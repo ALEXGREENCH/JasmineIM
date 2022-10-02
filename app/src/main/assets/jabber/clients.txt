@@ -1,0 +1,96 @@
+﻿-im/,-im/,aqq.eu/caps,gajim.org/caps,nimbuzz.com/,nimbuzzmod,http://google,kissmod,bluejabber.com,http://swift.im/,caps/,voffk.org.ru/bombus/caps,bombusng-qd.googlecode.com/caps,isida.googlecode.com/caps,/ng/caps,ex-im.mobi,mod/caps,pandion/caps,psi/caps,miranda/caps,tkabber/caps,gajim/caps,qip/caps,pidgin/caps,kopete/caps,exodus/caps,bitlbee/caps,coccinella/caps,mchat/caps,vacuum/caps,gaim/caps,jajc/caps,qutim/caps,nimbuzz.com/,nimbuzz/caps,siejc/caps,trillian/caps,oneteam/caps,palringo/caps,psi-im/caps,butterfly/,.caps,jw.lt/caps,avalon/caps,telepathy/caps,mcabber/caps,juick/caps,jimm/caps,jubo/caps,isida/caps,none/caps,talkonaut/caps,adium.com,adiumx.com,isida-bot/caps,vacuum-im/caps,:/caps,pigeon/caps,./caps,tkabber.jabber.ru/caps,qutim.org/caps,isida-bot.com/,bombus-im.org/java/caps,mchat.mgslab.com/caps,0.ru/caps,1.ru/caps,2.ru/caps,3.ru/caps,4.ru/caps,5.ru/caps,6.ru/caps,7.ru/caps,8.ru/caps,9.ru/caps	Wrong entity caps
+http://bombusmod.net.ru/caps	BombusMod
+http://bombusmod.net.ru,http://ex-im.name/caps	BombusMod (old)
+http://gajim.org/	Gajim (old)
+http://miranda-im.org/caps	Miranda
+http://voffk.org.ru/bombus	Bombus+
+http://online.yandex.ru/caps	YaOnline
+http://tkabber.jabber.ru/	Tkabber
+http://psi-dev.googlecode.com/caps	Psi+
+http://isida-bot.com	Isida Bot
+http://palringo.com/caps	uTalk
+http://qutim.org	qutIM
+http://chat.freize.org/caps	Freize Web Chat
+http://bombus-im.org/java	Bombus
+http://bitlbee.org/xmpp/caps	BitlBee
+http://bombusmod-qd.wen.ru/caps	BombusQD
+http://mcabber.lilotux.net/caps,http://mcabber.com/caps	mcabber
+http://dev.jabbim.cz/jabbim/caps	Jabbim
+http://qip.ru/caps?QIP	QIP Mobile
+http://jimm.net.ru/caps	Jimm aspro
+http://jajc.jrudevels.org/caps	JAJC
+http://kopete.kde.org/jabber/caps	Kopete
+http://bombus-im.org/ng	BombusNG
+http://trillian.im/caps	Trillian
+http://gaim.sf.net/caps	Gaim
+http://emess.eqx.su/caps,http://eqx.su/emess	Emess
+http://jabbrik.ru/caps	Uta Bot
+http://agent.mail.ru	Mail.Ru Agent
+http://www.google.com/xmpp/client/caps	Gtalk
+http://jasmineicq.ru/caps	Jasmine IM
+http://www.barobin.com/caps	BayanICQ
+http://jabber.pdg.pl/caps,http://klub54.wen.ru/caps	BombusKlub
+http://www.apple.com/ichat/caps	iChat Agent
+http://coccinella.sourceforge.net/protocol/caps	Coccinella
+http://bluendo.com/protocol/caps	Lampiro
+http://pda.qip.ru/caps	QIP PDA
+http://qip.ru/caps	QIP (Infium/2012)
+http://2010.qip.ru/caps	QIP 2010
+http://www.android.com/gtalk/client/caps	Gtalk Android
+http://erlim.a7x-im.com/	Erlang IM
+http://mail.google.com/xmpp/client/caps	Gmail
+http://stranger.kiev.ua/caps	fin jabber
+http://sonicrevolution.no.sapo.pt	Sonic Revolution
+http://swift.im	Swift
+http://www.igniterealtime.org/projects/smack/	Smack API
+http://www.weonlydo.com/XMPP/caps	wod-xmpp
+http://svn.posix.ru/fatal-bot/trunk,http://fatal-bot.spb.ru/caps,http://fatal-dev.ru/bot/caps	Fatal Bot
+http://www.asterisk.org/xmpp/client/caps	Asterisk
+http://apps.radio-t.com/caps	AIR Radio-T
+http://jtalk.ustyugov.net/caps	jTalk
+http://bombusng-qd.googlecode.com	BombusNG QD
+http://megafonvolga.ru/	MegaFon Connect
+http://bombusng-md.googlecode.com	BombusNG MD
+http://leechcraft.org/azoth	Leechcraft Azoth
+https://www.jappix.com/	Jappix
+http://oneteam.im/caps,ttp://www.process-one.net/en/solutions/oneteam_iphone/	OneTeam iPhone
+http://telepathy.freedesktop.org/caps	Telepathy
+http://vacuum-im.googlecode.com,http://code.google.com/p/vacuum-im/	Vacuum IM
+http://psi-im.org/caps	Psi
+http://exodus.jabberstudio.org/caps	Exodus
+http://jabbroid.akuz.de/caps	Jabbroid
+http://blacksmith-2.googlecode.com/svn/	Blacksmith-2 Bot
+http://simpleapps.ru/caps#blacksmith	Blacksmith Bot
+http://pjc.googlecode.com/caps	JuBo
+http://tomclaw.com/mandarin_im/caps	Mandarin IM
+http://chat.ovi.com/caps	Ovi chat
+http://gajim.org	Gajim
+http://aqq.eu/	AQQ
+http://bombus-im.org/android	Bombus Lime
+http://japyt.googlecode.com	Japyt for iPhone
+http://imadering.com/caps	IMadering
+http://sim-im.org/caps	Sim-IM
+http://digsby.com/caps	Digsby
+http://simpleapps.ru/xmpp/caps#security-bot	Security Bot
+http://mchat.mgslab.com/	mChat
+http://snapi-bot.googlecode.com/caps	Snapi-Snup Bot
+http://pidgin.im/caps	Libpurple (old)
+http://storm-bot.googlecode.com/svn/trunk,svn.jsmart.web.id/storm,http://code.google.com/p/storm-bot/	Storm Bot
+http://bombus.pl,http://bombusmod.eu	BombusMod (PL)
+http://pidgin.im/	Libpurple
+http://chat.jabbercity.ru/caps,https://mayplaces.com/im/	Unknown Web Agent
+nimbuzz:caps	Nimbuzz
+http://klub54.wen.ru	Ranka Bot (PL)
+http://jabber-net.ru/talisman-bot/caps,http://witcher-team.ucoz.ru/,http://j-tmb.ru/caps	Talisman Bot
+http://java.util.Random@,0.ru,1.ru,2.ru,3.ru,4.ru,5.ru,6.ru,7.ru,8.ru,9.ru	Bombus Avalon (old)
+magnet2.py	Magnet2.py Bot
+.google.com/xmpp/	Gtalk
+http://tkabber.jabber.ru,http://pidgin.im,yandex-webchat	Psi+ Client switcher plugin
+osiris-bot	Osiris Bot
+freq	freQ Bot
+bot,python,ocaml,psto,http://simpleapps.ru/,jabbrik.ru,http://jrudevels.org/lij/comp/,http://web-apps.ru/jabber-presence/,http://fin.jabber.ru/caps,http://jabrvista.net.ru,svn.jsmart.web.id,jame,clon,Kabul	Jabber Bot
+jdisk,msn,http://spectrum.im/transport,http://home.gna.org/,http://jit.,http://py,svn.xmpp.ru,mail.ru,bk.ru,inbox.ru,list.ru,none,registered	Jabber Transport
+http://,https://	Not-in-list (visit to http://westsibe.wen.ru)
+juick	Juick
+Ψ,ψ,q,w,e,r,t,y,u,i,o,p,a,s,d,f,g,h,j,k,l,z,x,c,v,b,n,m,_,=,\,-,@,.,#,&,/,',~,^,*,(,),+,`,:,;,[,],$,%,±,º,«,»,€,¢,¿,í,ç,ö,õ,®,©,§,á,æ,þ,¥,£,ì,ï,î,ø,ñ,1,2,3,4,5,6,7,8,9,0,й,ц,у,к,е,н,г,ш,щ,з,х,ъ,ф,ы,в,а,п,р,о,л,д,ж,э,я,ч,с,м,и,т,ь,б,ю	Unknown (Icon pack v.18.05.12)
+0.ru,,1.ru	Bombus Avalon

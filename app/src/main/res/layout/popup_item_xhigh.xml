@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alwaysDrawnWithCache="false"
+    android:background="@drawable/popup_notify"
+    android:orientation="horizontal"
+    android:padding="4sp">
+
+    <ImageView
+        android:id="@+id/popup_avatar"
+        android:layout_width="80sp"
+        android:layout_height="80sp"
+        android:src="@drawable/no_avatar" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="3sp"
+        android:layout_weight="1"
+        android:alwaysDrawnWithCache="false"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/popup_header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6sp"
+            android:layout_marginBottom="5sp"
+            android:layout_weight="1"
+            android:drawableLeft="@drawable/icq_msg_in"
+            android:drawablePadding="5sp"
+            android:ellipsize="marquee"
+            android:gravity="center"
+            android:singleLine="true"
+            android:text="TextView"
+            android:textColor="#ffffffff"
+            android:textSize="19sp"
+            android:textStyle="bold" />
+
+        <ru.ivansuper.jasmin.ui.MyTextView
+            android:id="@+id/popup_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:text="AutoRefreshTextView" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/popup_close"
+        android:layout_width="48sp"
+        android:layout_height="48sp"
+        android:scaleType="center"
+        android:src="@drawable/btn_dialog" />
+</LinearLayout>

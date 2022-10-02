@@ -1,0 +1,63 @@
+<?xml version='1.0' encoding='utf-8' standalone='yes' ?>
+<map>
+<boolean name="ms_restore_conf_presence" value="true" />
+<string name="ms_cl_font_size">15</string>
+<boolean name="ms_offline" value="true" />
+<boolean name="ms_auto_open_keyboard" value="true" />
+<string name="ms_wallpaper_type">0</string>
+<boolean name="ms_groups" value="true" />
+<boolean name="ms_check_tls_certificate" value="true" />
+<boolean name="ms_use_items_shadow" value="true" />
+<boolean name="ms_as_qest_enable" value="true" />
+<boolean name="ms_preload_history" value="true" />
+<boolean name="ms_triple_vibro" value="true" />
+<boolean name="ms_use_popup" value="true" />
+<boolean name="ms_use_overscroll" value="true" />
+<boolean name="ms_animated_smileys" value="true" />
+<string name="ms_turn_sts_timeout">300</string>
+<string name="ms_chat_style">1</string>
+<string name="ms_chat_text_size">15</string>
+<string name="ms_chat_time_size">15</string>
+<boolean name="ms_as_notify" value="true" />
+<string name="ms_as_question">Сколько будет 2x2?</string>
+<string name="ms_smileys_scale">100</string>
+<boolean name="ms_use_shadow" value="true" />
+<string name="ms_cl_columns">2</string>
+<boolean name="ms_show_clients" value="true" />
+<boolean name="ms_sounds" value="true" />
+<string name="ms_as_allowed">Вы успешно прошли антиспам!</string>
+<boolean name="ms_emptygroups" value="true" />
+<boolean name="ms_dragdrop_quoting" value="true" />
+<boolean name="ms_log_online" value="true" />
+<string name="ms_port">5190</string>
+<boolean name="ms_nick_in_chat" value="true" />
+<boolean name="ms_log_xtraz_reading" value="true" />
+<boolean name="ms_typing_notify" value="true" />
+<string name="ms_vibro_length">500</string>
+<string name="ms_server">login.icq.com</string>
+<boolean name="ms_use_history" value="true" />
+<string name="ms_auth_method">1</string>
+<int name="ms_cl_transition_effect" value="3" />
+<boolean name="ms_show_away" value="true" />
+<string name="ms_columns">5</string>
+<boolean name="ms_show_markers_in_chat" value="true" />
+<boolean name="ms_use_ping" value="true" />
+<boolean name="ms_log_offline" value="true" />
+<boolean name="ms_wifi_lock" value="true" />
+<boolean name="ms_vibro" value="true" />
+<boolean name="ms_two_screens_mode" value="true" />
+<boolean name="ms_show_xstatuses" value="true" />
+<string name="ms_reconnection_count">15</string>
+<string name="ms_select_language">0</string>
+<boolean name="ms_use_auto_cap" value="true" />
+<string name="ms_as_answer">4</string>
+<string name="chlver">5.4.8</string>
+<boolean name="ms_old_chat_style" value="true" />
+<boolean name="ms_realtime_history_record" value="true" />
+<boolean name="ms_use_pass_security" value="false" />
+<boolean name="ms_messages_limit_enabled" value="true" />
+<string name="ms_messages_limit_value">100</string>
+<boolean name="ms_conf_show_theme" value="true" />
+<boolean name="ms_use_messages_merging" value="false" />
+</map>
+

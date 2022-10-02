@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alwaysDrawnWithCache="false"
+    android:background="#ffffffff"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:alwaysDrawnWithCache="false">
+
+        <ImageView
+            android:layout_width="128sp"
+            android:layout_height="128sp"
+            android:layout_gravity="bottom|left"
+            android:src="@drawable/google_mail_logo" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alwaysDrawnWithCache="false"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/gmail_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/google_mail_title_back"
+                android:padding="3sp"
+                android:shadowColor="#ff000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="Google mail"
+                android:textColor="#ffffffff"
+                android:textSize="16sp" />
+
+            <ListView
+                android:id="@+id/gmail_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:alwaysDrawnWithCache="false"
+                android:cacheColorHint="#00000000"
+                android:divider="#77000000" />
+        </LinearLayout>
+    </FrameLayout>
+</LinearLayout>

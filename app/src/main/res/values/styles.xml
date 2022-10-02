@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="WallpaperNoTitleTheme" parent="@android:style/Theme.Wallpaper.NoTitleBar">
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+        <item name="android:editTextStyle">@style/EditTextStyle</item>
+        <item name="android:textViewStyle">@style/TextViewStyle</item>
+    </style>
+
+    <style name="SmileysSelectorTheme" parent="@android:style/Theme.Translucent.NoTitleBar">
+        <item name="android:textViewStyle">@style/TextViewStyle</item>
+    </style>
+
+    <style name="BlackNoTitleTheme" parent="@android:style/Theme.Black.NoTitleBar">
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+        <item name="android:editTextStyle">@style/EditTextStyle</item>
+        <item name="android:textViewStyle">@style/TextViewStyle</item>
+    </style>
+
+    <style name="ListViewStyle" parent="@android:style/Widget.ListView">
+        <item name="android:listSelector">@drawable/list_selector_background</item>
+    </style>
+
+    <style name="GridViewStyle" parent="@android:style/Widget.GridView">
+        <item name="android:listSelector">@drawable/list_selector_background</item>
+    </style>
+
+    <style name="TextViewStyle" parent="@android:style/Widget.TextView">
+        <item name="android:singleLine">false</item>
+    </style>
+
+    <style name="ButtonStyle" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/btn_default_small</item>
+    </style>
+
+    <style name="EditTextStyle" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/edit_text</item>
+    </style>
+
+    <style name="DialogTheme" parent="@android:style/Theme.Dialog">
+        <item name="android:colorForeground">#ffffffff</item>
+        <item name="android:colorBackground">#aaffffff</item>
+        <item name="android:buttonStyle">@style/ButtonStyle</item>
+        <item name="android:windowBackground">@drawable/grey_back</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:editTextStyle">@style/EditTextStyle</item>
+        <item name="android:textViewStyle">@style/TextViewStyle</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="TopDialogAnimation" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/top_dialog_show</item>
+        <item name="android:windowExitAnimation">@anim/top_dialog_hide</item>
+    </style>
+
+    <style name="CenterDialogAnimation" parent="@android:style/Animation.Dialog">
+        <item name="android:windowEnterAnimation">@anim/center_dialog_show</item>
+        <item name="android:windowExitAnimation">@anim/center_dialog_hide</item>
+    </style>
+</resources>

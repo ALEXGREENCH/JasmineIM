@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:alwaysDrawnWithCache="false"
+    android:background="#00000000"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/popup_log_list"
+        android:layout_width="400sp"
+        android:layout_height="wrap_content"
+        android:alwaysDrawnWithCache="false"
+        android:animationCache="false"
+        android:background="#00000000"
+        android:cacheColorHint="#00000000"
+        android:divider="#00000000"
+        android:dividerHeight="1sp" />
+</LinearLayout>

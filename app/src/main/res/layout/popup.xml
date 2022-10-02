@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/popup_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/grey_back"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/tracks"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="#00000000"
+            android:gravity="left"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/popup_wnd_header"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left"
+                android:maxLines="1"
+                android:paddingLeft="4sp"
+                android:paddingRight="4sp"
+                android:shadowColor="#ff000000"
+                android:shadowDx="1"
+                android:shadowDy="1"
+                android:shadowRadius="1"
+                android:text="TextView"
+                android:textColor="#ffffffff"
+                android:textSize="18dp" />
+
+            <LinearLayout
+                android:id="@+id/popup_header_divider"
+                android:layout_width="match_parent"
+                android:layout_height="3px"
+                android:layout_marginTop="3sp"
+                android:layout_marginBottom="3sp"
+                android:background="#ff00aaee"
+                android:orientation="vertical" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#ffcccccc"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@+id/xml_console_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:cacheColorHint="#ff777777"
+        android:divider="#ff000000"
+        android:dividerHeight="1px"
+        android:drawingCacheQuality="low"
+        android:stackFromBottom="true"
+        android:transcriptMode="normal" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:background="#ff000000"
+        android:orientation="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#22000000"
+        android:gravity="center_vertical">
+
+        <ru.ivansuper.jasmin.ui.MCheckBox
+            android:id="@+id/xml_console_enable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Enable"
+            android:textColor="#ff000000" />
+
+        <Button
+            android:id="@+id/xml_console_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Очистить" />
+    </LinearLayout>
+</LinearLayout>

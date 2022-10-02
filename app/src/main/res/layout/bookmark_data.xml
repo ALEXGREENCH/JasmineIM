@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="5sp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/l1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:paddingRight="10sp"
+                    android:text="Select type"
+                    android:textColor="#ffffffff"
+                    android:textSize="16sp" />
+
+                <ru.ivansuper.jasmin.ui.Spinner
+                    android:id="@+id/bookmark_type_list"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <EditText
+                android:id="@+id/bookmark_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:singleLine="true">
+
+                <requestFocus />
+            </EditText>
+
+            <EditText
+                android:id="@+id/bookmark_data"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/bookmark_nick"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:singleLine="true" />
+
+            <EditText
+                android:id="@+id/bookmark_pass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:singleLine="true" />
+
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/bookmark_autojoin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Autojoin"
+                android:textColor="#ffffffff" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

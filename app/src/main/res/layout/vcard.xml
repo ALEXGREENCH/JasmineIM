@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="2sp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="160sp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/vcard_avatar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
+                android:maxWidth="128sp"
+                android:maxHeight="128sp"
+                android:minWidth="128sp"
+                android:minHeight="128sp"
+                android:src="@drawable/no_avatar" />
+
+            <EditText
+                android:id="@+id/vcard_desc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:autoLink="phone|email|web"
+                android:background="@drawable/smiley_and_send_btn"
+                android:imeOptions="flagNoEnterAction|flagNoAccessoryAction|flagNoExtractUi"
+                android:shadowColor="#ff000000"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="1"
+                android:textColor="#ffffffff"
+                android:textColorLink="#ffffffff">
+
+                <requestFocus />
+            </EditText>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

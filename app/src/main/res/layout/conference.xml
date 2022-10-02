@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alwaysDrawnWithCache="false"
+    android:animationCache="false"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:drawingCacheQuality="low">
+
+        <LinearLayout
+            android:id="@+id/chat_back"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:alwaysDrawnWithCache="false"
+            android:animationCache="false"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/chat_header"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alwaysDrawnWithCache="false"
+                        android:background="#77000000"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:id="@+id/LinearLayout01"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/mainStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginLeft="5sp"
+                                android:src="@drawable/icq_status_chat" />
+
+                            <ImageView
+                                android:id="@+id/xStatus"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:src="@drawable/x_funny" />
+
+                            <TextView
+                                android:id="@+id/nickname"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="5sp"
+                                android:layout_marginBottom="5sp"
+                                android:text="Nickname"
+                                android:textColor="#ffffffff"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:scrollbars="none">
+
+                            <TextView
+                                android:id="@+id/encoding"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="3sp"
+                                android:ellipsize="marquee"
+                                android:focusable="true"
+                                android:focusableInTouchMode="true"
+                                android:marqueeRepeatLimit="marquee_forever"
+                                android:scrollHorizontally="true"
+                                android:singleLine="true"
+                                android:text="Очень длинная тема, которая занимает очень много места и должна скроллиться (установлена muzikalka)"
+                                android:textColor="#ffffffff" />
+                        </HorizontalScrollView>
+                    </LinearLayout>
+
+                    <FrameLayout
+                        android:id="@+id/chat_messages_layout"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="150"
+                        android:alwaysDrawnWithCache="false"
+                        android:animationCache="false">
+
+                        <ru.ivansuper.jasmin.slide_tools.ListViewA
+                            android:id="@+id/messages"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:alwaysDrawnWithCache="false"
+                            android:cacheColorHint="#00000000"
+                            android:fadeScrollbars="true"
+                            android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
+                            android:scrollbarTrackVertical="@drawable/scrollbar_track"
+                            android:scrollbars="vertical"
+                            android:transcriptMode="disabled" />
+
+                        <LinearLayout
+                            android:id="@+id/chat_chats_markers"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:paddingTop="3sp" />
+
+                        <Button
+                            android:id="@+id/chat_scroll_right"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:background="#33000000"
+                            android:paddingLeft="5sp"
+                            android:paddingTop="32sp"
+                            android:paddingRight="5sp"
+                            android:paddingBottom="32sp"
+                            android:text="+"
+                            android:textColor="#aaffffff"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+
+                        <Button
+                            android:id="@+id/chat_scroll_left"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:background="#33000000"
+                            android:paddingLeft="5sp"
+                            android:paddingTop="32sp"
+                            android:paddingRight="5sp"
+                            android:paddingBottom="32sp"
+                            android:text="-"
+                            android:textColor="#aaffffff"
+                            android:textSize="18sp"
+                            android:textStyle="bold" />
+                    </FrameLayout>
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent">
+
+                    <ListView
+                        android:id="@+id/chat_conf_users"
+                        android:layout_width="192sp"
+                        android:layout_height="match_parent"
+                        android:divider="#00000000"
+                        android:dividerHeight="0sp"
+                        android:fadeScrollbars="true"
+                        android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
+                        android:scrollbarTrackVertical="@drawable/scrollbar_track"
+                        android:scrollbars="vertical" />
+
+                    <ImageView
+                        android:id="@+id/conf_users_toggle_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="right"
+                        android:background="#7700aaff"
+                        android:minWidth="12sp" />
+                </FrameLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/chat_bottom_panel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:alwaysDrawnWithCache="false"
+                android:background="#77000000"
+                android:gravity="center_horizontal"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="1px"
+                            android:background="#ff000000"
+                            android:orientation="vertical" />
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawingCacheQuality="low"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/msg_nick"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:drawingCacheQuality="low"
+                                android:text="Profile nickname"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:drawingCacheQuality="low"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <Button
+                                android:id="@+id/chat_menu_btn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:background="@drawable/btn_default_small"
+                                android:drawableLeft="@drawable/ic_menu"
+                                android:paddingLeft="12sp"
+                                android:paddingRight="12sp" />
+
+                            <EditText
+                                android:id="@+id/input"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:gravity="top|left"
+                                android:maxLines="4" />
+
+                            <Button
+                                android:id="@+id/chat_smiley_btn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:drawableLeft="@drawable/smile_button"
+                                android:gravity="center"
+                                android:paddingLeft="14sp"
+                                android:paddingRight="14sp" />
+
+                            <Button
+                                android:id="@+id/send"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:paddingLeft="18sp"
+                                android:paddingRight="18sp"
+                                android:shadowColor="#ff000000"
+                                android:shadowDx="0"
+                                android:shadowDy="0"
+                                android:shadowRadius="1"
+                                android:textColor="#ffffffff" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <ru.ivansuper.jasmin.chats.QuotingView
+            android:id="@+id/chat_quoting_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+</LinearLayout>

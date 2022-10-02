@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/cl_back"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alwaysDrawnWithCache="false"
+    android:background="#77000000"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/contacts_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1.7"
+                android:orientation="vertical">
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ru.ivansuper.jasmin.slide_tools.SlideSwitcher
+                        android:id="@+id/contactlist"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fadeScrollbars="true"
+                        android:focusable="true"
+                        android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
+                        android:scrollbarTrackVertical="@drawable/scrollbar_track"
+                        android:scrollbars="vertical" />
+
+                    <LinearLayout
+                        android:id="@+id/profiles_connection_bars"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:alwaysDrawnWithCache="false"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:orientation="vertical" />
+                </FrameLayout>
+
+                <LinearLayout
+                    android:id="@+id/bottomPanel"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:alwaysDrawnWithCache="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:id="@+id/contactlist_search_bar"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center_vertical"
+                        android:longClickable="false"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/contactlist_search_panel_slot"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical" />
+
+                        <ImageView
+                            android:id="@+id/contactlist_search_hide"
+                            android:layout_width="48px"
+                            android:layout_height="48px"
+                            android:layout_marginLeft="5sp"
+                            android:layout_marginRight="5sp"
+                            android:background="@drawable/btn_dialog" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alwaysDrawnWithCache="false"
+                        android:clickable="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:longClickable="false">
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:alwaysDrawnWithCache="false"
+                            android:clickable="false"
+                            android:longClickable="false">
+
+                            <LinearLayout
+                                android:id="@+id/profilesPanel"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:alwaysDrawnWithCache="false"
+                                android:clickable="true"
+                                android:gravity="center" />
+                        </HorizontalScrollView>
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:alwaysDrawnWithCache="false">
+
+                            <ImageView
+                                android:id="@+id/toggle_sound"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="5sp"
+                                android:src="@drawable/toggle_sound" />
+
+                            <ImageView
+                                android:id="@+id/toggle_vibro"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="5sp"
+                                android:src="@drawable/toggle_vibro" />
+
+                            <ImageView
+                                android:id="@+id/toggle_offline"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="5sp"
+                                android:src="@drawable/toggle_offline" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/contactlist_list_chat_separator"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="#ff0077aa"
+                android:minWidth="10sp" />
+
+            <LinearLayout
+                android:id="@+id/chat_fragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:visibility="gone">
+
+                <FrameLayout
+                    android:id="@+id/contactlist_chat"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <ru.ivansuper.jasmin.ConfigListenerView
+            android:id="@+id/config_listener"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
+</LinearLayout>

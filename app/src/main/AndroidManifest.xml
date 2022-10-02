@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="ru.ivansuper.jasmin">
+
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+
+    <application
+        android:name="ru.ivansuper.jasmin.base.APP"
+        android:icon="@drawable/icon"
+        android:label="Jasmine IM"
+        android:theme="@style/WallpaperNoTitleTheme">
+
+        <activity
+            android:name="ru.ivansuper.jasmin.main"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:noHistory="false"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateAlwaysHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="ContactListActivity"
+            android:clearTaskOnLaunch="true"
+            android:configChanges="orientation|keyboardHidden"
+            android:launchMode="singleTask"
+            android:noHistory="false"
+            android:theme="@style/WallpaperNoTitleTheme" />
+
+        <activity
+            android:name="ProfilesActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleTask"
+            android:noHistory="true">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ru.ivansuper.jasmin.PROFILES_MANAGER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="SettingsActivity"
+            android:configChanges="uiMode|screenLayout|orientation|keyboardHidden|keyboard"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleTask"
+            android:noHistory="false"
+            android:theme="@android:style/Theme.Black.NoTitleBar" />
+
+        <activity
+            android:name="ContactHistoryActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleInstance"
+            android:noHistory="true"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <activity
+            android:name=".color_editor.ColorEditorActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleInstance"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ru.ivansuper.jasmin.color_editor.COLOR_EDITOR" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="SmileysManagerActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ru.ivansuper.jasmin.SMILEYS_MANAGER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="FileBrowserActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:noHistory="true"
+            android:theme="@android:style/Theme.NoTitleBar" />
+
+        <activity
+            android:name="MediaManagerActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleTask"
+            android:noHistory="false"
+            android:theme="@android:style/Theme.NoTitleBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+                <action android:name="ru.ivansuper.jasmin.MEDIA_MANAGER" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="SmileysSelector"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:noHistory="true" />
+
+        <activity
+            android:name="SearchActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleInstance"
+            android:noHistory="true" />
+
+        <activity
+            android:name=".jabber.GMail.GMailActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleTask"
+            android:noHistory="true" />
+
+        <activity
+            android:name=".jabber.XMLConsole.XMLConsoleActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleTask"
+            android:noHistory="true" />
+
+        <activity
+            android:name=".jabber.conference.BannedListActivity"
+            android:configChanges="orientation|navigation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Black.NoTitleBar" />
+
+        <activity
+            android:name=".jabber.disco.DiscoActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleTask" />
+
+        <activity
+            android:name=".jabber.bookmarks.BookmarksActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:finishOnTaskLaunch="true"
+            android:launchMode="singleTask" />
+
+        <activity
+            android:name=".HistoryTools.ExportImportActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:exported="false"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="ru.ivansuper.jasmin.HISTORY_TOOLS" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name=".Service.jasminSvc"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ru.ivansuper.jasmin.PING" />
+            </intent-filter>
+        </service>
+
+    </application>
+
+    <uses-permission
+        android:name="android.permission.INTERNET"
+        tools:ignore="ManifestOrder" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+</manifest>

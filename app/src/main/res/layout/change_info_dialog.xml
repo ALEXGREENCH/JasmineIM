@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/l1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ник:"
+                android:textColor="#ffffffff" />
+
+            <EditText
+                android:id="@+id/info_dialog_nick_e"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:singleLine="true">
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/l2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Имя:"
+                android:textColor="#ffffffff" />
+
+            <EditText
+                android:id="@+id/info_dialog_name_e"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/l3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Фамилия:"
+                android:textColor="#ffffffff" />
+
+            <EditText
+                android:id="@+id/info_dialog_surname_e"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/l4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Пол:"
+                android:textColor="#ffffffff" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioGroup
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <RadioButton
+                        android:id="@+id/info_dialog_gender_m"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:checked="true"
+                        android:text="Муж."
+                        android:textColor="#ffffffff" />
+
+                    <RadioButton
+                        android:id="@+id/info_dialog_gender_w"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Жен."
+                        android:textColor="#ffffffff" />
+
+                    <RadioButton
+                        android:id="@+id/info_dialog_gender_none"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Не задан"
+                        android:textColor="#ffffffff" />
+                </RadioGroup>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/l5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Дата рождения(год,месяц,число):"
+                android:textColor="#ffffffff" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="64sp">
+
+                <EditText
+                    android:id="@+id/info_dialog_b_year"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:hint="1234"
+                    android:inputType="numberDecimal"
+                    android:maxLength="4" />
+
+                <EditText
+                    android:id="@+id/info_dialog_b_month"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.6"
+                    android:hint="12"
+                    android:inputType="numberDecimal"
+                    android:maxLength="2" />
+
+                <EditText
+                    android:id="@+id/info_dialog_b_day"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.6"
+                    android:hint="12"
+                    android:inputType="numberDecimal"
+                    android:maxLength="2" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginLeft="16sp"
+                android:layout_marginTop="5sp"
+                android:layout_marginRight="16sp"
+                android:layout_marginBottom="5sp"
+                android:background="#ffffffff"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/l6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="E-mail:"
+                android:textColor="#ffffffff" />
+
+            <EditText
+                android:id="@+id/info_dialog_email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/l7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Домашняя страница:"
+                android:textColor="#ffffffff" />
+
+            <EditText
+                android:id="@+id/info_dialog_homepage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_marginLeft="16sp"
+                android:layout_marginTop="5sp"
+                android:layout_marginRight="16sp"
+                android:layout_marginBottom="5sp"
+                android:background="#ffffffff"
+                android:orientation="vertical" />
+
+            <TextView
+                android:id="@+id/l8"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Город:"
+                android:textColor="#ffffffff" />
+
+            <EditText
+                android:id="@+id/info_dialog_city_e"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:maxLines="1"
+                android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/l9"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="О себе:"
+                android:textColor="#ffffffff" />
+
+            <EditText
+                android:id="@+id/info_dialog_about_e"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="top|left"
+                android:maxLines="3"
+                android:minLines="2" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alwaysDrawnWithCache="false"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/gmail_item_theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="2sp"
+        android:text="Theme"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#ff000000"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/gmail_item_sender"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="5sp"
+        android:text="Sender"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#ff222222"
+        android:textStyle="italic" />
+
+    <TextView
+        android:id="@+id/gmail_item_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="5sp"
+        android:paddingRight="5sp"
+        android:text="Message text"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#ff000000" />
+</LinearLayout>

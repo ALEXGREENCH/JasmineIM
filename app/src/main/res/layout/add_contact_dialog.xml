@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/l1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ID контакта"
+                android:textColor="#ffffffff"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/add_contact_uin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp">
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/l2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Имя"
+                android:textColor="#ffffffff"
+                android:textSize="16sp" />
+
+            <EditText
+                android:id="@+id/add_contact_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/l3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Группа"
+                android:textColor="#ffffffff"
+                android:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/add_contact_groups"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

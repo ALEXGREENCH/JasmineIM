@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10sp">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/l1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Ваш JID (user@host.ru):"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/xmpp_profile_add_jid"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <requestFocus />
+            </EditText>
+
+            <TextView
+                android:id="@+id/l2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Пароль:"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/xmpp_profile_add_pass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:id="@+id/l3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Сервер:"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <EditText
+                    android:id="@+id/xmpp_profile_add_server"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:ems="10" />
+
+                <Button
+                    android:id="@+id/detect_srv_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Detect" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/l4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Порт:"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/xmpp_profile_add_port"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:maxLength="5"
+                android:text="5222" />
+
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/xmpp_profile_add_enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Enabled" />
+
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/xmpp_profile_add_zlib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Compression" />
+
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/xmpp_profile_add_tls"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TLS" />
+
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/xmpp_profile_add_autoconnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Autoconnect" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

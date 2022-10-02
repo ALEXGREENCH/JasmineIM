@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" android:key="ms_settings">
+    <ru.ivansuper.jasmin.Preferences.LanguagePicker android:key="ms_select_language"/>
+    <PreferenceScreen android:title="Управление аккаунтами" android:key="ms_profiles_manager">
+        <intent android:action="ru.ivansuper.jasmin.PROFILES_MANAGER"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Настройки звуков" android:key="ms_media_manager">
+        <intent android:action="ru.ivansuper.jasmin.MEDIA_MANAGER"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Смайлы" android:key="ms_smileys_manager">
+        <PreferenceScreen android:title="Смайлпаки" android:key="ms_smileys">
+            <intent android:action="ru.ivansuper.jasmin.SMILEYS_MANAGER"/>
+        </PreferenceScreen>
+        <ru.ivansuper.jasmin.Preferences.SmileysSizePickerSlide android:key="ms_smileys_scale" android:defaultValue="100"/>
+        <CheckBoxPreference android:title="Включить анимацию смайлов" android:key="ms_animated_smileys" android:defaultValue="true"/>
+        <ru.ivansuper.jasmin.Preferences.ColumnsPicker android:key="ms_columns" android:summary="Количество колонок при выборе смайлов" android:defaultValue="5"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:key="ms_server_settings">
+        <PreferenceCategory android:title="ICQ" android:key="ms_server_settings_icq"/>
+        <EditTextPreference android:key="ms_server" android:defaultValue="login.icq.com" android:positiveButtonText="Применить" android:negativeButtonText="Отмена"/>
+        <EditTextPreference android:key="ms_port" android:defaultValue="5190" android:positiveButtonText="Ok" android:negativeButtonText="Отмена"/>
+        <ListPreference android:entries="@array/auth_methods" android:key="ms_auth_method" android:defaultValue="1" android:entryValues="@array/auth_methods_values"/>
+        <PreferenceCategory android:key="ms_jabber_category"/>
+        <CheckBoxPreference android:key="ms_check_tls_certificate" android:defaultValue="true"/>
+        <PreferenceCategory android:title="Поддержание подключения" android:key="ms_server_settings_keepalive"/>
+        <CheckBoxPreference android:title="Принудительный пинг" android:key="ms_use_ping" android:defaultValue="true"/>
+        <ru.ivansuper.jasmin.Preferences.IntegerPickerMedium android:key="ms_ping_freq" android:summary="Рекомендуется не менее 60" android:dependency="ms_use_ping" android:defaultValue="120"/>
+        <ListPreference android:entries="@array/reconnects_labels" android:key="ms_reconnection_count" android:defaultValue="15" android:entryValues="@array/reconnects_values"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Уведомления" android:key="ms_notifications">
+        <CheckBoxPreference android:title="Вибрация" android:key="ms_vibro" android:defaultValue="true"/>
+        <ru.ivansuper.jasmin.Preferences.IntegerPickerBig android:key="ms_vibro_length" android:defaultValue="350"/>
+        <CheckBoxPreference android:title="Вибрация при потере связи" android:key="ms_triple_vibro" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Звуковые оповещения" android:key="ms_sounds" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Отдельные нотификации" android:key="ms_notify_mode" android:summary="Отдельное оповещение для каждого контакта" android:defaultValue="false"/>
+        <PreferenceCategory android:title="Логгирование" android:key="ms_notifications_log"/>
+        <CheckBoxPreference android:title="Следить за чтением статуса" android:key="ms_log_xtraz_reading" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Следить за входом" android:key="ms_log_online" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Следить за выходом" android:key="ms_log_offline" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Всплывающие уведомления" android:key="ms_use_popup" android:defaultValue="true"/>
+        <CheckBoxPreference android:key="ms_log_clickable" android:defaultValue="false"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Список контактов" android:key="ms_contactlist">
+        <CheckBoxPreference android:title="Показывать группы" android:key="ms_groups" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Скрывать пустые группы" android:key="ms_emptygroups" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Скрыть неподключенные профили" android:key="ms_hide_not_connected_profiles" android:defaultValue="false"/>
+        <CheckBoxPreference android:title="Скрывать оффлайн контакты" android:key="ms_offline" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Литой список" android:key="ms_simple_list" android:summary="Отображение без разделения на профили и без разделения на группы" android:defaultValue="false"/>
+        <CheckBoxPreference android:title="Открытые чаты вверху списка" android:key="ms_chats_at_top" android:summary="Перемещать открытые чаты в самый верх списка контактов" android:defaultValue="false"/>
+        <CheckBoxPreference android:key="ms_two_screens_mode" android:defaultValue="true"/>
+        <ru.ivansuper.jasmin.Preferences.ColumnsPicker android:key="ms_cl_columns" android:defaultValue="1"/>
+        <ru.ivansuper.jasmin.Preferences.IntegerPickerSmall android:key="ms_cl_font_size" android:defaultValue="18"/>
+        <CheckBoxPreference android:title="Показывать статус" android:key="ms_show_away" android:summary="Показывать текст статуса под контактами (Не совместимо с несколькими колонками)" android:defaultValue="false"/>
+        <CheckBoxPreference android:title="Показывать аватары" android:key="ms_show_avatars" android:defaultValue="false"/>
+        <CheckBoxPreference android:key="ms_show_xstatuses" android:defaultValue="true"/>
+        <CheckBoxPreference android:key="ms_show_clients" android:defaultValue="true"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Чат" android:key="ms_chat">
+        <CheckBoxPreference android:title="Отправка по Enter" android:key="ms_send_by_enter" android:defaultValue="false"/>
+        <CheckBoxPreference android:title="Drag&amp;Drop цитирование" android:key="ms_dragdrop_quoting" android:defaultValue="true"/>
+        <ru.ivansuper.jasmin.Preferences.IntegerPickerSmall android:key="ms_chat_text_size" android:defaultValue="16"/>
+        <ru.ivansuper.jasmin.Preferences.IntegerPickerSmall android:key="ms_chat_time_size" android:defaultValue="14"/>
+        <CheckBoxPreference android:title="Отображать никнеймы" android:key="ms_nick_in_chat" android:defaultValue="false"/>
+        <CheckBoxPreference android:title="Уведомление о наборе" android:key="ms_typing_notify" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Автоуправление клавиатурой" android:key="ms_auto_open_keyboard" android:defaultValue="false"/>
+        <CheckBoxPreference android:title="Авторегистр при вводе" android:key="ms_use_auto_cap" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Разделители сообщений" android:key="ms_chat_dividers" android:defaultValue="false"/>
+        <CheckBoxPreference android:key="ms_show_markers_in_chat" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Кнопки перехода" android:key="ms_scroll_arrows" android:summary="Отображать кнопки перехода между чатами" android:defaultValue="false"/>
+        <ru.ivansuper.jasmin.Preferences.ChatStylePicker android:key="ms_chat_style" android:summary="Стиль индикаторов доставки сообщений в чате" android:defaultValue="0"/>
+        <CheckBoxPreference android:title="Загружать картинки" android:key="ms_links_to_images" android:summary="Подгружать изображение заменяя им ссылку" android:defaultValue="false"/>
+        <CheckBoxPreference android:key="ms_use_messages_merging"/>
+        <PreferenceCategory android:key="ms_messages_limit"/>
+        <CheckBoxPreference android:key="ms_messages_limit_enabled" android:defaultValue="true"/>
+        <ru.ivansuper.jasmin.Preferences.IntegerPickerBig android:key="ms_messages_limit_value" android:dependency="ms_messages_limit_enabled" android:defaultValue="100"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:key="ms_conference">
+        <CheckBoxPreference android:key="ms_restore_conf_presence" android:defaultValue="false"/>
+        <CheckBoxPreference android:key="ms_use_bookmark_autojoin" android:defaultValue="false"/>
+        <CheckBoxPreference android:key="ms_conf_show_theme" android:defaultValue="true"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="История" android:key="ms_history">
+        <CheckBoxPreference android:enabled="true" android:title="Хранить историю" android:key="ms_use_history" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Реалтайм экспорт" android:key="ms_realtime_history_record" android:summary="Писать историю на карту памяти в реальном времени" android:defaultValue="false"/>
+        <CheckBoxPreference android:title="Подгружать историю" android:key="ms_preload_history" android:defaultValue="true"/>
+        <PreferenceScreen android:key="ms_history_tools">
+            <intent android:action="ru.ivansuper.jasmin.HISTORY_TOOLS"/>
+        </PreferenceScreen>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Оформление" android:key="ms_skins" android:summary="После изменений нужно перезагрузить программу">
+        <PreferenceScreen android:title="Редактор цветовой схемы" android:key="ms_colors">
+            <intent android:action="ru.ivansuper.jasmin.color_editor.COLOR_EDITOR"/>
+        </PreferenceScreen>
+        <ru.ivansuper.jasmin.Preferences.BackgroundPicker android:key="ms_wallpaper_type" android:defaultValue="0"/>
+        <CheckBoxPreference android:title="Затемнять фон окон" android:key="ms_use_shadow" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Отбрасывать тень" android:key="ms_use_items_shadow" android:summary="Разрешить отрисовку тени под текстом контактов" android:defaultValue="true"/>
+        <CheckBoxPreference android:title="Старый стиль ввода в чате" android:key="ms_old_chat_style" android:defaultValue="true"/>
+        <CheckBoxPreference android:key="ms_use_overscroll" android:defaultValue="true"/>
+        <ru.ivansuper.jasmin.Preferences.TransitionPicker android:key="ms_cl_transition_effect" android:dependency="ms_two_screens_mode" android:defaultValue="7"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Антиспам" android:key="ms_antispam">
+        <CheckBoxPreference android:title="Сообщения только от добавленных" android:key="ms_as_only_roster" android:summary="Получать сообщения только от тех, кто уже находится в Вашем списке контактов" android:defaultValue="false"/>
+        <CheckBoxPreference android:title="Уведомлять о блокировке" android:key="ms_as_notify" android:defaultValue="true"/>
+        <PreferenceCategory android:key="ms_notify_c"/>
+        <CheckBoxPreference android:title="Включить вопрос" android:key="ms_as_qest_enable" android:defaultValue="true"/>
+        <EditTextPreference android:title="Вопрос" android:key="ms_as_question" android:summary="Будет задан собеседнику" android:dependency="ms_as_qest_enable" android:defaultValue="Сколько будет 2x2?"/>
+        <EditTextPreference android:title="Ответ" android:key="ms_as_answer" android:summary="Что должен ответить собеседник" android:dependency="ms_as_qest_enable" android:defaultValue="4"/>
+        <EditTextPreference android:title="Успешное прохождение" android:key="ms_as_allowed" android:summary="Что отослать собеседнику если он прошел антиспам" android:dependency="ms_as_qest_enable" android:defaultValue="Вы успешно прошли антиспам!"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Электропитание" android:key="ms_locks">
+        <CheckBoxPreference android:title="Блокировать сон" android:key="ms_wake_lock" android:summary="Не давать устройству полностью усыпать" android:defaultValue="false"/>
+        <CheckBoxPreference android:title="Удерживать Wi-Fi" android:key="ms_wifi_lock" android:summary="Предотвращать отключение Wi-Fi во сне" android:defaultValue="true"/>
+        <PreferenceScreen android:title="Внимание" android:selectable="false" android:key="ms_locks_notify_a" android:summary="Включение блокировки сна повышает расход заряда батареи!"/>
+        <PreferenceScreen android:title="Требуется перезагрузка" android:selectable="false" android:key="ms_locks_notify_b"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:key="ms_security">
+        <PreferenceScreen android:key="ms_use_pass_security"/>
+    </PreferenceScreen>
+    <PreferenceScreen android:title="Другие настройки" android:key="ms_misc">
+        <PreferenceCategory/>
+        <CheckBoxPreference android:title="Автостатус" android:key="ms_turn_sts_on_screen" android:summary="Автоматически менять статус на &quot;Отошел&quot; при отключении экрана" android:defaultValue="false"/>
+        <ru.ivansuper.jasmin.Preferences.IntegerPickerMedium android:key="ms_turn_sts_timeout" android:summary="Через какой период времени сменить статус (секунды)" android:defaultValue="300"/>
+        <PreferenceCategory/>
+        <CheckBoxPreference android:title="Автозакрытие чата" android:key="ms_auto_close_chat" android:summary="Закрывать чат, если контакт вышел из сети" android:defaultValue="false"/>
+        <PreferenceCategory/>
+        <CheckBoxPreference android:title="Автостатус" android:key="ms_auto_xtraz" android:summary="Автоматически запрашивать статус при его изменении" android:defaultValue="false"/>
+    </PreferenceScreen>
+</PreferenceScreen>

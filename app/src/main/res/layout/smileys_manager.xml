@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#77000000"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/l1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableBottom="@drawable/away_divider"
+        android:gravity="center_horizontal"
+        android:padding="3sp"
+        android:shadowColor="#ff000000"
+        android:shadowDx="1"
+        android:shadowDy="1"
+        android:shadowRadius="3"
+        android:text="Менеджер смайлов"
+        android:textColor="#ffffffff"
+        android:textSize="18sp" />
+
+    <TextView
+        android:id="@+id/l2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="3sp"
+        android:text="Доступные смайлпаки:"
+        android:textColor="#ffffffff" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:id="@+id/smileys_manager_pack_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical" />
+    </ScrollView>
+
+    <Button
+        android:id="@+id/smileys_manager_apply"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Подгрузить выбранный пак"
+        android:textSize="18sp" />
+</LinearLayout>

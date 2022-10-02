@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:alwaysDrawnWithCache="false"
+    android:background="@drawable/popup_notify"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/popup_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/icq_msg_in"
+        android:drawablePadding="2sp"
+        android:ellipsize="marquee"
+        android:gravity="center"
+        android:singleLine="true"
+        android:text="TextView"
+        android:textColor="#ffffffff"
+        android:textStyle="bold" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:alwaysDrawnWithCache="false">
+
+        <ImageView
+            android:id="@+id/popup_avatar"
+            android:layout_width="48sp"
+            android:layout_height="48sp"
+            android:src="@drawable/no_avatar" />
+
+        <ru.ivansuper.jasmin.ui.MyTextView
+            android:id="@+id/popup_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="AutoRefreshTextView" />
+    </LinearLayout>
+</LinearLayout>

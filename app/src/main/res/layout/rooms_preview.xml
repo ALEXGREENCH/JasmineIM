@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/rooms_preview_filter"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Фильтр по JID и названию">
+
+        <requestFocus />
+    </EditText>
+
+    <ListView
+        android:id="@+id/rooms_preview_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:divider="#77ffffff"
+        android:dividerHeight="5sp"
+        android:drawingCacheQuality="low" />
+</LinearLayout>

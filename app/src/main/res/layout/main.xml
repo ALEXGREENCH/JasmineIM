@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/splash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16sp"
+        android:layout_marginTop="16sp"
+        android:layout_marginRight="16sp"
+        android:layout_marginBottom="16sp"
+        android:background="@drawable/splash_back"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="10sp">
+
+        <ImageView
+            android:id="@+id/imageView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/splash" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <ru.ivansuper.jasmin.ui.LoadingView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1" />
+
+            <TextView
+                android:id="@+id/loading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10sp"
+                android:shadowColor="#ff9db5cd"
+                android:shadowDx="0"
+                android:shadowDy="0"
+                android:shadowRadius="2"
+                android:text="Загружаемся ..."
+                android:textColor="#ff2b5278"
+                android:textSize="20sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/buyed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="96sp"
+            android:shadowColor="#ff9db5cd"
+            android:shadowDx="0"
+            android:shadowDy="0"
+            android:shadowRadius="2"
+            android:text="КУПЛЕНО"
+            android:textColor="#ff2b5278"
+            android:textStyle="bold"
+            android:visibility="gone" />
+    </LinearLayout>
+</LinearLayout>

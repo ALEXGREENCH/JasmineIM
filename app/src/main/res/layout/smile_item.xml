@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@drawable/smiley_and_send_btn"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <ru.ivansuper.jasmin.animate_tools.SmileView
+        android:id="@+id/smile_item"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+</LinearLayout>

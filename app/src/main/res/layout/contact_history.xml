@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/history_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#aa000000"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/history_wnd_nickname"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:paddingTop="5sp"
+            android:paddingBottom="5sp"
+            android:text="Nickname"
+            android:textColor="#ffffffff"
+            android:textSize="15sp" />
+
+        <EditText
+            android:id="@+id/search_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:drawableRight="@drawable/ic_btn_search"
+            android:maxLines="3"
+            android:textSize="15sp" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/history_wnd_msglist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#77000000"
+        android:cacheColorHint="#00000000"
+        android:divider="#2200ffff"
+        android:drawingCacheQuality="low"
+        android:fastScrollEnabled="true"
+        android:stackFromBottom="true" />
+</LinearLayout>
