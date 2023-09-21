@@ -123,14 +123,14 @@ public class resources {
     public static Drawable eat;
     private static Bitmap edt_disabled;
     private static Bitmap edt_disabled_focused;
-    private static final Rect edt_disabled_focused_padding = new Rect();
-    private static final Rect edt_disabled_padding = new Rect();
+    private static Rect edt_disabled_focused_padding = new Rect();
+    private static Rect edt_disabled_padding = new Rect();
     private static Bitmap edt_normal;
-    private static final Rect edt_normal_padding = new Rect();
+    private static Rect edt_normal_padding = new Rect();
     private static Bitmap edt_pressed;
-    private static final Rect edt_pressed_padding = new Rect();
+    private static Rect edt_pressed_padding = new Rect();
     private static Bitmap edt_selected;
-    private static final Rect edt_selected_padding = new Rect();
+    private static Rect edt_selected_padding = new Rect();
     public static Drawable evil;
     public static Drawable file;
     public static Drawable file_brw;
@@ -515,37 +515,68 @@ public class resources {
         return attachEditTextInternal(editText);
     }
 
-    private static boolean attachEditTextInternal(EditText editText) {
-        int textColor = ColorScheme.getColor(46);
-        int shadowColor = Color.argb(Color.alpha(textColor) / 5, Color.red(textColor), Color.green(textColor), Color.blue(textColor));
+    private static boolean attachEditTextInternal(EditText var0) {
+        int var1 = ColorScheme.getColor(46);
+        int var2 = Color.alpha(var1);
+        int var3 = Color.red(var1);
+        int var4 = Color.green(var1);
+        int var5 = Color.blue(var1);
+        var0.setTextColor(var1);
+        var0.setShadowLayer(1.0F, 0.0F, 0.0F, Color.argb(var2 / 5, var3, var4, var5));
+        boolean var6;
+        if (edt_normal == null) {
+            var6 = false;
+        } else if (edt_disabled == null) {
+            var6 = false;
+        } else if (edt_pressed == null) {
+            var6 = false;
+        } else if (edt_selected == null) {
+            var6 = false;
+        } else if (edt_disabled_focused == null) {
+            var6 = false;
+        } else {
+            StateListDrawable var7 = new StateListDrawable();
+            if (edt_normal_padding == null) {
+                edt_normal_padding = new Rect(18, 5, 18, 5);
+            }
 
-        editText.setTextColor(textColor);
-        editText.setShadowLayer(1.0F, 0.0F, 0.0F, shadowColor);
+            NinePatchDrawable var8 = new NinePatchDrawable(ctx.getResources(), edt_normal, edt_normal.getNinePatchChunk(), edt_normal_padding, null);
+            var7.addState(new int[]{-16842909, 16842908}, var8);
+            if (edt_disabled_padding == null) {
+                edt_disabled_padding = new Rect(18, 5, 18, 5);
+            }
 
-        StateListDrawable drawable = createEditTextStateListDrawable();
-        editText.setBackgroundDrawable(drawable);
+            var8 = new NinePatchDrawable(ctx.getResources(), edt_disabled, edt_disabled.getNinePatchChunk(), edt_disabled_padding, null);
+            var7.addState(new int[]{-16842909, -16842908}, var8);
+            if (edt_pressed_padding == null) {
+                edt_pressed_padding = new Rect(18, 5, 18, 5);
+            }
 
-        return true;
-    }
+            var8 = new NinePatchDrawable(ctx.getResources(), edt_pressed, edt_pressed.getNinePatchChunk(), edt_pressed_padding, null);
+            var7.addState(new int[]{16842919}, var8);
+            if (edt_selected_padding == null) {
+                edt_selected_padding = new Rect(18, 5, 18, 5);
+            }
 
-    private static StateListDrawable createEditTextStateListDrawable() {
-        StateListDrawable drawable = new StateListDrawable();
-        Rect padding = new Rect(18, 5, 18, 5);
+            var8 = new NinePatchDrawable(ctx.getResources(), edt_selected, edt_selected.getNinePatchChunk(), edt_selected_padding, null);
+            var7.addState(new int[]{16842908, 16842910}, var8);
+            if (edt_normal_padding == null) {
+                edt_normal_padding = new Rect(18, 5, 18, 5);
+            }
 
-        addStateDrawable(drawable, new int[]{-android.R.attr.state_enabled, android.R.attr.state_focused}, edt_normal, padding);
-        addStateDrawable(drawable, new int[]{-android.R.attr.state_enabled, -android.R.attr.state_focused}, edt_disabled, padding);
-        addStateDrawable(drawable, new int[]{android.R.attr.state_pressed}, edt_pressed, padding);
-        addStateDrawable(drawable, new int[]{android.R.attr.state_enabled, android.R.attr.state_activated}, edt_selected, padding);
-        addStateDrawable(drawable, new int[]{android.R.attr.state_activated}, edt_normal, padding);
-        addStateDrawable(drawable, new int[]{android.R.attr.state_focused}, edt_disabled_focused, new Rect());
+            var8 = new NinePatchDrawable(ctx.getResources(), edt_normal, edt_normal.getNinePatchChunk(), edt_normal_padding, null);
+            var7.addState(new int[]{16842910}, var8);
+            if (edt_disabled_focused_padding == null) {
+                edt_disabled_focused_padding = new Rect();
+            }
 
-        return drawable;
-    }
+            var8 = new NinePatchDrawable(ctx.getResources(), edt_disabled_focused, edt_disabled_focused.getNinePatchChunk(), edt_disabled_focused_padding, null);
+            var7.addState(new int[]{16842908}, var8);
+            var0.setBackgroundDrawable(var7);
+            var6 = true;
+        }
 
-    private static void addStateDrawable(StateListDrawable drawable, int[] stateSet, Bitmap bitmap, Rect padding) {
-        Resources resources = ctx.getResources();
-        NinePatchDrawable ninePatchDrawable = new NinePatchDrawable(resources, bitmap, bitmap.getNinePatchChunk(), padding, null);
-        drawable.addState(stateSet, ninePatchDrawable);
+        return var6;
     }
 
     /**
