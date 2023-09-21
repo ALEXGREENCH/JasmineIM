@@ -141,6 +141,14 @@
                                 android:layout_gravity="center"
                                 android:padding="5sp"
                                 android:src="@drawable/toggle_offline" />
+
+                            <ImageView
+                                android:id="@+id/toggle_menu"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center"
+                                android:padding="5sp"
+                                android:src="@drawable/toggle_menu" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>

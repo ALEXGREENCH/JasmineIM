@@ -59,24 +59,19 @@ public class main extends Activity implements Handler.Callback {
             }
 
             @Override
-            public void onServiceDisconnected(ComponentName arg0) {}
+            public void onServiceDisconnected(ComponentName componentName) {}
         };
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            if (checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Запрос разрешения у пользователя
+            if (checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissions(
                         new String[]{Manifest.permission.FOREGROUND_SERVICE},
                         MY_PERMISSIONS_REQUEST_FOREGROUND_SERVICE);
-                // После ответа пользователя результат будет обработан в onRequestPermissionsResult
-                return;
+                startJasmineService();
             }
         } else {
             startJasmineService();
         }
-
-
     }
 
     private void startJasmineService() {
@@ -128,21 +123,6 @@ public class main extends Activity implements Handler.Callback {
                 Process.setThreadPriority(-10);
                 service.firstStart = false;
                 hdl.sendEmptyMessage(1);
-                /*
-                int zzs = Math.abs(3748);
-                int av = 502 + zzs;
-                String aas = String.valueOf(av) + av;
-                int zzd = av + aas.hashCode();
-                boolean a = SNAC.sts.startsWith(utilities.randomized);
-                boolean b = SNAC.sts.startsWith(utilities.randomized2);
-                int zzs2 = Math.abs(zzd);
-                int av2 = 675 + zzs2;
-                String aaf = String.valueOf(av2) + av2;
-                //noinspection unused
-                int zze = av2 + aaf.hashCode();
-                 */
-                // TODO: :)
-                //SmileysManager.preloadPack(a, b);
                 SmileysManager.preloadPack();
                 prepareProfiles();
             }
@@ -174,8 +154,6 @@ public class main extends Activity implements Handler.Callback {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-
         startJasmineService();
-
     }
 }

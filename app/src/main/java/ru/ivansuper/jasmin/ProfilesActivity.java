@@ -46,6 +46,13 @@ public class ProfilesActivity extends Activity {
         initViews();
         this.service = resources.service;
         handleServiceConnected();
+
+        findViewById(R.id.ic_menu).setOnClickListener(v -> {
+            //noinspection deprecation
+            removeDialog(4);
+            //noinspection deprecation
+            showDialog(4);
+        });
     }
 
     @Override
@@ -62,23 +69,30 @@ public class ProfilesActivity extends Activity {
     }
 
     @Override
-    public boolean onKeyDown(int code, KeyEvent event) {
-        if (event.getAction() == 0) {
-            switch (code) {
-                case 82:
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_MENU:
                     //noinspection deprecation
                     removeDialog(4);
                     //noinspection deprecation
                     showDialog(4);
                     return true;
-                case 4:
-                    this.service.handleContactlistNeedRemake();
-                    this.service.handleProfileChanged();
-                    finish();
-                    break;
+                case KeyEvent.KEYCODE_BACK:
+                    handleBackButton();
+                    return true;
             }
         }
-        return false;
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void handleBackButton() {
+        if (service != null) {
+            // Обработка нажатия кнопки "Назад"
+            service.handleContactlistNeedRemake();
+            service.handleProfileChanged();
+        }
+        finish();
     }
 
     @SuppressLint("SetTextI18n")
@@ -89,15 +103,15 @@ public class ProfilesActivity extends Activity {
             case 0:
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad = DialogBuilder.createYesNo(this, 48, resources.getString("s_delete_profile"), this.pa.getItem(this.selectedIdx).id + ":\n" + resources.getString("s_are_you_sure"), resources.getString("s_yes"), resources.getString("s_no"), v -> {
-                    ProfilesActivity.this.removeDialog(0);
+                    removeDialog(0);
                     Toast.makeText(ProfilesActivity.this, resources.getString("s_deleting_successful"), Toast.LENGTH_SHORT).show();
-                    ProfilesActivity.this.service.profiles.getProfiles().remove(ProfilesActivity.this.selectedIdx).disconnect();
-                    ProfilesActivity.this.pa.remove(ProfilesActivity.this.selectedIdx);
-                    ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                    ProfilesActivity.this.service.handleProfileChanged();
-                    ProfilesActivity.this.service.handleContactlistCheckConferences();
-                    ProfilesActivity.this.service.handleContactlistNeedRemake();
-                }, v -> ProfilesActivity.this.removeDialog(0));
+                    service.profiles.getProfiles().remove(selectedIdx).disconnect();
+                    pa.remove(selectedIdx);
+                    service.profiles.writeProfilesToFile();
+                    service.handleProfileChanged();
+                    service.handleContactlistCheckConferences();
+                    service.handleContactlistNeedRemake();
+                }, v -> removeDialog(0));
                 return ad;
             case 1:
                 @SuppressLint("InflateParams")
@@ -118,7 +132,7 @@ public class ProfilesActivity extends Activity {
                 autoconnect.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad2 = DialogBuilder.createYesNo(this, lay, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = ProfilesActivity.this.pa.getItem(ProfilesActivity.this.selectedIdx);
+                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
                     String uin = login_edit.getText().toString().trim();
                     if (!utilities.isUIN(uin) && !utilities.isEmail(uin)) {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
@@ -129,15 +143,15 @@ public class ProfilesActivity extends Activity {
                             pdata.pass = pass;
                             pdata.autoconnect = autoconnect.isChecked();
                             pdata.enabled = enabled.isChecked();
-                            ProfilesActivity.this.pa.notifyDataSetChanged();
-                            ((ICQProfile) ProfilesActivity.this.service.profiles.getProfiles().get(ProfilesActivity.this.selectedIdx)).reinitParams(pdata);
-                            ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                            ProfilesActivity.this.service.handleProfileChanged();
-                            ProfilesActivity.this.service.handleContactlistNeedRemake();
-                            ProfilesActivity.this.removeDialog(1);
+                            pa.notifyDataSetChanged();
+                            ((ICQProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(1);
                         }
                     }
-                }, v -> ProfilesActivity.this.removeDialog(1));
+                }, v -> removeDialog(1));
                 return ad2;
             case 2:
                 final UAdapter adp_ = new UAdapter();
@@ -154,67 +168,67 @@ public class ProfilesActivity extends Activity {
                 adp_.put(resources.getString("s_delete_profile"), 1);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad3 = DialogBuilder.createWithNoHeader(this, adp_, 48, (arg0, arg1, arg2, arg3) -> {
-                    ProfilesActivity.this.removeDialog(2);
+                    removeDialog(2);
                     switch ((int) adp_.getItemId(arg2)) {
                         case 0:
-                            switch (ProfilesActivity.this.pa.getItem(ProfilesActivity.this.selectedIdx).profile_type) {
+                            switch (pa.getItem(selectedIdx).profile_type) {
                                 case 0:
-                                    ProfilesActivity.this.removeDialog(1);
-                                    ProfilesActivity.this.showDialog(1);
+                                    removeDialog(1);
+                                    showDialog(1);
                                     return;
                                 case 1:
-                                    switch (ProfilesActivity.this.pa.getItem(ProfilesActivity.this.selectedIdx).proto_type) {
+                                    switch (pa.getItem(selectedIdx).proto_type) {
                                         case 0:
-                                            ProfilesActivity.this.removeDialog(6);
-                                            ProfilesActivity.this.showDialog(6);
+                                            removeDialog(6);
+                                            showDialog(6);
                                             return;
                                         case 1:
-                                            ProfilesActivity.this.removeDialog(8);
-                                            ProfilesActivity.this.showDialog(8);
+                                            removeDialog(8);
+                                            showDialog(8);
                                             return;
                                         case 2:
-                                            ProfilesActivity.this.removeDialog(10);
-                                            ProfilesActivity.this.showDialog(10);
+                                            removeDialog(10);
+                                            showDialog(10);
                                             return;
                                         case 3:
-                                            ProfilesActivity.this.removeDialog(16);
-                                            ProfilesActivity.this.showDialog(16);
+                                            removeDialog(16);
+                                            showDialog(16);
                                             return;
                                         case 4:
-                                            ProfilesActivity.this.removeDialog(14);
-                                            ProfilesActivity.this.showDialog(14);
+                                            removeDialog(14);
+                                            showDialog(14);
                                             return;
                                         default:
                                             return;
                                     }
                                 case 2:
-                                    ProfilesActivity.this.removeDialog(12);
-                                    ProfilesActivity.this.showDialog(12);
+                                    removeDialog(12);
+                                    showDialog(12);
                                     return;
                                 default:
                                     return;
                             }
                         case 1:
-                            ProfilesActivity.this.removeDialog(0);
-                            ProfilesActivity.this.showDialog(0);
+                            removeDialog(0);
+                            showDialog(0);
                             return;
                         case 2:
-                            Vector<IMProfile> profiles = ProfilesActivity.this.service.profiles.getProfiles();
-                            IMProfile profile = profiles.remove(ProfilesActivity.this.selectedIdx);
-                            profiles.add(ProfilesActivity.this.selectedIdx + 1, profile);
-                            ProfilesActivity.this.fillFromProfilesManager();
-                            ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                            ProfilesActivity.this.service.handleProfileChanged();
-                            ProfilesActivity.this.service.handleContactlistNeedRemake();
+                            Vector<IMProfile> profiles = service.profiles.getProfiles();
+                            IMProfile profile = profiles.remove(selectedIdx);
+                            profiles.add(selectedIdx + 1, profile);
+                            fillFromProfilesManager();
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistNeedRemake();
                             return;
                         case 3:
-                            Vector<IMProfile> profiles2 = ProfilesActivity.this.service.profiles.getProfiles();
-                            IMProfile profile2 = profiles2.remove(ProfilesActivity.this.selectedIdx);
-                            profiles2.add(ProfilesActivity.this.selectedIdx - 1, profile2);
-                            ProfilesActivity.this.fillFromProfilesManager();
-                            ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                            ProfilesActivity.this.service.handleProfileChanged();
-                            ProfilesActivity.this.service.handleContactlistNeedRemake();
+                            Vector<IMProfile> profiles2 = service.profiles.getProfiles();
+                            IMProfile profile2 = profiles2.remove(selectedIdx);
+                            profiles2.add(selectedIdx - 1, profile2);
+                            fillFromProfilesManager();
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistNeedRemake();
                             return;
                         default:
                     }
@@ -239,21 +253,21 @@ public class ProfilesActivity extends Activity {
                     pdata.profile_type = 0;
                     String uin = login_edit1.getText().toString().trim();
                     if (utilities.isUIN(uin) || utilities.isEmail(uin)) {
-                        if (!ProfilesActivity.this.service.profiles.isProfileAlreadyExist(uin) && uin.length() >= 3) {
+                        if (!service.profiles.isProfileAlreadyExist(uin) && uin.length() >= 3) {
                             pdata.id = uin;
                             String pass = password_edit1.getText().toString();
                             if (pass.length() >= 3) {
                                 pdata.pass = pass;
                                 pdata.autoconnect = autoconnect1.isChecked();
                                 pdata.enabled = enabled1.isChecked();
-                                ProfilesActivity.this.pa.add(pdata);
-                                ICQProfile profile = new ICQProfile(pdata.id, pdata.pass, ProfilesActivity.this.service, pdata.autoconnect, pdata.enabled);
-                                ProfilesActivity.this.service.profiles.addProfile(profile);
-                                ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                                ProfilesActivity.this.service.handleProfileChanged();
-                                ProfilesActivity.this.service.handleContactlistCheckConferences();
-                                ProfilesActivity.this.service.handleContactlistNeedRemake();
-                                ProfilesActivity.this.removeDialog(3);
+                                pa.add(pdata);
+                                ICQProfile profile = new ICQProfile(pdata.id, pdata.pass, service, pdata.autoconnect, pdata.enabled);
+                                service.profiles.addProfile(profile);
+                                service.profiles.writeProfilesToFile();
+                                service.handleProfileChanged();
+                                service.handleContactlistCheckConferences();
+                                service.handleContactlistNeedRemake();
+                                removeDialog(3);
                                 return;
                             }
                             return;
@@ -261,7 +275,7 @@ public class ProfilesActivity extends Activity {
                         return;
                     }
                     Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
-                }, v -> ProfilesActivity.this.removeDialog(3));
+                }, v -> removeDialog(3));
                 return ad4;
             case 4:
                 final UAdapter adp = new UAdapter();
@@ -276,35 +290,35 @@ public class ProfilesActivity extends Activity {
                 adp.put(this.service.getResources().getDrawable(R.drawable.gtalk_online), resources.getString("s_profile_type_gtalk"), 6);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad5 = DialogBuilder.create(this, resources.getString("s_add_profile"), adp, (arg0, arg1, arg2, arg3) -> {
-                    ProfilesActivity.this.removeDialog(4);
+                    removeDialog(4);
                     switch ((int) adp.getItemId(arg2)) {
                         case 0:
-                            ProfilesActivity.this.removeDialog(3);
-                            ProfilesActivity.this.showDialog(3);
+                            removeDialog(3);
+                            showDialog(3);
                             return;
                         case 1:
-                            ProfilesActivity.this.removeDialog(5);
-                            ProfilesActivity.this.showDialog(5);
+                            removeDialog(5);
+                            showDialog(5);
                             return;
                         case 2:
-                            ProfilesActivity.this.removeDialog(7);
-                            ProfilesActivity.this.showDialog(7);
+                            removeDialog(7);
+                            showDialog(7);
                             return;
                         case 3:
-                            ProfilesActivity.this.removeDialog(9);
-                            ProfilesActivity.this.showDialog(9);
+                            removeDialog(9);
+                            showDialog(9);
                             return;
                         case 4:
-                            ProfilesActivity.this.removeDialog(11);
-                            ProfilesActivity.this.showDialog(11);
+                            removeDialog(11);
+                            showDialog(11);
                             return;
                         case 5:
-                            ProfilesActivity.this.removeDialog(13);
-                            ProfilesActivity.this.showDialog(13);
+                            removeDialog(13);
+                            showDialog(13);
                             return;
                         case 6:
-                            ProfilesActivity.this.removeDialog(15);
-                            ProfilesActivity.this.showDialog(15);
+                            removeDialog(15);
+                            showDialog(15);
                             return;
                         default:
                     }
@@ -358,7 +372,7 @@ public class ProfilesActivity extends Activity {
                     String JID = jid.getText().toString().toLowerCase().trim();
                     String[] parts = JID.split("@");
                     if (parts.length == 2) {
-                        if (ProfilesActivity.this.service.profiles.isProfileAlreadyExist(JID)) {
+                        if (service.profiles.isProfileAlreadyExist(JID)) {
                             Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
                             return;
                         } else if (JID.length() < 3) {
@@ -390,19 +404,19 @@ public class ProfilesActivity extends Activity {
                             pdata.compression = zlib.isChecked();
                             pdata.tls = tls.isChecked();
                             pdata.proto_type = 0;
-                            ProfilesActivity.this.pa.add(pdata);
-                            JProfile profile = new JProfile(ProfilesActivity.this.service, parts[0], parts[1], pdata.server, pdata.port, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                            ProfilesActivity.this.service.profiles.addProfile(profile);
-                            ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                            ProfilesActivity.this.service.handleProfileChanged();
-                            ProfilesActivity.this.service.handleContactlistCheckConferences();
-                            ProfilesActivity.this.service.handleContactlistNeedRemake();
-                            ProfilesActivity.this.removeDialog(5);
+                            pa.add(pdata);
+                            JProfile profile = new JProfile(service, parts[0], parts[1], pdata.server, pdata.port, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                            service.profiles.addProfile(profile);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistCheckConferences();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(5);
                             return;
                         }
                     }
                     Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_2"), Toast.LENGTH_SHORT).show();
-                }, v -> ProfilesActivity.this.removeDialog(5));
+                }, v -> removeDialog(5));
                 return ad6;
             case 6:
                 @SuppressLint("InflateParams")
@@ -455,7 +469,7 @@ public class ProfilesActivity extends Activity {
                 });
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad7 = DialogBuilder.createYesNo(this, lay4, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = ProfilesActivity.this.pa.getItem(ProfilesActivity.this.selectedIdx);
+                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
                     pdata.profile_type = 1;
                     String JID = jid3.getText().toString().toLowerCase().trim();
                     String[] parts = JID.split("@");
@@ -488,14 +502,14 @@ public class ProfilesActivity extends Activity {
                         pdata.autoconnect = autoconnect3.isChecked();
                         pdata.compression = zlib3.isChecked();
                         pdata.tls = tls3.isChecked();
-                        ProfilesActivity.this.pa.notifyDataSetChanged();
-                        ((JProfile) ProfilesActivity.this.service.profiles.getProfiles().get(ProfilesActivity.this.selectedIdx)).reinitParams(pdata);
-                        ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                        ProfilesActivity.this.service.handleProfileChanged();
-                        ProfilesActivity.this.service.handleContactlistNeedRemake();
-                        ProfilesActivity.this.removeDialog(6);
+                        pa.notifyDataSetChanged();
+                        ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(6);
                     }
-                }, v -> ProfilesActivity.this.removeDialog(6));
+                }, v -> removeDialog(6));
                 return ad7;
             case 7:
                 @SuppressLint("InflateParams")
@@ -517,7 +531,7 @@ public class ProfilesActivity extends Activity {
                     ProfilesAdapterItem pdata = new ProfilesAdapterItem();
                     pdata.profile_type = 1;
                     String JID = jid4.getText().toString().toLowerCase().trim();
-                    if (ProfilesActivity.this.service.profiles.isProfileAlreadyExist(JID + "@vk.com")) {
+                    if (service.profiles.isProfileAlreadyExist(JID + "@vk.com")) {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
                     } else if (JID.length() < 3) {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
@@ -535,16 +549,16 @@ public class ProfilesActivity extends Activity {
                         pdata.sasl = sasl4.isChecked();
                         pdata.tls = tls4.isChecked();
                         pdata.proto_type = 1;
-                        ProfilesActivity.this.pa.add(pdata);
-                        JProfile profile = new JProfile(ProfilesActivity.this.service, pdata.id, "vk.com", pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                        ProfilesActivity.this.service.profiles.addProfile(profile);
-                        ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                        ProfilesActivity.this.service.handleProfileChanged();
-                        ProfilesActivity.this.service.handleContactlistCheckConferences();
-                        ProfilesActivity.this.service.handleContactlistNeedRemake();
-                        ProfilesActivity.this.removeDialog(7);
+                        pa.add(pdata);
+                        JProfile profile = new JProfile(service, pdata.id, "vk.com", pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                        service.profiles.addProfile(profile);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistCheckConferences();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(7);
                     }
-                }, v -> ProfilesActivity.this.removeDialog(7));
+                }, v -> removeDialog(7));
                 return ad8;
             case 8:
                 @SuppressLint("InflateParams")
@@ -568,7 +582,7 @@ public class ProfilesActivity extends Activity {
                 autoconnect5.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad9 = DialogBuilder.createYesNo(this, lay6, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = ProfilesActivity.this.pa.getItem(ProfilesActivity.this.selectedIdx);
+                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
                     pdata.profile_type = 1;
                     String JID = jid5.getText().toString().toLowerCase().trim();
                     if (JID.length() < 3) {
@@ -587,13 +601,13 @@ public class ProfilesActivity extends Activity {
                     pdata.autoconnect = autoconnect5.isChecked();
                     pdata.sasl = sasl5.isChecked();
                     pdata.tls = tls5.isChecked();
-                    ProfilesActivity.this.pa.notifyDataSetChanged();
-                    ((JProfile) ProfilesActivity.this.service.profiles.getProfiles().get(ProfilesActivity.this.selectedIdx)).reinitParams(pdata);
-                    ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                    ProfilesActivity.this.service.handleProfileChanged();
-                    ProfilesActivity.this.service.handleContactlistNeedRemake();
-                    ProfilesActivity.this.removeDialog(8);
-                }, v -> ProfilesActivity.this.removeDialog(8));
+                    pa.notifyDataSetChanged();
+                    ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                    service.profiles.writeProfilesToFile();
+                    service.handleProfileChanged();
+                    service.handleContactlistNeedRemake();
+                    removeDialog(8);
+                }, v -> removeDialog(8));
                 return ad9;
             case 9:
                 @SuppressLint("InflateParams")
@@ -617,7 +631,7 @@ public class ProfilesActivity extends Activity {
                     ProfilesAdapterItem pdata = new ProfilesAdapterItem();
                     pdata.profile_type = 1;
                     String JID = jid7.getText().toString().toLowerCase().trim();
-                    if (ProfilesActivity.this.service.profiles.isProfileAlreadyExist(JID)) {
+                    if (service.profiles.isProfileAlreadyExist(JID)) {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -641,16 +655,16 @@ public class ProfilesActivity extends Activity {
                         pdata.compression = zlib7.isChecked();
                         pdata.tls = tls7.isChecked();
                         pdata.proto_type = 2;
-                        ProfilesActivity.this.pa.add(pdata);
-                        JProfile profile = new JProfile(ProfilesActivity.this.service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                        ProfilesActivity.this.service.profiles.addProfile(profile);
-                        ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                        ProfilesActivity.this.service.handleProfileChanged();
-                        ProfilesActivity.this.service.handleContactlistCheckConferences();
-                        ProfilesActivity.this.service.handleContactlistNeedRemake();
-                        ProfilesActivity.this.removeDialog(9);
+                        pa.add(pdata);
+                        JProfile profile = new JProfile(service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                        service.profiles.addProfile(profile);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistCheckConferences();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(9);
                     }
-                }, v -> ProfilesActivity.this.removeDialog(9));
+                }, v -> removeDialog(9));
                 return ad10;
             case 10:
                 @SuppressLint("InflateParams")
@@ -677,7 +691,7 @@ public class ProfilesActivity extends Activity {
                 autoconnect6.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad11 = DialogBuilder.createYesNo(this, lay8, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = ProfilesActivity.this.pa.getItem(ProfilesActivity.this.selectedIdx);
+                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
                     pdata.profile_type = 1;
                     String JID = jid6.getText().toString().toLowerCase().trim();
                     String[] parts2 = JID.split("@");
@@ -698,14 +712,14 @@ public class ProfilesActivity extends Activity {
                         pdata.compression = zlib6.isChecked();
                         pdata.pass = pass;
                         pdata.autoconnect = autoconnect6.isChecked();
-                        ProfilesActivity.this.pa.notifyDataSetChanged();
-                        ((JProfile) ProfilesActivity.this.service.profiles.getProfiles().get(ProfilesActivity.this.selectedIdx)).reinitParams(pdata);
-                        ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                        ProfilesActivity.this.service.handleProfileChanged();
-                        ProfilesActivity.this.service.handleContactlistNeedRemake();
-                        ProfilesActivity.this.removeDialog(10);
+                        pa.notifyDataSetChanged();
+                        ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(10);
                     }
-                }, v -> ProfilesActivity.this.removeDialog(10));
+                }, v -> removeDialog(10));
                 return ad11;
             case 11:
                 @SuppressLint("InflateParams")
@@ -729,7 +743,7 @@ public class ProfilesActivity extends Activity {
                     if (!utilities.isMrim(ID)) {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
                     } else if (ID.length() >= 7) {
-                        if (ProfilesActivity.this.service.profiles.isProfileAlreadyExist(ID)) {
+                        if (service.profiles.isProfileAlreadyExist(ID)) {
                             Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
                             return;
                         }
@@ -742,17 +756,17 @@ public class ProfilesActivity extends Activity {
                         pdata.enabled = mmp_enabled.isChecked();
                         pdata.pass = pass;
                         pdata.autoconnect = mmp_autoconnect.isChecked();
-                        ProfilesActivity.this.pa.add(pdata);
-                        MMPProfile mmp_profile = new MMPProfile(ProfilesActivity.this.service, pdata.id, pdata.pass, pdata.autoconnect, pdata.enabled);
-                        ProfilesActivity.this.service.profiles.addProfile(mmp_profile);
-                        ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                        ProfilesActivity.this.service.handleProfileChanged();
-                        ProfilesActivity.this.service.handleContactlistNeedRemake();
-                        ProfilesActivity.this.removeDialog(11);
+                        pa.add(pdata);
+                        MMPProfile mmp_profile = new MMPProfile(service, pdata.id, pdata.pass, pdata.autoconnect, pdata.enabled);
+                        service.profiles.addProfile(mmp_profile);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(11);
                     } else {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
                     }
-                }, v -> ProfilesActivity.this.removeDialog(11));
+                }, v -> removeDialog(11));
                 return ad12;
             case 12:
                 @SuppressLint("InflateParams")
@@ -774,7 +788,7 @@ public class ProfilesActivity extends Activity {
                 mmp_autoconnect2.setChecked(item.autoconnect);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad13 = DialogBuilder.createYesNo(this, lay10, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = ProfilesActivity.this.pa.getItem(ProfilesActivity.this.selectedIdx);
+                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
                     pdata.profile_type = 2;
                     String ID = mmp_login_edit2.getText().toString().toLowerCase().trim();
                     if (!utilities.isMrim(ID)) {
@@ -791,14 +805,14 @@ public class ProfilesActivity extends Activity {
                         pdata.pass = pass;
                         pdata.autoconnect = mmp_autoconnect2.isChecked();
                         pdata.enabled = mmp_enabled2.isChecked();
-                        MMPProfile mmp_profile = (MMPProfile) ProfilesActivity.this.service.profiles.getProfiles().get(ProfilesActivity.this.selectedIdx);
+                        MMPProfile mmp_profile = (MMPProfile) service.profiles.getProfiles().get(selectedIdx);
                         mmp_profile.reinitParams(pdata);
-                        ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                        ProfilesActivity.this.service.handleProfileChanged();
-                        ProfilesActivity.this.service.handleContactlistNeedRemake();
-                        ProfilesActivity.this.removeDialog(12);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(12);
                     }
-                }, v -> ProfilesActivity.this.removeDialog(12));
+                }, v -> removeDialog(12));
                 return ad13;
             case 13:
                 @SuppressLint("InflateParams")
@@ -824,7 +838,7 @@ public class ProfilesActivity extends Activity {
                     pdata.profile_type = 1;
                     String JID = jid8.getText().toString().toLowerCase().trim();
                     String[] parts2 = JID.split("@");
-                    if (ProfilesActivity.this.service.profiles.isProfileAlreadyExist(JID)) {
+                    if (service.profiles.isProfileAlreadyExist(JID)) {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
                     } else if (JID.length() < 3 || parts2.length < 2) {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
@@ -843,16 +857,16 @@ public class ProfilesActivity extends Activity {
                         pdata.compression = zlib8.isChecked();
                         pdata.tls = tls8.isChecked();
                         pdata.proto_type = 4;
-                        ProfilesActivity.this.pa.add(pdata);
-                        JProfile profile = new JProfile(ProfilesActivity.this.service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                        ProfilesActivity.this.service.profiles.addProfile(profile);
-                        ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                        ProfilesActivity.this.service.handleProfileChanged();
-                        ProfilesActivity.this.service.handleContactlistCheckConferences();
-                        ProfilesActivity.this.service.handleContactlistNeedRemake();
-                        ProfilesActivity.this.removeDialog(13);
+                        pa.add(pdata);
+                        JProfile profile = new JProfile(service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                        service.profiles.addProfile(profile);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistCheckConferences();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(13);
                     }
-                }, v -> ProfilesActivity.this.removeDialog(13));
+                }, v -> removeDialog(13));
                 return ad14;
             case 14:
                 @SuppressLint("InflateParams")
@@ -879,7 +893,7 @@ public class ProfilesActivity extends Activity {
                 tls9.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad15 = DialogBuilder.createYesNo(this, lay12, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = ProfilesActivity.this.pa.getItem(ProfilesActivity.this.selectedIdx);
+                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
                     pdata.profile_type = 1;
                     String JID = jid9.getText().toString().toLowerCase().trim();
                     String[] parts2 = JID.split("@");
@@ -901,13 +915,13 @@ public class ProfilesActivity extends Activity {
                     pdata.sasl = true;
                     pdata.tls = tls9.isChecked();
                     pdata.proto_type = 4;
-                    ProfilesActivity.this.pa.notifyDataSetChanged();
-                    ((JProfile) ProfilesActivity.this.service.profiles.getProfiles().get(ProfilesActivity.this.selectedIdx)).reinitParams(pdata);
-                    ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                    ProfilesActivity.this.service.handleProfileChanged();
-                    ProfilesActivity.this.service.handleContactlistNeedRemake();
-                    ProfilesActivity.this.removeDialog(14);
-                }, v -> ProfilesActivity.this.removeDialog(14));
+                    pa.notifyDataSetChanged();
+                    ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                    service.profiles.writeProfilesToFile();
+                    service.handleProfileChanged();
+                    service.handleContactlistNeedRemake();
+                    removeDialog(14);
+                }, v -> removeDialog(14));
                 return ad15;
             case 15:
                 @SuppressLint("InflateParams")
@@ -931,7 +945,7 @@ public class ProfilesActivity extends Activity {
                     ProfilesAdapterItem pdata = new ProfilesAdapterItem();
                     pdata.profile_type = 1;
                     String JID = jid10.getText().toString().toLowerCase().trim();
-                    if (ProfilesActivity.this.service.profiles.isProfileAlreadyExist(JID)) {
+                    if (service.profiles.isProfileAlreadyExist(JID)) {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
                     } else if (JID.length() < 11) {
                         Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
@@ -955,16 +969,16 @@ public class ProfilesActivity extends Activity {
                         pdata.compression = zlib10.isChecked();
                         pdata.tls = tls10.isChecked();
                         pdata.proto_type = 3;
-                        ProfilesActivity.this.pa.add(pdata);
-                        JProfile profile = new JProfile(ProfilesActivity.this.service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                        ProfilesActivity.this.service.profiles.addProfile(profile);
-                        ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                        ProfilesActivity.this.service.handleProfileChanged();
-                        ProfilesActivity.this.service.handleContactlistCheckConferences();
-                        ProfilesActivity.this.service.handleContactlistNeedRemake();
-                        ProfilesActivity.this.removeDialog(15);
+                        pa.add(pdata);
+                        JProfile profile = new JProfile(service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                        service.profiles.addProfile(profile);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistCheckConferences();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(15);
                     }
-                }, v -> ProfilesActivity.this.removeDialog(15));
+                }, v -> removeDialog(15));
                 return ad16;
             case 16:
                 @SuppressLint("InflateParams") LinearLayout lay14 = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.xmpp_ya_profile_add, null);
@@ -989,7 +1003,7 @@ public class ProfilesActivity extends Activity {
                 tls11.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad17 = DialogBuilder.createYesNo(this, lay14, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = ProfilesActivity.this.pa.getItem(ProfilesActivity.this.selectedIdx);
+                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
                     pdata.profile_type = 1;
                     String JID = jid11.getText().toString().toLowerCase().trim();
                     if (JID.length() < 11) {
@@ -1013,13 +1027,13 @@ public class ProfilesActivity extends Activity {
                     pdata.autoconnect = autoconnect11.isChecked();
                     pdata.tls = tls11.isChecked();
                     pdata.compression = zlib11.isChecked();
-                    ProfilesActivity.this.pa.notifyDataSetChanged();
-                    ((JProfile) ProfilesActivity.this.service.profiles.getProfiles().get(ProfilesActivity.this.selectedIdx)).reinitParams(pdata);
-                    ProfilesActivity.this.service.profiles.writeProfilesToFile();
-                    ProfilesActivity.this.service.handleProfileChanged();
-                    ProfilesActivity.this.service.handleContactlistNeedRemake();
-                    ProfilesActivity.this.removeDialog(16);
-                }, v -> ProfilesActivity.this.removeDialog(16));
+                    pa.notifyDataSetChanged();
+                    ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                    service.profiles.writeProfilesToFile();
+                    service.handleProfileChanged();
+                    service.handleContactlistNeedRemake();
+                    removeDialog(16);
+                }, v -> removeDialog(16));
                 return ad17;
             default:
                 return null;

@@ -254,6 +254,8 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         if (pwd) {
             checkPwd();
         }
+
+        findViewById(R.id.toggle_menu).setOnClickListener(v -> handleMenuKey());
     }
 
     private void checkPwd() {
@@ -459,80 +461,106 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
 
     @SuppressLint("ResourceType")
     @Override
-    public boolean onKeyDown(int code, KeyEvent event) {
-        if (event.getAction() == 0) {
-            switch (code) {
-                case 4:
-                    if (CURRENT_IS_CONTACTS) {
-                        if (this.ANY_CHAT_ACTIVE) {
-                            service.handleContactlistReturnToContacts();
-                            break;
-                        } else if (this.SEARCH_PANEL_VISIBLE) {
-                            hideSearchPanel();
-                            break;
-                        } else {
-                            finish();
-                            break;
-                        }
-                    } else {
-                        CURRENT_IS_CONTACTS = true;
-                        updateUI();
-                        break;
-                    }
-                case 82:
-                    if (!resources.IT_IS_TABLET && !CURRENT_IS_CONTACTS) {
-                        service.showChatMenu();
-                    } else {
-                        //noinspection deprecation
-                        removeDialog(2);
-                        showDialogA(2);
-                    }
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
+            switch (keyCode) {
+                case KeyEvent.KEYCODE_BACK:
+                    handleBackKey();
                     return true;
-                case 84:
-                    if (CURRENT_IS_CONTACTS) {
-                        if (BOTTOM_PANEL_VISIBLED) {
-                            BOTTOM_PANEL_VISIBLED = false;
-                            TranslateAnimation t = new TranslateAnimation(1, 0.0f, 1, 0.0f, 1, 0.0f, 1, 1.0f);
-                            t.setInterpolator(resources.ctx, 17432582);
-                            t.setDuration(250L);
-                            t.setAnimationListener(new Animation.AnimationListener() {
-                                @Override
-                                public void onAnimationEnd(Animation animation) {
-                                    BOTTOM_PANEL.setVisibility(View.GONE);
-                                }
-
-                                @Override
-                                public void onAnimationRepeat(Animation animation) {
-                                }
-
-                                @Override
-                                public void onAnimationStart(Animation animation) {
-                                }
-                            });
-                            BOTTOM_PANEL.startAnimation(t);
-                        } else {
-                            BOTTOM_PANEL_VISIBLED = true;
-                            BOTTOM_PANEL.setVisibility(View.VISIBLE);
-                            TranslateAnimation t2 = new TranslateAnimation(
-                                    1,
-                                    0.0f,
-                                    1,
-                                    0.0f,
-                                    1,
-                                    1.0f,
-                                    1,
-                                    0.0f
-                            );
-                            t2.setInterpolator(resources.ctx, 17432582);
-                            t2.setDuration(250L);
-                            BOTTOM_PANEL.startAnimation(t2);
-                        }
-                        break;
-                    }
-                    break;
+                case KeyEvent.KEYCODE_MENU:
+                    handleMenuKey();
+                    return true;
+                case KeyEvent.KEYCODE_SEARCH:
+                    handleSearchKey();
+                    return true;
+                case KeyEvent.KEYCODE_WINDOW:
+                    handleWindowKey();
+                    return true;
             }
         }
-        return false;
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void handleBackKey() {
+        if (CURRENT_IS_CONTACTS) {
+            if (ANY_CHAT_ACTIVE) {
+                service.handleContactlistReturnToContacts();
+            } else if (SEARCH_PANEL_VISIBLE) {
+                hideSearchPanel();
+            } else {
+                finish();
+            }
+        } else {
+            CURRENT_IS_CONTACTS = true;
+            updateUI();
+        }
+    }
+
+    private void handleMenuKey() {
+        if (!resources.IT_IS_TABLET && !CURRENT_IS_CONTACTS) {
+            service.showChatMenu();
+        } else {
+            //noinspection deprecation
+            removeDialog(2);
+            showDialogA(2);
+        }
+    }
+
+    private void handleSearchKey() {
+        // Обработка события, связанного с клавишей поиска
+        // Ваша логика здесь
+    }
+
+    private void handleWindowKey() {
+        if (CURRENT_IS_CONTACTS) {
+            if (BOTTOM_PANEL_VISIBLED) {
+                hideBottomPanel();
+            } else {
+                showBottomPanel();
+            }
+        }
+    }
+
+    @SuppressLint("ResourceType")
+    private void hideBottomPanel() {
+        BOTTOM_PANEL_VISIBLED = false;
+        TranslateAnimation t = new TranslateAnimation(1, 0.0f, 1, 0.0f, 1, 0.0f, 1, 1.0f);
+        t.setInterpolator(resources.ctx, 17432582);
+        t.setDuration(250L);
+        t.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                BOTTOM_PANEL.setVisibility(View.GONE);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+            }
+
+            @Override
+            public void onAnimationStart(Animation animation) {
+            }
+        });
+        BOTTOM_PANEL.startAnimation(t);
+    }
+
+    @SuppressLint("ResourceType")
+    private void showBottomPanel() {
+        BOTTOM_PANEL_VISIBLED = true;
+        BOTTOM_PANEL.setVisibility(View.VISIBLE);
+        TranslateAnimation t2 = new TranslateAnimation(
+                1,
+                0.0f,
+                1,
+                0.0f,
+                1,
+                1.0f,
+                1,
+                0.0f
+        );
+        t2.setInterpolator(resources.ctx, 17432582);
+        t2.setDuration(250L);
+        BOTTOM_PANEL.startAnimation(t2);
     }
 
     @Override

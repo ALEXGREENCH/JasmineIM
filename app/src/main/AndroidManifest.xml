@@ -181,7 +181,8 @@
 
         <service
             android:name=".Service.jasminSvc"
-            android:exported="false">
+            android:exported="false"
+            android:foregroundServiceType="dataSync">
             <intent-filter>
                 <action android:name="ru.ivansuper.jasmin.PING" />
             </intent-filter>
