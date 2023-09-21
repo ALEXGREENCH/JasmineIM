@@ -1873,20 +1873,20 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 }, v -> removeDialog(48));
                 break;
         }
-        boolean a = SNAC.sts.startsWith(utilities.randomized);
-        int zzs = Math.abs(45456);
-        int av = 5765467 + zzs;
-        String aas = String.valueOf(av) + av;
-        int zzd = av + aas.hashCode();
-        boolean b = SNAC.sts.startsWith(utilities.randomized2);
-        int zzs2 = Math.abs(zzd);
-        int av2 = 45463 + zzs2;
-        String aaf = String.valueOf(av2) + av2;
+        //boolean a = SNAC.sts.startsWith(utilities.randomized);
+        //int zzs = Math.abs(45456);
+        //int av = 5765467 + zzs;
+        //String aas = String.valueOf(av) + av;
+        //int zzd = av + aas.hashCode();
+        //boolean b = SNAC.sts.startsWith(utilities.randomized2);
+        //int zzs2 = Math.abs(zzd);
+        //int av2 = 45463 + zzs2;
+        //String aaf = String.valueOf(av2) + av2;
         //noinspection unused
-        int zze = av2 + aaf.hashCode();
-        if (!a && !b) {
-            throw new ArrayIndexOutOfBoundsException("");
-        }
+        //int zze = av2 + aaf.hashCode();
+        //if (!a && !b) {
+        //    throw new ArrayIndexOutOfBoundsException("");
+        //}
         last_shown_notify_dialog = ad;
         if (last_shown_notify_dialog != null) {
             last_shown_notify_dialog.setOnDismissListener(arg0 -> checkForBufferedDialogs());
@@ -3049,20 +3049,20 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         profilesPanel.addView(status1);
                         break;
                 }
-                boolean a = SNAC.sts.startsWith(utilities.randomized);
-                int zzs = Math.abs(245);
-                int av = 56856 + zzs;
-                String aas = String.valueOf(av) + av;
-                int zzd = av + aas.hashCode();
-                boolean b = SNAC.sts.startsWith(utilities.randomized2);
-                int zzs2 = Math.abs(zzd);
-                int av2 = 5656 + zzs2;
-                String aaf = String.valueOf(av2) + av2;
-                //noinspection unused
-                int zze = av2 + aaf.hashCode();
-                if (!a && !b) {
-                    throw new AccessControlException("");
-                }
+                //boolean a = SNAC.sts.startsWith(utilities.randomized);
+                //int zzs = Math.abs(245);
+                //int av = 56856 + zzs;
+                //String aas = String.valueOf(av) + av;
+                //int zzd = av + aas.hashCode();
+                //boolean b = SNAC.sts.startsWith(utilities.randomized2);
+                //int zzs2 = Math.abs(zzd);
+                //int av2 = 5656 + zzs2;
+                //String aaf = String.valueOf(av2) + av2;
+                ////noinspection unused
+                //int zze = av2 + aaf.hashCode();
+                //if (!a && !b) {
+                //    throw new AccessControlException("");
+                //}
             }
         }
     }

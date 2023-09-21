@@ -139,7 +139,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
                 genders.put(resources.getString("s_gender_param_none"), 0);
                 genders.put(resources.getString("s_gender_param_woman"), 1);
                 genders.put(resources.getString("s_gender_param_man"), 2);
-                gender.setAdapter((SpinnerAdapter) genders);
+                gender.setAdapter(genders);
                 gender.setSelection(criteries.gender);
                 nick.setText(criteries.nick);
                 name.setText(criteries.name);

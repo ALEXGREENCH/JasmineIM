@@ -84,22 +84,68 @@ public class SlideSwitcher extends ViewGroup {
     private int wrap_direction = 0;
     private boolean wrap_mode = false;
 
-    public SlideSwitcher(Context var1) {
-        super(var1);
-        this.init(var1);
+    public SlideSwitcher(Context context) {
+        super(context);
+        this.init(context);
     }
 
-    public SlideSwitcher(Context var1, AttributeSet var2) {
-        super(var1, var2);
-        // TODO: !!!
-        // this.attrs = var1.obtainStyledAttributes(var2, R.styleable.View);
-        this.init(var1);
+    public SlideSwitcher(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+
+        int[] styleableView = {
+                16842851,
+                16842852,
+                16842853,
+                16842854,
+                16842855,
+                16842856,
+                16842857,
+                16842879,
+                16842960,
+                16842961,
+                16842962,
+                16842963,
+                16842964,
+                16842965,
+                16842966,
+                16842967,
+                16842968,
+                16842969,
+                16842970,
+                16842971,
+                16842972,
+                16842973,
+                16842974,
+                16842975,
+                16842976,
+                16842977,
+                16842978,
+                16842979,
+                16842980,
+                16842981,
+                16842982,
+                16842983,
+                16842984,
+                16842985,
+                16843071,
+                16843072,
+                16843285,
+                16843286,
+                16843342,
+                16843358,
+                16843375,
+                16843379,
+                16843432,
+                16843433,
+                16843434};
+        this.attrs = context.obtainStyledAttributes(attributeSet, styleableView);
+        this.init(context);
     }
 
     private void handleAnimationEnd() {
         int var1 = this.getChildCount();
 
-        for(int var2 = 0; var2 < var1; ++var2) {
+        for (int var2 = 0; var2 < var1; ++var2) {
             View var3 = this.getChildAt(var2);
             if (var3 != null) {
                 var3.setDrawingCacheEnabled(false);
@@ -112,7 +158,7 @@ public class SlideSwitcher extends ViewGroup {
     private void handleAnimationStart() {
         int var1 = this.getChildCount();
 
-        for(int var2 = 0; var2 < var1; ++var2) {
+        for (int var2 = 0; var2 < var1; ++var2) {
             View var3 = this.getChildAt(var2);
             if (var3 != null) {
                 var3.setDrawingCacheEnabled(true);
@@ -238,8 +284,8 @@ public class SlideSwitcher extends ViewGroup {
 
     public void addView(View var1, String var2) {
         this.labels.add(var2);
-        this.blinks.add((Object)null);
-        if ((LinearLayout.LayoutParams)var1.getLayoutParams() == null) {
+        this.blinks.add((Object) null);
+        if ((LinearLayout.LayoutParams) var1.getLayoutParams() == null) {
             var1.setLayoutParams(new LinearLayout.LayoutParams(-1, -1));
         }
 
@@ -249,11 +295,11 @@ public class SlideSwitcher extends ViewGroup {
     public void clearupCaches() {
         int var1 = this.getChildCount();
 
-        for(int var2 = 0; var2 < var1; ++var2) {
+        for (int var2 = 0; var2 < var1; ++var2) {
             View var3 = this.getChildAt(var2);
 
             try {
-                ((MultiColumnList)var3).clearup();
+                ((MultiColumnList) var3).clearup();
             } catch (Exception var4) {
             }
         }
@@ -292,42 +338,43 @@ public class SlideSwitcher extends ViewGroup {
             int var2 = this.getChildCount();
             super.dispatchDraw(var1);
             if (this.show_panel) {
-                float var3 = (float)this.getScrollX();
-                float var4 = (float)(this.getWidth() + this.DIVIDER_WIDTH);
-                float var5 = (float)((this.getWidth() + this.DIVIDER_WIDTH) / 2);
-                this.panel.setBounds((int)var3, 0, (int)(var3 + var4), this.PANEL_HEIGHT);
+                float var3 = (float) this.getScrollX();
+                float var4 = (float) (this.getWidth() + this.DIVIDER_WIDTH);
+                float var5 = (float) ((this.getWidth() + this.DIVIDER_WIDTH) / 2);
+                this.panel.setBounds((int) var3, 0, (int) (var3 + var4), this.PANEL_HEIGHT);
                 this.panel.draw(var1);
-                int var6 = var1.saveLayer(var3, 0.0F, var3 + var4, (float)this.PANEL_HEIGHT, (Paint)null, Canvas.ALL_SAVE_FLAG);
-                float var7 = (float)(-this.labels_.getFontMetricsInt().ascent - this.labels_.getFontMetricsInt().descent);
+                int var6 = var1.saveLayer(var3, 0.0F, var3 + var4, (float) this.PANEL_HEIGHT, (Paint) null, Canvas.ALL_SAVE_FLAG);
+                float var7 = (float) (-this.labels_.getFontMetricsInt().ascent - this.labels_.getFontMetricsInt().descent);
                 int var8 = this.labels.size();
                 int var9 = -2;
 
-                while(true) {
+                while (true) {
                     if (var9 > var8 + 1) {
                         this.fade_shader_m.setRotate(-90.0F);
                         this.fade_shader.setLocalMatrix(this.fade_shader_m);
                         var1.translate(var3, 0.0F);
-                        var1.drawRect(0.0F, 0.0F, this.FADING_LENGTH, (float)this.PANEL_HEIGHT, this.fade_shader_);
+                        var1.drawRect(0.0F, 0.0F, this.FADING_LENGTH, (float) this.PANEL_HEIGHT, this.fade_shader_);
                         this.fade_shader_m.setRotate(90.0F);
                         this.fade_shader_m.postTranslate(this.FADING_LENGTH, 0.0F);
-                        var1.translate((float)this.getWidth() - this.FADING_LENGTH, 0.0F);
+                        var1.translate((float) this.getWidth() - this.FADING_LENGTH, 0.0F);
                         this.fade_shader.setLocalMatrix(this.fade_shader_m);
-                        var1.drawRect(0.0F, 0.0F, this.FADING_LENGTH, (float)this.PANEL_HEIGHT, this.fade_shader_);
+                        var1.drawRect(0.0F, 0.0F, this.FADING_LENGTH, (float) this.PANEL_HEIGHT, this.fade_shader_);
                         var1.restoreToCount(var6);
                         break;
                     }
 
-                    label107: {
+                    label107:
+                    {
                         String var10 = null;
                         boolean var11 = false;
                         int var12 = this.getScrollX();
-                        float var13 = (float)(var12 / 2) + (float)var9 * var5;
+                        float var13 = (float) (var12 / 2) + (float) var9 * var5;
                         if (var9 == -1) {
                             if (var2 == 1) {
                                 break label107;
                             }
 
-                            var10 = (String)this.labels.get(var8 - 1);
+                            var10 = (String) this.labels.get(var8 - 1);
                             if (this.blinks.get(var8 - 1) != null) {
                                 var11 = true;
                             } else {
@@ -335,9 +382,9 @@ public class SlideSwitcher extends ViewGroup {
                             }
 
                             var12 = this.getScrollX();
-                            var13 = (float)(var12 / 2) - var5;
+                            var13 = (float) (var12 / 2) - var5;
                         } else if (var9 >= 0 && var9 < var8) {
-                            var10 = (String)this.labels.get(var9);
+                            var10 = (String) this.labels.get(var9);
                             if (this.blinks.get(var9) != null) {
                                 var11 = true;
                             } else {
@@ -345,13 +392,13 @@ public class SlideSwitcher extends ViewGroup {
                             }
 
                             var12 = this.getScrollX();
-                            var13 = (float)(var12 / 2) + (float)var9 * var5;
+                            var13 = (float) (var12 / 2) + (float) var9 * var5;
                         } else if (var9 == var8) {
                             if (var2 == 1) {
                                 break label107;
                             }
 
-                            var10 = (String)this.labels.get(0);
+                            var10 = (String) this.labels.get(0);
                             if (this.blinks.get(0) != null) {
                                 var11 = true;
                             } else {
@@ -359,13 +406,13 @@ public class SlideSwitcher extends ViewGroup {
                             }
 
                             var12 = this.getScrollX();
-                            var13 = (float)(var12 / 2) + (float)var9 * var5;
+                            var13 = (float) (var12 / 2) + (float) var9 * var5;
                         } else if (var9 == -2) {
                             if (var2 == 1) {
                                 break label107;
                             }
 
-                            var10 = (String)this.labels.get(var8 - 2);
+                            var10 = (String) this.labels.get(var8 - 2);
                             if (this.blinks.get(var8 - 2) != null) {
                                 var11 = true;
                             } else {
@@ -373,13 +420,13 @@ public class SlideSwitcher extends ViewGroup {
                             }
 
                             var12 = this.getScrollX();
-                            var13 = (float)(var12 / 2) - 2.0F * var5;
+                            var13 = (float) (var12 / 2) - 2.0F * var5;
                         } else if (var9 == var8 + 1) {
                             if (var2 == 1) {
                                 break label107;
                             }
 
-                            var10 = (String)this.labels.get(1);
+                            var10 = (String) this.labels.get(1);
                             if (this.blinks.get(1) != null) {
                                 var11 = true;
                             } else {
@@ -387,13 +434,13 @@ public class SlideSwitcher extends ViewGroup {
                             }
 
                             var12 = this.getScrollX();
-                            var13 = (float)(var12 / 2) + (float)var9 * var5;
+                            var13 = (float) (var12 / 2) + (float) var9 * var5;
                         }
 
                         float var14 = this.labels_.measureText(var10);
                         float var15 = var13 + var5 - var14 / 2.0F;
-                        if (var15 + var14 > (float)var12 && var15 < (float)var12 + var4) {
-                            var12 = 255 - (int)(Math.abs((float)var12 + var5 - var14 / 2.0F - var15) * 255.0F / (0.65F * var4));
+                        if (var15 + var14 > (float) var12 && var15 < (float) var12 + var4) {
+                            var12 = 255 - (int) (Math.abs((float) var12 + var5 - var14 / 2.0F - var15) * 255.0F / (0.65F * var4));
                             int var16 = var12;
                             if (var12 > 255) {
                                 var16 = 255;
@@ -404,7 +451,7 @@ public class SlideSwitcher extends ViewGroup {
                                 var12 = 0;
                             }
 
-                            var14 = (float)(this.PANEL_HEIGHT / 2) + var7 / 2.0F;
+                            var14 = (float) (this.PANEL_HEIGHT / 2) + var7 / 2.0F;
                             if (var11) {
                                 var1.drawText(var10, var15, var14, this.effect);
                                 this.labels_.setStrokeWidth(1.0F);
@@ -412,7 +459,7 @@ public class SlideSwitcher extends ViewGroup {
                                 this.labels_.setStrokeWidth(4.0F);
                             }
 
-                            this.highlight.setBounds((int)var13, 0, (int)(var13 + var4), this.PANEL_HEIGHT);
+                            this.highlight.setBounds((int) var13, 0, (int) (var13 + var4), this.PANEL_HEIGHT);
                             this.highlight_.setAlpha(var12);
                             this.highlight.draw(var1);
                             this.labels_.setColor(-16777216);
@@ -528,7 +575,7 @@ public class SlideSwitcher extends ViewGroup {
                     break;
                 case 2:
                     if (this.mIsBeingDragged) {
-                        this.scrollBy((int)(this.scrollX - var1.getX()), 0);
+                        this.scrollBy((int) (this.scrollX - var1.getX()), 0);
                         this.scrollX = var1.getX();
                     } else {
                         var3 = Math.abs(this.lastTouchX - var1.getX());
@@ -680,57 +727,57 @@ public class SlideSwitcher extends ViewGroup {
         switch (this.ANIMATION_TYPE) {
             case 0:
                 var2.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyPolyCube(var15, var11, var12, (float)var4 * 180.0F / (float)var11, var4);
+                Transform.applyPolyCube(var15, var11, var12, (float) var4 * 180.0F / (float) var11, var4);
                 break;
             case 1:
                 var2.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyPolyCubeInv(var15, var11, var12, (float)var4 * 180.0F / (float)var11, var4);
+                Transform.applyPolyCubeInv(var15, var11, var12, (float) var4 * 180.0F / (float) var11, var4);
                 break;
             case 2:
                 var2.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyTransformationFlip2((float)var4 * 180.0F / (float)var11, (float)(var11 / 2), (float)(var12 / 2), var15);
+                Transform.applyTransformationFlip2((float) var4 * 180.0F / (float) var11, (float) (var11 / 2), (float) (var12 / 2), var15);
             case 3:
             default:
                 break;
             case 4:
-                var15.postRotate((float)var4 * 180.0F / (float)var11, (float)(var11 / 2), (float)(var12 / 2));
+                var15.postRotate((float) var4 * 180.0F / (float) var11, (float) (var11 / 2), (float) (var12 / 2));
                 break;
             case 5:
-                var15.postRotate((float)(-var4) * 90.0F / (float)var11, (float)(var11 / 2), (float)var12);
+                var15.postRotate((float) (-var4) * 90.0F / (float) var11, (float) (var11 / 2), (float) var12);
                 break;
             case 6:
-                var15.postRotate((float)var4 * 90.0F / (float)var11, (float)(var11 / 2), 0.0F);
+                var15.postRotate((float) var4 * 90.0F / (float) var11, (float) (var11 / 2), 0.0F);
                 break;
             case 7:
-                var14 = Math.abs((float)var4 / (float)var11);
+                var14 = Math.abs((float) var4 / (float) var11);
                 if (var4 >= 0) {
                     var2.setTransformationType(Transformation.TYPE_BOTH);
                     var2.setAlpha(1.0F - var14);
                 } else {
                     var2.setTransformationType(Transformation.TYPE_BOTH);
                     var2.setAlpha(1.0F - var14);
-                    var14 = Math.abs((float)var4 / (float)var11) / 7.0F;
-                    var15.postScale(1.0F - var14, 1.0F - var14, (float)(var11 / 2), (float)(var12 / 2));
-                    var15.postTranslate((float)var4, 0.0F);
+                    var14 = Math.abs((float) var4 / (float) var11) / 7.0F;
+                    var15.postScale(1.0F - var14, 1.0F - var14, (float) (var11 / 2), (float) (var12 / 2));
+                    var15.postTranslate((float) var4, 0.0F);
                 }
                 break;
             case 8:
                 var2.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyPolySnake(var15, var11, var12, (float)var4 * 180.0F / (float)var11, var4);
+                Transform.applyPolySnake(var15, var11, var12, (float) var4 * 180.0F / (float) var11, var4);
                 break;
             case 9:
-                var14 = Math.abs((float)var4 / (float)var11);
+                var14 = Math.abs((float) var4 / (float) var11);
                 var2.setTransformationType(Transformation.TYPE_BOTH);
                 var2.setAlpha(1.0F - var14);
-                var15.postRotate((float)var4 * 90.0F / (float)var11, 0.0F, 0.0F);
-                var15.postTranslate((float)var4, 0.0F);
+                var15.postRotate((float) var4 * 90.0F / (float) var11, 0.0F, 0.0F);
+                var15.postTranslate((float) var4, 0.0F);
                 break;
             case 10:
                 var2.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyTransformationFlip2((float)var4 * 20.0F / (float)var11, (float)(var11 / 2), (float)(var12 / 2), var15);
+                Transform.applyTransformationFlip2((float) var4 * 20.0F / (float) var11, (float) (var11 / 2), (float) (var12 / 2), var15);
         }
 
-        var15.postTranslate((float)var8, 0.0F);
+        var15.postTranslate((float) var8, 0.0F);
         return true;
     }
 
@@ -757,7 +804,7 @@ public class SlideSwitcher extends ViewGroup {
             var5 = 0;
         }
 
-        for(int var8 = 0; var8 < var6; ++var8) {
+        for (int var8 = 0; var8 < var6; ++var8) {
             View var9 = this.getChildAt(var8);
             int var10 = this.getWidth() + this.DIVIDER_WIDTH;
             var9.measure(MeasureSpec.makeMeasureSpec(this.getWidth(), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(var7 - var5, MeasureSpec.UNSPECIFIED));
@@ -845,15 +892,15 @@ public class SlideSwitcher extends ViewGroup {
     }
 
     public void updateConfig() {
-        float var1 = (float)PreferenceTable.clTextSize;
+        float var1 = (float) PreferenceTable.clTextSize;
         var1 += var1 / 100.0F * 10.0F;
         this.labels_.setTextSize(resources.dm.density * var1);
         this.effect.setColor(ColorScheme.getColor(49));
         this.effect.setAlpha(160);
         this.effect.setTextSize(this.labels_.getTextSize());
         this.highlight_.setColorFilter(new LightingColorFilter(0, ColorScheme.getColor(49)));
-        this.PANEL_HEIGHT = (int)((var1 / 100.0F * 70.0F + var1) * resources.dm.density);
-        this.DIVIDER_WIDTH = (int)(0.0F * resources.dm.density);
+        this.PANEL_HEIGHT = (int) ((var1 / 100.0F * 70.0F + var1) * resources.dm.density);
+        this.DIVIDER_WIDTH = (int) (0.0F * resources.dm.density);
         this.requestLayout();
     }
 

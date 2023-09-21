@@ -4,18 +4,19 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Window;
 import android.widget.GridView;
-import android.widget.ListAdapter;
 
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.chats.Chat;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 
 public class SmileysSelector extends Activity {
-    
+
     public static boolean VISIBLE;
     private GridView smileys;
 
@@ -23,41 +24,51 @@ public class SmileysSelector extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        initializeTheme();
+        initializeUI();
+    }
+
+    private void initializeTheme() {
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        setTheme(16973830);
-        Window wnd = getWindow();
         String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
+
         switch (wallpaper_type) {
             case "0":
                 setTheme(R.style.WallpaperNoTitleTheme);
                 break;
             case "1":
-                setTheme(R.style.BlackNoTitleTheme);
-                getWindow().setBackgroundDrawable(resources.custom_wallpaper);
-                resources.attachChatMessagesBack(wnd);
-                break;
             case "2":
                 setTheme(R.style.BlackNoTitleTheme);
-                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
+                Window wnd = getWindow();
+                if (wallpaper_type.equals("1")) {
+                    wnd.setBackgroundDrawable(resources.custom_wallpaper);
+                } else if (wallpaper_type.equals("2")) {
+                    wnd.setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
+                }
                 resources.attachChatMessagesBack(wnd);
                 break;
         }
-        setVolumeControlStream(3);
+    }
+
+    private void initializeUI() {
+        setVolumeControlStream(AudioManager.STREAM_MUSIC);
         setContentView(R.layout.smileys_selector);
-        smileys = (GridView) findViewById(R.id.smileys_selector_field);
+        smileys = findViewById(R.id.smileys_selector_field);
         smileys.setSelector(resources.getListSelector());
+
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (!sp.getBoolean("ms_use_shadow", true)) {
-            smileys.setBackgroundColor(0);
+            smileys.setBackgroundColor(Color.TRANSPARENT);
         }
+
         smileys.setNumColumns(PreferenceTable.smileysSelectorColumns);
         final smileys_adapter adapter = new smileys_adapter();
-        smileys.setAdapter((ListAdapter) adapter);
-        smileys.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
-            String tag = adapter.getTag(arg2);
-            Intent i = new Intent();
-            i.setAction(" " + tag + " ");
+        smileys.setAdapter(adapter);
+        smileys.setOnItemClickListener((parent, view, position, id) -> {
+            String tag = adapter.getTag(position);
+            Intent i = new Intent(" " + tag + " ");
             Chat.received_smile_tag = i.getAction();
-            setResult(-1, i);
+            setResult(Activity.RESULT_OK, i);
             finish();
         });
     }

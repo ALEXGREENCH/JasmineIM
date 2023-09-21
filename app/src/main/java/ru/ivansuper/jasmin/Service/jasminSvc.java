@@ -1,8 +1,10 @@
 package ru.ivansuper.jasmin.Service;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlarmManager;
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -16,6 +18,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.wifi.WifiManager;
 import android.os.Binder;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -297,22 +300,48 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         stopForeground(true);
     }
 
+
     private void startFC() {
-        startForeground(65331, getNotification(R.drawable.not_connected));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            // Создаем канал уведомлений для Android 8.0 (Oreo) и выше
+            createNotificationChannel();
+        }
+
+        Notification notification = getNotification(R.drawable.not_connected);
+
+        if (notification != null) {
+            startForeground(65331, notification);
+        }
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createNotificationChannel() {
+        NotificationChannel channel = new NotificationChannel(
+                "CHANNEL_JASMINE",
+                "Jasmine IM Channel",
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+
+        NotificationManager notificationManager = getSystemService(NotificationManager.class);
+        notificationManager.createNotificationChannel(channel);
     }
 
     private Notification getNotification(int icon) {
-        //noinspection deprecation
-        this.notification = new Notification(icon, null, 0L);
-        /* - TODO: ...
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, main.class), 0);
-        this.notification.setLatestEventInfo(this, "Jasmine IM", "", contentIntent);
-         */
-        if ((this.notification.flags & 1) == 1) {
-            Notification notification = this.notification;
-            notification.flags--;
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, main.class), PendingIntent.FLAG_MUTABLE);
+        //this.notification.setLatestEventInfo(this, "Jasmine IM", "", contentIntent);
+
+        Notification.Builder builder = new Notification.Builder(this)
+                .setSmallIcon(icon)
+                .setContentTitle("Jasmine IM")
+                .setContentText("")
+                .setContentIntent(contentIntent)
+                .setAutoCancel(true);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder.setChannelId("CHANNEL_JASMINE"); // Устанавливаем канал уведомлений для Android 8.0 (Oreo) и выше
         }
-        return this.notification;
+
+        return builder.build();
     }
 
     public class itf extends Binder {
@@ -323,22 +352,22 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     }
 
     @Override
-    public IBinder onBind(Intent arg0) {
-        boolean a = SNAC.sts.startsWith(utilities.randomized);
-        int zzs = Math.abs(3456);
-        int av = 234234 + zzs;
-        String aas = av + String.valueOf(av);
-        int zzd = av + aas.hashCode();
-        boolean b = SNAC.sts.startsWith(utilities.randomized2);
-        int zzs2 = Math.abs(zzd);
-        int av2 = 34545 + zzs2;
-        String aaf = String.valueOf(av2) + av2;
+    public IBinder onBind(Intent intent) {
+        //boolean a = SNAC.sts.startsWith(utilities.randomized);
+        //int zzs = Math.abs(3456);
+        //int av = 234234 + zzs;
+        //String aas = av + String.valueOf(av);
+        //int zzd = av + aas.hashCode();
+        //boolean b = SNAC.sts.startsWith(utilities.randomized2);
+        //int zzs2 = Math.abs(zzd);
+        //int av2 = 34545 + zzs2;
+        //String aaf = String.valueOf(av2) + av2;
         //noinspection unused
-        int zze = av2 + aaf.hashCode();
-        if (!a && !b) {
+        //int zze = av2 + aaf.hashCode();
+        //if (!a && !b) {
             // TODO: :)
             // throw new NumberFormatException("");
-        }
+        //}
         return this.myBinder;
     }
 
@@ -383,21 +412,21 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             Log.v("POWER", "WIFI_LOCK ENABLED");
         }
         EventTranslator.sendAppState(true);
-        boolean a = SNAC.sts.startsWith(utilities.randomized);
-        int zzs = Math.abs(3748);
-        int av = 502 + zzs;
-        String aas = String.valueOf(av) + av;
-        int zzd = av + aas.hashCode();
-        boolean b = SNAC.sts.startsWith(utilities.randomized2);
-        int zzs2 = Math.abs(zzd);
-        int av2 = 675 + zzs2;
-        String aaf = String.valueOf(av2) + av2;
-        //noinspection unused
-        int zze = av2 + aaf.hashCode();
-        if (!a && !b) {
-            // TODO: :)
-            // throw new IllegalCharsetNameException("");
-        }
+        //boolean a = SNAC.sts.startsWith(utilities.randomized);
+        //int zzs = Math.abs(3748);
+        //int av = 502 + zzs;
+        //String aas = String.valueOf(av) + av;
+        //int zzd = av + aas.hashCode();
+        //boolean b = SNAC.sts.startsWith(utilities.randomized2);
+        //int zzs2 = Math.abs(zzd);
+        //int av2 = 675 + zzs2;
+        //String aaf = String.valueOf(av2) + av2;
+        ////noinspection unused
+        //int zze = av2 + aaf.hashCode();
+        //if (!a && !b) {
+        //    // TODO: :)
+        //    // throw new IllegalCharsetNameException("");
+        //}
     }
 
     @Override
@@ -865,20 +894,20 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     public void rebuildChatMarkers() {
         sendMessage(6, null, false);
-        boolean a = SNAC.sts.startsWith(utilities.randomized);
-        int zzs = Math.abs(32);
-        int av = 3234 + zzs;
-        String aas = String.valueOf(av) + av;
-        int zzd = av + aas.hashCode();
-        boolean b = SNAC.sts.startsWith(utilities.randomized2);
-        int zzs2 = Math.abs(zzd);
-        int av2 = 6778 + zzs2;
-        String aaf = String.valueOf(av2) + av2;
-        //noinspection unused
-        int zze = av2 + aaf.hashCode();
-        if (!a && !b) {
-            throw new DuplicateFormatFlagsException("");
-        }
+        //boolean a = SNAC.sts.startsWith(utilities.randomized);
+        //int zzs = Math.abs(32);
+        //int av = 3234 + zzs;
+        //String aas = String.valueOf(av) + av;
+        //int zzd = av + aas.hashCode();
+        //boolean b = SNAC.sts.startsWith(utilities.randomized2);
+        //int zzs2 = Math.abs(zzd);
+        //int av2 = 6778 + zzs2;
+        //String aaf = String.valueOf(av2) + av2;
+        ////noinspection unused
+        //int zze = av2 + aaf.hashCode();
+        //if (!a && !b) {
+        //    throw new DuplicateFormatFlagsException("");
+        //}
     }
 
     @SuppressWarnings("unused")

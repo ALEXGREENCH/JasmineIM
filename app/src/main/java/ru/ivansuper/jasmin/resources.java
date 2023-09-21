@@ -1,8 +1,3 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package ru.ivansuper.jasmin;
 
 import android.annotation.SuppressLint;
@@ -12,17 +7,16 @@ import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.Rect;
-import android.graphics.Bitmap.Config;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Environment;
-import android.os.Build.VERSION;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -32,12 +26,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Vector;
+
 import ru.ivansuper.jasmin.MMP.MMPContact;
 import ru.ivansuper.jasmin.MultiColumnList.MultiColumnList;
 import ru.ivansuper.jasmin.Service.jasminSvc;
@@ -60,6 +56,7 @@ public class resources {
     public static String JASMINE_SKIN_PATH;
     public static int OS_VERSION = 3;
     public static String OS_VERSION_STR = "";
+    @SuppressLint("SdCardPath")
     public static String SD_PATH = "/mnt/sdcard/";
     public static String SOFTWARE_STR = "";
     public static String VERSION;
@@ -78,14 +75,14 @@ public class resources {
     public static Drawable bp_divider;
     private static Bitmap btn_disabled;
     private static Bitmap btn_disabled_focused;
-    private static Rect btn_disabled_focused_padding = new Rect();
-    private static Rect btn_disabled_padding = new Rect();
+    private static final Rect btn_disabled_focused_padding = new Rect();
+    private static final Rect btn_disabled_padding = new Rect();
     private static Bitmap btn_normal;
-    private static Rect btn_normal_padding = new Rect();
+    private static final Rect btn_normal_padding = new Rect();
     private static Bitmap btn_pressed;
-    private static Rect btn_pressed_padding = new Rect();
+    private static final Rect btn_pressed_padding = new Rect();
     private static Bitmap btn_selected;
-    private static Rect btn_selected_padding = new Rect();
+    private static final Rect btn_selected_padding = new Rect();
     public static Drawable chat;
     private static Bitmap chat_bottom_panel;
     private static Rect chat_bottom_panel_padding = new Rect();
@@ -101,13 +98,18 @@ public class resources {
     private static Bitmap contactlist_bottom_panel_back;
     private static Bitmap contactlist_bottom_panel_connection_back;
     private static Bitmap contactlist_chat_divider;
+    /**
+     * @noinspection unused
+     */
     private static Rect contactlist_chat_divider_rect;
     private static Bitmap contactlist_group_normal;
     public static Bitmap contactlist_item_normal;
     private static Bitmap contactlist_item_selected;
     private static Bitmap contactlist_items_back;
+    /** @noinspection FieldCanBeLocal*/
     private static Rect contactlist_items_back_padding = new Rect();
     public static Drawable cross;
+    @SuppressLint("StaticFieldLeak")
     public static Context ctx;
     public static Drawable custom_wallpaper;
     public static String dataPath = "";
@@ -121,14 +123,14 @@ public class resources {
     public static Drawable eat;
     private static Bitmap edt_disabled;
     private static Bitmap edt_disabled_focused;
-    private static Rect edt_disabled_focused_padding = new Rect();
-    private static Rect edt_disabled_padding = new Rect();
+    private static final Rect edt_disabled_focused_padding = new Rect();
+    private static final Rect edt_disabled_padding = new Rect();
     private static Bitmap edt_normal;
-    private static Rect edt_normal_padding = new Rect();
+    private static final Rect edt_normal_padding = new Rect();
     private static Bitmap edt_pressed;
-    private static Rect edt_pressed_padding = new Rect();
+    private static final Rect edt_pressed_padding = new Rect();
     private static Bitmap edt_selected;
-    private static Rect edt_selected_padding = new Rect();
+    private static final Rect edt_selected_padding = new Rect();
     public static Drawable evil;
     public static Drawable file;
     public static Drawable file_brw;
@@ -179,7 +181,10 @@ public class resources {
     public static Drawable jabber_waiting;
     public static Drawable jabber_xml_console;
     public static Drawable link_icon;
-    public static Vector<String> log = new Vector();
+    /**
+     * @noinspection unused
+     */
+    public static Vector<String> log = new Vector<>();
     public static Drawable marker_active_chat;
     public static Drawable marker_chat;
     public static Drawable marker_msg_chat;
@@ -229,6 +234,9 @@ public class resources {
     public static Drawable sms;
     private static Bitmap status_message_back;
     private static Rect status_message_back_padding = new Rect();
+    /**
+     * @noinspection FieldCanBeLocal
+     */
     private static Bitmap status_selector_arrow;
     private static Bitmap status_selector_back;
     private static Rect status_selector_back_padding = new Rect();
@@ -294,768 +302,700 @@ public class resources {
     public resources() {
     }
 
-    public static void attachAuthAccMsg(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachAuthAccMsg(View view) {
         if (auth_accepted_message_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), auth_accepted_message_back, auth_accepted_message_back.getNinePatchChunk(), auth_accepted_message_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), auth_accepted_message_back, auth_accepted_message_back.getNinePatchChunk(), auth_accepted_message_back_padding, null));
         }
 
     }
 
-    public static void attachAuthAskMsg(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachAuthAskMsg(View view) {
         if (auth_ask_message_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), auth_ask_message_back, auth_ask_message_back.getNinePatchChunk(), auth_ask_message_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), auth_ask_message_back, auth_ask_message_back.getNinePatchChunk(), auth_ask_message_back_padding, null));
         }
 
     }
 
-    public static void attachAuthDenMsg(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachAuthDenMsg(View view) {
         if (auth_denied_message_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), auth_denied_message_back, auth_denied_message_back.getNinePatchChunk(), auth_denied_message_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), auth_denied_message_back, auth_denied_message_back.getNinePatchChunk(), auth_denied_message_back_padding, null));
         }
 
     }
 
-    public static void attachAwayTextBackground(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachAwayTextBackground(View view) {
         if (away_text_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), away_text_back, away_text_back.getNinePatchChunk(), new Rect(), (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), away_text_back, away_text_back.getNinePatchChunk(), new Rect(), null));
         }
 
     }
 
-    public static void attachButtonStyle(View var0) {
+    public static void attachButtonStyle(View view) {
         try {
-            ((Button)var0).setTextColor(ColorScheme.getColor(52));
-        } catch (Exception var3) {
+            if (view instanceof Button) {
+                ((Button) view).setTextColor(ColorScheme.getColor(52));
+            }
+        } catch (Exception ignored) {
         }
 
         if (btn_normal != null && btn_disabled != null && btn_pressed != null && btn_selected != null && btn_disabled_focused != null) {
-            StateListDrawable var1 = new StateListDrawable();
-            if (btn_normal_padding == null) {
-                btn_normal_padding = new Rect(5, 5, 5, 5);
-            }
+            StateListDrawable stateListDrawable = createStateListDrawable(btn_normal, btn_disabled, btn_pressed, btn_selected, btn_disabled_focused);
 
-            NinePatchDrawable var2 = new NinePatchDrawable(ctx.getResources(), btn_normal, btn_normal.getNinePatchChunk(), btn_normal_padding, (String)null);
-            var1.addState(new int[]{-16842909, 16842908}, var2);
-            if (btn_disabled_padding == null) {
-                btn_disabled_padding = new Rect(5, 5, 5, 5);
-            }
-
-            var2 = new NinePatchDrawable(ctx.getResources(), btn_disabled, btn_disabled.getNinePatchChunk(), btn_disabled_padding, (String)null);
-            var1.addState(new int[]{-16842909, -16842908}, var2);
-            if (btn_pressed_padding == null) {
-                btn_pressed_padding = new Rect(5, 5, 5, 5);
-            }
-
-            var2 = new NinePatchDrawable(ctx.getResources(), btn_pressed, btn_pressed.getNinePatchChunk(), btn_pressed_padding, (String)null);
-            var1.addState(new int[]{16842919}, var2);
-            if (btn_selected_padding == null) {
-                btn_selected_padding = new Rect(5, 5, 5, 5);
-            }
-
-            var2 = new NinePatchDrawable(ctx.getResources(), btn_selected, btn_selected.getNinePatchChunk(), btn_selected_padding, (String)null);
-            var1.addState(new int[]{16842908, 16842910}, var2);
-            if (btn_normal_padding == null) {
-                btn_normal_padding = new Rect(5, 5, 5, 5);
-            }
-
-            var2 = new NinePatchDrawable(ctx.getResources(), btn_normal, btn_normal.getNinePatchChunk(), btn_normal_padding, (String)null);
-            var1.addState(new int[]{16842910}, var2);
-            if (btn_disabled_focused_padding == null) {
-                btn_disabled_focused_padding = new Rect();
-            }
-
-            var2 = new NinePatchDrawable(ctx.getResources(), btn_disabled_focused, btn_disabled_focused.getNinePatchChunk(), btn_disabled_focused_padding, (String)null);
-            var1.addState(new int[]{16842908}, var2);
-            var0.setBackgroundDrawable(var1);
+            view.setBackgroundDrawable(stateListDrawable);
         }
-
     }
 
-    public static void attachChatBottomPanel(View var0) {
+    private static StateListDrawable createStateListDrawable(Bitmap btnNormal, Bitmap btnDisabled, Bitmap btnPressed, Bitmap btnSelected, Bitmap btnDisabledFocused) {
+        StateListDrawable stateListDrawable = new StateListDrawable();
+
+        Rect padding = new Rect(5, 5, 5, 5);
+
+        NinePatchDrawable btnNormalDrawable = createNinePatchDrawable(btnNormal, padding);
+        stateListDrawable.addState(new int[]{-android.R.attr.state_enabled, android.R.attr.state_focused}, btnNormalDrawable);
+
+        NinePatchDrawable btnDisabledDrawable = createNinePatchDrawable(btnDisabled, padding);
+        stateListDrawable.addState(new int[]{-android.R.attr.state_enabled, -android.R.attr.state_focused}, btnDisabledDrawable);
+
+        NinePatchDrawable btnPressedDrawable = createNinePatchDrawable(btnPressed, padding);
+        stateListDrawable.addState(new int[]{android.R.attr.state_pressed}, btnPressedDrawable);
+
+        NinePatchDrawable btnSelectedDrawable = createNinePatchDrawable(btnSelected, padding);
+        stateListDrawable.addState(new int[]{android.R.attr.state_enabled, android.R.attr.state_activated}, btnSelectedDrawable);
+
+        NinePatchDrawable btnNormalFocusedDrawable = createNinePatchDrawable(btnNormal, padding);
+        stateListDrawable.addState(new int[]{android.R.attr.state_activated}, btnNormalFocusedDrawable);
+
+        NinePatchDrawable btnDisabledFocusedDrawable = createNinePatchDrawable(btnDisabledFocused, new Rect());
+        stateListDrawable.addState(new int[]{android.R.attr.state_focused}, btnDisabledFocusedDrawable);
+
+        return stateListDrawable;
+    }
+
+    private static NinePatchDrawable createNinePatchDrawable(Bitmap bitmap, Rect padding) {
+        return new NinePatchDrawable(ctx.getResources(), bitmap, bitmap.getNinePatchChunk(), padding, null);
+    }
+
+    /** @noinspection unused*/
+    public static void attachChatBottomPanel(View view) {
         if (chat_bottom_panel != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), chat_bottom_panel, chat_bottom_panel.getNinePatchChunk(), chat_bottom_panel_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), chat_bottom_panel, chat_bottom_panel.getNinePatchChunk(), chat_bottom_panel_padding, null));
         }
 
     }
 
-    public static void attachChatMessagesBack(View var0) {
+    public static void attachChatMessagesBack(View view) {
         if (chat_messages_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), chat_messages_back, chat_messages_back.getNinePatchChunk(), chat_messages_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), chat_messages_back, chat_messages_back.getNinePatchChunk(), chat_messages_back_padding, null));
         }
 
     }
 
-    public static void attachChatMessagesBack(Window var0) {
+    public static void attachChatMessagesBack(Window window) {
         if (chat_messages_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), chat_messages_back, chat_messages_back.getNinePatchChunk(), chat_messages_back_padding, (String)null));
+            window.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), chat_messages_back, chat_messages_back.getNinePatchChunk(), chat_messages_back_padding, null));
         }
 
     }
 
-    public static void attachChatTopPanel(View var0) {
+    public static void attachChatTopPanel(View view) {
         if (chat_top_panel != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), chat_top_panel, chat_top_panel.getNinePatchChunk(), chat_top_panel_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), chat_top_panel, chat_top_panel.getNinePatchChunk(), chat_top_panel_padding, null));
         }
 
     }
 
-    public static void attachCheckStyle(CheckBox var0) {
+    public static void attachCheckStyle(CheckBox checkBox) {
         if (check_on != null && check_off != null) {
-            StateListDrawable var1 = new StateListDrawable();
-            BitmapDrawable var2 = new BitmapDrawable(ctx.getResources(), check_on);
-            BitmapDrawable var3 = new BitmapDrawable(ctx.getResources(), check_off);
-            var1.addState(new int[]{16843014, 16842908, 16842766}, var2);
-            var1.addState(new int[]{-16843014, -16842908, 16842766}, var3);
-            var1.addState(new int[]{16843014, 16842919, 16842766}, var2);
-            var1.addState(new int[]{-16843014, 16842919, 16842766}, var3);
-            var1.addState(new int[]{-16843014}, var3);
-            var1.addState(new int[]{16843014}, var2);
-            var0.setBackgroundDrawable(var1);
-        }
+            StateListDrawable stateListDrawable = createCheckStateListDrawable();
 
+            checkBox.setBackgroundDrawable(stateListDrawable);
+        }
     }
 
-    public static void attachContactlistBack(View var0) {
+    private static StateListDrawable createCheckStateListDrawable() {
+        StateListDrawable stateListDrawable = new StateListDrawable();
+
+        BitmapDrawable checkOnDrawable = new BitmapDrawable(ctx.getResources(), check_on);
+        BitmapDrawable checkOffDrawable = new BitmapDrawable(ctx.getResources(), check_off);
+
+        stateListDrawable.addState(new int[]{android.R.attr.state_checked, android.R.attr.state_enabled, android.R.attr.state_checkable}, checkOnDrawable);
+        stateListDrawable.addState(new int[]{-android.R.attr.state_checked, android.R.attr.state_enabled, android.R.attr.state_checkable}, checkOffDrawable);
+        stateListDrawable.addState(new int[]{android.R.attr.state_checked, android.R.attr.state_activated, android.R.attr.state_checkable}, checkOnDrawable);
+        stateListDrawable.addState(new int[]{-android.R.attr.state_checked, android.R.attr.state_activated, android.R.attr.state_checkable}, checkOffDrawable);
+        stateListDrawable.addState(new int[]{-android.R.attr.state_checkable}, checkOffDrawable);
+        stateListDrawable.addState(new int[]{android.R.attr.state_checkable}, checkOnDrawable);
+
+        return stateListDrawable;
+    }
+
+    public static void attachContactlistBack(View view) {
         if (contactlist_items_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_items_back, contactlist_items_back.getNinePatchChunk(), new Rect(), (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_items_back, contactlist_items_back.getNinePatchChunk(), new Rect(), null));
         }
 
     }
 
-    public static void attachContactlistBack(Window var0) {
+    public static void attachContactlistBack(Window window) {
         if (contactlist_items_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_items_back, contactlist_items_back.getNinePatchChunk(), new Rect(), (String)null));
+            window.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_items_back, contactlist_items_back.getNinePatchChunk(), new Rect(), null));
         }
 
     }
 
-    public static void attachContactlistBottomConnectionStatusPanel(LinearLayout var0) {
+    public static void attachContactlistBottomConnectionStatusPanel(LinearLayout linearLayout) {
         if (contactlist_bottom_panel_connection_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_bottom_panel_connection_back, contactlist_bottom_panel_connection_back.getNinePatchChunk(), new Rect(), (String)null));
+            linearLayout.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_bottom_panel_connection_back, contactlist_bottom_panel_connection_back.getNinePatchChunk(), new Rect(), null));
         }
 
     }
 
-    public static void attachContactlistBottomPanel(View var0) {
+    public static void attachContactlistBottomPanel(View view) {
         if (contactlist_bottom_panel_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_bottom_panel_back, contactlist_bottom_panel_back.getNinePatchChunk(), new Rect(), (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_bottom_panel_back, contactlist_bottom_panel_back.getNinePatchChunk(), new Rect(), null));
         }
 
     }
 
-    public static void attachContactlistChatDivider(View var0) {
+    public static void attachContactlistChatDivider(View view) {
         if (contactlist_chat_divider == null) {
-            var0.setBackgroundResource(R.drawable.contactlist_chat_divider);
+            view.setBackgroundResource(R.drawable.contactlist_chat_divider);
         } else {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_chat_divider, contactlist_chat_divider.getNinePatchChunk(), contactlist_chat_divider_rect, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_chat_divider, contactlist_chat_divider.getNinePatchChunk(), contactlist_chat_divider_rect, null));
         }
 
     }
 
-    public static void attachContactlistGroupItemBack(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachContactlistGroupItemBack(View view) {
         if (contactlist_group_normal != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_group_normal, contactlist_group_normal.getNinePatchChunk(), new Rect(), (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_group_normal, contactlist_group_normal.getNinePatchChunk(), new Rect(), null));
         }
 
     }
 
-    public static void attachContactlistItemBack(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachContactlistItemBack(View view) {
         if (contactlist_item_normal != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_item_normal, contactlist_item_normal.getNinePatchChunk(), new Rect(), (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), contactlist_item_normal, contactlist_item_normal.getNinePatchChunk(), new Rect(), null));
         }
 
     }
 
-    public static void attachDialogStyle(Window var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachDialogStyle(Window window) {
         if (dialogs_back != null) {
             if (dialogs_back_padding == null) {
                 dialogs_back_padding = new Rect(15, 15, 15, 15);
             }
 
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), dialogs_back, dialogs_back.getNinePatchChunk(), dialogs_back_padding, (String)null));
+            window.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), dialogs_back, dialogs_back.getNinePatchChunk(), dialogs_back_padding, null));
         }
 
     }
 
-    public static boolean attachEditText(EditText var0) {
-        return attachEditTextInternal(var0);
+    public static boolean attachEditText(EditText editText) {
+        return attachEditTextInternal(editText);
     }
 
-    private static boolean attachEditTextInternal(EditText var0) {
-        int var1 = ColorScheme.getColor(46);
-        int var2 = Color.alpha(var1);
-        int var3 = Color.red(var1);
-        int var4 = Color.green(var1);
-        int var5 = Color.blue(var1);
-        var0.setTextColor(var1);
-        var0.setShadowLayer(1.0F, 0.0F, 0.0F, Color.argb(var2 / 5, var3, var4, var5));
-        boolean var6;
-        if (edt_normal == null) {
-            var6 = false;
-        } else if (edt_disabled == null) {
-            var6 = false;
-        } else if (edt_pressed == null) {
-            var6 = false;
-        } else if (edt_selected == null) {
-            var6 = false;
-        } else if (edt_disabled_focused == null) {
-            var6 = false;
-        } else {
-            StateListDrawable var7 = new StateListDrawable();
-            if (edt_normal_padding == null) {
-                edt_normal_padding = new Rect(18, 5, 18, 5);
-            }
+    private static boolean attachEditTextInternal(EditText editText) {
+        int textColor = ColorScheme.getColor(46);
+        int shadowColor = Color.argb(Color.alpha(textColor) / 5, Color.red(textColor), Color.green(textColor), Color.blue(textColor));
 
-            NinePatchDrawable var8 = new NinePatchDrawable(ctx.getResources(), edt_normal, edt_normal.getNinePatchChunk(), edt_normal_padding, (String)null);
-            var7.addState(new int[]{-16842909, 16842908}, var8);
-            if (edt_disabled_padding == null) {
-                edt_disabled_padding = new Rect(18, 5, 18, 5);
-            }
+        editText.setTextColor(textColor);
+        editText.setShadowLayer(1.0F, 0.0F, 0.0F, shadowColor);
 
-            var8 = new NinePatchDrawable(ctx.getResources(), edt_disabled, edt_disabled.getNinePatchChunk(), edt_disabled_padding, (String)null);
-            var7.addState(new int[]{-16842909, -16842908}, var8);
-            if (edt_pressed_padding == null) {
-                edt_pressed_padding = new Rect(18, 5, 18, 5);
-            }
+        StateListDrawable drawable = createEditTextStateListDrawable();
+        editText.setBackgroundDrawable(drawable);
 
-            var8 = new NinePatchDrawable(ctx.getResources(), edt_pressed, edt_pressed.getNinePatchChunk(), edt_pressed_padding, (String)null);
-            var7.addState(new int[]{16842919}, var8);
-            if (edt_selected_padding == null) {
-                edt_selected_padding = new Rect(18, 5, 18, 5);
-            }
-
-            var8 = new NinePatchDrawable(ctx.getResources(), edt_selected, edt_selected.getNinePatchChunk(), edt_selected_padding, (String)null);
-            var7.addState(new int[]{16842908, 16842910}, var8);
-            if (edt_normal_padding == null) {
-                edt_normal_padding = new Rect(18, 5, 18, 5);
-            }
-
-            var8 = new NinePatchDrawable(ctx.getResources(), edt_normal, edt_normal.getNinePatchChunk(), edt_normal_padding, (String)null);
-            var7.addState(new int[]{16842910}, var8);
-            if (edt_disabled_focused_padding == null) {
-                edt_disabled_focused_padding = new Rect();
-            }
-
-            var8 = new NinePatchDrawable(ctx.getResources(), edt_disabled_focused, edt_disabled_focused.getNinePatchChunk(), edt_disabled_focused_padding, (String)null);
-            var7.addState(new int[]{16842908}, var8);
-            var0.setBackgroundDrawable(var7);
-            var6 = true;
-        }
-
-        return var6;
+        return true;
     }
 
-    public static void attachIngMsg(View var0) {
+    private static StateListDrawable createEditTextStateListDrawable() {
+        StateListDrawable drawable = new StateListDrawable();
+        Rect padding = new Rect(18, 5, 18, 5);
+
+        addStateDrawable(drawable, new int[]{-android.R.attr.state_enabled, android.R.attr.state_focused}, edt_normal, padding);
+        addStateDrawable(drawable, new int[]{-android.R.attr.state_enabled, -android.R.attr.state_focused}, edt_disabled, padding);
+        addStateDrawable(drawable, new int[]{android.R.attr.state_pressed}, edt_pressed, padding);
+        addStateDrawable(drawable, new int[]{android.R.attr.state_enabled, android.R.attr.state_activated}, edt_selected, padding);
+        addStateDrawable(drawable, new int[]{android.R.attr.state_activated}, edt_normal, padding);
+        addStateDrawable(drawable, new int[]{android.R.attr.state_focused}, edt_disabled_focused, new Rect());
+
+        return drawable;
+    }
+
+    private static void addStateDrawable(StateListDrawable drawable, int[] stateSet, Bitmap bitmap, Rect padding) {
+        Resources resources = ctx.getResources();
+        NinePatchDrawable ninePatchDrawable = new NinePatchDrawable(resources, bitmap, bitmap.getNinePatchChunk(), padding, null);
+        drawable.addState(stateSet, ninePatchDrawable);
+    }
+
+    /**
+     * @noinspection unused
+     */
+    public static void attachIngMsg(View view) {
         if (incoming_message_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), incoming_message_back, incoming_message_back.getNinePatchChunk(), incoming_message_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), incoming_message_back, incoming_message_back.getNinePatchChunk(), incoming_message_back_padding, null));
         }
 
     }
 
-    public static void attachListSelector(MultiColumnList var0) {
+    public static void attachListSelector(MultiColumnList multiColumnList) {
         if (contactlist_item_selected != null) {
-            var0.setListSelector(new NinePatchDrawable(ctx.getResources(), contactlist_item_selected, contactlist_item_selected.getNinePatchChunk(), new Rect(), (String)null));
+            multiColumnList.setListSelector(new NinePatchDrawable(ctx.getResources(), contactlist_item_selected, contactlist_item_selected.getNinePatchChunk(), new Rect(), null));
         }
 
     }
 
-    public static void attachOutMsg(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachOutMsg(View view) {
         if (outgoing_message_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), outgoing_message_back, outgoing_message_back.getNinePatchChunk(), outgoing_message_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), outgoing_message_back, outgoing_message_back.getNinePatchChunk(), outgoing_message_back_padding, null));
         }
 
     }
 
-    public static void attachPopupBack(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachPopupBack(View view) {
         if (popup_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), popup_back, popup_back.getNinePatchChunk(), popup_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), popup_back, popup_back.getNinePatchChunk(), popup_back_padding, null));
         }
 
     }
 
-    public static void attachSlidePanel(SlideSwitcher var0) {
+    public static void attachSlidePanel(SlideSwitcher slideSwitcher) {
         if (slide_switcher_panel != null) {
             if (slide_switcher_panel_padding == null) {
                 slide_switcher_panel_padding = new Rect(1, 1, 1, 1);
             }
 
-            var0.panel = new NinePatchDrawable(ctx.getResources(), slide_switcher_panel, slide_switcher_panel.getNinePatchChunk(), slide_switcher_panel_padding, (String)null);
+            slideSwitcher.panel = new NinePatchDrawable(ctx.getResources(), slide_switcher_panel, slide_switcher_panel.getNinePatchChunk(), slide_switcher_panel_padding, null);
         }
 
     }
 
-    public static void attachStatusMsg(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachStatusMsg(View view) {
         if (status_message_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), status_message_back, status_message_back.getNinePatchChunk(), status_message_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), status_message_back, status_message_back.getNinePatchChunk(), status_message_back_padding, null));
         }
 
     }
 
-    public static void attachStatusSelectorBackAndArrow(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachStatusSelectorBackAndArrow(View view) {
         if (status_selector_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), status_selector_back, status_selector_back.getNinePatchChunk(), status_selector_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), status_selector_back, status_selector_back.getNinePatchChunk(), status_selector_back_padding, null));
         }
 
     }
 
-    public static void attachTransferMsg(View var0) {
+    /**
+     * @noinspection unused
+     */
+    public static void attachTransferMsg(View view) {
         if (transfer_message_back != null) {
-            var0.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), transfer_message_back, transfer_message_back.getNinePatchChunk(), transfer_message_back_padding, (String)null));
+            view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), transfer_message_back, transfer_message_back.getNinePatchChunk(), transfer_message_back_padding, null));
         }
 
     }
 
-    public static ru.ivansuper.jasmin.BitmapDrawable convertToMyFormat(Drawable var0) {
-        ru.ivansuper.jasmin.BitmapDrawable var1;
-        if (var0 == null) {
-            var1 = null;
-        } else {
-            Bitmap var2 = ((BitmapDrawable)var0).getBitmap();
-            var2.setDensity(0);
-            var1 = new ru.ivansuper.jasmin.BitmapDrawable(var2);
-            var1.setBounds(0, 0, var1.getIntrinsicWidth(), var1.getIntrinsicHeight());
-            var1 = (ru.ivansuper.jasmin.BitmapDrawable)var1;
+    public static ru.ivansuper.jasmin.BitmapDrawable convertToMyFormat(Drawable drawable) {
+        if (drawable instanceof BitmapDrawable) {
+            BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+            Bitmap bitmap = bitmapDrawable.getBitmap();
+            bitmap.setDensity(0);
+            return new ru.ivansuper.jasmin.BitmapDrawable(bitmap);
         }
-
-        return var1;
+        return null;
     }
 
-    public static void copyAssetToSD(String var0, String var1) {
-        File var10 = new File(var1);
-        if (!var10.exists()) {
-            IOException var10000;
-            label40: {
-                InputStream var2;
-                FileOutputStream var8;
-                byte[] var11;
-                boolean var10001;
-                try {
-                    var10.createNewFile();
-                    var2 = am.open(var0);
-                    var8 = new FileOutputStream(var10);
-                    var11 = new byte[8192];
-                } catch (IOException var7) {
-                    var10000 = var7;
-                    var10001 = false;
-                    break label40;
+    public static void copyAssetToSD(String assetPath, String destinationPath) {
+        File destinationFile = new File(destinationPath);
+        if (!destinationFile.exists()) {
+            try {
+                destinationFile.createNewFile();
+                InputStream inputStream = am.open(assetPath);
+                FileOutputStream fileOutputStream = new FileOutputStream(destinationFile);
+                byte[] buffer = new byte[8192];
+                int bytesRead;
+
+                while ((bytesRead = inputStream.read(buffer, 0, 8192)) > 0) {
+                    fileOutputStream.write(buffer, 0, bytesRead);
                 }
 
-                while(true) {
-                    try {
-                        if (var2.available() <= 0) {
-                            var8.close();
-                            var2.close();
-                            return;
-                        }
-                    } catch (IOException var6) {
-                        var10000 = var6;
-                        var10001 = false;
-                        break;
-                    }
-
-                    int var3;
-                    try {
-                        var3 = var2.read(var11, 0, 8192);
-                    } catch (IOException var5) {
-                        var10000 = var5;
-                        var10001 = false;
-                        break;
-                    }
-
-                    if (var3 > 0) {
-                        try {
-                            var8.write(var11, 0, var3);
-                        } catch (IOException var4) {
-                            var10000 = var4;
-                            var10001 = false;
-                            break;
-                        }
-                    }
-                }
+                fileOutputStream.close();
+                inputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-
-            IOException var9 = var10000;
-            var9.printStackTrace();
         }
-
     }
 
+    /**
+     * @noinspection unused
+     */
     public static NinePatchDrawable getContactlistGroupItemBack() {
-        NinePatchDrawable var0 = null;
+        NinePatchDrawable ninePatchDrawable = null;
         if (contactlist_group_normal != null) {
-            var0 = new NinePatchDrawable(ctx.getResources(), contactlist_group_normal, contactlist_group_normal.getNinePatchChunk(), new Rect(), (String)null);
+            ninePatchDrawable = new NinePatchDrawable(ctx.getResources(), contactlist_group_normal, contactlist_group_normal.getNinePatchChunk(), new Rect(), null);
         }
 
-        return var0;
+        return ninePatchDrawable;
     }
 
+    /**
+     * @noinspection unused
+     */
     public static NinePatchDrawable getContactlistItemBack() {
-        NinePatchDrawable var0 = null;
+        NinePatchDrawable ninePatchDrawable = null;
         if (contactlist_item_normal != null) {
-            var0 = new NinePatchDrawable(ctx.getResources(), contactlist_item_normal, contactlist_item_normal.getNinePatchChunk(), new Rect(), (String)null);
+            ninePatchDrawable = new NinePatchDrawable(ctx.getResources(), contactlist_item_normal, contactlist_item_normal.getNinePatchChunk(), new Rect(), null);
         }
 
-        return var0;
+        return ninePatchDrawable;
     }
 
+    /**
+     * @noinspection unused
+     */
     public static double getDiagonal() {
-        double var3;
+        double diagonal;
         try {
-            DisplayMetrics var0 = ctx.getResources().getDisplayMetrics();
-            float var1 = (float)(var0.widthPixels / var0.densityDpi);
-            float var2 = (float)(var0.heightPixels / var0.densityDpi);
-            var3 = Math.sqrt(Math.pow((double)var1, 2.0) + Math.pow((double)var2, 2.0));
-        } catch (Throwable var5) {
-            var3 = 0.0;
+            DisplayMetrics displayMetrics = ctx.getResources().getDisplayMetrics();
+            float widthInches = (float) displayMetrics.widthPixels / displayMetrics.xdpi;
+            float heightInches = (float) displayMetrics.heightPixels / displayMetrics.ydpi;
+            diagonal = Math.sqrt(Math.pow(widthInches, 2.0) + Math.pow(heightInches, 2.0));
+        } catch (Throwable t) {
+            diagonal = 0.0;
         }
-
-        return var3;
+        return diagonal;
     }
 
-    public static Drawable getICQStatusIconFull(ICQContact var0) {
-        Drawable var1;
-        if (var0.added) {
-            if (var0.authorized) {
-                if (utilities.isUIN(var0.ID)) {
-                    var1 = getStatusIcon(var0.status);
+    /**
+     * @noinspection unused
+     */
+    public static Drawable getICQStatusIconFull(ICQContact contact) {
+        Drawable icon;
+        if (contact.added) {
+            if (contact.authorized) {
+                if (utilities.isUIN(contact.ID)) {
+                    icon = getStatusIcon(contact.status);
                 } else {
-                    var1 = getMrimStatusIcon(var0.status);
+                    icon = getMrimStatusIcon(contact.status);
                 }
             } else {
-                var1 = unauthorized;
+                icon = unauthorized;
             }
         } else {
-            var1 = not_added;
+            icon = not_added;
         }
-
-        return var1;
+        return icon;
     }
 
-    public static int getIcqAbstractStatus(int var0) {
-        byte var1 = 0;
-        byte var2;
-        switch (var0) {
+    /**
+     * @noinspection unused
+     */
+    public static int getIcqAbstractStatus(int status) {
+        int abstractStatus = -1;
+        switch (status) {
             case -1:
-                var2 = -1;
+                abstractStatus = -1;
                 break;
             case 0:
-                var2 = 0;
+                abstractStatus = 0;
                 break;
             case 1:
-                var2 = 7;
+                abstractStatus = 7;
                 break;
             case 2:
-                var2 = 10;
+                abstractStatus = 10;
                 break;
             case 4:
-                var2 = 8;
-                break;
             case 5:
-                var2 = 8;
+                abstractStatus = 8;
                 break;
             case 16:
-                var2 = 9;
-                break;
             case 17:
-                var2 = 9;
+                abstractStatus = 9;
                 break;
             case 32:
-                var2 = 1;
+                abstractStatus = 1;
                 break;
             case 8193:
-                var2 = 6;
+                abstractStatus = 6;
                 break;
             case 12288:
-                var2 = 2;
+                abstractStatus = 2;
                 break;
             case 16384:
-                var2 = 3;
+                abstractStatus = 3;
                 break;
             case 20480:
-                var2 = 4;
+                abstractStatus = 4;
                 break;
             case 24576:
-                var2 = 5;
+                abstractStatus = 5;
                 break;
-            default:
-                var2 = var1;
         }
-
-        return var2;
+        return abstractStatus;
     }
 
     public static Drawable getListSelector() {
-        StateListDrawable var0 = new StateListDrawable();
-        SolidDrawable var1 = new SolidDrawable(0);
-        var0.addState(new int[]{-16842909}, var1);
-        var1 = new SolidDrawable(0);
-        var0.addState(new int[]{16842908, -16842910, 16842919}, var1);
-        var1 = new SolidDrawable(0);
-        var0.addState(new int[]{16842908, -16842910}, var1);
-        var1 = new SolidDrawable(ColorScheme.getColor(47));
-        var0.addState(new int[]{16842908, 16842919}, var1);
-        var1 = new SolidDrawable(ColorScheme.getColor(47));
-        var0.addState(new int[]{-16842908, 16842919}, var1);
-        var1 = new SolidDrawable(0);
-        var0.addState(new int[]{-16842908}, var1);
-        var1 = new SolidDrawable(ColorScheme.getColor(47));
-        var0.addState(new int[]{16842908}, var1);
-        return var0;
+        StateListDrawable listSelector = new StateListDrawable();
+
+        int colorPrimary = ColorScheme.getColor(47);
+        int colorDefault = 0;
+
+        listSelector.addState(new int[]{-android.R.attr.state_enabled}, new SolidDrawable(colorDefault));
+        listSelector.addState(new int[]{android.R.attr.state_pressed, -android.R.attr.state_activated, android.R.attr.state_focused}, new SolidDrawable(colorDefault));
+        listSelector.addState(new int[]{android.R.attr.state_pressed, -android.R.attr.state_activated}, new SolidDrawable(colorDefault));
+        listSelector.addState(new int[]{android.R.attr.state_focused, android.R.attr.state_activated}, new SolidDrawable(colorPrimary));
+        listSelector.addState(new int[]{-android.R.attr.state_focused, android.R.attr.state_activated}, new SolidDrawable(colorPrimary));
+        listSelector.addState(new int[]{-android.R.attr.state_focused}, new SolidDrawable(colorDefault));
+        listSelector.addState(new int[]{android.R.attr.state_focused}, new SolidDrawable(colorPrimary));
+
+        return listSelector;
     }
 
-    public static Drawable getMMPStatusIconFull(MMPContact var0) {
-        Drawable var1;
-        switch (var0.status) {
+    /**
+     * @noinspection unused
+     */
+    public static Drawable getMMPStatusIconFull(MMPContact mmpContact) {
+        Drawable icon;
+        switch (mmpContact.status) {
             case 0:
-                var1 = mrim_offline;
+                icon = mrim_offline;
                 break;
             case 1:
             case 3:
             case 4:
             default:
-                var1 = mrim_online;
+                icon = mrim_online;
                 break;
             case 2:
-                var1 = mrim_away;
+                icon = mrim_away;
                 break;
             case 5:
-                var1 = mrim_dnd;
+                icon = mrim_dnd;
                 break;
             case 6:
-                var1 = mrim_oc;
+                icon = mrim_oc;
                 break;
             case 7:
-                var1 = mrim_na;
+                icon = mrim_na;
                 break;
             case 8:
-                var1 = mrim_lunch;
+                icon = mrim_lunch;
                 break;
             case 9:
-                var1 = mrim_work;
+                icon = mrim_work;
                 break;
             case 10:
-                var1 = mrim_home;
+                icon = mrim_home;
                 break;
             case 11:
-                var1 = mrim_depress;
+                icon = mrim_depress;
                 break;
             case 12:
-                var1 = mrim_angry;
+                icon = mrim_angry;
                 break;
             case 13:
-                var1 = mrim_chat;
+                icon = mrim_chat;
+                break;
         }
-
-        return var1;
+        return icon;
     }
 
-    public static Drawable getMrimStatusIcon(int var0) {
-        Drawable var1 = online;
-        switch (var0) {
+    public static Drawable getMrimStatusIcon(int status) {
+        Drawable icon = online;
+        switch (status) {
             case -1:
-                var1 = mrim_offline;
+                icon = mrim_offline;
                 break;
             case 0:
-                var1 = mrim_online;
+                icon = mrim_online;
                 break;
             case 1:
-                var1 = mrim_away;
+                icon = mrim_away;
+                break;
         }
-
-        return var1;
+        return icon;
     }
 
-    public static final String getSomething(String var0) {
+    /**
+     * @noinspection unused
+     */
+    public static String getSomething(String s) {
         return "Result from another class!";
     }
 
-    @Deprecated
-    public static Drawable getStatusIcon(int var0) {
-        Drawable var1 = online;
-        switch (var0) {
+    public static Drawable getStatusIcon(int status) {
+        Drawable icon = online;
+        switch (status) {
             case -1:
-                var1 = offline;
+                icon = offline;
                 break;
             case 0:
-                var1 = online;
+                icon = online;
                 break;
             case 1:
-                var1 = away;
+                icon = away;
                 break;
             case 2:
-                var1 = dnd;
+                icon = dnd;
                 break;
             case 4:
-                var1 = na;
-                break;
             case 5:
-                var1 = na;
+                icon = na;
                 break;
             case 16:
-                var1 = oc;
-                break;
             case 17:
-                var1 = oc;
+                icon = oc;
                 break;
             case 32:
-                var1 = chat;
+                icon = chat;
                 break;
             case 8193:
-                var1 = eat;
+                icon = eat;
                 break;
             case 12288:
-                var1 = evil;
+                icon = evil;
                 break;
             case 16384:
-                var1 = depress;
+                icon = depress;
                 break;
             case 20480:
-                var1 = home;
+                icon = home;
                 break;
             case 24576:
-                var1 = work;
+                icon = work;
+                break;
+        }
+        return icon;
+    }
+
+    public static String getString(int resId) {
+        return ctx.getString(resId);
+    }
+
+    public static String getString(String key) {
+        return utilities.replace(Locale.getString(key), "[NL]", "\n");
+    }
+
+    public static int getTrayMessageIconResId(int countMsg) {
+        int defaultResId = R.drawable.icq_msg_in;
+
+        if (countMsg >= 1 && countMsg <= 9) {
+            return ctx.getResources().getIdentifier("inc_msg_" + countMsg, "drawable", ctx.getPackageName());
+        } else if (countMsg > 9) {
+            return R.drawable.inc_msg_9_more;
         }
 
-        return var1;
+        return defaultResId;
     }
 
-    public static String getString(int var0) {
-        return ctx.getResources().getString(var0);
-    }
-
-    public static String getString(String var0) {
-        return utilities.replace(Locale.getString(var0), "[NL]", "\n");
-    }
-
-    public static final int getTrayMessageIconResId(int var0) {
-        int var1 = 2130837572;
-        int var2 = var1;
-        switch (var0) {
-            case 1:
-                break;
-            case 2:
-                var2 = 2130837598;
-                break;
-            case 3:
-                var2 = 2130837599;
-                break;
-            case 4:
-                var2 = 2130837600;
-                break;
-            case 5:
-                var2 = 2130837601;
-                break;
-            case 6:
-                var2 = 2130837602;
-                break;
-            case 7:
-                var2 = 2130837603;
-                break;
-            case 8:
-                var2 = 2130837604;
-                break;
-            case 9:
-                var2 = 2130837605;
-                break;
-            default:
-                var2 = var1;
-                if (var0 > 9) {
-                    var2 = 2130837606;
-                }
-        }
-
-        return var2;
-    }
-
-    public static Drawable getXMPPStatusIcon(int var0) {
-        Drawable var1;
-        switch (var0) {
+    /**
+     * @noinspection unused
+     */
+    public static Drawable getXMPPStatusIcon(int status) {
+        Drawable drawable;
+        switch (status) {
             case 0:
-                var1 = jabber_chat;
+                drawable = jabber_chat;
                 break;
             case 1:
-                var1 = jabber_online;
+                drawable = jabber_online;
                 break;
             case 2:
-                var1 = jabber_away;
+                drawable = jabber_away;
                 break;
             case 3:
-                var1 = jabber_dnd;
+                drawable = jabber_dnd;
                 break;
             case 4:
-                var1 = jabber_na;
+                drawable = jabber_na;
                 break;
             default:
-                var1 = jabber_offline;
+                drawable = jabber_offline;
         }
 
-        return var1;
+        return drawable;
     }
 
-    public static Drawable getXMPPStatusIconFull(JContact var0) {
-        Object var1 = null;
-        Drawable var2;
-        switch (var0.profile.type) {
+    /**
+     * @noinspection unused
+     */
+    public static Drawable getXMPPStatusIconFull(JContact jContact) {
+        Drawable drawable = null;
+
+        switch (jContact.profile.type) {
             case 0:
-                if (var0.conf_pm) {
-                    var2 = jabber_conf_pm;
-                } else if (var0.isOnline()) {
-                    switch (var0.getStatus()) {
+                if (jContact.conf_pm) {
+                    return jabber_conf_pm;
+                } else if (jContact.isOnline()) {
+                    switch (jContact.getStatus()) {
                         case 0:
-                            var2 = jabber_chat;
-                            return var2;
+                            drawable = jabber_chat;
+                            break;
                         case 1:
-                            var2 = jabber_online;
-                            return var2;
+                            drawable = jabber_online;
+                            break;
                         case 2:
-                            var2 = jabber_away;
-                            return var2;
+                            drawable = jabber_away;
+                            break;
                         case 3:
-                            var2 = jabber_dnd;
-                            return var2;
+                            drawable = jabber_dnd;
+                            break;
                         case 4:
-                            var2 = jabber_na;
-                            return var2;
-                        default:
-                            var2 = (Drawable)var1;
+                            drawable = jabber_na;
+                            break;
                     }
                 } else {
-                    var2 = jabber_offline;
+                    drawable = jabber_offline;
                 }
                 break;
             case 1:
-                if (var0.isOnline()) {
-                    var2 = vk_online;
-                } else {
-                    var2 = vk_offline;
-                }
+                drawable = jContact.isOnline() ? vk_online : vk_offline;
                 break;
             case 2:
-                if (var0.isOnline()) {
-                    var2 = yandex_online;
-                } else {
-                    var2 = yandex_offline;
-                }
+                drawable = jContact.isOnline() ? yandex_online : yandex_offline;
                 break;
             case 3:
-                if (var0.isOnline()) {
-                    var2 = gtalk_online;
-                } else {
-                    var2 = gtalk_offline;
-                }
+                drawable = jContact.isOnline() ? gtalk_online : gtalk_offline;
                 break;
             case 4:
-                if (var0.isOnline()) {
-                    var2 = qip_online;
-                } else {
-                    var2 = qip_offline;
-                }
+                drawable = jContact.isOnline() ? qip_online : qip_offline;
                 break;
-            default:
-                var2 = (Drawable)var1;
         }
 
-        return var2;
+        return drawable;
     }
 
     public static void initInternalGraphics() {
@@ -1541,7 +1481,7 @@ public class resources {
         }
 
         if (directory == null) {
-            directory = normalize(res.getDrawable(R.drawable.directory ));
+            directory = normalize(res.getDrawable(R.drawable.directory));
         }
 
         if (directory_up == null) {
@@ -1704,26 +1644,19 @@ public class resources {
     }
 
     public static boolean isTablet() {
-        boolean var0 = false;
-
-        double var4;
         try {
-            DisplayMetrics var1 = ctx.getResources().getDisplayMetrics();
-            float var2 = (float)(var1.widthPixels / var1.densityDpi);
-            float var3 = (float)(var1.heightPixels / var1.densityDpi);
-            var4 = Math.sqrt(Math.pow((double)var2, 2.0) + Math.pow((double)var3, 2.0));
-            StringBuilder var7 = new StringBuilder();
-            Log.e("ScreenSize", var7.append(var4).toString());
-        } catch (Throwable var6) {
-            Log.e("resources", "Failed to compute screen size", var6);
-            return var0;
-        }
+            DisplayMetrics displayMetrics = ctx.getResources().getDisplayMetrics();
+            float screenWidthInches = (float) displayMetrics.widthPixels / displayMetrics.densityDpi;
+            float screenHeightInches = (float) displayMetrics.heightPixels / displayMetrics.densityDpi;
+            double screenSizeInches = Math.sqrt(Math.pow(screenWidthInches, 2.0) + Math.pow(screenHeightInches, 2.0));
 
-        if (var4 >= 6.0) {
-            var0 = true;
-        }
+            Log.e("ScreenSize", String.valueOf(screenSizeInches));
 
-        return var0;
+            return screenSizeInches >= 6.0;
+        } catch (Throwable throwable) {
+            Log.e("resources", "Failed to compute screen size", throwable);
+            return false;
+        }
     }
 
     public static void loadGraphics() {
@@ -1977,7 +1910,7 @@ public class resources {
                 var34 = new StringBuilder(String.valueOf(JASMINE_SD_PATH));
                 var36 = new File(var34.append("Skin/check_on.png").toString());
                 var1 = new FileInputStream(var36);
-                check_on = BitmapFactory.decodeFileDescriptor(var1.getFD(), (Rect)null, var0);
+                check_on = BitmapFactory.decodeFileDescriptor(var1.getFD(), (Rect) null, var0);
                 var1.close();
             } catch (Exception var24) {
             }
@@ -1986,7 +1919,7 @@ public class resources {
                 var34 = new StringBuilder(String.valueOf(JASMINE_SD_PATH));
                 var36 = new File(var34.append("Skin/check_off.png").toString());
                 var1 = new FileInputStream(var36);
-                check_off = BitmapFactory.decodeFileDescriptor(var1.getFD(), (Rect)null, var0);
+                check_off = BitmapFactory.decodeFileDescriptor(var1.getFD(), (Rect) null, var0);
                 var1.close();
             } catch (Exception var23) {
             }
@@ -2172,25 +2105,25 @@ public class resources {
                 var33 = new FileInputStream(var32);
                 popup_back = BitmapFactory.decodeFileDescriptor(var33.getFD(), popup_back_padding, var0);
                 var33.close();
-            } catch (Exception var4) {
+            } catch (Exception ignored) {
             }
         }
 
     }
 
     public static Drawable mutateDrawableA(Drawable var0) {
-        Bitmap var2 = ((BitmapDrawable)var0).getBitmap();
+        Bitmap var2 = ((BitmapDrawable) var0).getBitmap();
         BitmapDrawable var1 = new BitmapDrawable(var2);
         var1.setBounds(0, 0, var2.getWidth(), var2.getHeight());
         return var1;
     }
 
-    public static Drawable normalize(Drawable var0) {
+    public static Drawable normalize(Drawable drawable) {
         ru.ivansuper.jasmin.BitmapDrawable var1;
-        if (var0 == null) {
+        if (drawable == null) {
             var1 = null;
         } else {
-            Bitmap var2 = ((BitmapDrawable)var0).getBitmap().copy(Config.ARGB_4444, false);
+            Bitmap var2 = ((BitmapDrawable) drawable).getBitmap().copy(Config.ARGB_4444, false);
             var2.setDensity(0);
             var1 = new ru.ivansuper.jasmin.BitmapDrawable(var2);
             var1.setBounds(0, 0, var1.getIntrinsicWidth(), var1.getIntrinsicHeight());
@@ -2199,36 +2132,46 @@ public class resources {
         return var1;
     }
 
-    public static Drawable normalizeIconDPIBased(Drawable var0) {
-        ru.ivansuper.jasmin.BitmapDrawable var2;
-        if (var0 == null) {
-            var2 = null;
-        } else {
-            Bitmap var1 = ((BitmapDrawable)var0).getBitmap();
-            Bitmap var3;
-            switch (ctx.getResources().getDisplayMetrics().densityDpi) {
-                case 120:
-                    var3 = Bitmap.createScaledBitmap(var1, 16, 16, true);
-                    break;
-                case 160:
-                    var3 = Bitmap.createScaledBitmap(var1, 24, 24, true);
-                    break;
-                case 240:
-                    var3 = Bitmap.createScaledBitmap(var1, 32, 32, true);
-                    break;
-                default:
-                    var3 = Bitmap.createScaledBitmap(var1, var0.getIntrinsicWidth(), var0.getIntrinsicHeight(), true);
-            }
-
-            var3 = var3.copy(Config.ARGB_4444, false);
-            var3.setDensity(0);
-            var2 = new ru.ivansuper.jasmin.BitmapDrawable(ctx.getResources(), var3);
-            var2.setBounds(0, 0, var2.getIntrinsicWidth(), var2.getIntrinsicHeight());
+    /**
+     * @noinspection unused
+     */
+    public static Drawable normalizeIconDPIBased(Drawable drawable) {
+        //noinspection ConditionCoveredByFurtherCondition
+        if (drawable == null || !(drawable instanceof BitmapDrawable)) {
+            return drawable;
         }
 
-        return var2;
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+        Bitmap bitmap = bitmapDrawable.getBitmap();
+        int densityDpi = ctx.getResources().getDisplayMetrics().densityDpi;
+        int targetSize = getTargetSizeForDensity(densityDpi);
+
+        Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, targetSize, targetSize, true);
+        scaledBitmap = scaledBitmap.copy(Bitmap.Config.ARGB_4444, false);
+        scaledBitmap.setDensity(0);
+
+        BitmapDrawable normalizedDrawable = new BitmapDrawable(ctx.getResources(), scaledBitmap);
+        normalizedDrawable.setBounds(0, 0, normalizedDrawable.getIntrinsicWidth(), normalizedDrawable.getIntrinsicHeight());
+
+        return normalizedDrawable;
     }
 
+    private static int getTargetSizeForDensity(int densityDpi) {
+        switch (densityDpi) {
+            case DisplayMetrics.DENSITY_LOW:
+                return 16;
+            case DisplayMetrics.DENSITY_MEDIUM:
+                return 24;
+            case DisplayMetrics.DENSITY_HIGH:
+                return 32;
+            default:
+                return -1; // Use the original size for other densities
+        }
+    }
+
+    /**
+     * @noinspection unused
+     */
     public static void prerareInterface() {
         if (!PreferenceManager.getDefaultSharedPreferences(ctx).getBoolean("skin_loaded", false) && sd_mounted()) {
             if (dm.widthPixels < 400) {
@@ -2272,136 +2215,89 @@ public class resources {
 
     @SuppressLint("WrongConstant")
     public static void putContext(Context var0) {
-        boolean var1 = false;
-        if (ctx == null) {
-            DEVICE_HEAP_SIZE = Runtime.getRuntime().maxMemory() / 1024L / 1024L;
-            DEVICE_HEAP_USED_SIZE = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1024L / 1024L;
-            ctx = var0;
-            IT_IS_TABLET = isTablet();
-            ApplicationInfo var13 = null;
-
-            ApplicationInfo var2;
-            label83: {
-                try {
-                    var2 = ctx.getPackageManager().getApplicationInfo("ru.ivansuper.jasmindonate", 128);
-                } catch (PackageManager.NameNotFoundException var12) {
-                    break label83;
-                }
-
-                var13 = var2;
-            }
-
-            boolean var3 = false;
-            boolean var4 = false;
-            if (var13 != null) {
-                var3 = true;
-            }
-
-            var13 = null;
-
-            label76: {
-                try {
-                    var2 = ctx.getPackageManager().getApplicationInfo("ru.ivansuper.jasmindonatesmall", 128);
-                } catch (PackageManager.NameNotFoundException var11) {
-                    break label76;
-                }
-
-                var13 = var2;
-            }
-
-            if (var13 != null) {
-                var4 = true;
-            }
-
-            if (var3 || var4) {
-                var1 = true;
-            }
-
-            DONATE_INSTALLED = var1;
-
-            try {
-                VERSION = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName;
-            } catch (Exception var10) {
-                var10.printStackTrace();
-            }
-
-            try {
-                StringBuilder var14 = new StringBuilder(String.valueOf(ctx.getPackageManager().getApplicationInfo(ctx.getPackageName(), 0).dataDir));
-                dataPath = var14.append("/").toString();
-            } catch (PackageManager.NameNotFoundException var9) {
-                var9.printStackTrace();
-            }
-
-            am = ctx.getAssets();
-            Locale.prepare();
-            OS_VERSION = Integer.parseInt(android.os.Build.VERSION.SDK);
-            SD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
-            JASMINE_SD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Jasmine/";
-            JASMINE_INCOMING_FILES_PATH = JASMINE_SD_PATH + "RcvdFiles/";
-            JASMINE_JHA_PATH = JASMINE_SD_PATH + "Jasmine History Archive/";
-            JASMINE_SKIN_PATH = JASMINE_SD_PATH + "Skin/";
-            JASMINE = ctx.getPackageManager();
-            OS_VERSION_STR = android.os.Build.VERSION.RELEASE;
-            DEVICE_STR = utilities.compute(Build.BRAND, Build.MODEL);
-            SOFTWARE_STR = Build.ID;
-
-            File var15;
-            try {
-                var15 = new File(JASMINE_INCOMING_FILES_PATH);
-                if (!var15.exists()) {
-                    var15.mkdirs();
-                }
-            } catch (Exception var8) {
-                var8.printStackTrace();
-            }
-
-            try {
-                var15 = new File(JASMINE_SD_PATH);
-                if (!var15.exists()) {
-                    var15.mkdirs();
-                }
-            } catch (Exception var7) {
-                var7.printStackTrace();
-            }
-
-            try {
-                var15 = new File(JASMINE_JHA_PATH);
-                if (!var15.exists()) {
-                    var15.mkdirs();
-                }
-            } catch (Exception var6) {
-                var6.printStackTrace();
-            }
-
-            try {
-                var15 = new File(JASMINE_SKIN_PATH);
-                if (!var15.exists()) {
-                    var15.mkdirs();
-                }
-            } catch (Exception var5) {
-                var5.printStackTrace();
-            }
-
-            res = ctx.getResources();
-            loadGraphics();
-            initInternalGraphics();
-            res = null;
-            System.gc();
+        if (ctx != null) {
+            return;
         }
 
+        DEVICE_HEAP_SIZE = Runtime.getRuntime().maxMemory() / (1024L * 1024L);
+        DEVICE_HEAP_USED_SIZE = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / (1024L * 1024L);
+        ctx = var0;
+        IT_IS_TABLET = isTablet();
+
+        ApplicationInfo donateAppInfo = null;
+        boolean donateInstalled = false;
+
+        try {
+            donateAppInfo = ctx.getPackageManager().getApplicationInfo("ru.ivansuper.jasmindonate", 128);
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+
+        try {
+            ApplicationInfo donateSmallAppInfo = ctx.getPackageManager().getApplicationInfo("ru.ivansuper.jasmindonatesmall", 128);
+            //noinspection ConstantValue
+            if (donateSmallAppInfo != null) {
+                donateInstalled = true;
+            }
+        } catch (PackageManager.NameNotFoundException ignored) {
+        }
+
+        DONATE_INSTALLED = donateAppInfo != null || donateInstalled;
+
+        try {
+            VERSION = ctx.getPackageManager().getPackageInfo(ctx.getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            File dataDir = new File(ctx.getPackageManager().getApplicationInfo(ctx.getPackageName(), 0).dataDir);
+            dataPath = dataDir.getAbsolutePath() + "/";
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        am = ctx.getAssets();
+        Locale.prepare();
+        OS_VERSION = Integer.parseInt(android.os.Build.VERSION.SDK);
+        SD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+        JASMINE_SD_PATH = SD_PATH + "/Jasmine/";
+        JASMINE_INCOMING_FILES_PATH = JASMINE_SD_PATH + "RcvdFiles/";
+        JASMINE_JHA_PATH = JASMINE_SD_PATH + "Jasmine History Archive/";
+        JASMINE_SKIN_PATH = JASMINE_SD_PATH + "Skin/";
+        JASMINE = ctx.getPackageManager();
+        OS_VERSION_STR = android.os.Build.VERSION.RELEASE;
+        DEVICE_STR = utilities.compute(Build.BRAND, Build.MODEL);
+        SOFTWARE_STR = Build.ID;
+
+        createDirectories(JASMINE_INCOMING_FILES_PATH, JASMINE_SD_PATH, JASMINE_JHA_PATH, JASMINE_SKIN_PATH);
+
+        res = ctx.getResources();
+        loadGraphics();
+        initInternalGraphics();
+        res = null;
+        System.gc();
+    }
+
+    private static void createDirectories(String... paths) {
+        for (String path : paths) {
+            try {
+                File directory = new File(path);
+                if (!directory.exists()) {
+                    directory.mkdirs();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public static boolean sd_mounted() {
-        boolean var0;
-        if (Environment.getExternalStorageState().equals("mounted")) {
-            var0 = true;
-        } else {
-            var0 = false;
-        }
-
-        return var0;
+        return Environment.getExternalStorageState().equals("mounted");
     }
 
+    /**
+     * @noinspection RedundantThrows
+     */
     protected void finalize() throws Throwable {
         throw new RuntimeException("Canceling finalization of resources class");
     }
