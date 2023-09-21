@@ -1,9 +1,12 @@
 package ru.ivansuper.jasmin;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -26,6 +29,8 @@ public class main extends Activity implements Handler.Callback {
     private jasminSvc service;
     private LinearLayout splash;
     private ServiceConnection svcc;
+
+    int MY_PERMISSIONS_REQUEST_FOREGROUND_SERVICE = 112;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,25 @@ public class main extends Activity implements Handler.Callback {
             @Override
             public void onServiceDisconnected(ComponentName arg0) {}
         };
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            if (checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE)
+                    != PackageManager.PERMISSION_GRANTED) {
+                // Запрос разрешения у пользователя
+                requestPermissions(
+                        new String[]{Manifest.permission.FOREGROUND_SERVICE},
+                        MY_PERMISSIONS_REQUEST_FOREGROUND_SERVICE);
+                // После ответа пользователя результат будет обработан в onRequestPermissionsResult
+                return;
+            }
+        } else {
+            startJasmineService();
+        }
+
+
+    }
+
+    private void startJasmineService() {
         Intent svc = new Intent();
         svc.setClass(getApplicationContext(), jasminSvc.class);
         startService(svc);
@@ -145,5 +169,13 @@ public class main extends Activity implements Handler.Callback {
 
     protected void finalize() {
         Log.e("Main", "Class 0x" + Integer.toHexString(hashCode()) + " finalized");
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        startJasmineService();
+
     }
 }

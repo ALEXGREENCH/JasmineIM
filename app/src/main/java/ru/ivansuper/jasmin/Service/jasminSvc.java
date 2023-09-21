@@ -1,5 +1,6 @@
 package ru.ivansuper.jasmin.Service;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlarmManager;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -306,9 +308,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
         Notification notification = getNotification(R.drawable.not_connected);
 
-        if (notification != null) {
-            startForeground(65331, notification);
-        }
+        startForeground(65331, notification);
     }
 
     @TargetApi(Build.VERSION_CODES.O)
