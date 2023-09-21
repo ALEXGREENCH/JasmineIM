@@ -104,6 +104,7 @@ public class main extends Activity implements Handler.Callback {
                 Process.setThreadPriority(-10);
                 service.firstStart = false;
                 hdl.sendEmptyMessage(1);
+                /*
                 int zzs = Math.abs(3748);
                 int av = 502 + zzs;
                 String aas = String.valueOf(av) + av;
@@ -115,7 +116,10 @@ public class main extends Activity implements Handler.Callback {
                 String aaf = String.valueOf(av2) + av2;
                 //noinspection unused
                 int zze = av2 + aaf.hashCode();
-                SmileysManager.preloadPack(a, b);
+                 */
+                // TODO: :)
+                //SmileysManager.preloadPack(a, b);
+                SmileysManager.preloadPack();
                 prepareProfiles();
             }
             hdl.sendEmptyMessage(0);

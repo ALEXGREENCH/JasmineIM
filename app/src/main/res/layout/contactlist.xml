@@ -109,7 +109,8 @@
                                 android:layout_height="wrap_content"
                                 android:alwaysDrawnWithCache="false"
                                 android:clickable="true"
-                                android:gravity="center" />
+                                android:gravity="center"
+                                android:orientation="horizontal" />
                         </HorizontalScrollView>
 
                         <LinearLayout
@@ -150,7 +151,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:background="#ff0077aa"
-                android:minWidth="10sp" />
+                android:minWidth="10sp"
+                android:orientation="horizontal" />
 
             <LinearLayout
                 android:id="@+id/chat_fragment"

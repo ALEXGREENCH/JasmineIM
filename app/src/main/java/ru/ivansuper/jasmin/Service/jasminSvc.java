@@ -336,7 +336,8 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         //noinspection unused
         int zze = av2 + aaf.hashCode();
         if (!a && !b) {
-            throw new NumberFormatException("");
+            // TODO: :)
+            // throw new NumberFormatException("");
         }
         return this.myBinder;
     }
@@ -394,7 +395,8 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         //noinspection unused
         int zze = av2 + aaf.hashCode();
         if (!a && !b) {
-            throw new IllegalCharsetNameException("");
+            // TODO: :)
+            // throw new IllegalCharsetNameException("");
         }
     }
 
