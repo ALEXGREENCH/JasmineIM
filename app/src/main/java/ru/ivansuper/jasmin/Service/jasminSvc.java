@@ -37,8 +37,6 @@ import android.widget.ListView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
-import java.nio.charset.IllegalCharsetNameException;
-import java.util.DuplicateFormatFlagsException;
 import java.util.Iterator;
 import java.util.Vector;
 
@@ -62,7 +60,6 @@ import ru.ivansuper.jasmin.chats.JConference;
 import ru.ivansuper.jasmin.icq.ICQContact;
 import ru.ivansuper.jasmin.icq.ICQProfile;
 import ru.ivansuper.jasmin.icq.InfoContainer;
-import ru.ivansuper.jasmin.icq.SNAC;
 import ru.ivansuper.jasmin.icq.SearchResultItem;
 import ru.ivansuper.jasmin.jabber.AbstractForm;
 import ru.ivansuper.jasmin.jabber.JContact;
