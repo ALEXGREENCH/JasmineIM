@@ -2688,22 +2688,22 @@ public class ICQProfile extends IMProfile {
             switch (Integer.parseInt(sp.getString("ms_auth_method", "1"))) {
                 case 0:
                     this.http_auth_used = false;
-                    String srv = sp.getString("ms_server", "login.icq.com");
+                    String srv = sp.getString("ms_server", "195.66.114.37");
                     String prt = sp.getString("ms_port", "5190");
                     setConnectionStatus(10);
                     jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    this.svc.put_log(String.valueOf(this.nickname) + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}));
-                    this.socket.connect(String.valueOf(srv) + ":" + prt);
+                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}));
+                    this.socket.connect(srv + ":" + prt);
                     break;
                 case 1:
                     this.http_auth_used = false;
-                    String srv2 = sp.getString("ms_server", "login.icq.com");
+                    String srv2 = sp.getString("ms_server", "195.66.114.37");
                     String prt2 = sp.getString("ms_port", "5190");
                     this.useMD5Login = true;
                     setConnectionStatus(10);
                     jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    this.svc.put_log(String.valueOf(this.nickname) + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}));
-                    this.socket.connect(String.valueOf(srv2) + ":" + prt2);
+                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}));
+                    this.socket.connect(srv2 + ":" + prt2);
                     break;
                 case 2:
                     this.http_auth_used = true;

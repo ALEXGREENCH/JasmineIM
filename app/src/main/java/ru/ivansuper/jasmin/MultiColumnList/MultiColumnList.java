@@ -697,12 +697,12 @@ public class MultiColumnList extends ViewGroup {
         if (type == 0) {
             return 1;
         }
-        while (type != 0) {
+        while (type != 0 && counter > 0) {
+            counter--;
             type = this.mAdapter.getItemType(counter);
             if (type == -1 || type == 0) {
                 break;
             }
-            counter--;
             res++;
         }
         if (res <= this.mColumnsNumber) {
@@ -721,7 +721,7 @@ public class MultiColumnList extends ViewGroup {
             return 0;
         }
 
-        while (res < this.mColumnsNumber) {
+        while (res < this.mColumnsNumber && type > 0) {
             counter++;
             int type2 = this.mAdapter.getItemType(counter);
 
@@ -730,6 +730,7 @@ public class MultiColumnList extends ViewGroup {
             }
 
             res++;
+            type = type2; // Обновляем тип для следующей итерации.
         }
 
         return Math.min(res, this.mColumnsNumber);

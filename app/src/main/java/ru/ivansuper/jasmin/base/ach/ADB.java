@@ -6,6 +6,7 @@ import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Vector;
 import ru.ivansuper.jasmin.ISDialog;
@@ -149,243 +150,107 @@ public class ADB {
     }
 
     public static final int getActivatedCount() {
-        synchronized(ADB.class){}
-        int var0 = 0;
+        synchronized (ADB.class) {
+            int count = 0;
 
-        Throwable var10000;
-        label143: {
-            Iterator var1;
-            boolean var10001;
-            try {
-                var1 = list.iterator();
-            } catch (Throwable var15) {
-                var10000 = var15;
-                var10001 = false;
-                break label143;
+            for (Item item : list) {
+                if (item.activated) {
+                    count++;
+                }
             }
 
-            while(true) {
-                boolean var2;
-                try {
-                    var2 = var1.hasNext();
-                } catch (Throwable var14) {
-                    var10000 = var14;
-                    var10001 = false;
-                    break;
-                }
-
-                if (!var2) {
-                    return var0;
-                }
-
-                try {
-                    var2 = ((Item)var1.next()).activated;
-                } catch (Throwable var13) {
-                    var10000 = var13;
-                    var10001 = false;
-                    break;
-                }
-
-                byte var3;
-                if (var2) {
-                    var3 = 1;
-                } else {
-                    var3 = 0;
-                }
-
-                var0 += var3;
-            }
-        }
-
-        Throwable var16 = var10000;
-        try {
-            throw var16;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
+            return count;
         }
     }
 
     public static final Vector<Item> getAll() {
-        synchronized(ADB.class){}
-
-        Vector var0;
-        try {
-            var0 = (Vector)list.clone();
-        } finally {
-            ;
+        synchronized (ADB.class) {
+            return new Vector<>(list);
         }
-
-        return var0;
     }
+
 
     public static final void init() {
         fill();
-        File var0 = new File(resources.dataPath + "achs.adb");
-        if (!var0.exists()) {
+        File achsFile = new File(resources.dataPath + "achs.adb");
+        if (!achsFile.exists()) {
             try {
-                var0.createNewFile();
-                save(var0);
-            } catch (Exception var2) {
+                achsFile.createNewFile();
+                save(achsFile);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         } else {
             try {
-                load(var0);
-            } catch (Exception var1) {
+                load(achsFile);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }
-
     }
 
-    private static final void load(File var0) throws Exception {
-        DataInputStream var1 = new DataInputStream(new FileInputStream(var0));
+    private static final void load(File achsFile) throws IOException {
+        DataInputStream dataInputStream = new DataInputStream(new FileInputStream(achsFile));
 
-        while(var1.available() > 0) {
-            setActivationState(var1.readInt(), var1.readBoolean());
+        while (dataInputStream.available() > 0) {
+            setActivationState(dataInputStream.readInt(), dataInputStream.readBoolean());
         }
 
+        dataInputStream.close();
     }
 
-    public static final void proceedMessage(String var0) {
-        countDevils(var0);
-        countBadWords(var0);
+    public static final void proceedMessage(String message) {
+        countDevils(message);
+        countBadWords(message);
     }
 
     public static final void save() {
         try {
-            StringBuilder var1 = new StringBuilder(String.valueOf(resources.dataPath));
-            File var0 = new File(var1.append("achs.adb").toString());
-            save(var0);
-        } catch (Exception var2) {
+            File achsFile = new File(resources.dataPath + "achs.adb");
+            save(achsFile);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
     }
 
-    private static final void save(File var0) throws Exception {
-        DataOutputStream var1 = new DataOutputStream(new FileOutputStream(var0));
-        Iterator var2 = list.iterator();
-
-        while(var2.hasNext()) {
-            Item var3 = (Item)var2.next();
-            var1.writeInt(var3.id);
-            var1.writeBoolean(var3.activated);
-        }
-
-    }
-
-    public static final void setActivated(int var0) {
-        synchronized(ADB.class){}
-
-        label133: {
-            Throwable var10000;
-            label132: {
-                Iterator var1;
-                boolean var10001;
-                try {
-                    var1 = list.iterator();
-                } catch (Throwable var15) {
-                    var10000 = var15;
-                    var10001 = false;
-                    break label132;
+    public static void save(File file) throws IOException {
+        synchronized (list) {
+            try (DataOutputStream outputStream = new DataOutputStream(new FileOutputStream(file))) {
+                for (Item item : list) {
+                    outputStream.writeInt(item.id);
+                    outputStream.writeBoolean(item.activated);
                 }
-
-                while(true) {
-                    boolean var2;
-                    try {
-                        var2 = var1.hasNext();
-                    } catch (Throwable var14) {
-                        var10000 = var14;
-                        var10001 = false;
-                        break;
-                    }
-
-                    if (!var2) {
-                        break label133;
-                    }
-
-                    try {
-                        Item var3 = (Item)var1.next();
-                        if (var3.id == var0 && !var3.activated) {
-                            ISDialog.showAch(var3.icon, var3.desc);
-                            var3.activated = true;
-                            save();
-                            break label133;
-                        }
-                    } catch (Throwable var13) {
-                        var10000 = var13;
-                        var10001 = false;
-                        break;
-                    }
-                }
-            }
-
-            Throwable var16 = var10000;
-            try {
-                throw var16;
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
             }
         }
-
     }
 
-    private static final void setActivationState(int var0, boolean var1) {
-        synchronized(ADB.class){}
-
-        label125: {
-            Throwable var10000;
-            label124: {
-                boolean var10001;
-                Iterator var2;
-                try {
-                    var2 = list.iterator();
-                } catch (Throwable var16) {
-                    var10000 = var16;
-                    var10001 = false;
-                    break label124;
+    public static void setActivated(int id) {
+        synchronized (list) {
+            for (Item item : list) {
+                if (item.id == id && !item.activated) {
+                    ISDialog.showAch(item.icon, item.desc);
+                    item.activated = true;
+                    save();
+                    return;
                 }
-
-                while(true) {
-                    boolean var3;
-                    try {
-                        var3 = var2.hasNext();
-                    } catch (Throwable var15) {
-                        var10000 = var15;
-                        var10001 = false;
-                        break;
-                    }
-
-                    if (!var3) {
-                        break label125;
-                    }
-
-                    try {
-                        Item var4 = (Item)var2.next();
-                        if (var4.id == var0) {
-                            var4.activated = var1;
-                            break label125;
-                        }
-                    } catch (Throwable var14) {
-                        var10000 = var14;
-                        var10001 = false;
-                        break;
-                    }
-                }
-            }
-
-            Throwable var17 = var10000;
-            try {
-                throw var17;
-            } catch (Throwable e) {
-                throw new RuntimeException(e);
             }
         }
-
     }
 
-    public static final void startOnlineCounter() {
-        synchronized(ADB.class){}
 
-        try {
+    private static void setActivationState(int id, boolean activated) {
+        synchronized (list) {
+            for (Item item : list) {
+                if (item.id == id) {
+                    item.activated = activated;
+                    return;
+                }
+            }
+        }
+    }
+
+    public static void startOnlineCounter() {
+        synchronized (ADB.class) {
             if (online_counter != null) {
                 online_counter.active = false;
             }
@@ -393,37 +258,29 @@ public class ADB {
             online_counter = new OnlineCounter();
             online_counter.setPriority(1);
             online_counter.start();
-        } finally {
-            ;
         }
-
     }
 
-    public static final void stopOnlineCounter() {
-        synchronized(ADB.class){}
-
-        try {
+    public static void stopOnlineCounter() {
+        synchronized (ADB.class) {
             if (online_counter != null) {
                 online_counter.active = false;
             }
-        } finally {
-            ;
         }
-
     }
 
-    public static final void symbolTyped() {
-        long var0 = System.currentTimeMillis();
-        if (var0 - last_symbol_timestamp > 200L) {
+    public static void symbolTyped() {
+        long currentTime = System.currentTimeMillis();
+        if (currentTime - last_symbol_timestamp > 200L) {
             typed_symbols = 1;
         } else {
-            ++typed_symbols;
+            typed_symbols++;
             if (typed_symbols >= 50) {
                 setActivated(3);
             }
         }
 
-        last_symbol_timestamp = var0;
+        last_symbol_timestamp = currentTime;
     }
 
     public static class Item {
@@ -442,7 +299,7 @@ public class ADB {
     }
 
     private static class OnlineCounter extends Thread {
-        public boolean active;
+        private volatile boolean active;
         private long stamp;
 
         private OnlineCounter() {
@@ -450,19 +307,19 @@ public class ADB {
             this.stamp = System.currentTimeMillis();
         }
 
+        @Override
         public void run() {
-            while(this.active) {
+            while (this.active) {
                 try {
-                    sleep(1000L);
+                    Thread.sleep(1000L);
                     if ((System.currentTimeMillis() - this.stamp) / 1000L >= 259200L) {
                         ADB.setActivated(5);
                         this.active = false;
                     }
-                } catch (InterruptedException var2) {
-                    var2.printStackTrace();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
                 }
             }
-
         }
     }
 }

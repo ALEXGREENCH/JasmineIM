@@ -8,9 +8,12 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.text.Editable;
@@ -324,27 +327,42 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void copyDumpsToSD() {
-        byte[] buffer = new byte[16384];
-        File data_dir = new File(resources.dataPath);
-        FilenameFilter filter = (dir, filename) -> filename.endsWith(".st");
-        File[] dumps = data_dir.listFiles(filter);
-        assert dumps != null;
-        for (File dump : dumps) {
-            try {
-                File out = new File(resources.JASMINE_SD_PATH + "/" + dump.getName());
-                FileOutputStream fos = new FileOutputStream(out);
-                FileInputStream fis = new FileInputStream(dump);
-                while (fis.available() > 0) {
-                    int readed = fis.read(buffer, 0, 16384);
-                    fos.write(buffer, 0, readed);
+        new CopyFilesTask().execute();
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    private static class CopyFilesTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            byte[] buffer = new byte[16384];
+            File data_dir = new File(resources.dataPath);
+            FilenameFilter filter = (dir, filename) -> filename.endsWith(".st");
+            File[] dumps = data_dir.listFiles(filter);
+            assert dumps != null;
+            for (File dump : dumps) {
+                try {
+                    File out = new File(resources.JASMINE_SD_PATH + "/" + dump.getName());
+                    FileOutputStream fos = new FileOutputStream(out);
+                    FileInputStream fis = new FileInputStream(dump);
+                    while (fis.available() > 0) {
+                        int readed = fis.read(buffer, 0, 16384);
+                        fos.write(buffer, 0, readed);
+                    }
+                    fos.close();
+                    fis.close();
+                    //noinspection ResultOfMethodCallIgnored
+                    dump.delete();
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
-                fos.close();
-                fis.close();
-            } catch (Exception e) {
-                e.printStackTrace();
             }
-            //noinspection ResultOfMethodCallIgnored
-            dump.delete();
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+
         }
     }
 
@@ -2114,7 +2132,10 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         this.contactlist.setOnItemLongClickListener(l2);
         createContactlistFromProfiles();
         otherInit();
-        service.cancelMultiloginNotify();
+        if (service != null) {
+            service.cancelMultiloginNotify();
+
+        }
     }
 
     private void initConferencesScreen() {
@@ -2181,22 +2202,27 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void checkConnectionPanelVisibility() {
-        boolean visible = false;
-        int count = connectionStatusPanel.getChildCount();
-        int i = 0;
-        while (true) {
-            if (i >= count) {
-                break;
+        new Thread(() -> {
+            boolean visible = false;
+            int count = connectionStatusPanel.getChildCount();
+            int i = 0;
+            while (true) {
+                if (i >= count) {
+                    break;
+                }
+                View v = connectionStatusPanel.getChildAt(i);
+                if (v.getVisibility() != View.VISIBLE) {
+                    i++;
+                } else {
+                    visible = true;
+                    break;
+                }
             }
-            View v = connectionStatusPanel.getChildAt(i);
-            if (v.getVisibility() != View.VISIBLE) {
-                i++;
-            } else {
-                visible = true;
-                break;
-            }
-        }
-        connectionStatusPanel.setVisibility(visible ? View.VISIBLE : View.GONE);
+
+            final boolean finalVisible = visible;
+
+            runOnUiThread(() -> connectionStatusPanel.setVisibility(finalVisible ? View.VISIBLE : View.GONE));
+        }).start();
     }
 
     private void updateBottomPanel() {
@@ -4009,4 +4035,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             service.handleContactlistNeedRemake();
         }
     }
+
+
 }

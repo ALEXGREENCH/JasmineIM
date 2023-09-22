@@ -34,7 +34,7 @@
 <boolean name="ms_log_xtraz_reading" value="true" />
 <boolean name="ms_typing_notify" value="true" />
 <string name="ms_vibro_length">500</string>
-<string name="ms_server">login.icq.com</string>
+<string name="ms_server">195.66.114.37</string>
 <boolean name="ms_use_history" value="true" />
 <string name="ms_auth_method">1</string>
 <int name="ms_cl_transition_effect" value="3" />
