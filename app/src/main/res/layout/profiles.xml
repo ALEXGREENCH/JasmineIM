@@ -28,21 +28,24 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:gravity="center_horizontal">
         <TextView
             android:id="@+id/l2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
+            android:layout_weight="1"
             android:text="Для добавления нового профиля нажмите кнопку Меню"/>
 
         <ImageView
             android:id="@+id/ic_menu"
-            android:layout_width="48dp"
+            android:layout_width="36dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:padding="4dp"
-            android:src="@android:drawable/ic_menu_preferences"/>
+            android:layout_weight="0.5"
+            android:src="@drawable/contactlist_chat_divider"/>
     </LinearLayout>
 
 </LinearLayout>

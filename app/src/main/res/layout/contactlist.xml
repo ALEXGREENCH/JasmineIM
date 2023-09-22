@@ -35,7 +35,13 @@
                         android:focusable="true"
                         android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
                         android:scrollbarTrackVertical="@drawable/scrollbar_track"
-                        android:scrollbars="vertical" />
+                        android:scrollbars="vertical" >
+
+                        <ru.ivansuper.jasmin.ConfigListenerView
+                            android:id="@+id/config_listener"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent" />
+                    </ru.ivansuper.jasmin.slide_tools.SlideSwitcher>
 
                     <LinearLayout
                         android:id="@+id/profiles_connection_bars"
@@ -144,11 +150,11 @@
 
                             <ImageView
                                 android:id="@+id/toggle_menu"
-                                android:layout_width="wrap_content"
+                                android:layout_width="30dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
                                 android:padding="5sp"
-                                android:src="@drawable/toggle_menu" />
+                                android:src="@drawable/contactlist_chat_divider" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -177,9 +183,5 @@
             </LinearLayout>
         </LinearLayout>
 
-        <ru.ivansuper.jasmin.ConfigListenerView
-            android:id="@+id/config_listener"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
     </FrameLayout>
 </LinearLayout>

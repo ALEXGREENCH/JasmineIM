@@ -515,14 +515,14 @@ public class resources {
         return attachEditTextInternal(editText);
     }
 
-    private static boolean attachEditTextInternal(EditText var0) {
+    private static boolean attachEditTextInternal(EditText editText) {
         int var1 = ColorScheme.getColor(46);
         int var2 = Color.alpha(var1);
         int var3 = Color.red(var1);
         int var4 = Color.green(var1);
         int var5 = Color.blue(var1);
-        var0.setTextColor(var1);
-        var0.setShadowLayer(1.0F, 0.0F, 0.0F, Color.argb(var2 / 5, var3, var4, var5));
+        editText.setTextColor(var1);
+        editText.setShadowLayer(1.0F, 0.0F, 0.0F, Color.argb(var2 / 5, var3, var4, var5));
         boolean var6;
         if (edt_normal == null) {
             var6 = false;
@@ -572,7 +572,7 @@ public class resources {
 
             var8 = new NinePatchDrawable(ctx.getResources(), edt_disabled_focused, edt_disabled_focused.getNinePatchChunk(), edt_disabled_focused_padding, null);
             var7.addState(new int[]{16842908}, var8);
-            var0.setBackgroundDrawable(var7);
+            editText.setBackgroundDrawable(var7);
             var6 = true;
         }
 
