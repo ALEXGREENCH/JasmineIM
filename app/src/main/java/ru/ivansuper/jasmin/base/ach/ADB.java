@@ -189,7 +189,7 @@ public class ADB {
         }
     }
 
-    private static final void load(File achsFile) throws IOException {
+    private static void load(File achsFile) throws IOException {
         DataInputStream dataInputStream = new DataInputStream(new FileInputStream(achsFile));
 
         while (dataInputStream.available() > 0) {
