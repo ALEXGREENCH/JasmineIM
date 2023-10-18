@@ -199,6 +199,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     @SuppressLint("ApplySharedPref")
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        this.IT_IS_PORTRAIT = true;
         boolean z = true;
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
@@ -225,9 +226,8 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         service = resources.service;
         dialogs = new Vector<>();
         if (getResources().getConfiguration().orientation != 1) {
-            z = false;
+            IT_IS_PORTRAIT = false;
         }
-        this.IT_IS_PORTRAIT = z;
         initViews();
         updateUI();
         sp.registerOnSharedPreferenceChangeListener(this);
@@ -524,9 +524,41 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         }
     }
 
+    @SuppressLint("ResourceType")
     private void handleSearchKey() {
-        // Обработка события, связанного с клавишей поиска
-        // Ваша логика здесь
+        if (CURRENT_IS_CONTACTS) {
+            if (BOTTOM_PANEL_VISIBLED) {
+                BOTTOM_PANEL_VISIBLED = false;
+                TranslateAnimation t = new TranslateAnimation(1, 0.0f, 1, 0.0f, 1, 0.0f, 1, 1.0f);
+                t.setInterpolator(resources.ctx, 17432582);
+                t.setDuration(250L);
+                t.setAnimationListener(new Animation.AnimationListener() {
+                    @Override
+                    public void onAnimationEnd(Animation animation) {
+                        ContactListActivity.BOTTOM_PANEL.setVisibility(View.GONE);
+                    }
+
+                    @Override
+                    public void onAnimationRepeat(Animation animation) {
+
+                    }
+
+                    @Override
+                    public void onAnimationStart(Animation animation) {
+
+                    }
+                });
+                BOTTOM_PANEL.startAnimation(t);
+            } else {
+                BOTTOM_PANEL_VISIBLED = true;
+                BOTTOM_PANEL.setVisibility(View.VISIBLE);
+                TranslateAnimation t2 = new TranslateAnimation(1, 0.0f, 1, 0.0f, 1, 1.0f, 1, 0.0f);
+                t2.setInterpolator(resources.ctx, 17432582);
+                t2.setDuration(250L);
+                BOTTOM_PANEL.startAnimation(t2);
+            }
+        }
+
     }
 
     private void handleWindowKey() {
@@ -654,17 +686,19 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             opts.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
             if (opts.outWidth <= 64 && opts.outHeight <= 64) {
-                // TODO: ...
+                // TODO: ?
                 //if (0 != 0) {
-                //    Toast.makeText(this, resources.getString("s_avatar_size_too_big"), 1).show();
+                //    Toast.makeText(this, resources.getString("s_avatar_size_too_big"), Toast.LENGTH_LONG).show();
                 //} else {
-                contextProfile.doChangeAvatar(file);
+                    contextProfile.doChangeAvatar(file);
                 //}
                 return;
             }
+            return;
         }
         Toast.makeText(this, resources.getString("s_avatar_file_too_big"), Toast.LENGTH_LONG).show();
     }
+
 
     private void uploadJabberAvatar(File file) {
         Dialog progress = DialogBuilder.createProgress(this, Locale.getString("s_please_wait"), true);
@@ -1917,20 +1951,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 }, v -> removeDialog(48));
                 break;
         }
-        //boolean a = SNAC.sts.startsWith(utilities.randomized);
-        //int zzs = Math.abs(45456);
-        //int av = 5765467 + zzs;
-        //String aas = String.valueOf(av) + av;
-        //int zzd = av + aas.hashCode();
-        //boolean b = SNAC.sts.startsWith(utilities.randomized2);
-        //int zzs2 = Math.abs(zzd);
-        //int av2 = 45463 + zzs2;
-        //String aaf = String.valueOf(av2) + av2;
-        //noinspection unused
-        //int zze = av2 + aaf.hashCode();
-        //if (!a && !b) {
-        //    throw new ArrayIndexOutOfBoundsException("");
-        //}
         last_shown_notify_dialog = ad;
         if (last_shown_notify_dialog != null) {
             last_shown_notify_dialog.setOnDismissListener(arg0 -> checkForBufferedDialogs());

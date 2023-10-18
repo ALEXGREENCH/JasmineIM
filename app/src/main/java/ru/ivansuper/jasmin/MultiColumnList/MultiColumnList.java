@@ -27,7 +27,6 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.resources;
 
-/* loaded from: classes.dex */
 public class MultiColumnList extends ViewGroup {
     public static final int LONG_CLICK_TIMEOUT = 500;
     private static int OVERSCROLL_EFFECT_AMOUNT = 192;
@@ -117,7 +116,7 @@ public class MultiColumnList extends ViewGroup {
         initView(context, attrs);
     }
 
-    private final void initView(Context context, TypedArray attrs) {
+    private void initView(Context context, TypedArray attrs) {
         initializeViewFlagsAndCache();
 
         LogHeapSize();
@@ -302,15 +301,14 @@ public class MultiColumnList extends ViewGroup {
         invalidate();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void reset() {
+    private void reset() {
         initView();
         removeAllViewsInLayout();
         requestLayout();
     }
 
     @SuppressLint("WrongConstant")
-    private final void addAndMeasureChild(View child, int viewPos, boolean its_group) {
+    private void addAndMeasureChild(View child, int viewPos, boolean its_group) {
         int width;
         ViewGroup.LayoutParams params = child.getLayoutParams();
         if (params == null) {
@@ -325,7 +323,7 @@ public class MultiColumnList extends ViewGroup {
         child.measure(View.MeasureSpec.makeMeasureSpec(width, MMPProtocol.MMP_FLAG_INVISIBLE), View.MeasureSpec.makeMeasureSpec(getMeasuredHeight(), MMPProtocol.MMP_FLAG_INVISIBLE));
     }
 
-    @Override // android.view.ViewGroup
+    @Override
     protected final boolean getChildStaticTransformation(View child, Transformation t) {
         t.clear();
         Matrix m = t.getMatrix();
@@ -368,7 +366,7 @@ public class MultiColumnList extends ViewGroup {
         return true;
     }
 
-    @Override // android.view.ViewGroup, android.view.View
+    @Override
     public final void dispatchDraw(Canvas canvas) {
         if ((this.mDrawSelector || this.keyboard_used) && this.mSelector != null) {
             Drawable selector = this.mSelector;
@@ -414,18 +412,17 @@ public class MultiColumnList extends ViewGroup {
         }
     }
 
-    private final Rect getChildRect(int idx) {
+    private Rect getChildRect(int idx) {
         int local_idx = (idx - this.mTopViewIndex) - 1;
         Rect rect = new Rect();
         View child = getChildAt(local_idx);
         if (child != null) {
-            Rect rect2 = new Rect(child.getLeft(), child.getTop(), child.getRight(), child.getBottom());
-            return rect2;
+            return new Rect(child.getLeft(), child.getTop(), child.getRight(), child.getBottom());
         }
         return rect;
     }
 
-    @Override // android.view.View
+    @Override
     protected final int computeVerticalScrollExtent() {
         int count = getChildCount();
         if (count > 0) {
@@ -450,7 +447,7 @@ public class MultiColumnList extends ViewGroup {
         return 0;
     }
 
-    @Override // android.view.View
+    @Override
     protected final int computeVerticalScrollOffset() {
         int index;
         int firstPosition = this.mTopViewIndex + 1;
@@ -479,7 +476,7 @@ public class MultiColumnList extends ViewGroup {
         } else {
             index = firstPosition + (childCount / 2);
         }
-        return (int) (firstPosition + (childCount * (index / count)));
+        return firstPosition + (childCount * (index / count));
     }
 
     @Override // android.view.View
@@ -488,11 +485,9 @@ public class MultiColumnList extends ViewGroup {
             return 0;
         }
         if (this.mSmoothScrollbarEnabled) {
-            int result = Math.max(this.mAdapter.getCount() * 100, 0);
-            return result;
+            return Math.max(this.mAdapter.getCount() * 100, 0);
         }
-        int result2 = this.mAdapter.getCount();
-        return result2;
+        return this.mAdapter.getCount();
     }
 
     @Override // android.view.View
@@ -621,12 +616,7 @@ public class MultiColumnList extends ViewGroup {
             }
             if (!this.mScroller.isFinished()) {
                 awakenScrollBars();
-                post(new Runnable() { // from class: ru.ivansuper.jasmin.MultiColumnList.MultiColumnList.2
-                    @Override // java.lang.Runnable
-                    public void run() {
-                        MultiColumnList.this.requestLayout();
-                    }
-                });
+                post(() -> MultiColumnList.this.requestLayout());
             }
         }
     }
@@ -662,7 +652,7 @@ public class MultiColumnList extends ViewGroup {
         fillListTop(edge2);
     }
 
-    private final void fillListBottom(int bottomEdge) {
+    private void fillListBottom(int bottomEdge) {
         int height = getMeasuredHeight();
         int count = this.mAdapter.getCount();
         while (this.dy + bottomEdge < height && this.mBottomViewIndex < count) {
@@ -680,14 +670,14 @@ public class MultiColumnList extends ViewGroup {
         this.mMaxY = Integer.MAX_VALUE;
     }
 
-    private final void fillListTop(int topEdge) {
+    private void fillListTop(int topEdge) {
         while (this.dy + topEdge >= 0 && this.mTopViewIndex >= 0) {
             int height = addRowToTop();
             topEdge -= height;
         }
     }
 
-    private final int getItemsAvailabled(int idx) {
+    private int getItemsAvailabled(int idx) {
         int counter = idx;
         int res = 0;
         int type = this.mAdapter.getItemType(counter);
@@ -736,7 +726,7 @@ public class MultiColumnList extends ViewGroup {
         return Math.min(res, this.mColumnsNumber);
     }
 
-    private final int addRowToTop() {
+    private int addRowToTop() {
         int available = getItemsAvailabled(this.mTopViewIndex);
         if (available == 0) {
             return 0;
