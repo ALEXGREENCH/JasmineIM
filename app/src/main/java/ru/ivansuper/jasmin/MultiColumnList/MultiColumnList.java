@@ -655,10 +655,18 @@ public class MultiColumnList extends ViewGroup {
     private void fillListBottom(int bottomEdge) {
         int height = getMeasuredHeight();
         int count = this.mAdapter.getCount();
+
+
+
+
+        // TODO: TMP
+        /*
         while (this.dy + bottomEdge < height && this.mBottomViewIndex < count) {
             int last_height = addRowToBottom();
             bottomEdge += last_height;
         }
+
+         */
         if (this.mBottomViewIndex >= this.mAdapter.getCount()) {
             this.mMaxY = (this.mCurrentY + bottomEdge) - height;
             if (this.mMaxY < 0) {
@@ -758,7 +766,7 @@ public class MultiColumnList extends ViewGroup {
         return 0;
     }
 
-    private final int addRowToBottom() {
+    private int addRowToBottom() {
         int available = getItemsAvailabledBottom(this.mBottomViewIndex);
         if (available == 0) {
             return 0;

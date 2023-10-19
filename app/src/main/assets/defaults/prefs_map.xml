@@ -36,7 +36,7 @@
 <string name="ms_vibro_length">500</string>
 <string name="ms_server">195.66.114.37</string>
 <boolean name="ms_use_history" value="true" />
-<string name="ms_auth_method">1</string>
+<string name="ms_auth_method">0</string>
 <int name="ms_cl_transition_effect" value="3" />
 <boolean name="ms_show_away" value="true" />
 <string name="ms_columns">5</string>

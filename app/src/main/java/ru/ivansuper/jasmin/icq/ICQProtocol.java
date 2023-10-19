@@ -1,11 +1,12 @@
 package ru.ivansuper.jasmin.icq;
 
 import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
 import java.util.Vector;
+
 import ru.ivansuper.jasmin.ContactListActivity;
 import ru.ivansuper.jasmin.animate_tools.GifDecoder;
 import ru.ivansuper.jasmin.chats.JConference;
@@ -13,8 +14,8 @@ import ru.ivansuper.jasmin.popup_log_adapter;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
-/* loaded from: classes.dex */
 public class ICQProtocol {
+
     public static ByteBuffer createHelloReply(int seq) {
         ByteBuffer buffer = new ByteBuffer(48);
         buffer.writeDWord(1);
@@ -22,20 +23,20 @@ public class ICQProtocol {
         buffer.writeWord(4);
         buffer.writeWord(16);
         buffer.writeWord(0);
-        ByteBuffer flp = FLAP.createFlap((byte) 1, seq, buffer);
-        return flp;
+        return FLAP.createFlap((byte) 1, seq, buffer);
     }
 
     public static ByteBuffer createGoodbye(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
-        ByteBuffer flp = FLAP.createFlap((byte) 4, seq, buffer);
-        return flp;
+        return FLAP.createFlap((byte) 4, seq, buffer);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createPing(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
-        ByteBuffer flp = FLAP.createFlap((byte) 5, seq, buffer);
-        return flp;
+        return FLAP.createFlap((byte) 5, seq, buffer);
     }
 
     public static ByteBuffer createTypingNotify(int seq, String uin, int type) {
@@ -47,8 +48,7 @@ public class ICQProtocol {
         buffer.writeStringAscii(uin);
         buffer.writeWord(type);
         ByteBuffer snc = SNAC.createSnac(4, 20, 0, 20, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createOfflineMsgsRequest(int seq, String uin) {
@@ -60,8 +60,7 @@ public class ICQProtocol {
         buf.writeWord(seq + 1);
         buffer.writeIcqTLV(buf, 1);
         ByteBuffer snc = SNAC.createSnac(21, 2, 0, 64017, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createDeleteOfflineMsgsRequest(int seq, String uin) {
@@ -73,8 +72,7 @@ public class ICQProtocol {
         buf.writeWord(seq + 1);
         buffer.writeIcqTLV(buf, 1);
         ByteBuffer snc = SNAC.createSnac(21, 2, 0, 0, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createMD5Login(byte[] key, int seq, String uin, String password) throws Exception {
@@ -86,8 +84,7 @@ public class ICQProtocol {
         buffer.writeWord(md5.length);
         buffer.write(md5);
         ByteBuffer snc = SNAC.createSnac(23, 2, 0, 0, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createXORLogin(int seq, String uin, String password) throws Exception {
@@ -100,10 +97,39 @@ public class ICQProtocol {
         byte[] xor = utilities.xorPass(pass);
         buffer.writeWord(xor.length);
         buffer.write(xor);
-        ByteBuffer flp = FLAP.createFlap((byte) 1, seq, buffer);
-        return flp;
+
+        buffer.writeWord(0x03);
+        buffer.writePreLengthStringAscii("Jasmine v666");
+
+        buffer.writeWord(0x16);
+        byte[] FIXED_UNKNOWN = {(byte) 0x01, (byte) 0x0A};
+        buffer.write(FIXED_UNKNOWN);
+
+        buffer.writeWord(0x17);
+        byte[] FIXED_VER_MAJOR = {(byte) 0x00, (byte) 0x05};
+        buffer.write(FIXED_VER_MAJOR);
+
+        buffer.writeWord(0x18);
+        byte[] FIXED_VER_MINOR = {(byte) 0x00, (byte) 0x2F};
+        buffer.write(FIXED_VER_MINOR);
+
+        buffer.writeWord(0x19);
+        byte[] FIXED_VER_LESSER = {(byte) 0x00, (byte) 0x01};
+        buffer.write(FIXED_VER_LESSER);
+
+        buffer.writeWord(0x0f);
+        buffer.writeStringAscii("ru");
+
+        buffer.writeWord(0x0e);
+        buffer.writeStringAscii("ru");
+
+
+        return FLAP.createFlap((byte) 1, seq, buffer);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createEMAILLogin(int seq, String email, String password) throws Exception {
         String pass = password.length() > 8 ? password.substring(0, 8) : password;
         ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
@@ -116,34 +142,36 @@ public class ICQProtocol {
         byte[] xor = utilities.xorPass(pass);
         buffer.writeWord(xor.length);
         buffer.write(xor);
-        ByteBuffer flp = FLAP.createFlap((byte) 1, seq, buffer);
-        return flp;
+        return FLAP.createFlap((byte) 1, seq, buffer);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createSendCookies(byte[] cookies, String uin, int seq) {
         ByteBuffer buffer = new ByteBuffer(cookies.length + ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeDWord(1);
         buffer.writeWord(6);
         buffer.writeWord(cookies.length);
         buffer.write(cookies);
-        ByteBuffer flp = FLAP.createFlap((byte) 1, seq, buffer);
-        return flp;
+        return FLAP.createFlap((byte) 1, seq, buffer);
     }
 
     public static ByteBuffer createRequestRoster(int seq) {
         ByteBuffer buffer = new ByteBuffer(16);
         ByteBuffer snc = SNAC.createSnac(19, 4, 0, 0, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createCheckRoster(int seq) {
         ByteBuffer buffer = new ByteBuffer(16);
         buffer.writeDWord(1271737088);
         buffer.writeWord(22);
         ByteBuffer snc = SNAC.createSnac(19, 5, 0, 65541, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createSetStatus(int seq, int status, int flags) {
@@ -153,12 +181,11 @@ public class ICQProtocol {
         data.writeWord(flags);
         data.writeWord(status);
         ByteBuffer snc = SNAC.createSnac(1, 30, 0, 30, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createSetAwayText(int seq, String text) {
-        String away = text.length() > 253 ? String.valueOf(text.substring(0, 249)) + " ..." : text;
+        String away = text.length() > 253 ? text.substring(0, 249) + " ..." : text;
         ByteBuffer data = new ByteBuffer(512);
         ByteBuffer buffer = new ByteBuffer(512);
         if (text.length() > 0) {
@@ -166,10 +193,12 @@ public class ICQProtocol {
             buffer.writeByte((byte) 4);
             byte[] raw = null;
             try {
+                //noinspection CharsetObjectCanBeUsed
                 raw = away.getBytes("utf8");
             } catch (UnsupportedEncodingException e1) {
                 e1.printStackTrace();
             }
+            //noinspection DataFlowIssue
             buffer.writeByte((byte) (raw.length + 2));
             buffer.writeWord(raw.length);
             try {
@@ -190,8 +219,7 @@ public class ICQProtocol {
         }
         data.writeIcqTLV(buffer, 29);
         ByteBuffer snc = SNAC.createSnac(1, 30, 0, 30, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createSetDCInfo(int seq, int status, int flags, int protoVer) {
@@ -222,8 +250,7 @@ public class ICQProtocol {
         buf4.writeWord(0);
         buffer.writeIcqTLV(buf4, 31);
         ByteBuffer snc = SNAC.createSnac(1, 30, 0, 30, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createClientFamilies(int seq) {
@@ -240,10 +267,12 @@ public class ICQProtocol {
         buffer.writeDWord(655361);
         buffer.writeDWord(720897);
         ByteBuffer snc = SNAC.createSnac(1, 23, 0, 23, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createClientFamiliesAvatar(int seq) {
         ByteBuffer buffer = new ByteBuffer(16);
         buffer.writeWord(1);
@@ -251,8 +280,7 @@ public class ICQProtocol {
         buffer.writeWord(16);
         buffer.writeWord(1);
         ByteBuffer snc = SNAC.createSnac(1, 23, 0, 23, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createClientReady(int seq) {
@@ -280,10 +308,12 @@ public class ICQProtocol {
         buffer.writeDWord(720897);
         buffer.writeDWord(17831503);
         ByteBuffer snc = SNAC.createSnac(1, 2, 0, 23, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createClientReadyAvatar(int seq) {
         ByteBuffer buffer = new ByteBuffer(64);
         buffer.writeDWord(65540);
@@ -291,8 +321,7 @@ public class ICQProtocol {
         buffer.writeDWord(1048577);
         buffer.writeDWord(1050852);
         ByteBuffer snc = SNAC.createSnac(1, 2, 0, 23, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createSetICBM(int seq) {
@@ -305,8 +334,7 @@ public class ICQProtocol {
         buffer.writeWord(0);
         buffer.writeWord(0);
         ByteBuffer snc = SNAC.createSnac(4, 2, 0, 2, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createSetUserInfo(int seq, int x, String qip_status) {
@@ -335,8 +363,7 @@ public class ICQProtocol {
         ByteBuffer buf = new ByteBuffer(256);
         buf.writeIcqTLV(buffer, 5);
         ByteBuffer snc = SNAC.createSnac(2, 4, 0, 4, buf);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createUpdateSSIInfo(int seq, int id, int param, boolean my_info) {
@@ -355,8 +382,7 @@ public class ICQProtocol {
             s = 131089;
         }
         ByteBuffer snc = SNAC.createSnac(19, 9, 0, s, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createContactRename(int seq, String uin, String newNick, int group, int id, boolean have_auth_flag) {
@@ -381,13 +407,16 @@ public class ICQProtocol {
         }
         buffer.writeIcqTLV(buf, 305);
         ByteBuffer snc = SNAC.createSnac(19, 9, 0, 131075, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createGroupRename(int seq, ICQGroup group, ICQProfile profile, String new_name) {
         ByteBuffer buffer = new ByteBuffer(512);
         try {
+            //noinspection CharsetObjectCanBeUsed
             byte[] raw = group.name.getBytes("utf8");
             buffer.writeWord(raw.length);
             buffer.write(raw);
@@ -399,9 +428,7 @@ public class ICQProtocol {
                 buffer.writeWord((list.size() * 2) + 4);
                 buffer.writeWord(200);
                 buffer.writeWord(list.size() * 2);
-                Iterator<ICQContact> it = list.iterator();
-                while (it.hasNext()) {
-                    ICQContact contact = it.next();
+                for (ICQContact contact : list) {
                     buffer.writeWord(contact.id);
                 }
             } else {
@@ -411,22 +438,19 @@ public class ICQProtocol {
             e.printStackTrace();
         }
         ByteBuffer snc = SNAC.createSnac(19, 9, 0, 131104, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createSSIEditStart(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
         ByteBuffer snc = SNAC.createSnac(19, 17, 0, 17, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createSSIEditEnd(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
         ByteBuffer snc = SNAC.createSnac(19, 18, 0, 18, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createAddToLists(int seq, ssi_item item, int listType) {
@@ -439,8 +463,7 @@ public class ICQProtocol {
         buffer.writeWord(listType);
         buffer.writeWord(0);
         ByteBuffer snc = SNAC.createSnac(19, 8, 0, 131073, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createRemoveFromLists(int seq, ssi_item item, int listType) {
@@ -453,8 +476,7 @@ public class ICQProtocol {
         buffer.writeWord(listType);
         buffer.writeWord(0);
         ByteBuffer snc = SNAC.createSnac(19, 10, 0, 131073, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createContactDelete(int seq, ICQContact contact) {
@@ -467,13 +489,16 @@ public class ICQProtocol {
         buffer.writeWord(0);
         buffer.writeWord(0);
         ByteBuffer snc = SNAC.createSnac(19, 10, 0, 131082, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createGroupDelete(int seq, ICQGroup group, ICQProfile profile) {
         ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
         try {
+            //noinspection CharsetObjectCanBeUsed
             byte[] raw = group.name.getBytes("utf8");
             buffer.writeWord(raw.length);
             buffer.write(raw);
@@ -481,13 +506,15 @@ public class ICQProtocol {
             buffer.writeWord(0);
             buffer.writeWord(1);
             buffer.writeWord(0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         ByteBuffer snc = SNAC.createSnac(19, 10, 0, 131105, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createContactDelete(int seq, String itemName, int group, int id, int type) {
         ByteBuffer buffer = new ByteBuffer(512);
         buffer.writeWord(itemName.length());
@@ -497,8 +524,7 @@ public class ICQProtocol {
         buffer.writeWord(type);
         buffer.writeWord(0);
         ByteBuffer snc = SNAC.createSnac(19, 10, 0, 131082, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createAddRosterIconRecord(String name, int group, int id, int seq) {
@@ -510,10 +536,12 @@ public class ICQProtocol {
         buffer.writeWord(20);
         buffer.writeWord(0);
         ByteBuffer snc = SNAC.createSnac(19, 8, 0, 10, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection RedundantThrows
+     */
     public static ByteBuffer createAddContact(int seq, ICQContact contact) throws Exception {
         ByteBuffer buffer = new ByteBuffer(2048);
         String sUIN = contact.ID;
@@ -529,13 +557,13 @@ public class ICQProtocol {
         buffer.writeWord(utf.writePos);
         buffer.write(ByteBuffer.normalizeBytes(utf.bytes, utf.writePos));
         ByteBuffer snc = SNAC.createSnac(19, 8, 0, 131080, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createAddGroup(int seq, ICQGroup group) {
         ByteBuffer buffer = new ByteBuffer(512);
         try {
+            //noinspection CharsetObjectCanBeUsed
             byte[] raw = group.name.getBytes("utf8");
             buffer.writeWord(raw.length);
             buffer.write(raw);
@@ -543,13 +571,15 @@ public class ICQProtocol {
             buffer.writeWord(0);
             buffer.writeWord(1);
             buffer.writeWord(0);
-        } catch (Exception e) {
+        } catch (Exception ignored) {
         }
         ByteBuffer snc = SNAC.createSnac(19, 8, 0, 131106, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection RedundantThrows
+     */
     public static ByteBuffer createAddNotAuthContact(int seq, ICQContact contact) throws Exception {
         ByteBuffer buffer = new ByteBuffer(512);
         String sUIN = contact.ID;
@@ -569,15 +599,13 @@ public class ICQProtocol {
         buffer.writeWord(temp.writePos);
         buffer.write(ByteBuffer.normalizeBytes(temp.bytes, temp.writePos));
         ByteBuffer snc = SNAC.createSnac(19, 8, 0, 131080, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createAnotherOfflineMsgsRequest(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
         ByteBuffer snc = SNAC.createSnac(4, 16, 0, 262431, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createLoginAuthorizationRequest(int seq, String uin) {
@@ -585,8 +613,7 @@ public class ICQProtocol {
         buffer.writeWord(1);
         buffer.writePreLengthStringAscii(uin);
         ByteBuffer snc = SNAC.createSnac(23, 6, 0, 0, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createAuthorizationRequest(int seq, String uin) {
@@ -604,8 +631,7 @@ public class ICQProtocol {
         buffer.write(ByteBuffer.normalizeBytes(r.bytes, r.writePos));
         buffer.writeWord(0);
         ByteBuffer snc = SNAC.createSnac(19, 24, 0, 24, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createFutureAuthGrand(int seq, String uin) {
@@ -614,8 +640,7 @@ public class ICQProtocol {
         buffer.writeStringAscii(uin);
         buffer.writeDWord(0);
         ByteBuffer snc = SNAC.createSnac(19, 20, 0, 20, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createAuthReply(int seq, String uin, int reply) {
@@ -625,15 +650,13 @@ public class ICQProtocol {
         buffer.writeByte((byte) reply);
         buffer.writeDWord(0);
         ByteBuffer snc = SNAC.createSnac(19, 26, 0, 26, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createRatesRequest(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
         ByteBuffer snc = SNAC.createSnac(1, 6, 0, 6, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createContactInfoRequest(int seq, String profileId, String uin, int flag) {
@@ -647,8 +670,7 @@ public class ICQProtocol {
         data.writeWord(45572);
         data.writeDWordLE(Integer.parseInt(uin));
         ByteBuffer snc = SNAC.createSnac(21, 2, 0, flag, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createInfoChange(int seq, String profileId, InfoContainer container) {
@@ -678,15 +700,13 @@ public class ICQProtocol {
         tlv1data.writeByteBuffer(tlv1subdata);
         tlv1.writeIcqTLV(tlv1data, 1);
         ByteBuffer snc = SNAC.createSnac(21, 2, 1, 1023, tlv1);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createReqLocation(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
         ByteBuffer snc = SNAC.createSnac(2, 2, 0, 2, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createDelYourself(int seq, String uin) {
@@ -694,8 +714,7 @@ public class ICQProtocol {
         buffer.writeByte((byte) uin.length());
         buffer.writeStringAscii(uin);
         ByteBuffer snc = SNAC.createSnac(19, 22, 0, 0, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createReqBuddy(int seq) {
@@ -704,29 +723,25 @@ public class ICQProtocol {
         buffer.writeWord(2);
         buffer.writeWord(3);
         ByteBuffer snc = SNAC.createSnac(3, 2, 0, 2, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createReqICBM(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
         ByteBuffer snc = SNAC.createSnac(4, 4, 0, 4, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createReqBOS(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
         ByteBuffer snc = SNAC.createSnac(9, 2, 0, 2, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createRosterAck(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
         ByteBuffer snc = SNAC.createSnac(19, 7, 0, 7, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createReqLists(int seq) {
@@ -735,15 +750,13 @@ public class ICQProtocol {
         buffer.writeWord(2);
         buffer.writeWord(15);
         ByteBuffer snc = SNAC.createSnac(19, 2, 0, 2, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createReqInfo(int seq) {
         ByteBuffer buffer = new ByteBuffer(0);
         ByteBuffer snc = SNAC.createSnac(1, 14, 0, 14, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createAckRates(int seq, int groups) {
@@ -752,10 +765,12 @@ public class ICQProtocol {
             buffer.writeWord(i + 1);
         }
         ByteBuffer snc = SNAC.createSnac(1, 8, 0, 8, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createAvatarRequest(byte[] hash, int id, int flag, String uin, int seq) {
         ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeByte((byte) uin.length());
@@ -766,18 +781,19 @@ public class ICQProtocol {
         buffer.writeByte((byte) hash.length);
         buffer.write(hash);
         ByteBuffer snc = SNAC.createSnac(16, 6, 0, 6, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createAvatarServiceRequest(int seq) {
         ByteBuffer buffer = new ByteBuffer(16);
         buffer.writeWord(16);
         ByteBuffer snc = SNAC.createSnac(1, 4, 0, 4, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection RedundantThrows
+     */
     public static ByteBuffer createMsgAck(int seq, byte[] cookie, String receiver) throws Exception {
         ByteBuffer buffer = new ByteBuffer(256);
         if (cookie != null) {
@@ -792,10 +808,12 @@ public class ICQProtocol {
         buffer.writeWord(3);
         buffer.write(utilities.hexStringToBytesArray("1B00090000000000000000000000000000000000000001000000008CBE0E008CBE00000000000000000000000001000000000001000000000000FFFFFF00"));
         ByteBuffer snc = SNAC.createSnac(4, 11, 0, 11, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection RedundantThrows
+     */
     public static ByteBuffer createXtrazAnswer(int seq, byte[] cookie, String receiver, ICQProfile profile) throws Exception {
         ByteBuffer buffer = new ByteBuffer(4192);
         buffer.write(cookie);
@@ -823,8 +841,7 @@ public class ICQProtocol {
         buffer.writeWordLE(0);
         buffer.write(ByteBuffer.normalizeBytes(pluginData.bytes, pluginData.writePos));
         ByteBuffer snc = SNAC.createSnac(4, 11, 0, 11, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createTransferAccept(byte[] cookie, String uin, int seq) {
@@ -841,8 +858,7 @@ public class ICQProtocol {
         data.writeWord(3);
         data.writeWord(0);
         ByteBuffer snc = SNAC.createSnac(4, 6, 0, 6, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createRedirectFromLocalToInverseProxy(byte[] cookie, String uin, byte[] ip, int port, int seq) {
@@ -877,10 +893,12 @@ public class ICQProtocol {
         tlv5.writeWord(0);
         data.writeIcqTLV(tlv5, 5);
         ByteBuffer snc = SNAC.createSnac(4, 6, 0, 6, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection RedundantThrows
+     */
     public static ByteBuffer createFileTransferSendRequest(byte[] cookie, String uin, byte[] ip, int port, File file, int seq) throws Exception {
         ByteBuffer data = new ByteBuffer(1280);
         data.write(cookie);
@@ -928,16 +946,14 @@ public class ICQProtocol {
         tlv5.writeIcqTLV(encoding, 10002);
         data.writeIcqTLV(tlv5, 5);
         ByteBuffer snc = SNAC.createSnac(4, 6, 0, 6, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     private static int getPortCheck(int port) {
         byte a = (byte) (port >> 8);
         byte b = (byte) port;
         byte b2 = (byte) (255 - b);
-        int result = (((byte) (255 - a)) << 8) | b2;
-        return result;
+        return (((byte) (255 - a)) << 8) | b2;
     }
 
     public static ByteBuffer createTransferCancel(byte[] cookie, String uin, int seq) {
@@ -954,15 +970,18 @@ public class ICQProtocol {
         data.writeWord(3);
         data.writeWord(0);
         ByteBuffer snc = SNAC.createSnac(4, 6, 0, 6, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createAvatarUpload(File file, int seq) throws Exception {
         ByteBuffer data = new ByteBuffer();
         data.writeWord(1);
         data.writeWord((int) file.length());
         int readed_summ = 0;
+        //noinspection resource
         FileInputStream in = new FileInputStream(file);
         while (readed_summ < file.length()) {
             byte[] raw = new byte[GifDecoder.MaxStackSize];
@@ -975,10 +994,12 @@ public class ICQProtocol {
             }
         }
         ByteBuffer snc = SNAC.createSnac(16, 2, 0, 10, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * @noinspection unused
+     */
     public static ByteBuffer createUpdateIconHash(byte[] hash, String name, int group, int id, int seq) {
         ByteBuffer data = new ByteBuffer(256);
         data.writeWord(name.length());
@@ -993,8 +1014,7 @@ public class ICQProtocol {
         data.writeWord(tlv.writePos + 4);
         data.writeIcqTLV(tlv, 213);
         ByteBuffer snc = SNAC.createSnac(19, 9, 0, 10, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createSearchRequest(String ID, SearchCriteries criteries, int seq) {
@@ -1015,18 +1035,21 @@ public class ICQProtocol {
         if (criteries.nick.length() > 0) {
             byte[] raw_nick = utilities.prepareUTF8(criteries.nick);
             criteries_block.writeWord(120);
+            //noinspection DataFlowIssue
             criteries_block.writeWord(raw_nick.length);
             criteries_block.write(raw_nick);
         }
         if (criteries.name.length() > 0) {
             byte[] raw_name = utilities.prepareUTF8(criteries.name);
             criteries_block.writeWord(100);
+            //noinspection DataFlowIssue
             criteries_block.writeWord(raw_name.length);
             criteries_block.write(raw_name);
         }
         if (criteries.lastname.length() > 0) {
             byte[] raw_lastname = utilities.prepareUTF8(criteries.lastname);
             criteries_block.writeWord(110);
+            //noinspection DataFlowIssue
             criteries_block.writeWord(raw_lastname.length);
             criteries_block.write(raw_lastname);
         }
@@ -1038,6 +1061,7 @@ public class ICQProtocol {
         if (criteries.city.length() > 0) {
             byte[] raw_city = utilities.prepareUTF8(criteries.city);
             criteries_block.writeWord(160);
+            //noinspection DataFlowIssue
             criteries_block.writeWord(raw_city.length);
             criteries_block.write(raw_city);
         }
@@ -1049,19 +1073,17 @@ public class ICQProtocol {
         tlv1.write(tlv1_data.getBytes());
         data.writeIcqTLV(tlv1, 1);
         ByteBuffer snc = SNAC.createSnac(21, 2, 0, 10, data);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
     public static ByteBuffer createInvalidPacket(int seq) {
         ByteBuffer buffer = new ByteBuffer(64);
         buffer.writeByte((byte) 9);
         ByteBuffer snc = SNAC.createSnac(4, 6, 0, 15, buffer);
-        ByteBuffer flp = FLAP.createFlap((byte) 2, seq, snc);
-        return flp;
+        return FLAP.createFlap((byte) 2, seq, snc);
     }
 
-    public static final String preparePassword(String source) {
+    public static String preparePassword(String source) {
         if (source == null) {
             return "null";
         }

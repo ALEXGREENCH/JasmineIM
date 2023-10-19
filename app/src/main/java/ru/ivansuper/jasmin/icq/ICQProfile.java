@@ -10,7 +10,6 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Vector;
 
 import ru.ivansuper.jasmin.AntispamBot;
@@ -43,10 +42,25 @@ import ru.ivansuper.jasmin.utilities;
 
 /* loaded from: classes.dex */
 public class ICQProfile extends IMProfile {
+    /**
+     * @noinspection unused
+     */
     public static final int VISIBILITY_FOR_ALL = 1;
+    /**
+     * @noinspection unused
+     */
     public static final int VISIBILITY_FOR_ALL_EX_INVISIBLE = 4;
+    /**
+     * @noinspection unused
+     */
     public static final int VISIBILITY_FOR_CONTACTS = 5;
+    /**
+     * @noinspection unused
+     */
     public static final int VISIBILITY_FOR_VISIBLE = 3;
+    /**
+     * @noinspection unused
+     */
     public static final int VISIBILITY_INV_FOR_ALL = 2;
     private PendingIntentHandler PING_TASK;
     private final PendingIntentHandler ach_task_1;
@@ -59,6 +73,9 @@ public class ICQProfile extends IMProfile {
     private SSIOperation lastDelete;
     private SSIOperation lastRename;
     public String password;
+    /**
+     * @noinspection unused
+     */
     private ping_thread pinger;
     private SocketConnection socket;
     public SharedPreferences sp;
@@ -73,6 +90,9 @@ public class ICQProfile extends IMProfile {
     public boolean authorized = false;
     public boolean authFirstStageCompleted = false;
     public boolean connectedToBOS = false;
+    /**
+     * @noinspection unused
+     */
     public boolean connectionLosted = false;
     private boolean jumpingToBOS = false;
     private final Vector<HistoryItem> messagesForConfurming = new Vector<>();
@@ -81,7 +101,9 @@ public class ICQProfile extends IMProfile {
     public final ArrayList<ssi_item> invisible_list = new ArrayList<>();
     public final ArrayList<ssi_item> ignore_list = new ArrayList<>();
     private final reconnector rcn = new reconnector();
-    private boolean useMD5Login = true;
+
+    //private boolean useMD5Login = true; // todo;...
+    private final boolean useMD5Login = false;
     private screen_controller screen_ctrlr = new screen_controller(this, null);
     private final ArrayList<String> offlineMessages = new ArrayList<>();
     private final ArrayList<FileTransfer> transfers = new ArrayList<>();
@@ -96,7 +118,7 @@ public class ICQProfile extends IMProfile {
     public final InfoContainer info_container = new InfoContainer();
     private ByteBuffer BUFFER = new ByteBuffer(0);
 
-    private final InfoOperation getInfoOperation(int id) {
+    private InfoOperation getInfoOperation(int id) {
         for (int i = 0; i < this.info_requests.size(); i++) {
             InfoOperation operation = this.info_requests.get(i);
             if (operation.id == id) {
@@ -106,7 +128,7 @@ public class ICQProfile extends IMProfile {
         return null;
     }
 
-    private final void removeOperation(int id) {
+    private void removeOperation(int id) {
         for (int i = 0; i < this.info_requests.size(); i++) {
             InfoOperation operation = this.info_requests.get(i);
             if (operation.id == id) {
@@ -116,7 +138,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void putInfoOperation(String uin, int type, int id) {
+    private void putInfoOperation(String uin, int type, int id) {
         this.info_requests.add(new InfoOperation(uin, type, id));
     }
 
@@ -126,10 +148,11 @@ public class ICQProfile extends IMProfile {
         this.xtitle = " ";
         this.xdesc = " ";
         this.ach_task_1 = new PendingIntentHandler(("ach_task_" + this.ID + this.password).hashCode()) { // from class: ru.ivansuper.jasmin.icq.ICQProfile.1
-            @Override // ru.ivansuper.jasmin.Service.PendingIntentHandler
+            @Override
             public void run() {
             }
         };
+
         this.profile_type = 0;
         this.svc = svcParam;
         this.ID = uin;
@@ -144,21 +167,25 @@ public class ICQProfile extends IMProfile {
         this.xdesc = getSavedXDesc(this.xsts);
         getSavedVisibility();
         this.openedInContactList = this.sp.getBoolean("pg" + this.ID, true);
-        File profileDirectory = new File(String.valueOf(resources.dataPath) + this.ID);
+        File profileDirectory = new File(resources.dataPath + this.ID);
         if (!profileDirectory.isDirectory()) {
+            //noinspection ResultOfMethodCallIgnored
             profileDirectory.mkdirs();
         }
-        File avatars_dir = new File(String.valueOf(resources.dataPath) + this.ID + "/avatars/");
+        File avatars_dir = new File(resources.dataPath + this.ID + "/avatars/");
         if (!avatars_dir.isDirectory()) {
+            //noinspection ResultOfMethodCallIgnored
             avatars_dir.mkdirs();
         }
-        File historyDirectory = new File(String.valueOf(resources.dataPath) + this.ID + "/history");
+        File historyDirectory = new File(resources.dataPath + this.ID + "/history");
         if (!historyDirectory.isDirectory()) {
+            //noinspection ResultOfMethodCallIgnored
             historyDirectory.mkdirs();
         }
-        File roster = new File(String.valueOf(resources.dataPath) + this.ID + "/roster.bin");
+        File roster = new File(resources.dataPath + this.ID + "/roster.bin");
         if (!roster.exists()) {
             try {
+                //noinspection ResultOfMethodCallIgnored
                 roster.createNewFile();
             } catch (Exception e) {
                 e.printStackTrace();
@@ -167,15 +194,15 @@ public class ICQProfile extends IMProfile {
             this.contactlist.loadFromLocalStorage(roster, this);
         }
         if (autoconnect && enabled) {
-            this.status = Manager.getInt(String.valueOf(this.ID) + "status");
+            this.status = Manager.getInt(this.ID + "status");
             setStatus(this.status);
             startConnectingChosed();
         }
     }
 
-    private final void initSocket() {
-        this.socket = new SocketConnection(this.svc) { // from class: ru.ivansuper.jasmin.icq.ICQProfile.2
-            @Override // ru.ivansuper.jasmin.icq.SocketConnection
+    private void initSocket() {
+        this.socket = new SocketConnection(this.svc) {
+            @Override
             public void onRawData(ByteBuffer data) {
                 if (!this.connected && !this.connecting) {
                     return;
@@ -183,31 +210,31 @@ public class ICQProfile extends IMProfile {
                 ICQProfile.this.proceedFlapPacket(data);
             }
 
-            @Override // ru.ivansuper.jasmin.icq.SocketConnection
+            @Override
             public void onConnect() {
                 Log.e("SOCKET", "Connected");
             }
 
-            @Override // ru.ivansuper.jasmin.icq.SocketConnection
+            @Override
             public void onConnecting() {
                 Log.e("SOCKET", "Connecting");
             }
 
-            @Override // ru.ivansuper.jasmin.icq.SocketConnection
+            @Override
             public void onDisconnect() {
                 Log.e("SOCKET", "Disconnected!");
                 ICQProfile.this.handleProfileDisconnected();
             }
 
-            @Override // ru.ivansuper.jasmin.icq.SocketConnection
+            @Override
             public void onLostConnection() {
                 Log.e("SOCKET", "Connection losted");
                 ICQProfile.this.handleProfileConnectionLost();
             }
 
-            @Override // ru.ivansuper.jasmin.icq.SocketConnection
+            @Override
             public void onError(int errorCode) {
-                Log.e("SOCKET", "ERROR = " + String.valueOf(errorCode));
+                Log.e("SOCKET", "ERROR = " + errorCode);
             }
         };
     }
@@ -319,11 +346,13 @@ public class ICQProfile extends IMProfile {
         this.svc.showToast(text, 1);
     }
 
+    /**
+     * @noinspection unused
+     */
     public final void makeShortToast(String text) {
         this.svc.showToast(text, 0);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public final void proceedFlapPacket(ByteBuffer buffer) {
         FLAP flp = new FLAP(buffer);
         switch (flp.getChannel()) {
@@ -331,11 +360,10 @@ public class ICQProfile extends IMProfile {
                 if (this.authFirstStageCompleted) {
                     handleBOSServerHello();
                     setConnectionStatus(35);
-                    break;
                 } else {
                     handleServerAuthHello();
-                    break;
                 }
+                break;
             case 2:
                 handleSnacData(flp.getData());
                 break;
@@ -345,26 +373,27 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleServerAuthHello() {
+    private void handleServerAuthHello() {
         jasminSvc.pla.put(this.nickname, resources.getString("s_icq_authentification"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        this.svc.put_log(String.valueOf(this.nickname) + ": " + resources.getString("s_icq_authentification"));
+        this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_authentification"));
         setConnectionStatus(19);
-        if (utilities.isEmail(this.ID)) {
-            jasminSvc.pla.put(this.nickname, resources.getString("s_icq_enter_by_email"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-            this.svc.put_log(String.valueOf(this.nickname) + ": " + resources.getString("s_icq_enter_by_email"));
-            try {
-                this.BUFFER = ICQProtocol.createEMAILLogin(this.sequence, this.ID, this.password);
-                send();
-            } catch (Exception e) {
-                makeToast("error at createXORLogin()");
-                disconnect();
-            }
-        } else if (this.useMD5Login) {
-            this.BUFFER = ICQProtocol.createHelloReply(this.sequence);
-            send();
-            this.BUFFER = ICQProtocol.createLoginAuthorizationRequest(this.sequence, this.ID);
-            send();
-        } else {
+
+        //if (utilities.isEmail(this.ID)) {
+        //    jasminSvc.pla.put(this.nickname, resources.getString("s_icq_enter_by_email"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+        //    this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_enter_by_email"));
+        //    try {
+        //        this.BUFFER = ICQProtocol.createEMAILLogin(this.sequence, this.ID, this.password);
+        //        send();
+        //    } catch (Exception e) {
+        //        makeToast("error at createXORLogin()");
+        //        disconnect();
+        //    }
+        //} else if (this.useMD5Login) {
+        //    this.BUFFER = ICQProtocol.createHelloReply(this.sequence);
+        //    send();
+        //    this.BUFFER = ICQProtocol.createLoginAuthorizationRequest(this.sequence, this.ID);
+        //    send();
+        //} else {
             try {
                 this.BUFFER = ICQProtocol.createXORLogin(this.sequence, this.ID, this.password);
                 send();
@@ -372,14 +401,14 @@ public class ICQProfile extends IMProfile {
                 makeToast("error at createXORLogin()");
                 disconnect();
             }
-        }
+        //}
     }
 
-    private final void handleServerXORReply(TLV server, TLV cookie) {
+    private void handleServerXORReply(TLV server, TLV cookie) {
         setConnectionStatus(25);
         this.bos_server = server.getData().readStringAscii(server.length);
         jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{this.bos_server}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        this.svc.put_log(String.valueOf(this.nickname) + ": " + utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{this.bos_server}));
+        this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{this.bos_server}));
         this.cookies = cookie.getData().readBytes(cookie.length);
         ByteBuffer buffer = ICQProtocol.createGoodbye(this.sequence);
         send(buffer);
@@ -389,14 +418,14 @@ public class ICQProfile extends IMProfile {
         this.socket.connect(this.bos_server);
     }
 
-    private final void handleBOSServerHello() {
+    private void handleBOSServerHello() {
         jasminSvc.pla.put(this.nickname, resources.getString("s_icq_sending_cookies"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        this.svc.put_log(String.valueOf(this.nickname) + ": " + resources.getString("s_icq_sending_cookies"));
+        this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_sending_cookies"));
         ByteBuffer buffer = ICQProtocol.createSendCookies(this.cookies, this.ID, this.sequence);
         send(buffer);
     }
 
-    private final void handleDisconnectFlapData(ByteBuffer data) {
+    private void handleDisconnectFlapData(ByteBuffer data) {
         TLVList list = new TLVList(data, data.getBytesCountAvailableToRead(), true);
         TLV uin = list.getTLV(1);
         if (uin != null) {
@@ -414,7 +443,7 @@ public class ICQProfile extends IMProfile {
         }
         TLV error = list.getTLV(8);
         if (error != null) {
-            proceedLoginError(error == null ? -1 : error.getData().readWord());
+            proceedLoginError(error.getData().readWord());
             list.recycle();
             return;
         }
@@ -431,7 +460,7 @@ public class ICQProfile extends IMProfile {
         list.recycle();
     }
 
-    private final void handleSnacData(ByteBuffer data) {
+    private void handleSnacData(ByteBuffer data) {
         this.ping_answer_received = true;
         if (this.pinger != null) {
             this.pinger.resetTimer();
@@ -518,21 +547,16 @@ public class ICQProfile extends IMProfile {
                 }
                 break;
             case 21:
-                switch (snc.getSubtype()) {
-                    case 3:
-                        if (snc.getId() == 1023) {
-                            handleInfoUpdateResult(snc.getData());
-                            break;
-                        } else if (snc.getId() == 64017) {
-                            handleServerOfflineMessage(snc.getData());
-                            break;
-                        } else if (snc.getId() == 10) {
-                            handleSearchResult(snc.getData(), snc.getFlags());
-                            break;
-                        } else {
-                            handleServerContactInfo(snc.getData(), snc.getFlags(), snc.getId());
-                            break;
-                        }
+                if (snc.getSubtype() == 3) {
+                    if (snc.getId() == 1023) {
+                        handleInfoUpdateResult(snc.getData());
+                    } else if (snc.getId() == 64017) {
+                        handleServerOfflineMessage(snc.getData());
+                    } else if (snc.getId() == 10) {
+                        handleSearchResult(snc.getData(), snc.getFlags());
+                    } else {
+                        handleServerContactInfo(snc.getData(), snc.getFlags(), snc.getId());
+                    }
                 }
             case 23:
                 switch (snc.getSubtype()) {
@@ -546,10 +570,10 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleServerRates(ByteBuffer buffer) {
+    private void handleServerRates(ByteBuffer buffer) {
         setConnectionStatus(99);
         jasminSvc.pla.put(this.nickname, resources.getString("s_icq_session_setup"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        this.svc.put_log(String.valueOf(this.nickname) + ": " + resources.getString("s_icq_session_setup"));
+        this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_session_setup"));
         if (this.rcn.is_active) {
             this.rcn.stop();
         }
@@ -568,7 +592,8 @@ public class ICQProfile extends IMProfile {
         send();
         this.BUFFER = ICQProtocol.createReqBOS(this.sequence);
         send();
-        File roster = new File(String.valueOf(resources.dataPath) + this.ID + "/roster.bin");
+        File roster = new File(resources.dataPath + this.ID + "/roster.bin");
+        //noinspection ResultOfMethodCallIgnored
         roster.delete();
         synchronized (this.phantom_list) {
             this.phantom_list.clear();
@@ -583,6 +608,7 @@ public class ICQProfile extends IMProfile {
             this.ignore_list.clear();
         }
         try {
+            //noinspection ResultOfMethodCallIgnored
             roster.createNewFile();
         } catch (Exception e) {
             e.printStackTrace();
@@ -596,27 +622,27 @@ public class ICQProfile extends IMProfile {
         not_in_list.profile = this;
         this.contactlist.put(not_in_list);
         jasminSvc.pla.put(this.nickname, resources.getString("s_icq_roster_request"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        this.svc.put_log(String.valueOf(this.nickname) + ": " + resources.getString("s_icq_roster_request"));
+        this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_roster_request"));
         this.BUFFER = ICQProtocol.createRequestRoster(this.sequence);
         send();
     }
 
-    private final void handleServerLinks() {
+    private void handleServerLinks() {
         this.BUFFER = ICQProtocol.createClientFamilies(this.sequence);
         send();
         setConnectionStatus(60);
     }
 
-    private final void handleServerMOTD() {
+    private void handleServerMOTD() {
     }
 
-    private final void handleServerFamiliesVersions() {
+    private void handleServerFamiliesVersions() {
         this.BUFFER = ICQProtocol.createRatesRequest(this.sequence);
         send();
         setConnectionStatus(75);
     }
 
-    private final void handleServerRoster(ByteBuffer buffer, int flags) {
+    private void handleServerRoster(ByteBuffer buffer, int flags) {
         IncomingRosterParser parser = new IncomingRosterParser();
         if ((flags & 32768) == 32768) {
             int len = buffer.readWord();
@@ -644,11 +670,11 @@ public class ICQProfile extends IMProfile {
             send();
             setVisibilityS(this.visibilityStatus);
             jasminSvc.pla.put(this.nickname, resources.getString("s_icq_starting_session"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-            this.svc.put_log(String.valueOf(this.nickname) + ": " + resources.getString("s_icq_starting_session"));
+            this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_starting_session"));
             this.BUFFER = ICQProtocol.createRosterAck(this.sequence);
             send();
             jasminSvc.pla.put(this.nickname, resources.getString("s_icq_offline_msgs_req"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-            this.svc.put_log(String.valueOf(this.nickname) + ": " + resources.getString("s_icq_offline_msgs_req"));
+            this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_offline_msgs_req"));
             this.BUFFER = ICQProtocol.createOfflineMsgsRequest(this.sequence, this.ID);
             send();
             this.contactlist.saveToLocalStorage();
@@ -689,7 +715,6 @@ public class ICQProfile extends IMProfile {
         list.recycle();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public final void proceedLoginError(int error) {
         if (error == -1) {
             makeToast("Authorization error");
@@ -727,7 +752,7 @@ public class ICQProfile extends IMProfile {
                     break;
             }
             jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_login_error_log"), new String[]{String.valueOf(error)}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-            this.svc.put_log(String.valueOf(this.nickname) + ": " + utilities.match(resources.getString("s_icq_login_error_log"), new String[]{String.valueOf(error)}));
+            this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_login_error_log"), new String[]{String.valueOf(error)}));
         }
         disconnect();
     }
@@ -738,7 +763,7 @@ public class ICQProfile extends IMProfile {
         proceedMD5Login(key);
     }
 
-    private final void proceedMD5Login(byte[] key) {
+    private void proceedMD5Login(byte[] key) {
         try {
             this.BUFFER = ICQProtocol.createMD5Login(key, this.sequence, this.ID, ICQProtocol.preparePassword(this.password));
             send();
@@ -748,7 +773,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleAuthorizationRequest(ByteBuffer data, int flags) {
+    private void handleAuthorizationRequest(ByteBuffer data, int flags) {
         String reason;
         this.svc.playEvent(3);
         if (flags == 32768) {
@@ -784,9 +809,6 @@ public class ICQProfile extends IMProfile {
             }
             remakeContactList();
             return;
-        }
-        if (reason == null) {
-            reason = "[" + resources.getString("s_no") + "]";
         }
         jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_auth_req_from_unknown"), new String[]{sUIN, reason}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
         this.svc.put_log(String.valueOf(this.nickname) + ": " + utilities.match(resources.getString("s_auth_req_from_unknown"), new String[]{sUIN, reason}));
@@ -847,7 +869,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleServerExtStatus(ByteBuffer data, int flags) {
+    private void handleServerExtStatus(ByteBuffer data, int flags) {
         if (flags == 32768) {
             int len = data.readWord();
             data.skip(len);
@@ -855,7 +877,7 @@ public class ICQProfile extends IMProfile {
         data.readStringAscii(data.getBytesCountAvailableToRead());
     }
 
-    private final void handleServerOnlineInfo(ByteBuffer data, int flags) {
+    private void handleServerOnlineInfo(ByteBuffer data, int flags) {
         String away;
         if (flags == 32768) {
             int len = data.readWord();
@@ -889,7 +911,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleServerServiceRedirect(ByteBuffer data, int flags) {
+    private void handleServerServiceRedirect(ByteBuffer data, int flags) {
         if (flags == 32768) {
             int len = data.readWord();
             data.skip(len);
@@ -909,7 +931,7 @@ public class ICQProfile extends IMProfile {
         list.recycle();
     }
 
-    private final void handleServerUserOnline(ByteBuffer buffer) {
+    private void handleServerUserOnline(ByteBuffer buffer) {
         String away_status;
         int sts;
         String sUIN = buffer.readStringAscii(buffer.readByte());
@@ -934,8 +956,7 @@ public class ICQProfile extends IMProfile {
             if (tlv != null) {
                 ByteBuffer tlvData = tlv.getData();
                 tlvData.skip(2);
-                int status = tlvData.readWord();
-                contact.status = status;
+                contact.status = tlvData.readWord();
             } else {
                 contact.status = 0;
             }
@@ -947,8 +968,7 @@ public class ICQProfile extends IMProfile {
                 contact.dc_info.ip = tlvData2.readBytes(4);
                 contact.dc_info.port = tlvData2.readDWord();
                 contact.dc_info.dc_type = tlvData2.readByte();
-                int ver = tlvData2.readWord();
-                contact.protoVersion = ver;
+                contact.protoVersion = tlvData2.readWord();
                 tlvData2.skip(12);
                 contact.dc_info.dc1 = tlvData2.readDWord();
                 contact.dc_info.dc2 = tlvData2.readDWord();
@@ -1013,7 +1033,7 @@ public class ICQProfile extends IMProfile {
                             tlvData4.readPos = backup;
                             away_status = tlvData4.readString1251(len);
                         }
-                        if (away_status.length() > 0 && contact != null) {
+                        if (away_status.length() > 0) {
                             contact.away_status = away_status;
                             if (utilities.isEmptyForDisplay(contact.away_status)) {
                                 contact.away_status = null;
@@ -1021,7 +1041,7 @@ public class ICQProfile extends IMProfile {
                         }
                         lst.recycle();
                     }
-                } catch (Exception e2) {
+                } catch (Exception ignored) {
                 }
             }
             if (contact.presence_initialized && PreferenceTable.log_online && become_online) {
@@ -1046,7 +1066,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleServerUserOffline(ByteBuffer buffer) {
+    private void handleServerUserOffline(ByteBuffer buffer) {
         int len = buffer.readByte();
         String sUIN = buffer.readStringAscii(len);
         ICQContact contact = this.contactlist.getContactByUIN(sUIN);
@@ -1064,7 +1084,7 @@ public class ICQProfile extends IMProfile {
                 contact.typing = false;
                 if (PreferenceTable.log_offline) {
                     jasminSvc.pla.put(utilities.match(resources.getString("s_icq_contact_offline"), new String[]{contact.name}), "", resources.offline, null, popup_log_adapter.PRESENSE_DISPLAY_TIME, null);
-                    this.svc.put_log(String.valueOf(this.nickname) + ": " + utilities.match(resources.getString("s_icq_contact_offline"), new String[]{contact.name}));
+                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_contact_offline"), new String[]{contact.name}));
                 }
                 this.svc.playEvent(5);
                 remakeContactList();
@@ -1091,7 +1111,6 @@ public class ICQProfile extends IMProfile {
                 return;
             default:
                 Log.v("Jasmine:Message Error!", "Unknown error");
-                return;
         }
     }
 
@@ -1125,7 +1144,7 @@ public class ICQProfile extends IMProfile {
         remakeContactList();
     }
 
-    private final void handleServerAddBuddy(ByteBuffer data, int flags) {
+    private void handleServerAddBuddy(ByteBuffer data, int flags) {
         String sUIN;
         if (flags == 32768) {
             data.skip(data.readWord());
@@ -1158,11 +1177,7 @@ public class ICQProfile extends IMProfile {
                     contact2.added = false;
                     contact2.as_accepted = false;
                 }
-                if (tlv == null) {
-                    contact2.authorized = true;
-                } else {
-                    contact2.authorized = false;
-                }
+                contact2.authorized = tlv == null;
                 contact2.init();
                 this.contactlist.put(contact2);
                 this.contactlist.sort();
@@ -1173,11 +1188,7 @@ public class ICQProfile extends IMProfile {
                 if (grp.isNotIntList) {
                     contact.added = false;
                 }
-                if (tlv == null) {
-                    contact.authorized = true;
-                } else {
-                    contact.authorized = false;
-                }
+                contact.authorized = tlv == null;
             }
         } else if (type == 1) {
             ICQGroup grp2 = this.contactlist.getGroupById(group);
@@ -1199,7 +1210,7 @@ public class ICQProfile extends IMProfile {
         remakeContactList();
     }
 
-    private final void handleServerUpdateGroup(ByteBuffer data, int flags) throws Exception {
+    private void handleServerUpdateGroup(ByteBuffer data, int flags) throws Exception {
         String sUIN;
         if (flags == 32768) {
             data.skip(data.readWord());
@@ -1217,7 +1228,7 @@ public class ICQProfile extends IMProfile {
         int group = data.readWord();
         int id = data.readWord();
         int type = data.readWord();
-        Log.v("PROFILE", "Group: " + String.valueOf(group) + " ID: " + String.valueOf(id) + " Type:" + String.valueOf(type));
+        Log.v("PROFILE", "Group: " + group + " ID: " + id + " Type:" + type);
         if (type == 0) {
             Log.v("PROFILE", "Contact will be changed");
             ICQContact contact = this.contactlist.getContactByUIN(sUIN);
@@ -1225,11 +1236,7 @@ public class ICQProfile extends IMProfile {
                 TLVList list = new TLVList(data, data.readWord(), true);
                 TLV tlv = list.getTLV(102);
                 contact.id = id;
-                if (tlv == null) {
-                    contact.authorized = true;
-                } else {
-                    contact.authorized = false;
-                }
+                contact.authorized = tlv == null;
                 list.recycle();
             }
         } else if (type == 1) {
@@ -1242,7 +1249,7 @@ public class ICQProfile extends IMProfile {
         refreshContactList();
     }
 
-    private final void handleServerMessageAck(ByteBuffer data, int flags) {
+    private void handleServerMessageAck(ByteBuffer data, int flags) {
         int len;
         if (flags == 32768) {
             int len2 = data.readWord();
@@ -1279,11 +1286,11 @@ public class ICQProfile extends IMProfile {
                             String title = xstatus.getTagContent(message, "title");
                             String desc = xstatus.getTagContent(message, "desc");
                             if (contact != null) {
-                                contact.xtraz_text = String.valueOf(title) + " " + desc;
-                                if (!utilities.isEmptyForDisplay(String.valueOf(title) + desc)) {
+                                contact.xtraz_text = title + " " + desc;
+                                if (!utilities.isEmptyForDisplay(title + desc)) {
                                     if (!PreferenceTable.preloadHistory || contact.historyPreLoaded) {
                                         HistoryItem hst = new HistoryItem();
-                                        hst.message = String.valueOf(title) + "\n" + desc;
+                                        hst.message = title + "\n" + desc;
                                         hst.direction = 1;
                                         hst.isXtrazMessage = true;
                                         hst.xTrazIcon = contact.xstatus.mutate();
@@ -1306,7 +1313,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void ackMessage(byte[] cookie, ICQContact contact) {
+    private void ackMessage(byte[] cookie, ICQContact contact) {
         int sz = this.messagesForConfurming.size();
         for (int i = 0; i < sz; i++) {
             HistoryItem item = this.messagesForConfurming.get(i);
@@ -1319,7 +1326,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleYouWereAdded(ByteBuffer data, int flags) {
+    private void handleYouWereAdded(ByteBuffer data, int flags) {
         if (flags == 32768) {
             int extraLen = data.readWord();
             data.skip(extraLen);
@@ -1330,7 +1337,7 @@ public class ICQProfile extends IMProfile {
         this.svc.put_log(String.valueOf(this.nickname) + ": " + utilities.match(resources.getString("s_icq_you_were_added"), new String[]{sUIN}));
     }
 
-    private final void handleServerContactInfo(ByteBuffer data, int flags, int id) {
+    private void handleServerContactInfo(ByteBuffer data, int flags, int id) {
         if (flags == 32768) {
             int extraLen = data.readWord();
             data.skip(extraLen);
@@ -1550,7 +1557,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleSearchResult(ByteBuffer data, int flags) {
+    private void handleSearchResult(ByteBuffer data, int flags) {
         SearchResultItem result = new SearchResultItem();
         data.skip(16);
         int result_code = data.readByte();
@@ -1911,7 +1918,7 @@ public class ICQProfile extends IMProfile {
                 }
             });
             if (PreferenceTable.multi_notify) {
-                this.svc.showPersonalMessageNotify(String.valueOf(contact.name) + "/" + this.nickname, preview, true, utilities.getHash(contact), contact);
+                this.svc.showPersonalMessageNotify(contact.name + "/" + this.nickname, preview, true, utilities.getHash(contact), contact);
             } else {
                 this.svc.putMessageNotify(contact, contact.name, preview);
             }
@@ -2349,7 +2356,7 @@ public class ICQProfile extends IMProfile {
     public final void doDeleteContact(ICQContact contact) {
         if (this.connected) {
             if (contact.group != -1) {
-                this.svc.displayProgress(String.valueOf(resources.getString("s_deleting")) + " '" + contact.name + "' ...");
+                this.svc.displayProgress(resources.getString("s_deleting") + " '" + contact.name + "' ...");
                 this.BUFFER = ICQProtocol.createSSIEditStart(this.sequence);
                 userSend();
                 SSIOperation ssi = new SSIOperation(1, contact);
@@ -2374,7 +2381,7 @@ public class ICQProfile extends IMProfile {
                     Toast.makeText(this.svc, resources.getString("s_deleting_not_empty_group_error"), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                this.svc.displayProgress(String.valueOf(resources.getString("s_deleting")) + " ...");
+                this.svc.displayProgress(resources.getString("s_deleting") + " ...");
                 this.BUFFER = ICQProtocol.createSSIEditStart(this.sequence);
                 userSend();
                 SSIOperation ssi = new SSIOperation(1, group);
@@ -2414,7 +2421,7 @@ public class ICQProfile extends IMProfile {
             makeToast(resources.getString("s_group_already_exist"));
             return;
         }
-        this.svc.displayProgress(String.valueOf(resources.getString("s_adding")) + " ...");
+        this.svc.displayProgress(resources.getString("s_adding") + " ...");
         this.BUFFER = ICQProtocol.createSSIEditStart(this.sequence);
         userSend();
         SSIOperation ssi = new SSIOperation(0, group);
@@ -2426,7 +2433,7 @@ public class ICQProfile extends IMProfile {
     }
 
     public final void doRenameContact(ICQContact contact, String newNick) {
-        this.svc.displayProgress(String.valueOf(resources.getString("s_renaming")) + " '" + contact.name + "' ...");
+        this.svc.displayProgress(resources.getString("s_renaming") + " '" + contact.name + "' ...");
         this.BUFFER = ICQProtocol.createSSIEditStart(this.sequence);
         userSend();
         SSIOperation ssi = new SSIOperation(4, contact);
@@ -2439,7 +2446,7 @@ public class ICQProfile extends IMProfile {
     }
 
     public final void doRenameGroup(ICQGroup group, String new_name) {
-        this.svc.displayProgress(String.valueOf(resources.getString("s_renaming")) + " ...");
+        this.svc.displayProgress(resources.getString("s_renaming") + " ...");
         this.BUFFER = ICQProtocol.createSSIEditStart(this.sequence);
         userSend();
         SSIOperation ssi = new SSIOperation(4, group);
@@ -2452,7 +2459,7 @@ public class ICQProfile extends IMProfile {
     }
 
     @SuppressLint("LongLogTag")
-    private final void proceedLocalDeleteContact(ICQContact contact) {
+    private void proceedLocalDeleteContact(ICQContact contact) {
         Log.e("ICQProfile:proceedLocalDeleteContact", "Removing " + contact.ID);
         if (ICQChatActivity.VISIBLE && ICQChatActivity.contact.equals(contact)) {
             this.svc.closeChatIfShown();
@@ -2464,13 +2471,13 @@ public class ICQProfile extends IMProfile {
         this.contactlist.saveToLocalStorage();
     }
 
-    private final void proceedLocalDeleteGroup(ICQGroup group) {
+    private void proceedLocalDeleteGroup(ICQGroup group) {
         this.contactlist.removeGroup(group.id);
         remakeContactList();
         this.contactlist.saveToLocalStorage();
     }
 
-    private final void proceedLocalAddContact(ICQContact contact) {
+    private void proceedLocalAddContact(ICQContact contact) {
         Log.e("ICQProfile", "Removing " + contact.ID);
         this.svc.removeFromOpenedChats(contact.ID);
         this.contactlist.removeContact(contact.ID);
@@ -2482,14 +2489,14 @@ public class ICQProfile extends IMProfile {
         this.contactlist.saveToLocalStorage();
     }
 
-    private final void proceedLocalAddGroup(ICQGroup group) {
+    private void proceedLocalAddGroup(ICQGroup group) {
         this.contactlist.put(group);
         this.contactlist.sort();
         remakeContactList();
         this.contactlist.saveToLocalStorage();
     }
 
-    private final void proceedAddNotAuthContact() {
+    private void proceedAddNotAuthContact() {
         try {
             ICQContact contact = (ICQContact) this.lastAdd.object;
             this.BUFFER = ICQProtocol.createSSIEditStart(this.sequence);
@@ -2503,8 +2510,9 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void proceedLocalContactRename() {
+    private void proceedLocalContactRename() {
         ICQContact contact = (ICQContact) this.lastRename.object;
+        //noinspection UnnecessaryLocalVariable
         String newNick = (String) this.lastRename.objectA;
         contact.name = newNick;
         remakeContactList();
@@ -2513,6 +2521,7 @@ public class ICQProfile extends IMProfile {
 
     private final void proceedLocalGroupRename() {
         ICQGroup group = (ICQGroup) this.lastRename.object;
+        //noinspection UnnecessaryLocalVariable
         String new_name = (String) this.lastRename.objectA;
         group.name = new_name;
         remakeContactList();
@@ -2539,14 +2548,16 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleProfileStatusChanged() {
+    private void handleProfileStatusChanged() {
         notifyStatusIcon();
         refreshContactList();
     }
 
+    /** @noinspection unused*/
     public final void handleNetworkStateChanged() {
     }
 
+    /** @noinspection unused*/
     public final void handleServerNotResponding() {
         if (!this.rcn.is_active) {
             disconnect();
@@ -2554,7 +2565,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void performCleaning() {
+    private void performCleaning() {
         this.cookies = null;
         this.messagesForConfurming.clear();
         this.lastAdd = null;
@@ -2570,7 +2581,7 @@ public class ICQProfile extends IMProfile {
         this.info_requests.clear();
     }
 
-    private final void handleProfileConnected() {
+    private void handleProfileConnected() {
         this.connected = true;
         this.connecting = false;
         startPingTask();
@@ -2581,7 +2592,6 @@ public class ICQProfile extends IMProfile {
         EventTranslator.sendProfilePresence(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public final void handleProfileDisconnected() {
         if (!this.jumpingToBOS) {
             this.authorized = false;
@@ -2609,10 +2619,9 @@ public class ICQProfile extends IMProfile {
         this.jumpingToBOS = false;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public final void handleProfileConnectionLost() {
         jasminSvc.pla.put(this.nickname, resources.getString("s_icq_connection_losted"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        this.svc.put_log(String.valueOf(this.nickname) + ": " + resources.getString("s_icq_connection_losted"));
+        this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_connection_losted"));
         handleProfileDisconnected();
         if (!this.rcn.is_active) {
             if (PreferenceTable.triple_vibro) {
@@ -2623,7 +2632,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    @Override // ru.ivansuper.jasmin.protocols.IMProfile
+    @Override
     public final void disconnect() {
         if (this.rcn.is_active) {
             this.rcn.stop();
@@ -2633,7 +2642,7 @@ public class ICQProfile extends IMProfile {
             send();
             try {
                 Thread.sleep(500L);
-            } catch (InterruptedException e) {
+            } catch (InterruptedException ignored) {
             }
         }
         if (this.socket != null) {
@@ -2643,12 +2652,11 @@ public class ICQProfile extends IMProfile {
             handleProfileDisconnected();
         } else if (this.connected || this.connecting) {
             jasminSvc.pla.put(this.nickname, resources.getString("s_icq_disconnected"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-            this.svc.put_log(String.valueOf(this.nickname) + ": " + resources.getString("s_icq_disconnected"));
+            this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_disconnected"));
             handleProfileDisconnected();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public final void reconnectorDisconnect() {
         if (this.connectedToBOS) {
             this.BUFFER = ICQProtocol.createGoodbye(this.sequence);
@@ -2673,7 +2681,7 @@ public class ICQProfile extends IMProfile {
         startConnecting();
     }
 
-    @Override // ru.ivansuper.jasmin.protocols.IMProfile
+    @Override
     public final void startConnecting() {
         if (!this.connected && !this.connecting) {
             initSocket();
@@ -2685,7 +2693,8 @@ public class ICQProfile extends IMProfile {
             this.jumpingToBOS = false;
             handleProfileStatusChanged();
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.svc);
-            switch (Integer.parseInt(sp.getString("ms_auth_method", "1"))) {
+            /* TODO; ...
+            switch (Integer.parseInt(sp.getString("ms_auth_method", "0"))) {
                 case 0:
                     this.http_auth_used = false;
                     String srv = sp.getString("ms_server", "195.66.114.37");
@@ -2711,62 +2720,75 @@ public class ICQProfile extends IMProfile {
                     authorizer.performAuthorization();
                     break;
             }
+             */
+
+            this.http_auth_used = false;
+            String srv = sp.getString("ms_server", "195.66.114.37");
+            String prt = sp.getString("ms_port", "5190");
+            setConnectionStatus(10);
+            jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+            this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}));
+            this.socket.connect(srv + ":" + prt);
+
             notifyStatusIcon();
             refreshContactList();
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
+
+    /**
+     * @noinspection unused
+     */
     public final class http_auth_listener implements HTTPAuthorizer.HTTPAuthListener {
         private http_auth_listener() {
         }
 
-        /* synthetic */ http_auth_listener(ICQProfile iCQProfile, http_auth_listener http_auth_listenerVar) {
+        /**
+         * @noinspection unused
+         */ /* synthetic */ http_auth_listener(ICQProfile iCQProfile, http_auth_listener http_auth_listenerVar) {
             this();
         }
 
-        @Override // ru.ivansuper.jasmin.icq.HTTPAuthorizer.HTTPAuthListener
+        @Override
         public void onSuccess(String bos, byte[] cookie) {
             ICQProfile.this.bos_server = bos;
             ICQProfile.this.cookies = cookie;
             ICQProfile.this.jumpingToBOS = false;
             jasminSvc.pla.put(ICQProfile.this.nickname, utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{bos}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-            ICQProfile.this.svc.put_log(String.valueOf(ICQProfile.this.nickname) + ": " + utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{bos}));
+            ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{bos}));
             ICQProfile.this.authFirstStageCompleted = true;
             ICQProfile.this.socket.connect(ICQProfile.this.bos_server);
         }
 
-        @Override // ru.ivansuper.jasmin.icq.HTTPAuthorizer.HTTPAuthListener
+        @Override
         public void onError(int code) {
             ICQProfile.this.proceedLoginError(code);
         }
 
-        @Override // ru.ivansuper.jasmin.icq.HTTPAuthorizer.HTTPAuthListener
+        @Override
         public void onProgress(int state) {
             ICQProfile.this.setConnectionStatus((state * 3) + 10);
             switch (state) {
                 case 1:
                     jasminSvc.pla.put(ICQProfile.this.nickname, resources.getString("s_icq_http_connecting_1"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    ICQProfile.this.svc.put_log(String.valueOf(ICQProfile.this.nickname) + ": " + resources.getString("s_icq_http_connecting_1"));
+                    ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + resources.getString("s_icq_http_connecting_1"));
                     return;
                 case 2:
                     jasminSvc.pla.put(ICQProfile.this.nickname, resources.getString("s_icq_http_connecting_2"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    ICQProfile.this.svc.put_log(String.valueOf(ICQProfile.this.nickname) + ": " + resources.getString("s_icq_http_connecting_2"));
+                    ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + resources.getString("s_icq_http_connecting_2"));
                     return;
                 default:
-                    return;
             }
         }
     }
 
-    private final void userSend() {
+    private void userSend() {
         if (this.connected) {
             send();
         }
     }
 
-    private final void send() {
+    private void send() {
         if (this.socket.connected) {
             this.socket.write(this.BUFFER);
             this.sequence++;
@@ -2782,8 +2804,8 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public final void send(ByteBuffer buffer) {
+        //noinspection SynchronizeOnNonFinalField
         synchronized (this.BUFFER) {
             if (this.socket != null) {
                 if (this.socket.connected) {
@@ -2799,9 +2821,7 @@ public class ICQProfile extends IMProfile {
 
     public final void getUnreadMessagesDump(MessagesDump dump) {
         Vector<ICQContact> list = this.contactlist.getContacts();
-        Iterator<ICQContact> it = list.iterator();
-        while (it.hasNext()) {
-            ICQContact contact = it.next();
+        for (ICQContact contact : list) {
             if (contact.hasUnreadMessages) {
                 dump.simple_messages = true;
                 dump.from_contacts++;
@@ -2810,8 +2830,6 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
     public final class reconnector {
         private volatile reconnect_timer rt;
         public boolean is_active = false;
@@ -2822,7 +2840,7 @@ public class ICQProfile extends IMProfile {
         public reconnector() {
         }
 
-        public final void start() {
+        public void start() {
             if (!this.is_active) {
                 this.enabled = true;
                 this.is_active = true;
@@ -2830,38 +2848,37 @@ public class ICQProfile extends IMProfile {
                 this.tryes = 0;
                 this.rt = new reconnect_timer(this, null);
                 this.rt.start();
-                ICQProfile.this.svc.addWakeLock(String.valueOf(ICQProfile.this.ID) + ICQProfile.this.password);
+                ICQProfile.this.svc.addWakeLock(ICQProfile.this.ID + ICQProfile.this.password);
                 jasminSvc.pla.put(ICQProfile.this.nickname, resources.getString("s_reconnection_start"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                ICQProfile.this.svc.put_log(String.valueOf(ICQProfile.this.nickname) + ": " + resources.getString("s_reconnection_start"));
+                ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + resources.getString("s_reconnection_start"));
             }
         }
 
-        public final void stop() {
+        public void stop() {
             if (this.is_active) {
                 jasminSvc.pla.put(ICQProfile.this.nickname, resources.getString("s_reconnection_stop"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                ICQProfile.this.svc.put_log(String.valueOf(ICQProfile.this.ID) + ": " + resources.getString("s_reconnection_stop"));
+                ICQProfile.this.svc.put_log(ICQProfile.this.ID + ": " + resources.getString("s_reconnection_stop"));
                 this.enabled = false;
                 this.is_active = false;
-                ICQProfile.this.svc.removeWakeLock(String.valueOf(ICQProfile.this.ID) + ICQProfile.this.password);
+                ICQProfile.this.svc.removeWakeLock(ICQProfile.this.ID + ICQProfile.this.password);
             }
         }
 
-        /* JADX INFO: Access modifiers changed from: private */
-        /* loaded from: classes.dex */
         public final class reconnect_timer extends Thread {
             private reconnect_timer() {
             }
 
-            /* synthetic */ reconnect_timer(reconnector reconnectorVar, reconnect_timer reconnect_timerVar) {
+            /** @noinspection unused*/reconnect_timer(reconnector reconnectorVar, reconnect_timer reconnect_timerVar) {
                 this();
             }
 
-            @Override // java.lang.Thread, java.lang.Runnable
+            @Override
             public void run() {
                 reconnector.this.is_active = true;
                 int i = 0;
                 while (reconnector.this.enabled) {
                     try {
+                        //noinspection BusyWait
                         sleep(1000L);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
@@ -2873,26 +2890,22 @@ public class ICQProfile extends IMProfile {
                             if (reconnector.this.tryes < reconnector.this.limit) {
                                 ICQProfile.this.reconnectorDisconnect();
                                 try {
+                                    //noinspection BusyWait
                                     sleep(1000L);
                                 } catch (InterruptedException e2) {
                                     e2.printStackTrace();
                                 }
                                 if (ICQProfile.this.svc.isNetworkAvailable()) {
                                     jasminSvc.pla.put(ICQProfile.this.nickname, utilities.match(resources.getString("s_try_to_reconnect"), new String[]{String.valueOf(reconnector.this.tryes + 1)}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                                    ICQProfile.this.svc.put_log(String.valueOf(ICQProfile.this.nickname) + ": " + utilities.match(resources.getString("s_try_to_reconnect"), new String[]{String.valueOf(reconnector.this.tryes + 1)}));
+                                    ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + utilities.match(resources.getString("s_try_to_reconnect"), new String[]{String.valueOf(reconnector.this.tryes + 1)}));
                                     ICQProfile.this.startConnecting();
                                     reconnector.this.tryes++;
                                 }
                             } else {
                                 jasminSvc.pla.put(ICQProfile.this.nickname, resources.getString("s_reconnection_limit_exceed"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                                ICQProfile.this.svc.put_log(String.valueOf(ICQProfile.this.nickname) + ": " + resources.getString("s_reconnection_limit_exceed"));
+                                ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + resources.getString("s_reconnection_limit_exceed"));
                                 reconnector.this.stop();
-                                ICQProfile.this.svc.runOnUi(new Runnable() { // from class: ru.ivansuper.jasmin.icq.ICQProfile.reconnector.reconnect_timer.1
-                                    @Override // java.lang.Runnable
-                                    public void run() {
-                                        ICQProfile.this.disconnect();
-                                    }
-                                }, 150L);
+                                ICQProfile.this.svc.runOnUi(ICQProfile.this::disconnect, 150L);
                                 return;
                             }
                         }
@@ -2904,14 +2917,14 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    @Override // ru.ivansuper.jasmin.protocols.IMProfile
+    @Override
     public final void handleScreenTurnedOff() {
         if (!this.screen_ctrlr.is_active && PreferenceTable.auto_change_status) {
             this.screen_ctrlr.start();
         }
     }
 
-    @Override // ru.ivansuper.jasmin.protocols.IMProfile
+    @Override
     public final void handleScreenTurnedOn() {
         if (this.screen_ctrlr.status_changed) {
             Log.e("Auto-Away", "Main status recovered");
@@ -2921,7 +2934,6 @@ public class ICQProfile extends IMProfile {
         this.screen_ctrlr.stop();
     }
 
-    /* loaded from: classes.dex */
     private final class screen_controller {
         private PendingIntentHandler away_task;
         public boolean is_active;
@@ -2930,8 +2942,8 @@ public class ICQProfile extends IMProfile {
         private screen_controller() {
             this.is_active = false;
             this.status_changed = false;
-            this.away_task = new PendingIntentHandler() { // from class: ru.ivansuper.jasmin.icq.ICQProfile.screen_controller.1
-                @Override // ru.ivansuper.jasmin.Service.PendingIntentHandler
+            this.away_task = new PendingIntentHandler() {
+                @Override
                 public void run() {
                     ICQProfile.this.setTempStatus(1);
                     screen_controller.this.status_changed = true;
@@ -2940,33 +2952,31 @@ public class ICQProfile extends IMProfile {
             };
         }
 
-        /* synthetic */ screen_controller(ICQProfile iCQProfile, screen_controller screen_controllerVar) {
+        /** @noinspection unused*/
+        screen_controller(ICQProfile iCQProfile, screen_controller screen_controllerVar) {
             this();
         }
 
-        public final void start() {
+        public void start() {
             if (!this.is_active) {
                 this.is_active = true;
                 this.status_changed = false;
-                ICQProfile.this.svc.attachTimedTask(this.away_task, PreferenceTable.auto_change_status_timeout * 1000);
+                ICQProfile.this.svc.attachTimedTask(this.away_task, PreferenceTable.auto_change_status_timeout * 1000L);
             }
         }
 
-        public final void stop() {
+        public void stop() {
             this.is_active = false;
             this.status_changed = false;
             ICQProfile.this.svc.removeTimedTask(this.away_task);
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
     public final void sendPingPacket() {
         ByteBuffer buffer = ICQProtocol.createInvalidPacket(this.sequence);
         send(buffer);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    /* loaded from: classes.dex */
     public final class ping_thread extends Thread {
         private int counter = 0;
 
@@ -2978,11 +2988,11 @@ public class ICQProfile extends IMProfile {
             ICQProfile.this.ping_answer_received = true;
         }
 
-        @Override // java.lang.Thread, java.lang.Runnable
+        @Override
         public void run() {
             setPriority(1);
             int period = PreferenceTable.ping_freq;
-            setName(String.valueOf(ICQProfile.this.ID) + " ping thread");
+            setName(ICQProfile.this.ID + " ping thread");
             if (PreferenceTable.use_ping) {
                 ByteBuffer buffer = ICQProtocol.createInvalidPacket(ICQProfile.this.sequence);
                 ICQProfile.this.send(buffer);
@@ -3000,6 +3010,7 @@ public class ICQProfile extends IMProfile {
                                 return;
                             }
                         }
+                        //noinspection BusyWait
                         sleep(1000L);
                         this.counter++;
                     } catch (Exception e) {
