@@ -85,7 +85,7 @@ public class MultiColumnList extends ViewGroup {
         this.mSelectedViewIndex = 0;
         this.mMaxY = Integer.MAX_VALUE;
         this.mDisplayOffset = 0;
-        this.mRemovedViewQueue = new ArrayBlockingQueue(32);
+        this.mRemovedViewQueue = new ArrayBlockingQueue<>(32);
         this.mDataChanged = false;
         this.mColumnsNumber = 1;
         this.mLastTouchY = 0.0f;
@@ -163,7 +163,7 @@ public class MultiColumnList extends ViewGroup {
         setMeasuredDimension(width, height);
     }
 
-    private final synchronized void initView() {
+    private synchronized void initView() {
         this.mTopOverScrollAmount = 0;
         this.mBottomOverScrollAmount = 0;
         this.mTopViewIndex = -1;
@@ -345,7 +345,7 @@ public class MultiColumnList extends ViewGroup {
         this.mOverscroll.setBounds(0, 0, getWidth(), OVERSCROLL_EFFECT_AMOUNT);
         canvas.save();
         canvas.translate(0.0f, getHeight() - OVERSCROLL_EFFECT_AMOUNT);
-        canvas.rotate(180.0f, getWidth() / 2, OVERSCROLL_EFFECT_AMOUNT / 2);
+        canvas.rotate(180.0f, (float) getWidth() / 2, (float) OVERSCROLL_EFFECT_AMOUNT / 2);
         this.mOverscroll.draw(canvas);
         canvas.restore();
         if (this.mBottomOverScrollAmount > 0) {
@@ -487,7 +487,7 @@ public class MultiColumnList extends ViewGroup {
         requestLayout();
     }
 
-    private final void removeAllChilds() {
+    private void removeAllChilds() {
         while (getChildCount() > 0) {
             this.mRemovedViewQueue.offer(getChildAt(0));
             removeViewAt(0);
@@ -509,8 +509,7 @@ public class MultiColumnList extends ViewGroup {
                 this.mRenderOverscroll = true;
             }
             if (this.mScroller.computeScrollOffset()) {
-                int scrolly = this.mScroller.getCurrY();
-                this.mNextY = scrolly;
+                this.mNextY = this.mScroller.getCurrY();
             }
             if (this.mNextY <= 0) {
                 this.mTopOverScrollAmount += Math.abs(this.mNextY * 2);
@@ -565,7 +564,7 @@ public class MultiColumnList extends ViewGroup {
             }
             if (!this.mScroller.isFinished()) {
                 awakenScrollBars();
-                post(() -> MultiColumnList.this.requestLayout());
+                post(MultiColumnList.this::requestLayout);
             }
         }
     }
@@ -904,7 +903,7 @@ public class MultiColumnList extends ViewGroup {
         }
     }
 
-    private final void onTouchUp(float X, float Y) {
+    private void onTouchUp(float X, float Y) {
         if (this.mOnItemLongClicked == null || Math.abs(System.currentTimeMillis() - this.mTouchTime) <= 450) {
             Rect viewRect = new Rect();
             for (int i = 0; i < getChildCount(); i++) {
@@ -935,13 +934,14 @@ public class MultiColumnList extends ViewGroup {
         return new Rect(left, top, right, bottom);
     }
 
+    /** @noinspection SameParameterValue*/
     private void setSelector(int left, int top, int right, int bottom, boolean draw) {
         this.mSelectorRect.set(left, top, right, bottom);
         this.mDrawSelector = draw;
         invalidate();
     }
 
-    private final void hideSelector() {
+    private void hideSelector() {
         if (this.mDrawSelector) {
             this.mSelectorRect.set(0, 0, 0, 0);
             this.mDrawSelector = false;
@@ -990,7 +990,7 @@ public class MultiColumnList extends ViewGroup {
         return handled;
     }
 
-    private final int getChildRowNumber(int index) {
+    private int getChildRowNumber(int index) {
         int local_idx = (index - this.mTopViewIndex) - 1;
         View child = getChildAt(local_idx);
         if (child == null) {
@@ -999,14 +999,15 @@ public class MultiColumnList extends ViewGroup {
         return (child.getLeft() / (child.getRight() - child.getLeft())) + 1;
     }
 
-    /* JADX WARN: Code restructure failed: missing block: B:10:0x001c, code lost:
+    /** @noinspection unused*/ /* JADX WARN: Code restructure failed: missing block: B:10:0x001c, code lost:
 
         r3 = true;
      */
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private final int getNextUpDirectionIndex(int source) {
+    /**
+    private int getNextUpDirectionIndex(int source) {
         int available = 0;
         int count = this.mAdapter.getCount() - 1;
         int counter = source;
@@ -1019,6 +1020,7 @@ public class MultiColumnList extends ViewGroup {
             available++;
         }
         boolean last_is_group = false;
+        //noinspection ConstantValue
         if (last_is_group && counter < count && available == 0) {
             available++;
         }
@@ -1027,16 +1029,31 @@ public class MultiColumnList extends ViewGroup {
         Log.e("Available", String.valueOf(available));
         Log.e("LastIsGroup", String.valueOf(last_is_group));
         if (!last_is_group) {
-            int next = source + available;
-            return next;
+            return source + available;
         }
         int available2 = available - 1;
         if (available2 <= this.mColumnsNumber - row) {
-            int next2 = source + available2 + 1;
-            return next2;
+            return source + available2 + 1;
         }
-        int next3 = source + available2;
-        return next3;
+        return source + available2;
+    }
+     * @noinspection unused
+     */
+
+    private int getNextUpDirectionIndex(int source) {
+        int available = 0;
+        int counter = source;
+
+        while (counter > 0 && available < mColumnsNumber) {
+            int type = mAdapter.getItemType(counter - 1);
+            if (type == 0) break;
+            counter--;
+            available++;
+        }
+
+        //noinspection unused
+        int row = getChildRowNumber(source);
+        return source - available;
     }
 
     /* JADX WARN: Code restructure failed: missing block: B:10:0x001c, code lost:
@@ -1046,7 +1063,8 @@ public class MultiColumnList extends ViewGroup {
     /*
         Code decompiled incorrectly, please refer to instructions dump.
     */
-    private final int getNextBottomDirectionIndex(int source) {
+    /**
+    private int getNextBottomDirectionIndex(int source) {
         int available = 0;
         int count = this.mAdapter.getCount() - 1;
         int counter = source;
@@ -1059,7 +1077,9 @@ public class MultiColumnList extends ViewGroup {
             available++;
         }
         boolean last_is_group = false;
+        //noinspection ConstantValue
         if (last_is_group && counter < count && available == 0) {
+            //noinspection unused
             int i = counter + 1;
             available++;
         }
@@ -1068,17 +1088,33 @@ public class MultiColumnList extends ViewGroup {
         Log.e("Available", String.valueOf(available));
         Log.e("LastIsGroup", String.valueOf(last_is_group));
         if (!last_is_group) {
-            int next = source + available;
-            return next;
+            return source + available;
         }
         int available2 = available - 1;
         if (available2 <= this.mColumnsNumber - row) {
-            int next2 = source + available2 + 1;
-            return next2;
+            return source + available2 + 1;
         }
-        int next3 = source + available2;
-        return next3;
+        return source + available2;
     }
+     */
+
+    private int getNextBottomDirectionIndex(int source) {
+        int available = 0;
+        int count = mAdapter.getCount();
+        int counter = source;
+
+        while (counter < count - 1 && available < mColumnsNumber) {
+            int type = mAdapter.getItemType(counter + 1);
+            if (type == 0) break;
+            counter++;
+            available++;
+        }
+
+        //noinspection unused
+        int row = getChildRowNumber(source);
+        return source + available;
+    }
+
 
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     @Override
@@ -1089,14 +1125,14 @@ public class MultiColumnList extends ViewGroup {
             this.mScrolling = true;
         }
         switch (event.getAction()) {
-            case 0:
+            case MotionEvent.ACTION_DOWN:
                 this.IS_TOUCHED = true;
                 this.mLastTouchY = event.getY();
                 this.mLastMoveY = this.mLastTouchY;
                 onTouchDown(event.getX(), this.mLastTouchY);
                 invalidate();
                 return true;
-            case 1:
+            case MotionEvent.ACTION_UP:
                 this.IS_TOUCHED = false;
                 hideSelector();
                 if (this.mScrolling) {
@@ -1112,27 +1148,27 @@ public class MultiColumnList extends ViewGroup {
                 }
                 invalidate();
                 return true;
-            case 2:
-                if (this.mScrolling) {
+            case MotionEvent.ACTION_MOVE:
+                float Y = event.getY();
+                if (mScrolling) {
                     awakenScrollBars(2000, true);
-                    this.mTouchTime = 0L;
+                    mTouchTime = 0L;
                     hideSelector();
-                    float Y = event.getY();
-                    float diff2 = this.mLastMoveY - Y;
+                    float diff = mLastMoveY - Y;
                     synchronized (this) {
-                        this.mNextY += (int) diff2;
+                        mNextY += (int) diff;
                     }
                     requestLayout();
-                    this.mLastMoveY_ = this.mLastMoveY;
-                    this.mLastMoveY = Y;
-                } else if (Math.abs(this.mLastTouchY - event.getY()) > 15.0f) {
-                    this.mLastMoveY = event.getY();
-                    this.mScrolling = true;
+                    mLastMoveY_ = mLastMoveY;
+                    mLastMoveY = Y;
+                } else if (Math.abs(mLastTouchY - Y) > 15.0f) {
+                    mLastMoveY = Y;
+                    mScrolling = true;
                     dropAnimations();
                     hideSelector();
                 }
                 return true;
-            case 3:
+            case MotionEvent.ACTION_CANCEL:
                 this.mScrolling = false;
                 this.mTouchTime = 0L;
                 hideSelector();
@@ -1142,12 +1178,25 @@ public class MultiColumnList extends ViewGroup {
         }
     }
 
-    /** @noinspection UnusedReturnValue*/
+    /** @noinspection UnusedReturnValue, unused , SameParameterValue */
+    /**
     protected final boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         synchronized (this) {
             this.mScroller.fling(0, this.mNextY, 0, (int) velocityY, 0, 0, MMPProtocol.MMP_FLAG_INVISIBLE, Integer.MAX_VALUE);
         }
         requestLayout();
+        return true;
+    }
+     * @noinspection unused, SameParameterValue
+     */
+
+    protected final boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        if (mScroller != null) {
+            synchronized (this) {
+                mScroller.fling(0, mNextY, 0, (int) velocityY, 0, 0, 0, Integer.MAX_VALUE);
+            }
+            requestLayout();
+        }
         return true;
     }
 
@@ -1157,6 +1206,7 @@ public class MultiColumnList extends ViewGroup {
         return true;
     }
 
+    /**
     private static int getMax(int[] array) {
         int max = MMPProtocol.MMP_FLAG_INVISIBLE;
         if (array == null || array.length == 0) {
@@ -1169,12 +1219,33 @@ public class MultiColumnList extends ViewGroup {
         }
         return max;
     }
+     */
+
+    private static int getMax(int[] array) {
+        if (array == null || array.length == 0) return 0;
+        int max = array[0];
+        for (int value : array) {
+            if (value > max) max = value;
+        }
+        return max;
+    }
 
     /** @noinspection SpellCheckingInspection*/
+    /**
     public final void clearup() {
         removeAllViews();
         this.mDataObserver = null;
         this.mAdapter = null;
+        super.destroyDrawingCache();
+    }
+     */
+    public final void clearup() {
+        removeAllViews();
+        if (mAdapter != null && mDataObserver != null) {
+            mAdapter.unregisterDataSetObserver(mDataObserver);
+        }
+        mAdapter = null;
+        mDataObserver = null;
         super.destroyDrawingCache();
     }
 }

@@ -55,8 +55,7 @@ public abstract class SocketConnection {
         this.svc = param;
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public synchronized void errorOccured() {
+    private synchronized void errorOccured() {
         if (this.socket != null && this.connected) {
             try {
                 this.socket.close();
@@ -189,14 +188,17 @@ public abstract class SocketConnection {
                 writeThrd.setName("Socket write thread");
                 writeThrd.start();
             } catch (UnknownHostException e) {
+                //noinspection CallToPrintStackTrace
                 e.printStackTrace();
                 lastErrorCode = 1;
                 errorOccuredA();
             } catch (IOException e2) {
+                //noinspection CallToPrintStackTrace
                 e2.printStackTrace();
                 lastErrorCode = 2;
                 errorOccuredA();
             } catch (Exception e3) {
+                //noinspection CallToPrintStackTrace
                 e3.printStackTrace();
                 lastErrorCode = 255;
                 errorOccuredA();
@@ -237,7 +239,7 @@ public abstract class SocketConnection {
         }
 
         private ByteBuffer get() {
-            if (this.queue.size() > 0) {
+            if (!this.queue.isEmpty()) {
                 return this.queue.remove(0);
             }
             return null;
@@ -257,6 +259,7 @@ public abstract class SocketConnection {
                         }
                     }
                 } catch (Exception e) {
+                    //noinspection CallToPrintStackTrace
                     e.printStackTrace();
                     lastErrorCode = 5;
                     errorOccured();
@@ -317,6 +320,7 @@ public abstract class SocketConnection {
                     }
                 } catch (Exception e) {
                     if (connected) {
+                        //noinspection CallToPrintStackTrace
                         e.printStackTrace();
                         lastErrorCode = 4;
                         errorOccured();

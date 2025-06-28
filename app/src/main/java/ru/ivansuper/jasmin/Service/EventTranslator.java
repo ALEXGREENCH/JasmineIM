@@ -12,13 +12,21 @@ import ru.ivansuper.jasmin.resources;
 
 public class EventTranslator {
     public static final String ACTION = "ru.ivansuper.jasmin.JASMINE_NOTIFICATION";
+    /** @noinspection unused*/
     public static final int PROFILE_TYPE_ICQ = 0;
+    /** @noinspection unused*/
     public static final int PROFILE_TYPE_JABBER = 1;
+    /** @noinspection unused*/
     public static final int PROFILE_TYPE_MRIM = 2;
+    /** @noinspection unused*/
     public static final int TYPE_APP_CLOSED = 1;
+    /** @noinspection unused*/
     public static final int TYPE_APP_STARTED = 0;
+    /** @noinspection unused*/
     public static final int TYPE_PROFILES_LIST = 2;
+    /** @noinspection unused*/
     public static final int TYPE_PROFILE_STATUS = 3;
+    /** @noinspection unused*/
     public static final int TYPE_UNREADED_INFO = 4;
 
     public static synchronized void sendProfilePresence(final IMProfile profile) {

@@ -3,11 +3,13 @@ package ru.ivansuper.jasmin;
 import android.annotation.SuppressLint;
 import android.os.Build;
 import android.os.Process;
-import android.os.Build.VERSION;
 import android.util.Log;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 public class debug {
@@ -20,67 +22,58 @@ public class debug {
 
     private static class exception_hdl implements Thread.UncaughtExceptionHandler {
 
-        /** @noinspection NullableProblems*/
         @SuppressLint("LongLogTag")
-        public void uncaughtException(Thread thread, Throwable throwable) {
+        @Override // java.lang.Thread.UncaughtExceptionHandler
+        public void uncaughtException(Thread thread, Throwable ex) {
             try {
                 Log.e("JasmineIM:stack_dump", "Exception handled! Saving stack trace ...");
-                Log.e("JasmineIM:stack_dump:trace", "Details", throwable);
-                if (!resources.sd_mounted()) {
-                    return;
-                }
-
-                String currentTimeMillisString = String.valueOf(System.currentTimeMillis());
-                currentTimeMillisString = currentTimeMillisString.substring(currentTimeMillisString.length() - 7);
-                File file1 = new File(resources.dataPath + "stack_trace_" + currentTimeMillisString + ".st");
-                if (!file1.exists()) {
-                    //noinspection ResultOfMethodCallIgnored
-                    file1.createNewFile();
-                }
-
-                FileOutputStream fileOutputStream = new FileOutputStream(file1);
-                BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
-                PrintStream printStream = new PrintStream(bufferedOutputStream);
-                printStream.print("=== Jasmine Stack Dump File ===\n");
-                StringBuilder stringBuilder = new StringBuilder("BOARD: ");
-                printStream.print(stringBuilder.append(Build.BOARD).append("\n"));
-                stringBuilder = new StringBuilder("BRAND: ");
-                printStream.print(stringBuilder.append(Build.BRAND).append("\n"));
-                stringBuilder = new StringBuilder("FINGERPRINT: ");
-                printStream.print(stringBuilder.append(Build.FINGERPRINT).append("\n"));
-                stringBuilder = new StringBuilder("ID: ");
-                printStream.print(stringBuilder.append(Build.ID).append("\n"));
-                stringBuilder = new StringBuilder("MANUFACTURER: ");
-                printStream.print(stringBuilder.append(Build.MANUFACTURER).append("\n"));
-                stringBuilder = new StringBuilder("MODEL: ");
-                printStream.print(stringBuilder.append(Build.MODEL).append("\n"));
-                stringBuilder = new StringBuilder("PRODUCT: ");
-                printStream.print(stringBuilder.append(Build.PRODUCT).append("\n"));
-                stringBuilder = new StringBuilder("TAGS: ");
-                printStream.print(stringBuilder.append(Build.TAGS).append("\n"));
-                stringBuilder = new StringBuilder("TYPE: ");
-                printStream.print(stringBuilder.append(Build.TYPE).append("\n"));
-                stringBuilder = new StringBuilder("USER: ");
-                printStream.print(stringBuilder.append(Build.USER).append("\n\n"));
-                stringBuilder = new StringBuilder("OS Version: ");
-                printStream.print(stringBuilder.append(VERSION.SDK_INT).append(" ").append(VERSION.RELEASE).append("\n\n"));
-                stringBuilder = new StringBuilder("Available memory/Heap size: ");
-                printStream.print(stringBuilder.append(resources.DEVICE_HEAP_SIZE).append(" MB\n\n"));
-                stringBuilder = new StringBuilder("Used memory: ");
-                printStream.print(stringBuilder.append(resources.DEVICE_HEAP_USED_SIZE).append(" MB\n\n"));
-                stringBuilder = new StringBuilder("Jasmine IM Version: ");
-                printStream.print(stringBuilder.append(resources.VERSION));
-                throwable.printStackTrace(printStream);
-                printStream.close();
-                File file2 = new File(resources.dataPath + "ForceClosed.marker");
-                //noinspection ResultOfMethodCallIgnored
-                file2.createNewFile();
-            } catch (Exception var6) {
-                //noinspection CallToPrintStackTrace
-                var6.printStackTrace();
+                Log.e("JasmineIM:stack_dump:trace", "Details", ex);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-
-            Process.killProcess(Process.myPid());
+            if (resources.sd_mounted()) {
+                String unique_id = String.valueOf(System.currentTimeMillis());
+                File dump = new File(resources.dataPath + "stack_trace_" + unique_id.substring(unique_id.length() - 7) + ".st");
+                if (!dump.exists()) {
+                    try {
+                        //noinspection ResultOfMethodCallIgnored
+                        dump.createNewFile();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                PrintStream out;
+                try {
+                    out = new PrintStream(new BufferedOutputStream(new FileOutputStream(dump)));
+                } catch (FileNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
+                out.print("=== Jasmine Stack Dump File ===\n");
+                out.print("BOARD: " + Build.BOARD + "\n");
+                out.print("BRAND: " + Build.BRAND + "\n");
+                out.print("FINGERPRINT: " + Build.FINGERPRINT + "\n");
+                out.print("ID: " + Build.ID + "\n");
+                out.print("MANUFACTURER: " + Build.MANUFACTURER + "\n");
+                out.print("MODEL: " + Build.MODEL + "\n");
+                out.print("PRODUCT: " + Build.PRODUCT + "\n");
+                out.print("TAGS: " + Build.TAGS + "\n");
+                out.print("TYPE: " + Build.TYPE + "\n");
+                out.print("USER: " + Build.USER + "\n\n");
+                out.print("OS Version: " + Build.VERSION.SDK_INT + " " + Build.VERSION.RELEASE + "\n\n");
+                out.print("Available memory/Heap size: " + resources.DEVICE_HEAP_SIZE + " MB\n\n");
+                out.print("Used memory: " + resources.DEVICE_HEAP_USED_SIZE + " MB\n\n");
+                out.print("Jasmine IM Version: " + resources.VERSION);
+                ex.printStackTrace(out);
+                out.close();
+                File marker = new File(resources.dataPath + "ForceClosed.marker");
+                try {
+                    //noinspection ResultOfMethodCallIgnored
+                    marker.createNewFile();
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                Process.killProcess(Process.myPid());
+            }
         }
     }
 }

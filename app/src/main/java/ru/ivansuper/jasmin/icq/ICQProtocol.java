@@ -15,7 +15,7 @@ import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
 public class ICQProtocol {
-
+    /** @noinspection unused*/
     public static ByteBuffer createHelloReply(int seq) {
         ByteBuffer buffer = new ByteBuffer(48);
         buffer.writeDWord(1);
@@ -89,7 +89,7 @@ public class ICQProtocol {
 
     public static ByteBuffer createXORLogin(int seq, String uin, String password) throws Exception {
         String pass = password.length() > 8 ? password.substring(0, 8) : password;
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeDWord(1);
         buffer.writeWord(1);
         buffer.writePreLengthStringAscii(uin);
@@ -132,7 +132,7 @@ public class ICQProtocol {
      */
     public static ByteBuffer createEMAILLogin(int seq, String email, String password) throws Exception {
         String pass = password.length() > 8 ? password.substring(0, 8) : password;
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeDWord(1);
         buffer.writeWord(86);
         buffer.writeWord(0);
@@ -188,7 +188,7 @@ public class ICQProtocol {
         String away = text.length() > 253 ? text.substring(0, 249) + " ..." : text;
         ByteBuffer data = new ByteBuffer(512);
         ByteBuffer buffer = new ByteBuffer(512);
-        if (text.length() > 0) {
+        if (!text.isEmpty()) {
             buffer.writeWord(2);
             buffer.writeByte((byte) 4);
             byte[] raw = null;
@@ -196,6 +196,7 @@ public class ICQProtocol {
                 //noinspection CharsetObjectCanBeUsed
                 raw = away.getBytes("utf8");
             } catch (UnsupportedEncodingException e1) {
+                //noinspection CallToPrintStackTrace
                 e1.printStackTrace();
             }
             //noinspection DataFlowIssue
@@ -204,6 +205,7 @@ public class ICQProtocol {
             try {
                 buffer.write(raw);
             } catch (Exception e) {
+                //noinspection CallToPrintStackTrace
                 e.printStackTrace();
             }
             buffer.writeWord(0);
@@ -223,7 +225,7 @@ public class ICQProtocol {
     }
 
     public static ByteBuffer createSetDCInfo(int seq, int status, int flags, int protoVer) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         ByteBuffer buf = new ByteBuffer(16);
         buf.writeWord(flags);
         buf.writeWord(status);
@@ -231,7 +233,7 @@ public class ICQProtocol {
         ByteBuffer buf2 = new ByteBuffer(16);
         buf2.writeWord(0);
         buffer.writeIcqTLV(buf2, 8);
-        ByteBuffer buf3 = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buf3 = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buf3.writeWord(0);
         buf3.writeWord(0);
         buf3.writeDWord(0);
@@ -284,7 +286,7 @@ public class ICQProtocol {
     }
 
     public static ByteBuffer createClientReady(int seq) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeDWord(2228225);
         buffer.writeDWord(17831503);
         buffer.writeDWord(65540);
@@ -368,7 +370,7 @@ public class ICQProtocol {
 
     public static ByteBuffer createUpdateSSIInfo(int seq, int id, int param, boolean my_info) {
         int s;
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeDWord(0);
         buffer.writeWord(id);
         buffer.writeWord(4);
@@ -392,10 +394,11 @@ public class ICQProtocol {
         buffer.writeWord(group);
         buffer.writeWord(id);
         buffer.writeWord(0);
-        ByteBuffer buf = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buf = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         try {
             buf.writeStringUTF8(newNick);
         } catch (Exception e) {
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
         if (!have_auth_flag) {
@@ -424,7 +427,7 @@ public class ICQProtocol {
             buffer.writeWord(0);
             buffer.writeWord(1);
             Vector<ICQContact> list = profile.contactlist.getContactsByGroupId(group.id);
-            if (list.size() != 0) {
+            if (!list.isEmpty()) {
                 buffer.writeWord((list.size() * 2) + 4);
                 buffer.writeWord(200);
                 buffer.writeWord(list.size() * 2);
@@ -435,6 +438,7 @@ public class ICQProtocol {
                 buffer.writeWord(0);
             }
         } catch (UnsupportedEncodingException e) {
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
         ByteBuffer snc = SNAC.createSnac(19, 9, 0, 131104, buffer);
@@ -454,7 +458,7 @@ public class ICQProtocol {
     }
 
     public static ByteBuffer createAddToLists(int seq, ssi_item item, int listType) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         String sUIN = item.uin;
         buffer.writeWord(sUIN.length());
         buffer.writeStringAscii(sUIN);
@@ -467,7 +471,7 @@ public class ICQProtocol {
     }
 
     public static ByteBuffer createRemoveFromLists(int seq, ssi_item item, int listType) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         String sUIN = item.uin;
         buffer.writeWord(sUIN.length());
         buffer.writeStringAscii(sUIN);
@@ -480,7 +484,7 @@ public class ICQProtocol {
     }
 
     public static ByteBuffer createContactDelete(int seq, ICQContact contact) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         String sUIN = contact.ID;
         buffer.writeWord(sUIN.length());
         buffer.writeStringAscii(sUIN);
@@ -496,7 +500,7 @@ public class ICQProtocol {
      * @noinspection unused
      */
     public static ByteBuffer createGroupDelete(int seq, ICQGroup group, ICQProfile profile) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         try {
             //noinspection CharsetObjectCanBeUsed
             byte[] raw = group.name.getBytes("utf8");
@@ -528,7 +532,7 @@ public class ICQProtocol {
     }
 
     public static ByteBuffer createAddRosterIconRecord(String name, int group, int id, int seq) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeWord(name.length());
         buffer.writeStringAscii(name);
         buffer.writeWord(group);
@@ -589,7 +593,7 @@ public class ICQProtocol {
         buffer.writeWord(contact.id);
         buffer.writeWord(0);
         ByteBuffer temp = new ByteBuffer(256);
-        ByteBuffer utf = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer utf = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         utf.writeStringUTF8(contact.name);
         temp.writeWord(305);
         temp.writeWord(utf.writePos);
@@ -608,6 +612,7 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /** @noinspection unused*/
     public static ByteBuffer createLoginAuthorizationRequest(int seq, String uin) {
         ByteBuffer buffer = new ByteBuffer(64);
         buffer.writeWord(1);
@@ -617,14 +622,15 @@ public class ICQProtocol {
     }
 
     public static ByteBuffer createAuthorizationRequest(int seq, String uin) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeByte((byte) uin.length());
         buffer.writeStringAscii(uin);
         String reason = resources.getString("s_icq_authorize_text");
-        ByteBuffer r = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer r = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         try {
             r.writeStringUTF8(reason);
         } catch (Exception e) {
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
         buffer.writeWord(r.writePos);
@@ -635,7 +641,7 @@ public class ICQProtocol {
     }
 
     public static ByteBuffer createFutureAuthGrand(int seq, String uin) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeByte((byte) uin.length());
         buffer.writeStringAscii(uin);
         buffer.writeDWord(0);
@@ -644,7 +650,7 @@ public class ICQProtocol {
     }
 
     public static ByteBuffer createAuthReply(int seq, String uin, int reply) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeByte((byte) uin.length());
         buffer.writeStringAscii(uin);
         buffer.writeByte((byte) reply);
@@ -772,7 +778,7 @@ public class ICQProtocol {
      * @noinspection unused
      */
     public static ByteBuffer createAvatarRequest(byte[] hash, int id, int flag, String uin, int seq) {
-        ByteBuffer buffer = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeByte((byte) uin.length());
         buffer.writeStringAscii(uin);
         buffer.writeByte((byte) 1);
@@ -850,7 +856,7 @@ public class ICQProtocol {
         data.writeWord(2);
         data.writeByte((byte) uin.length());
         data.writeStringAscii(uin);
-        ByteBuffer tlv5 = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer tlv5 = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         tlv5.writeWord(2);
         tlv5.write(cookie);
         tlv5.write(utilities.hexStringToBytesArray("094613434C7F11D18222444553540000"));
@@ -962,7 +968,7 @@ public class ICQProtocol {
         data.writeWord(2);
         data.writeByte((byte) uin.length());
         data.writeStringAscii(uin);
-        ByteBuffer tlv5 = new ByteBuffer((int) ContactListActivity.UPDATE_BLINK_STATE);
+        ByteBuffer tlv5 = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
         tlv5.writeWord(1);
         tlv5.write(cookie);
         tlv5.write(utilities.hexStringToBytesArray("094613434C7F11D18222444553540000"));
@@ -1032,21 +1038,21 @@ public class ICQProtocol {
         tlv1_subdata.writeWord(criteries.page);
         tlv1_subdata.writeWord(1);
         ByteBuffer criteries_block = new ByteBuffer(512);
-        if (criteries.nick.length() > 0) {
+        if (!criteries.nick.isEmpty()) {
             byte[] raw_nick = utilities.prepareUTF8(criteries.nick);
             criteries_block.writeWord(120);
             //noinspection DataFlowIssue
             criteries_block.writeWord(raw_nick.length);
             criteries_block.write(raw_nick);
         }
-        if (criteries.name.length() > 0) {
+        if (!criteries.name.isEmpty()) {
             byte[] raw_name = utilities.prepareUTF8(criteries.name);
             criteries_block.writeWord(100);
             //noinspection DataFlowIssue
             criteries_block.writeWord(raw_name.length);
             criteries_block.write(raw_name);
         }
-        if (criteries.lastname.length() > 0) {
+        if (!criteries.lastname.isEmpty()) {
             byte[] raw_lastname = utilities.prepareUTF8(criteries.lastname);
             criteries_block.writeWord(110);
             //noinspection DataFlowIssue
@@ -1058,7 +1064,7 @@ public class ICQProtocol {
             criteries_block.writeWord(1);
             criteries_block.writeByte((byte) criteries.gender);
         }
-        if (criteries.city.length() > 0) {
+        if (!criteries.city.isEmpty()) {
             byte[] raw_city = utilities.prepareUTF8(criteries.city);
             criteries_block.writeWord(160);
             //noinspection DataFlowIssue

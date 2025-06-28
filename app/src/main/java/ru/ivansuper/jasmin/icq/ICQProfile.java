@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -40,8 +41,8 @@ import ru.ivansuper.jasmin.protocols.IMProfile;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
-/* loaded from: classes.dex */
 public class ICQProfile extends IMProfile {
+
     /**
      * @noinspection unused
      */
@@ -373,6 +374,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
+    /*
     private void handleServerAuthHello() {
         jasminSvc.pla.put(this.nickname, resources.getString("s_icq_authentification"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
         this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_authentification"));
@@ -403,18 +405,45 @@ public class ICQProfile extends IMProfile {
             }
         //}
     }
+     */
+
+
+    private void handleServerAuthHello() {
+        jasminSvc.pla.put(this.nickname, resources.getString("s_icq_authentification"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+        this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_authentification"));
+        setConnectionStatus(19);
+
+        try {
+            // здесь используется наш новый, правильный CLI_IDENT
+            this.BUFFER = ICQProtocol.createXORLogin(this.sequence, this.ID, this.password);
+            send();
+        } catch (Exception e) {
+            makeToast("error at createXORLogin()");
+            disconnect();
+        }
+    }
 
     private void handleServerXORReply(TLV server, TLV cookie) {
         setConnectionStatus(25);
-        this.bos_server = server.getData().readStringAscii(server.length);
-        jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{this.bos_server}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{this.bos_server}));
+        // читаем адрес BOS-сервера
+        String bos = server.getData().readStringAscii(server.length);
+        // сохраняем его в поле, чтобы потом на него коннектиться
+        this.bos_server = bos;
+
+        // логируем и показываем в списке контактов
+        String msg = utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{bos});
+        jasminSvc.pla.put(this.nickname, msg, null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+        this.svc.put_log(this.nickname + ": " + msg);
+        this.svc.showMessageInContactList(resources.getString("s_information"), msg);
+
         this.cookies = cookie.getData().readBytes(cookie.length);
         ByteBuffer buffer = ICQProtocol.createGoodbye(this.sequence);
         send(buffer);
         this.authFirstStageCompleted = true;
         this.jumpingToBOS = true;
+
         this.socket.disconnect();
+        // теперь bos_server точно не null
         this.socket.connect(this.bos_server);
     }
 
@@ -427,13 +456,8 @@ public class ICQProfile extends IMProfile {
 
     private void handleDisconnectFlapData(ByteBuffer data) {
         TLVList list = new TLVList(data, data.getBytesCountAvailableToRead(), true);
-        TLV uin = list.getTLV(1);
-        if (uin != null) {
-            ByteBuffer uin_data = uin.getData();
-            this.ID = uin_data.readStringAscii(uin.length);
-            this.svc.showMessageInContactList(resources.getString("s_information"), utilities.match(resources.getString("s_email_replaced"), new String[]{this.ID}));
-            this.svc.profiles.writeProfilesToFile();
-        }
+
+        // 1) Сначала — если это нормальный ответ на XOR-логин (server+cookie)
         TLV server = list.getTLV(5);
         TLV cookie = list.getTLV(6);
         if (server != null && cookie != null) {
@@ -441,21 +465,41 @@ public class ICQProfile extends IMProfile {
             list.recycle();
             return;
         }
+
+        // 2) Только теперь — если пришёл TLV 1, то это именно "вход по e-mail"
+        TLV uin = list.getTLV(1);
+        if (uin != null) {
+            ByteBuffer uin_data = uin.getData();
+            this.ID = uin_data.readStringAscii(uin.length);
+            this.svc.showMessageInContactList(
+                    resources.getString("s_information"),
+                    utilities.match(resources.getString("s_email_replaced"), new String[]{this.ID})
+            );
+            this.svc.profiles.writeProfilesToFile();
+        }
+
+        // 3) Дальше — ошибки и всё остальное
         TLV error = list.getTLV(8);
         if (error != null) {
             proceedLoginError(error.getData().readWord());
             list.recycle();
             return;
         }
-        TLV tlv = list.getTLV(9);
-        if (tlv != null) {
-            ByteBuffer buffer = tlv.getData();
-            if (buffer.readWord() == 1) {
-                this.svc.showMessageInContactList(this.ID, resources.getString("s_icq_used_on_another_device"));
+
+        TLV tlv9 = list.getTLV(9);
+        if (tlv9 != null) {
+            ByteBuffer buf = tlv9.getData();
+            if (buf.readWord() == 1) {
+                this.svc.showMessageInContactList(
+                        this.ID,
+                        resources.getString("s_icq_used_on_another_device")
+                );
             }
         }
-        ByteBuffer buffer2 = ICQProtocol.createGoodbye(this.sequence);
-        send(buffer2);
+
+        // если это не авторизация — просто скажем «пока» и отключимся
+        ByteBuffer goodbye = ICQProtocol.createGoodbye(this.sequence);
+        send(goodbye);
         disconnect();
         list.recycle();
     }

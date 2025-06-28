@@ -7,8 +7,9 @@ import android.media.AudioManager;
 import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.util.Log;
-import java.util.Iterator;
+
 import java.util.Vector;
+
 import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.locale.Locale;
@@ -20,7 +21,7 @@ public class BReceiver extends BroadcastReceiver {
     public static boolean mWidgetLocked = false;
     private int mFastRequestsCount = 0;
     private long mLastRequestTimestamp = 0;
-    private jasminSvc service;
+    private final jasminSvc service;
 
     public BReceiver(jasminSvc service) {
         this.service = service;
@@ -53,7 +54,6 @@ public class BReceiver extends BroadcastReceiver {
                         Media.ring_mode = 0;
                         return;
                     default:
-                        return;
                 }
             } else if (intent.getAction().contains("SCREEN_OFF")) {
                 this.service.handleScreenTurnedOff();

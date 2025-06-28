@@ -70,18 +70,23 @@ public class utilities {
     /**
      * @noinspection FieldMayBeFinal
      */
-    private static int[] xorArray = {243, 38, 129, 196, 57, 134, 219, 146, 113, 163, 185, 230, 83, 122, 149, 124};
+    // Статический массив «жарящих» байт
+    private static final byte[] ROAST_CHARS = new byte[]{
+            (byte)0xF3, 0x26, (byte)0x81, (byte)0xC4, 0x39, (byte)0x86, (byte)0xDB, (byte)0x92,
+            0x71, (byte)0xA3, (byte)0xB9, (byte)0xE6, 0x53, 0x7A, (byte)0x95, 0x7C
+    };
+
     private static final Random random = new Random();
 
-    /** @noinspection unused*/
-    public static byte[] xorPass(String source) throws Exception {
-        byte[] res = new byte[source.length()];
-        //noinspection InjectedReferences
-        byte[] src = source.getBytes("windows1251");
-        for (int i = 0; i < src.length; i++) {
-            res[i] = (byte) (src[i] ^ xorArray[i]);
+    /** «Жарим» пароль по циклическому XOR’у */
+    public static byte[] xorPass(String password) throws UnsupportedEncodingException {
+        //noinspection CharsetObjectCanBeUsed
+        byte[] pwd = password.getBytes("ASCII");
+        byte[] out = new byte[pwd.length];
+        for (int i = 0; i < pwd.length; i++) {
+            out[i] = (byte)(pwd[i] ^ ROAST_CHARS[i % ROAST_CHARS.length]);
         }
-        return ByteBuffer.normalizeBytes(res, source.length());
+        return out;
     }
 
     public static String convertToHex(byte[] data) {

@@ -19,6 +19,7 @@ public class MCheckBox extends CheckBox {
         init(context);
     }
 
+    /** @noinspection unused*/
     private void init(Context context) {
         setButtonDrawable(R.drawable.btn_check);
         resources.attachCheckStyle(this);

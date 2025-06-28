@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.os.Message;
 import android.text.ClipboardManager;
@@ -116,8 +115,8 @@ public class JConference extends Chat implements Handler.Callback {
             }
 
             try {
-                if (((IdentificatedRunnable)this.context_menus_runnables.get(var2)).id == var1) {
-                    ((IdentificatedRunnable)this.context_menus_runnables.remove(var2)).task.run();
+                if (this.context_menus_runnables.get(var2).id == var1) {
+                    this.context_menus_runnables.remove(var2).task.run();
                     return;
                 }
             } catch (Throwable var9) {
@@ -282,7 +281,7 @@ public class JConference extends Chat implements Handler.Callback {
                 if (var11 != null) {
                     try {
                         if (var11 instanceof Conference && var11.equals(conference)) {
-                            this.handleIncomingTextMessage((HistoryItem)null);
+                            this.handleIncomingTextMessage(null);
                         }
                     } catch (Exception var7) {
                         //noinspection UnusedAssignment
@@ -481,7 +480,7 @@ public class JConference extends Chat implements Handler.Callback {
         });
         this.messageList.setOnItemClickListener(new chat_click_listener());
         if (!PreferenceTable.chat_dividers) {
-            this.messageList.setDivider((Drawable)null);
+            this.messageList.setDivider(null);
         }
 
         this.input = (EditText)this.findViewById(2131427405);
@@ -489,7 +488,7 @@ public class JConference extends Chat implements Handler.Callback {
         this.input.setTextColor(ColorScheme.getColor(46));
         Button menu_btn = (Button)this.findViewById(2131427404);
         resources.attachButtonStyle(menu_btn);
-        menu_btn.setCompoundDrawables(resources.chat_menu_icon, (Drawable)null, (Drawable)null, (Drawable)null);
+        menu_btn.setCompoundDrawables(resources.chat_menu_icon, null, null, null);
         menu_btn.setOnClickListener(var1 -> {
             JConference.this.removeDialog(1);
             JConference.this.showDialog(1);
@@ -510,7 +509,7 @@ public class JConference extends Chat implements Handler.Callback {
         }
 
         this.smileysSelectBtn = (Button)this.findViewById(2131427406);
-        this.smileysSelectBtn.setCompoundDrawables(resources.smileys_select_icon, (Drawable)null, (Drawable)null, (Drawable)null);
+        this.smileysSelectBtn.setCompoundDrawables(resources.smileys_select_icon, null, null, null);
         this.smileysSelectBtn.setOnClickListener((View.OnClickListener) new smileySelectBtnListener());
         this.nick_ = (TextView)this.findViewById(2131427403);
         if (this.sp.getBoolean("ms_old_chat_style", true)) {
@@ -554,8 +553,8 @@ public class JConference extends Chat implements Handler.Callback {
         this.nick_.setTextSize((float)PreferenceTable.chatTextSize);
         this.input.setTextSize((float)PreferenceTable.chatTextSize);
         this.nick_.setTextColor(ColorScheme.getColor(22));
-        ((Button)this.findViewById(2131427393)).setVisibility(View.GONE);
-        ((Button)this.findViewById(2131427392)).setVisibility(View.GONE);
+        this.findViewById(2131427393).setVisibility(View.GONE);
+        this.findViewById(2131427392).setVisibility(View.GONE);
         this.toggleUserlistVisibility(false);
     }
 
@@ -904,7 +903,7 @@ public class JConference extends Chat implements Handler.Callback {
                                     adp4.put(item.name, i3);
                                 }
                                 Dialog commands = DialogBuilder.createWithNoHeader(JConference.this.ACTIVITY, adp4, 0, (arg02, arg12, arg22, arg32) -> {
-                                    CommandItem item2 = (CommandItem) list.get(arg22);
+                                    CommandItem item2 = list.get(arg22);
                                     JConference.conference.profile.executeCommand(item2.jid, item2.node);
                                 });
                                 commands.show();
@@ -938,8 +937,8 @@ public class JConference extends Chat implements Handler.Callback {
             }
             if (id == 7) {
                 LinearLayout vcard_lay = (LinearLayout) View.inflate(this.ACTIVITY, R.layout.vcard, null);
-                ImageView vcard_avatar = (ImageView) vcard_lay.findViewById(R.id.vcard_avatar);
-                EditText vcard_desc = (EditText) vcard_lay.findViewById(R.id.vcard_desc);
+                ImageView vcard_avatar = vcard_lay.findViewById(R.id.vcard_avatar);
+                EditText vcard_desc = vcard_lay.findViewById(R.id.vcard_desc);
                 if (this.vcard_to_display.avatar != null) {
                     vcard_avatar.setImageBitmap(this.vcard_to_display.avatar);
                 }
@@ -1246,9 +1245,9 @@ public class JConference extends Chat implements Handler.Callback {
 
         public el() {
             if (!resources.IT_IS_TABLET) {
-                JConference.this.send.setCompoundDrawables(resources.back_to_cl_icon, (Drawable)null, (Drawable)null, (Drawable)null);
+                JConference.this.send.setCompoundDrawables(resources.back_to_cl_icon, null, null, null);
             } else {
-                JConference.this.send.setCompoundDrawables(resources.send_msg_icon, (Drawable)null, (Drawable)null, (Drawable)null);
+                JConference.this.send.setCompoundDrawables(resources.send_msg_icon, null, null, null);
             }
 
         }
@@ -1270,9 +1269,9 @@ public class JConference extends Chat implements Handler.Callback {
 
             if (JConference.conference != null) {
                 if (var1.length() > 0) {
-                    JConference.this.send.setCompoundDrawables(resources.send_msg_icon, (Drawable)null, (Drawable)null, (Drawable)null);
+                    JConference.this.send.setCompoundDrawables(resources.send_msg_icon, null, null, null);
                 } else if (!resources.IT_IS_TABLET) {
-                    JConference.this.send.setCompoundDrawables(resources.back_to_cl_icon, (Drawable)null, (Drawable)null, (Drawable)null);
+                    JConference.this.send.setCompoundDrawables(resources.back_to_cl_icon, null, null, null);
                 }
             }
 

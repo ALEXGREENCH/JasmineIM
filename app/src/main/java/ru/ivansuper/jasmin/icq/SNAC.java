@@ -1,10 +1,10 @@
 package ru.ivansuper.jasmin.icq;
 public class SNAC {
-    private int flags;
-    private int id;
+    private final int flags;
+    private final int id;
     private final ByteBuffer localBuffer;
-    private int subtype;
-    private int type;
+    private final int subtype;
+    private final int type;
 
     public SNAC(ByteBuffer var1) {
         this.localBuffer = var1;
@@ -16,7 +16,7 @@ public class SNAC {
     }
 
     /** @noinspection unused*/
-    public static final ByteBuffer createSnac(int var0, int var1, int var2, int var3, ByteBuffer var4) {
+    public static ByteBuffer createSnac(int var0, int var1, int var2, int var3, ByteBuffer var4) {
         ByteBuffer var5 = new ByteBuffer(var4.writePos + 10);
         var5.writeWord(var0);
         var5.writeWord(var1);
