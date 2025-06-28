@@ -21,8 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1.7"
-                android:orientation="vertical"
-                android:paddingTop="36dp">
+                android:orientation="vertical">
 
                 <FrameLayout
                     android:layout_width="match_parent"
@@ -102,8 +101,7 @@
                         android:clickable="false"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:longClickable="false"
-                        android:paddingBottom="16dp">
+                        android:longClickable="false">
 
                         <HorizontalScrollView
                             android:layout_width="0dp"
