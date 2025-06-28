@@ -1043,11 +1043,12 @@ public class ContactsAdapter extends MultiColumnAdapter {
         return this.displayList.get(arg0).itemType;
     }
 
+    /** @noinspection unused*/
     public long getItemIdA(int arg0) {
         return this.list.get(arg0).itemType;
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public View getView(int arg0, View arg1, ViewGroup arg2) {
         RosterItemView item;
         if (arg1 == null) {

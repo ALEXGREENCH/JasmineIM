@@ -10,10 +10,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Handler;
 import android.os.Message;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.text.Editable;
@@ -26,6 +24,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
@@ -190,7 +189,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     private boolean IT_IS_PORTRAIT = false;
 
     private void checkForBufferedDialogs() {
-        if (dialogs.size() > 0) {
+        if (!dialogs.isEmpty()) {
             dialog_for_display = dialogs.remove(0);
             showDialogA(23);
         }
@@ -200,7 +199,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     @Override
     public void onCreate(Bundle savedInstanceState) {
         this.IT_IS_PORTRAIT = true;
-        boolean z = true;
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
         sp = PreferenceManager.getDefaultSharedPreferences(this);
@@ -906,15 +904,15 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             case 4:
                 ad = DialogBuilder.createOk(
                         this,
-                        service.LOG_ADAPTER,
+                        service.logAdapter,
                         resources.getString("s_log_list"),
                         resources.getString("s_clear"),
                         v -> {
-                            service.LOG_ADAPTER.clear();
+                            service.logAdapter.clear();
                             removeDialog(4);
                         },
                         (arg0, arg1, arg2, arg3) -> {
-                            String item = service.LOG_ADAPTER.getItem(arg2);
+                            String item = service.logAdapter.getItem(arg2);
                             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                             cm.setText(item);
                             Toast.makeText(this, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
@@ -2171,7 +2169,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         if (service != null) {
             hdl = new Handler(this);
             service.clHdl = hdl;
-            service.cl_act = this;
+            service.contactListActivity = this;
         }
     }
 
@@ -2246,6 +2244,11 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void updateBottomPanel() {
+
+        // todo; 32 dp - hardcode
+        final float scale = getResources().getDisplayMetrics().density;
+        int sizeInPixels = (int) (32 * scale + 0.5f);
+
         connectionStatusPanel.removeAllViews();
         profilesPanel.removeAllViews();
         ProfilesManager pm = service.profiles;
@@ -2255,10 +2258,10 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             final IMProfile improfile = list.get(i);
             if (improfile.enabled) {
                 View[] views = buildProgress();
-                final View cb_line = views[0];
-                final TextView cb_label = (TextView) views[1];
-                final PB cb_progress = (PB) views[2];
-                connectionStatusPanel.addView(cb_line);
+                final View cbLine = views[0];
+                final TextView cbLabel = (TextView) views[1];
+                final PB cbProgress = (PB) views[2];
+                connectionStatusPanel.addView(cbLine);
                 if (i != 0) {
                     ImageView divider = new ImageView(this);
                     divider.setImageDrawable(resources.bp_divider);
@@ -2267,14 +2270,18 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 }
                 switch (improfile.profile_type) {
                     case 0:
-                        final ICQProfile profile = (ICQProfile) improfile;
+                        final ICQProfile icqProfile = (ICQProfile) improfile;
                         final ImageView status2 = new ImageView(this);
                         status2.setClickable(true);
                         status2.setPadding(8, 7, 8, 7);
+
+                        // todo; 32 dp - hardcode
+                        status2.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
+
                         //noinspection deprecation
                         status2.setBackgroundDrawable(resources.getListSelector());
                         status2.setOnClickListener(view -> {
-                            contextProfile = profile;
+                            contextProfile = icqProfile;
                             UAdapter list2 = new UAdapter();
                             list2.setTextSize(18);
                             list2.setPadding(5);
@@ -2295,20 +2302,24 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             list2.put(resources.depress, resources.getString("s_status_depress"), 8);
                             list2.put(resources.home, resources.getString("s_status_at_home"), 9);
                             list2.put(resources.work, resources.getString("s_status_at_work"), 10);
-                            last_quick_action = PopupBuilder.buildList(list2, view, profile.nickname, RETURN_TO_CONTACTS, -2, new statusListListener(profile));
+                            last_quick_action = PopupBuilder.buildList(list2, view, icqProfile.nickname, RETURN_TO_CONTACTS, -2, new statusListListener(icqProfile));
                             last_quick_action.show();
                         });
                         profilesPanel.addView(status2);
                         final ImageView status3 = new ImageView(this);
                         status3.setClickable(true);
                         status3.setPadding(8, 7, 8, 7);
+
+                        // todo; 32 dp - hardcode
+                        status3.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
+
                         //noinspection deprecation
                         status3.setBackgroundDrawable(resources.getListSelector());
                         status3.setOnClickListener(view -> {
                             XStatusAdapter list2 = new XStatusAdapter();
-                            String str = profile.nickname;
+                            String str = icqProfile.nickname;
                             //noinspection UnnecessaryLocalVariable
-                            final ICQProfile iCQProfile = profile;
+                            final ICQProfile iCQProfile = icqProfile;
                             last_quick_action = PopupBuilder.buildGrid(list2, view, str, 6, -2, -2, (arg0, arg1, pos, arg3) -> {
                                 last_quick_action.dismiss();
                                 contextProfile = iCQProfile;
@@ -2332,6 +2343,10 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         final ImageView status4 = new ImageView(this);
                         status4.setClickable(true);
                         status4.setPadding(8, 7, 8, 7);
+
+                        // todo; 32 dp - hardcode
+                        status4.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
+
                         //noinspection deprecation
                         status4.setBackgroundDrawable(resources.getListSelector());
                         status4.setOnClickListener(view -> {
@@ -2343,7 +2358,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             vlist.put(resources.for_all_e_invl, resources.getString("s_vis_3"), 2);
                             vlist.put(resources.for_cl, resources.getString("s_vis_4"), 3);
                             vlist.put(resources.ivn_for_all, resources.getString("s_vis_5"), 4);
-                            switch (profile.visibilityStatus) {
+                            switch (icqProfile.visibilityStatus) {
                                 case 1:
                                     vlist.setSelected(0);
                                     break;
@@ -2360,9 +2375,9 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                     vlist.setSelected(3);
                                     break;
                             }
-                            String str = profile.nickname;
+                            String str = icqProfile.nickname;
                             //noinspection UnnecessaryLocalVariable
-                            final ICQProfile iCQProfile = profile;
+                            final ICQProfile iCQProfile = icqProfile;
                             last_quick_action = PopupBuilder.buildList(vlist, view, str, 450, -2, (arg0, arg1, arg2, arg3) -> {
                                 last_quick_action.dismiss();
                                 contextProfile = iCQProfile;
@@ -2391,27 +2406,27 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             last_quick_action.show();
                         });
                         profilesPanel.addView(status4);
-                        profile.setNotifier(new IMProfile.BottomPanelNotifier() {
+                        icqProfile.setNotifier(new IMProfile.BottomPanelNotifier() {
                             @Override
                             public void onStatusChanged() {
-                                if (profile.connected) {
-                                    if (profile.qip_status != null) {
-                                        status2.setImageDrawable(qip_statuses.getIcon(profile.qip_status));
+                                if (icqProfile.connected) {
+                                    if (icqProfile.qip_status != null) {
+                                        status2.setImageDrawable(qip_statuses.getIcon(icqProfile.qip_status));
                                     } else {
                                         //noinspection deprecation
-                                        status2.setImageDrawable(resources.getStatusIcon(profile.status));
+                                        status2.setImageDrawable(resources.getStatusIcon(icqProfile.status));
                                     }
-                                } else if (profile.connecting) {
+                                } else if (icqProfile.connecting) {
                                     status2.setImageDrawable(resources.connecting);
                                 } else {
                                     status2.setImageDrawable(resources.offline);
                                 }
-                                if (profile.xsts != -1) {
-                                    status3.setImageDrawable(xstatus.icons[profile.xsts]);
+                                if (icqProfile.xsts != -1) {
+                                    status3.setImageDrawable(xstatus.icons[icqProfile.xsts]);
                                 } else {
                                     status3.setImageDrawable(resources.cross);
                                 }
-                                switch (profile.visibilityStatus) {
+                                switch (icqProfile.visibilityStatus) {
                                     case 1:
                                         status4.setImageDrawable(resources.for_all);
                                         return;
@@ -2435,11 +2450,11 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             public void onConnectionStatusChanged() {
                                 Log.e("PanelNotifier", "ICQ updated");
                                 if (improfile.connection_status > 0 && improfile.connection_status < 100) {
-                                    cb_line.setVisibility(View.VISIBLE);
-                                    cb_label.setText(improfile.ID);
-                                    cb_progress.setProgress(improfile.connection_status);
+                                    cbLine.setVisibility(View.VISIBLE);
+                                    cbLabel.setText(improfile.ID);
+                                    cbProgress.setProgress(improfile.connection_status);
                                 } else {
-                                    cb_line.setVisibility(View.GONE);
+                                    cbLine.setVisibility(View.GONE);
                                 }
                                 checkConnectionPanelVisibility();
                             }
@@ -2450,6 +2465,11 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         final ImageView status = new ImageView(this);
                         status.setClickable(true);
                         status.setPadding(8, 7, 8, 7);
+
+
+                        // todo; 32 dp - hardcode
+                        status.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
+
                         //noinspection deprecation
                         status.setBackgroundDrawable(resources.getListSelector());
                         profilesPanel.addView(status);
@@ -2912,11 +2932,11 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             public void onConnectionStatusChanged() {
                                 Log.e("PanelNotifier", "JABBER updated");
                                 if (improfile.connection_status > 0 && improfile.connection_status < 100) {
-                                    cb_line.setVisibility(View.VISIBLE);
-                                    cb_label.setText(improfile.ID);
-                                    cb_progress.setProgress(improfile.connection_status);
+                                    cbLine.setVisibility(View.VISIBLE);
+                                    cbLabel.setText(improfile.ID);
+                                    cbProgress.setProgress(improfile.connection_status);
                                 } else {
-                                    cb_line.setVisibility(View.GONE);
+                                    cbLine.setVisibility(View.GONE);
                                 }
                                 checkConnectionPanelVisibility();
                             }
@@ -2980,11 +3000,11 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             public void onConnectionStatusChanged() {
                                 Log.e("PanelNotifier", "MMP updated");
                                 if (improfile.connection_status > 0 && improfile.connection_status < 100) {
-                                    cb_line.setVisibility(View.VISIBLE);
-                                    cb_label.setText(improfile.ID);
-                                    cb_progress.setProgress(improfile.connection_status);
+                                    cbLine.setVisibility(View.VISIBLE);
+                                    cbLabel.setText(improfile.ID);
+                                    cbProgress.setProgress(improfile.connection_status);
                                 } else {
-                                    cb_line.setVisibility(View.GONE);
+                                    cbLine.setVisibility(View.GONE);
                                 }
                                 checkConnectionPanelVisibility();
                             }
@@ -3884,8 +3904,8 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void updateBlinkState() {
-        switcher.setBlinkState(0, jasminSvc.dump.simple_messages);
-        switcher.setBlinkState(2, jasminSvc.dump.conferences);
+        switcher.setBlinkState(0, jasminSvc.MESSAGES_DUMP.simple_messages);
+        switcher.setBlinkState(2, jasminSvc.MESSAGES_DUMP.conferences);
     }
 
     public class contactLongClickListener implements MultiColumnList.OnItemLongClickListener {

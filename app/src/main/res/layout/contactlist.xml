@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/cl_back"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -20,12 +21,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1.7"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingTop="36dp">
 
                 <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    tools:ignore="NestedWeights">
 
                     <ru.ivansuper.jasmin.slide_tools.SlideSwitcher
                         android:id="@+id/contactlist"
@@ -35,7 +38,7 @@
                         android:focusable="true"
                         android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
                         android:scrollbarTrackVertical="@drawable/scrollbar_track"
-                        android:scrollbars="vertical" >
+                        android:scrollbars="vertical">
 
                         <ru.ivansuper.jasmin.ConfigListenerView
                             android:id="@+id/config_listener"
@@ -94,25 +97,28 @@
 
                     <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="48dp"
                         android:alwaysDrawnWithCache="false"
                         android:clickable="false"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:longClickable="false">
+                        android:longClickable="false"
+                        android:paddingBottom="16dp">
 
                         <HorizontalScrollView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
                             android:layout_weight="1"
                             android:alwaysDrawnWithCache="false"
                             android:clickable="false"
-                            android:longClickable="false">
+                            android:longClickable="false"
+                            android:paddingStart="8dp"
+                            android:paddingLeft="8dp">
 
                             <LinearLayout
                                 android:id="@+id/profilesPanel"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
                                 android:alwaysDrawnWithCache="false"
                                 android:clickable="true"
                                 android:gravity="center"
@@ -121,39 +127,47 @@
 
                         <LinearLayout
                             android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:alwaysDrawnWithCache="false">
+                            android:layout_height="match_parent"
+                            android:alwaysDrawnWithCache="false"
+                            android:paddingEnd="8dp"
+                            android:paddingRight="8dp">
 
                             <ImageView
                                 android:id="@+id/toggle_sound"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="42dp"
+                                android:layout_height="42dp"
                                 android:layout_gravity="center"
-                                android:padding="5sp"
+                                android:padding="8dp"
+                                android:scaleType="fitXY"
                                 android:src="@drawable/toggle_sound" />
 
                             <ImageView
                                 android:id="@+id/toggle_vibro"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="42dp"
+                                android:layout_height="42dp"
                                 android:layout_gravity="center"
-                                android:padding="5sp"
+                                android:padding="8dp"
+                                android:scaleType="fitXY"
                                 android:src="@drawable/toggle_vibro" />
 
                             <ImageView
                                 android:id="@+id/toggle_offline"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
+                                android:layout_width="42dp"
+                                android:layout_height="42dp"
                                 android:layout_gravity="center"
-                                android:padding="5sp"
+                                android:padding="8dp"
+                                android:scaleType="fitXY"
                                 android:src="@drawable/toggle_offline" />
 
                             <ImageView
                                 android:id="@+id/toggle_menu"
-                                android:layout_width="30dp"
+                                android:layout_width="32dp"
                                 android:layout_height="wrap_content"
                                 android:layout_gravity="center"
-                                android:padding="5sp"
+                                android:paddingStart="4dp"
+                                android:paddingLeft="4dp"
+                                android:paddingEnd="16dp"
+                                android:paddingRight="16dp"
                                 android:src="@drawable/contactlist_chat_divider" />
                         </LinearLayout>
                     </LinearLayout>

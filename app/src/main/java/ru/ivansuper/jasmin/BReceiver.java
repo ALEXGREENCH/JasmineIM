@@ -15,7 +15,6 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.plugins._interface.ServiceBroadcastReceiver;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
-/* loaded from: classes.dex */
 public class BReceiver extends BroadcastReceiver {
     private static final long WIDGET_REQUESTS_INTERVAL = 2000;
     public static boolean mWidgetLocked = false;
@@ -27,11 +26,24 @@ public class BReceiver extends BroadcastReceiver {
         this.service = service;
     }
 
-    @Override // android.content.BroadcastReceiver
-    public void onReceive(Context arg0, Intent arg1) {
-        boolean catched = ServiceBroadcastReceiver.OnIntent(arg0, arg1);
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        boolean catched = ServiceBroadcastReceiver.OnIntent(context, intent);
+
+        String action = intent.getAction();
+        if (action == null) return;
+
+        // Handle PING only once
+        if (action.contains(jasminSvc.ACTION_PING)) {
+            long id = intent.getLongExtra("ID", -1L);
+            if (id != -1L) {
+                this.service.notifyPingTask(id);
+            }
+            return; // Skip further processing
+        }
+
         if (!catched) {
-            if (arg1.getAction().indexOf("RINGER_MODE_CHANGED") >= 0) {
+            if (intent.getAction().contains("RINGER_MODE_CHANGED")) {
                 AudioManager am = (AudioManager) this.service.getSystemService(Context.AUDIO_SERVICE);
                 switch (am.getRingerMode()) {
                     case 1:
@@ -43,20 +55,20 @@ public class BReceiver extends BroadcastReceiver {
                     default:
                         return;
                 }
-            } else if (arg1.getAction().indexOf("SCREEN_OFF") >= 0) {
+            } else if (intent.getAction().contains("SCREEN_OFF")) {
                 this.service.handleScreenTurnedOff();
-            } else if (arg1.getAction().indexOf("SCREEN_ON") >= 0) {
+            } else if (intent.getAction().contains("SCREEN_ON")) {
                 this.service.handleScreenTurnedOn();
-            } else if (arg1.getAction().indexOf(jasminSvc.ACTION_PING) >= 0) {
-                this.service.notifyPingTask(arg1.getLongExtra("ID", -1L));
-            } else if (arg1.getAction().indexOf("PHONE_STATE") >= 0) {
+            } else if (intent.getAction().contains(jasminSvc.ACTION_PING)) {
+                this.service.notifyPingTask(intent.getLongExtra("ID", -1L));
+            } else if (intent.getAction().contains("PHONE_STATE")) {
                 TelephonyManager phone = (TelephonyManager) this.service.getSystemService(Context.TELEPHONY_SERVICE);
                 if (phone.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
                     Media.phone_mode = 0;
                 } else {
                     Media.phone_mode = 1;
                 }
-            } else if (arg1.getAction().startsWith("ru.ivansuper.jasmin.REQUEST_STATE")) {
+            } else if (intent.getAction().startsWith("ru.ivansuper.jasmin.REQUEST_STATE")) {
                 if (!mWidgetLocked) {
                     if (SystemClock.uptimeMillis() - this.mLastRequestTimestamp < WIDGET_REQUESTS_INTERVAL) {
                         this.mFastRequestsCount++;
@@ -72,17 +84,15 @@ public class BReceiver extends BroadcastReceiver {
                     if (resources.service != null && resources.service.profiles != null) {
                         EventTranslator.sendProfilesList();
                         Vector<IMProfile> profiles = resources.service.profiles.getProfiles();
-                        Iterator<IMProfile> it = profiles.iterator();
-                        while (it.hasNext()) {
-                            IMProfile p = it.next();
+                        for (IMProfile p : profiles) {
                             EventTranslator.sendProfilePresence(p);
                         }
                         this.service.updateNotify();
                         this.mLastRequestTimestamp = SystemClock.uptimeMillis();
                     }
                 }
-            } else if (arg1.getAction().startsWith(jasminSvc.ACTION_PING)) {
-                resources.service.notifyPingTask(arg1.getLongExtra("ID", -1L));
+            } else if (intent.getAction().startsWith(jasminSvc.ACTION_PING)) {
+                resources.service.notifyPingTask(intent.getLongExtra("ID", -1L));
             }
         }
     }

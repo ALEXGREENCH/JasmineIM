@@ -5,6 +5,9 @@
         <item name="android:buttonStyle">@style/ButtonStyle</item>
         <item name="android:editTextStyle">@style/EditTextStyle</item>
         <item name="android:textViewStyle">@style/TextViewStyle</item>
+
+        <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:windowTranslucentNavigation">true</item>
     </style>
 
     <style name="SmileysSelectorTheme" parent="@android:style/Theme.Translucent.NoTitleBar">

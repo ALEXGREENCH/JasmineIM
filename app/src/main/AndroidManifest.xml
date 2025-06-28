@@ -11,7 +11,7 @@
         android:theme="@style/WallpaperNoTitleTheme">
 
         <activity
-            android:name="ru.ivansuper.jasmin.main"
+            android:name="ru.ivansuper.jasmin.MainActivity"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:exported="true"
@@ -186,6 +186,11 @@
                 <action android:name="ru.ivansuper.jasmin.PING" />
             </intent-filter>
         </service>
+
+        <receiver
+            android:name=".BReceiver"
+            android:exported="false"
+            tools:ignore="Instantiatable" />
 
     </application>
 

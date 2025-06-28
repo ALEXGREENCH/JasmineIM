@@ -22,6 +22,7 @@
             android:id="@+id/imageView1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:importantForAccessibility="no"
             android:src="@drawable/splash" />
 
         <LinearLayout
@@ -30,7 +31,7 @@
             android:gravity="center">
 
             <ru.ivansuper.jasmin.ui.LoadingView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1" />
 
@@ -53,6 +54,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="96sp"
+            android:layout_marginStart="96sp"
             android:shadowColor="#ff9db5cd"
             android:shadowDx="0"
             android:shadowDy="0"

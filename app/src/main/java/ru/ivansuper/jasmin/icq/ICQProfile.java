@@ -1922,7 +1922,7 @@ public class ICQProfile extends IMProfile {
             } else {
                 this.svc.putMessageNotify(contact, contact.name, preview);
             }
-            this.svc.last_contact_for_non_multi_notify = contact;
+            this.svc.lastContactForNonMultiNotify = contact;
             remakeContactList();
         }
         HistoryItem hst = new HistoryItem(msg.timestamp);
