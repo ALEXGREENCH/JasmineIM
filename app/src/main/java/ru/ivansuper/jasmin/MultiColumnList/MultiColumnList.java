@@ -659,20 +659,22 @@ public class MultiColumnList extends ViewGroup {
         if (type == 0) {
             return 1;
         }
-        //noinspection InfiniteLoopStatement
+
         while (true) {
-            int type2 = this.mAdapter.getItemType(counter);
-            if (type2 > 0 && res < this.mColumnsNumber) {
-                counter++;
-                res++;
+            type = this.mAdapter.getItemType(counter);
+            if (type <= 0) {
+                break;
             }
+            counter++;
+            res++;
         }
-        // todo
-        ////if (res <= this.mColumnsNumber) {
-        ////    return res;
-        ////}
-        ////int last_count = res % this.mColumnsNumber;
-        ////return last_count == 0 ? this.mColumnsNumber : last_count;
+
+        if (res <= this.mColumnsNumber) {
+            return res;
+        }
+
+        int last_count = res % this.mColumnsNumber;
+        return last_count == 0 ? this.mColumnsNumber : last_count;
     }
 
     private int addRowToTop() {

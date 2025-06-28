@@ -282,11 +282,13 @@ public class SlideSwitcher extends ViewGroup {
                     int var2 = this.DIVIDER_WIDTH;
                     this.scrollTo((this.getChildCount() - 1) * (var1 + var2), 0);
                     this.wrap_direction = 0;
+                    this.wrap_mode = false;
                     this.setAnimationState(false);
                 } else if (this.wrap_direction > 0) {
                     this.scrollTo(0, 0);
                     this.postInvalidate();
                     this.wrap_direction = 0;
+                    this.wrap_mode = false;
                     this.setAnimationState(false);
                 } else {
                     this.wrap_mode = false;
