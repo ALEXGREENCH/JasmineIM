@@ -214,6 +214,9 @@ public class SlideSwitcher extends ViewGroup {
         resources.attachSlidePanel(this);
         ViewGroup.LayoutParams lp = new ViewGroup.LayoutParams(-1, -1);
         setLayoutParams(lp);
+        if (resources.OS_VERSION <= 15) {
+            setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        }
         this.scroller = new Scroller(context, new DecelerateInterpolator());
         this.FADING_LENGTH *= resources.dm.density;
         this.fade_shader = new LinearGradient(0.0f, 0.0f, 0.0f, this.FADING_LENGTH, -1, 16777215, Shader.TileMode.CLAMP);
