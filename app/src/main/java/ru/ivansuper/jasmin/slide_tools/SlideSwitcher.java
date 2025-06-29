@@ -292,6 +292,7 @@ public class SlideSwitcher extends ViewGroup {
             this.wrap_mode = false;
             this.wrap_direction = 0;
             setAnimationState(false);
+            postInvalidate();
         } else {
             setAnimationState(false);
         }
@@ -776,8 +777,13 @@ public class SlideSwitcher extends ViewGroup {
             this.wrap_mode = false;
             this.wrap_direction = 0;
             setAnimationState(false);
-            super.scrollTo((getWidth() + this.DIVIDER_WIDTH) * screen, 0);
-            this.currentScreen = screen;
+            if (getWidth() == 0) {
+                final int target = screen;
+                post(() -> scrollTo(target));
+            } else {
+                super.scrollTo((getWidth() + this.DIVIDER_WIDTH) * screen, 0);
+                this.currentScreen = screen;
+            }
         }
     }
 
