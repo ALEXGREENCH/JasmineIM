@@ -1,5 +1,6 @@
 package ru.ivansuper.jasmin.Preferences;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.DialogPreference;
@@ -7,7 +8,6 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -15,23 +15,27 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
 public class IntegerPickerMedium extends DialogPreference {
-    private int current;
-    private SharedPreferences manager;
+    private final SharedPreferences manager;
+    /** @noinspection FieldCanBeLocal, unused */
     private final int minimum;
+    private int current;
 
     public IntegerPickerMedium(Context context, AttributeSet attrs) {
+        //noinspection deprecation
         super(context, attrs);
         this.current = 0;
         this.minimum = 5;
+        //noinspection deprecation
         this.manager = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
+    /** @noinspection deprecation*/
     @Override
     protected View onCreateDialogView() {
-        LinearLayout lay = (LinearLayout) View.inflate(resources.ctx, R.layout.integer_picker, null);
-        return lay;
+        return View.inflate(resources.ctx, R.layout.integer_picker, null);
     }
 
+    /** @noinspection deprecation*/
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
@@ -60,6 +64,8 @@ public class IntegerPickerMedium extends DialogPreference {
         });
     }
 
+    /** @noinspection deprecation*/
+    @SuppressLint("ApplySharedPref")
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {

@@ -1,5 +1,6 @@
 package ru.ivansuper.jasmin.Preferences;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.DialogPreference;
@@ -7,17 +8,17 @@ import android.preference.PreferenceManager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
-/* loaded from: classes.dex */
 public class ColumnsPicker extends DialogPreference {
-    private int current;
-    private SharedPreferences manager;
+    private final SharedPreferences manager;
+    /** @noinspection FieldCanBeLocal, FieldCanBeLocal , unused */
     private final int minimum;
+    private int current;
     private RadioButton r1;
     private RadioButton r2;
     private RadioButton r3;
@@ -26,31 +27,36 @@ public class ColumnsPicker extends DialogPreference {
     private RadioButton r6;
 
     public ColumnsPicker(Context context, AttributeSet attrs) {
+        //noinspection deprecation
         super(context, attrs);
         this.current = 0;
         this.minimum = 1;
+        //noinspection deprecation
         this.manager = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
-    @Override // android.preference.DialogPreference
+    /** @noinspection deprecation*/
+    @Override
     protected View onCreateDialogView() {
-        LinearLayout lay = (LinearLayout) View.inflate(resources.ctx, R.layout.columns_picker, null);
-        return lay;
+        return View.inflate(resources.ctx, R.layout.columns_picker, null);
     }
 
-    @Override // android.preference.DialogPreference
+    /** @noinspection deprecation*/
+    @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
+        //noinspection DataFlowIssue
         this.current = Integer.parseInt(this.manager.getString(super.getKey(), "3"));
-        Log.e("Readed", new StringBuilder().append(this.current).toString());
-        TextView title = (TextView) view.findViewById(R.id.l2);
+        Log.e("Readed", String.valueOf(this.current));
+        TextView title = view.findViewById(R.id.l2);
+        //noinspection deprecation
         title.setText(getTitle());
-        this.r1 = (RadioButton) view.findViewById(R.id.r1);
-        this.r2 = (RadioButton) view.findViewById(R.id.r2);
-        this.r3 = (RadioButton) view.findViewById(R.id.r3);
-        this.r4 = (RadioButton) view.findViewById(R.id.r4);
-        this.r5 = (RadioButton) view.findViewById(R.id.r5);
-        this.r6 = (RadioButton) view.findViewById(R.id.r6);
+        this.r1 = view.findViewById(R.id.r1);
+        this.r2 = view.findViewById(R.id.r2);
+        this.r3 = view.findViewById(R.id.r3);
+        this.r4 = view.findViewById(R.id.r4);
+        this.r5 = view.findViewById(R.id.r5);
+        this.r6 = view.findViewById(R.id.r6);
         switch (this.current) {
             case 1:
                 this.r1.setChecked(true);
@@ -71,11 +77,12 @@ public class ColumnsPicker extends DialogPreference {
                 this.r6.setChecked(true);
                 return;
             default:
-                return;
         }
     }
 
-    @Override // android.preference.DialogPreference
+    /** @noinspection deprecation*/
+    @SuppressLint("ApplySharedPref")
+    @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
             if (this.r1.isChecked()) {

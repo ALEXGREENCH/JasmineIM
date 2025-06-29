@@ -1,5 +1,6 @@
 package ru.ivansuper.jasmin.Preferences;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.DialogPreference;
@@ -12,7 +13,6 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.SettingsActivity;
@@ -21,24 +21,29 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
 
 public class LanguagePicker extends DialogPreference {
+    private final SharedPreferences manager;
     private int current;
-    private SharedPreferences manager;
 
     public LanguagePicker(Context context, AttributeSet attrs) {
+        //noinspection deprecation
         super(context, attrs);
         this.current = 0;
+        //noinspection deprecation
         this.manager = PreferenceManager.getDefaultSharedPreferences(getContext());
     }
 
+    /** @noinspection deprecation*/
     @Override
     protected View onCreateDialogView() {
-        LinearLayout lay = (LinearLayout) View.inflate(resources.ctx, R.layout.columns_picker, null);
-        return lay;
+        return View.inflate(resources.ctx, R.layout.columns_picker, null);
     }
 
+    /** @noinspection deprecation*/
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onBindDialogView(View view) {
         super.onBindDialogView(view);
+        //noinspection DataFlowIssue
         this.current = Integer.parseInt(this.manager.getString(super.getKey(), String.valueOf(Locale.DEFAULT)));
         TextView title = view.findViewById(R.id.l2);
         title.setText(getTitle());
@@ -47,11 +52,9 @@ public class LanguagePicker extends DialogPreference {
         rg.removeAllViews();
         ArrayList<Language> list = Locale.getAvailable();
         int i = 0;
-        Iterator<Language> it = list.iterator();
-        while (it.hasNext()) {
-            Language language = it.next();
+        for (Language language : list) {
             RadioButton r = new RadioButton(getContext());
-            r.setText(String.valueOf(language.NAME) + "\n" + resources.getString("s_ms_select_language_language") + " " + language.LANGUAGE + "\n" + resources.getString("s_ms_select_language_author") + " " + language.AUTHOR);
+            r.setText(language.NAME + "\n" + resources.getString("s_ms_select_language_language") + " " + language.LANGUAGE + "\n" + resources.getString("s_ms_select_language_author") + " " + language.AUTHOR);
             final int ii = i;
             r.setOnClickListener(arg0 -> LanguagePicker.this.current = ii);
             rg.addView(r);
@@ -62,6 +65,8 @@ public class LanguagePicker extends DialogPreference {
         }
     }
 
+    /** @noinspection deprecation*/
+    @SuppressLint("ApplySharedPref")
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {

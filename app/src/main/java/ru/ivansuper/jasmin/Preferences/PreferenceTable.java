@@ -1,6 +1,5 @@
 package ru.ivansuper.jasmin.Preferences;
 
-/* loaded from: classes.dex */
 public class PreferenceTable {
     public static boolean as_enable_notify;
     public static boolean as_only_roster;
