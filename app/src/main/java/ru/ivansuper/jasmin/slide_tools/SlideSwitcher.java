@@ -383,6 +383,16 @@ public class SlideSwitcher extends ViewGroup {
                 } else {
                     this.mIsBeingDragged = true;
                     this.scroller.forceFinished(true);
+                    if (this.wrap_mode) {
+                        if (this.wrap_direction < 0) {
+                            int width = getWidth() + this.DIVIDER_WIDTH;
+                            scrollTo((getChildCount() - 1) * width, 0);
+                            this.currentScreen = getChildCount() - 1;
+                        } else if (this.wrap_direction > 0) {
+                            scrollTo(0, 0);
+                            this.currentScreen = 0;
+                        }
+                    }
                     this.wrap_mode = false;
                     this.wrap_direction = 0;
                     setAnimationState(false);
