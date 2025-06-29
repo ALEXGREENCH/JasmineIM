@@ -24,7 +24,6 @@ import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
-import java.util.Random;
 import java.util.Vector;
 
 import ru.ivansuper.jasmin.BitmapDrawable;
@@ -275,22 +274,30 @@ public class SlideSwitcher extends ViewGroup {
         }
     }
 
-    @Override // android.view.View
+    @Override
     public void computeScroll() {
-        if (this.scroller.computeScrollOffset()) {
-            scrollTo(this.scroller.getCurrX(), 0);
+        if (scroller.computeScrollOffset()) {
+            scrollTo(scroller.getCurrX(), 0);
             postInvalidate();
             return;
         }
-        if (this.wrap_mode) {
-            int width = getWidth() + this.DIVIDER_WIDTH;
-            if (this.wrap_direction > 0) {
-                scrollTo(0, 0);
-            } else if (this.wrap_direction < 0) {
-                scrollTo((getChildCount() - 1) * width, 0);
+
+        if (wrap_mode) {
+            int width = getWidth() + DIVIDER_WIDTH;
+
+            if (wrap_direction > 0) {
+                // переход с последнего на 0
+                super.scrollTo(0, 0);
+                currentScreen = 0;
+            } else if (wrap_direction < 0) {
+                // переход с 0 на последний
+                int last = getChildCount() - 1;
+                super.scrollTo(last * width, 0);
+                currentScreen = last;
             }
-            this.wrap_mode = false;
-            this.wrap_direction = 0;
+
+            wrap_mode = false;
+            wrap_direction = 0;
             setAnimationState(false);
         } else {
             setAnimationState(false);
@@ -298,21 +305,21 @@ public class SlideSwitcher extends ViewGroup {
     }
 
     private void wrapToFirst() {
-        this.wrap_mode = true;
-        this.wrap_direction = 1;
-        int width = getWidth() + this.DIVIDER_WIDTH;
-        this.scroller.startScroll(getScrollX(), 0, width, 0, this.SCROLLING_TIME);
+        wrap_mode = true;
+        wrap_direction = 1;
+        int width = getWidth() + DIVIDER_WIDTH;
+        scroller.startScroll(getScrollX(), 0, width, 0, SCROLLING_TIME);
         setAnimationState(true);
-        postInvalidate();
+        invalidate();
     }
 
     private void wrapToLast() {
-        this.wrap_mode = true;
-        this.wrap_direction = -1;
-        int width = getWidth() + this.DIVIDER_WIDTH;
-        this.scroller.startScroll(getScrollX(), 0, -width, 0, this.SCROLLING_TIME);
+        wrap_mode = true;
+        wrap_direction = -1;
+        int width = getWidth() + DIVIDER_WIDTH;
+        scroller.startScroll(getScrollX(), 0, -width, 0, SCROLLING_TIME);
         setAnimationState(true);
-        postInvalidate();
+        invalidate();
     }
 
     @Override // android.view.ViewGroup, android.view.View
@@ -337,46 +344,44 @@ public class SlideSwitcher extends ViewGroup {
     }
 
     private void switchToNext() {
-        if (this.fully_locked) {
+        if (fully_locked) {
             smoothScrollToCurrent();
             return;
         }
         int count = getChildCount();
-        if (count == 0) {
-            return;
-        }
-        int width = getWidth() + this.DIVIDER_WIDTH;
-        if (this.currentScreen == count - 1) {
-            this.currentScreen = 0;
+        if (count == 0) return;
+
+        int width = getWidth() + DIVIDER_WIDTH;
+        if (currentScreen == count - 1) {
+            currentScreen = 0;
             wrapToFirst();
         } else {
-            this.currentScreen++;
-            int target = this.currentScreen * width;
-            this.scroller.startScroll(getScrollX(), 0, target - getScrollX(), 0, this.SCROLLING_TIME);
+            currentScreen++;
+            int targetScroll = currentScreen * width;
+            scroller.startScroll(getScrollX(), 0, targetScroll - getScrollX(), 0, SCROLLING_TIME);
             setAnimationState(true);
-            postInvalidate();
+            invalidate();
         }
     }
 
     private void switchToPrev() {
-        if (this.fully_locked) {
+        if (fully_locked) {
             smoothScrollToCurrent();
             return;
         }
         int count = getChildCount();
-        if (count == 0) {
-            return;
-        }
-        int width = getWidth() + this.DIVIDER_WIDTH;
-        if (this.currentScreen == 0) {
-            this.currentScreen = count - 1;
+        if (count == 0) return;
+
+        int width = getWidth() + DIVIDER_WIDTH;
+        if (currentScreen == 0) {
+            currentScreen = count - 1;
             wrapToLast();
         } else {
-            this.currentScreen--;
-            int target = this.currentScreen * width;
-            this.scroller.startScroll(getScrollX(), 0, target - getScrollX(), 0, this.SCROLLING_TIME);
+            currentScreen--;
+            int targetScroll = currentScreen * width;
+            scroller.startScroll(getScrollX(), 0, targetScroll - getScrollX(), 0, SCROLLING_TIME);
             setAnimationState(true);
-            postInvalidate();
+            invalidate();
         }
     }
 
@@ -505,78 +510,55 @@ public class SlideSwitcher extends ViewGroup {
 
     @Override
     protected boolean getChildStaticTransformation(View child, Transformation t) {
-        int scrollx = getScrollX();
-        int child_count = getChildCount();
-        boolean wrap_to_end = scrollx < 0;
-        int total_width = (getWidth() + this.DIVIDER_WIDTH) * child_count;
-        boolean wrap_to_start = scrollx > total_width - getWidth();
-        int child_idx = indexOfChild(child);
-        boolean it_is_last = child_idx == child_count + (-1);
-        boolean it_is_first = child_idx == 0;
-        int width = child.getRight() - child.getLeft();
-        int height = child.getBottom() - child.getTop();
-        int wrap_shift = 0;
-        if (child_count > 1) {
-            if (wrap_to_end && it_is_last) {
-                wrap_shift = -total_width;
-            }
-            if (wrap_to_start && it_is_first) {
-                wrap_shift = total_width;
-            }
-        }
-        int center = child.getLeft() + wrap_shift;
-        int dist = scrollx - center;
+        final int scrollX = getScrollX();
+        final int childIndex = indexOfChild(child);
+        final int childCount = getChildCount();
+        final int childWidth = getWidth() + DIVIDER_WIDTH;
+
+        boolean isFirst = (childIndex == 0);
+        boolean isLast = (childIndex == childCount - 1);
+        boolean wrapLeft = scrollX < 0 && isLast;
+        boolean wrapRight = scrollX > (childWidth * (childCount - 1)) && isFirst;
+
+        int wrapOffset = 0;
+        if (wrapLeft) wrapOffset = -childCount * childWidth;
+        if (wrapRight) wrapOffset = childCount * childWidth;
+
+        int childCenter = childIndex * childWidth + wrapOffset;
+        int distance = scrollX - childCenter;
+
         t.clear();
-        Matrix m = t.getMatrix();
-        switch (this.ANIMATION_TYPE) {
-            case 0:
+        Matrix matrix = t.getMatrix();
+        switch (ANIMATION_TYPE) {
+            case ANIMATION_TYPE_CUBE:
                 t.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyPolyCube(m, width, height, (dist * 180.0f) / width, dist);
+                Transform.applyPolyCube(matrix, getWidth(), getHeight(), distance * 180f / childWidth, distance);
                 break;
-            case 1:
+            case ANIMATION_TYPE_FLIP_1:
                 t.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyPolyCubeInv(m, width, height, (dist * 180.0f) / width, dist);
+                Transform.applyPolyCubeInv(matrix, getWidth(), getHeight(), distance * 180f / childWidth, distance);
                 break;
-            case 2:
+            case ANIMATION_TYPE_FLIP_2:
                 t.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyTransformationFlip2((dist * 180.0f) / width, (float) width / 2, (float) height / 2, m);
+                Transform.applyTransformationFlip2(distance * 180f / childWidth, getWidth() / 2f, getHeight() / 2f, matrix);
                 break;
-            case 4:
-                m.postRotate((dist * 180.0f) / width, (float) width / 2, (float) height / 2);
+            case ANIMATION_TYPE_ROTATE_1:
+                matrix.postRotate(distance * 90f / childWidth, getWidth() / 2f, getHeight() / 2f);
                 break;
-            case 5:
-                m.postRotate(((-dist) * 90.0f) / width, (float) width / 2, height);
-                break;
-            case 6:
-                m.postRotate((dist * 90.0f) / width, (float) width / 2, 0.0f);
-                break;
-            case 7:
-                float alpha = Math.abs(dist / width);
+            case ANIMATION_TYPE_ICS:
+                float alpha = 1f - Math.abs((float) distance / childWidth);
+                t.setAlpha(alpha);
                 t.setTransformationType(Transformation.TYPE_BOTH);
-                t.setAlpha(1.0f - alpha);
-                if (dist < 0) {
-                    float factor = Math.abs(dist / width) / 7.0f;
-                    m.postScale(1.0f - factor, 1.0f - factor, (float) width / 2, (float) height / 2);
-                    m.postTranslate(dist, 0.0f);
-                }
+                matrix.postTranslate(distance, 0f);
+                float scale = 1f - Math.abs(distance) / (7f * childWidth);
+                matrix.postScale(scale, scale, getWidth() / 2f, getHeight() / 2f);
                 break;
-            case 8:
-                t.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyPolySnake(m, width, height, (dist * 180.0f) / width, dist);
-                break;
-            case 9:
-                float alpha2 = 1.0f - Math.abs(dist / width);
-                t.setTransformationType(Transformation.TYPE_BOTH);
-                t.setAlpha(alpha2);
-                m.postRotate((dist * 90.0f) / width, 0.0f, 0.0f);
-                m.postTranslate(dist, 0.0f);
-                break;
-            case 10:
-                t.setTransformationType(Transformation.TYPE_MATRIX);
-                Transform.applyTransformationFlip2((dist * 20.0f) / width, (float) width / 2, (float) height / 2, m);
+            default:
+                matrix.postTranslate(distance, 0f);
                 break;
         }
-        m.postTranslate(wrap_shift, 0.0f);
+
+        matrix.postTranslate(wrapOffset, 0f);
         return true;
     }
 
@@ -597,161 +579,92 @@ public class SlideSwitcher extends ViewGroup {
         return false;
     }
 
-    /* JADX WARN: Removed duplicated region for block: B:24:0x018a  */
-    /* JADX WARN: Removed duplicated region for block: B:26:0x018e  */
-    /* JADX WARN: Removed duplicated region for block: B:29:0x019e  */
-    /* JADX WARN: Removed duplicated region for block: B:32:0x01e7  */
-    /* JADX WARN: Removed duplicated region for block: B:35:0x020a  */
-    /* JADX WARN: Removed duplicated region for block: B:38:0x0217  */
-    /* JADX WARN: Removed duplicated region for block: B:42:0x0310  */
-    /* JADX WARN: Removed duplicated region for block: B:43:0x030d  */
-    /* JADX WARN: Removed duplicated region for block: B:44:0x0302  */
-    @Override // android.view.ViewGroup, android.view.View
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    public void dispatchDraw(Canvas canvas) {
-        float width_;
-        float left;
-        int alpha;
-        if (!this.freezed) {
-            int child_count = getChildCount();
-            super.dispatchDraw(canvas);
-            if (this.show_panel) {
-                float scroll_x = getScrollX();
-                float width = getWidth() + this.DIVIDER_WIDTH;
-                float width2 = (float) (getWidth() + this.DIVIDER_WIDTH) / 2;
-                this.panel.setBounds((int) scroll_x, 0, (int) (scroll_x + width), this.PANEL_HEIGHT);
-                this.panel.draw(canvas);
-                int save_count = canvas.saveLayer(scroll_x, 0.0f, scroll_x + width, this.PANEL_HEIGHT, null, Canvas.ALL_SAVE_FLAG);
-                float size = (-this.labels_.getFontMetricsInt().ascent) - this.labels_.getFontMetricsInt().descent;
-                int labels_count = this.labels.size();
-                for (int i = -2; i <= labels_count + 1; i++) {
-                    String label = null;
-                    boolean blink = false;
-                    int scrollX = getScrollX();
-                    float screen_x = ((float) scrollX / 2) + (i * width2);
-                    if (i == -1) {
-                        if (child_count != 1) {
-                            label = this.labels.get(labels_count - 1);
-                            blink = this.blinks.get(labels_count + (-1)) != null;
-                            scrollX = getScrollX();
-                            screen_x = ((float) scrollX / 2) - width2;
-                            width_ = this.labels_.measureText(label);
-                            left = (screen_x + width2) - (width_ / 2.0f);
-                            if (left + width_ > scrollX && left < scrollX + width) {
-                                float distance = ((scrollX + width2) - (width_ / 2.0f)) - left;
-                                alpha = 255 - ((int) ((Math.abs(distance) * 255.0f) / (0.65f * width)));
-                                if (alpha > 255) {
-                                    alpha = 255;
-                                }
-                                if (alpha < 0) {
-                                    alpha = 0;
-                                }
-                                float top = ((float) this.PANEL_HEIGHT / 2) + (size / 2.0f);
-                                if (!blink) {
-                                    canvas.drawText(label, left, top, this.effect);
-                                    this.labels_.setStrokeWidth(1.0f);
-                                } else {
-                                    this.labels_.setStrokeWidth(4.0f);
-                                }
-                                this.highlight.setBounds((int) screen_x, 0, (int) (screen_x + width), this.PANEL_HEIGHT);
-                                this.highlight_.setAlpha(alpha);
-                                this.highlight.draw(canvas);
-                                this.labels_.setColor(-16777216);
-                                this.labels_.setAlpha(!blink ? 255 : alpha);
-                                this.labels_.setStyle(Paint.Style.STROKE);
-                                canvas.drawText(label, left, top, this.labels_);
-                                this.labels_.setColor(!blink ? this.text_color : -1);
-                                TextPaint textPaint = this.labels_;
-                                if (blink) {
-                                    alpha = 255;
-                                }
-                                textPaint.setAlpha(alpha);
-                                this.labels_.setStyle(Paint.Style.FILL);
-                                canvas.drawText(label, left, top, this.labels_);
-                            }
-                        }
-                    } else {
-                        if (i >= 0 && i < labels_count) {
-                            label = this.labels.get(i);
-                            blink = this.blinks.get(i) != null;
-                            scrollX = getScrollX();
-                            screen_x = ((float) scrollX / 2) + (i * width2);
-                        } else if (i == labels_count) {
-                            if (child_count != 1) {
-                                label = this.labels.get(0);
-                                blink = this.blinks.get(0) != null;
-                                scrollX = getScrollX();
-                                screen_x = ((float) scrollX / 2) + (i * width2);
-                            }
-                        } else if (i == -2) {
-                            if (child_count != 1) {
-                                label = this.labels.get(labels_count - 2);
-                                blink = this.blinks.get(labels_count + (-2)) != null;
-                                scrollX = getScrollX();
-                                screen_x = ((float) scrollX / 2) - (2.0f * width2);
-                            }
-                        } else if (i == labels_count + 1) {
-                            if (child_count != 1) {
-                                label = this.labels.get(1);
-                                blink = this.blinks.get(1) != null;
-                                scrollX = getScrollX();
-                                screen_x = ((float) scrollX / 2) + (i * width2);
-                            }
-                        }
-                        width_ = this.labels_.measureText(label);
-                        left = (screen_x + width2) - (width_ / 2.0f);
-                        if (left + width_ > scrollX) {
-                            float distance2 = ((scrollX + width2) - (width_ / 2.0f)) - left;
-                            alpha = 255 - ((int) ((Math.abs(distance2) * 255.0f) / (0.65f * width)));
-                            //noinspection StatementWithEmptyBody
-                            if (alpha > 255) {
-                            }
-                            //noinspection StatementWithEmptyBody
-                            if (alpha < 0) {
-                            }
-                            float top2 = ((float) this.PANEL_HEIGHT / 2) + (size / 2.0f);
-                            //noinspection StatementWithEmptyBody
-                            if (!blink) {
-                            }
-                            this.highlight.setBounds((int) screen_x, 0, (int) (screen_x + width), this.PANEL_HEIGHT);
-                            this.highlight_.setAlpha(alpha);
-                            this.highlight.draw(canvas);
-                            this.labels_.setColor(-16777216);
-                            this.labels_.setAlpha(!blink ? 255 : alpha);
-                            this.labels_.setStyle(Paint.Style.STROKE);
-                            //noinspection DataFlowIssue
-                            canvas.drawText(label, left, top2, this.labels_);
-                            this.labels_.setColor(!blink ? this.text_color : -1);
-                            TextPaint textPaint2 = this.labels_;
-                            //noinspection StatementWithEmptyBody
-                            if (blink) {
+    @Override
+    protected void dispatchDraw(Canvas canvas) {
+        if (freezed) return;
 
-                            }
-                            textPaint2.setAlpha(alpha);
-                            this.labels_.setStyle(Paint.Style.FILL);
-                            canvas.drawText(label, left, top2, this.labels_);
-                        }
-                    }
-                }
-                this.fade_shader_m.setRotate(-90.0f);
-                this.fade_shader.setLocalMatrix(this.fade_shader_m);
-                canvas.translate(scroll_x, 0.0f);
-                canvas.drawRect(0.0f, 0.0f, this.FADING_LENGTH, this.PANEL_HEIGHT, this.fade_shader_);
-                this.fade_shader_m.setRotate(90.0f);
-                this.fade_shader_m.postTranslate(this.FADING_LENGTH, 0.0f);
-                canvas.translate(getWidth() - this.FADING_LENGTH, 0.0f);
-                this.fade_shader.setLocalMatrix(this.fade_shader_m);
-                canvas.drawRect(0.0f, 0.0f, this.FADING_LENGTH, this.PANEL_HEIGHT, this.fade_shader_);
-                canvas.restoreToCount(save_count);
+        super.dispatchDraw(canvas);
+
+        if (!show_panel) return;
+
+        final int childCount = getChildCount();
+        final int labelCount = labels.size();
+        final int width = getWidth();
+        final float halfWidth = width / 2f;
+        final float fullWidth = width + DIVIDER_WIDTH;
+        final float scrollX = getScrollX();
+        final float fontHeight = labels_.getFontMetrics().bottom - labels_.getFontMetrics().top;
+        final float centerY = PANEL_HEIGHT / 2f + fontHeight / 2f;
+
+        panel.setBounds((int) scrollX, 0, (int) (scrollX + fullWidth), PANEL_HEIGHT);
+        panel.draw(canvas);
+
+        int save = canvas.saveLayer(scrollX, 0, scrollX + fullWidth, PANEL_HEIGHT, null, Canvas.ALL_SAVE_FLAG);
+
+        // Отрисовка лейблов (в т.ч. wrap left/right)
+        for (int i = -2; i <= labelCount + 1; i++) {
+            int index = i;
+
+            boolean isWrapped = false;
+            if (index < 0) {
+                index = labelCount + index;
+                isWrapped = true;
+            } else if (index >= labelCount) {
+                index = index - labelCount;
+                isWrapped = true;
             }
 
-            // TODO: ...
-            ////if (0 != 0) {
-            ////    invalidate();
-            ////}
+            if (index < 0 || index >= labelCount) continue;
+
+            String label = labels.get(index);
+            if (label == null || label.isEmpty()) continue;
+
+            boolean blink = blinks.get(index) != null;
+            float screenX = (i * halfWidth) + (scrollX / 2f);
+            float textWidth = labels_.measureText(label);
+            float textLeft = screenX + halfWidth - textWidth / 2f;
+
+            if (textLeft + textWidth < scrollX || textLeft > scrollX + width) continue;
+
+            float dx = ((scrollX + halfWidth) - textWidth / 2f) - textLeft;
+            int alpha = 255 - (int) ((Math.abs(dx) * 255f) / (0.65f * width));
+            alpha = Math.max(0, Math.min(255, alpha));
+
+            // highlight
+            highlight.setBounds((int) screenX, 0, (int) (screenX + fullWidth), PANEL_HEIGHT);
+            highlight_.setAlpha(alpha);
+            highlight.draw(canvas);
+
+            // Тень
+            labels_.setStrokeWidth(blink ? 4f : 1f);
+            labels_.setColor(0xFF000000); // черный
+            labels_.setAlpha(alpha);
+            labels_.setStyle(Paint.Style.STROKE);
+            canvas.drawText(label, textLeft, centerY, labels_);
+
+            // Основной текст
+            labels_.setColor(blink ? 0xFFFFFFFF : text_color);
+            labels_.setAlpha(alpha);
+            labels_.setStyle(Paint.Style.FILL);
+            canvas.drawText(label, textLeft, centerY, labels_);
         }
+
+        // Левая затухающая маска
+        fade_shader_m.setRotate(-90f);
+        fade_shader.setLocalMatrix(fade_shader_m);
+        canvas.translate(scrollX, 0);
+        canvas.drawRect(0, 0, FADING_LENGTH, PANEL_HEIGHT, fade_shader_);
+
+        // Правая затухающая маска
+        fade_shader_m.setRotate(90f);
+        fade_shader_m.postTranslate(FADING_LENGTH, 0);
+        fade_shader.setLocalMatrix(fade_shader_m);
+        canvas.translate(width - FADING_LENGTH, 0);
+        canvas.drawRect(0, 0, FADING_LENGTH, PANEL_HEIGHT, fade_shader_);
+
+        canvas.restoreToCount(save);
+
+        invalidate();
     }
 
     @Override
@@ -768,20 +681,23 @@ public class SlideSwitcher extends ViewGroup {
     }
 
     public void scrollTo(int screen) {
-        int child_count = getChildCount();
-        if (child_count > 0 && screen < child_count) {
-            if (!this.scroller.isFinished()) {
-                this.scroller.abortAnimation();
-            }
-            this.wrap_mode = false;
-            this.wrap_direction = 0;
-            setAnimationState(false);
-            super.scrollTo((getWidth() + this.DIVIDER_WIDTH) * screen, 0);
-            this.currentScreen = screen;
+        int count = getChildCount();
+        if (count == 0 || screen >= count) return;
+
+        if (!scroller.isFinished()) {
+            scroller.abortAnimation();
         }
+
+        wrap_mode = false;
+        wrap_direction = 0;
+        setAnimationState(false);
+
+        int target = screen * (getWidth() + DIVIDER_WIDTH);
+        super.scrollTo(target, 0);
+        currentScreen = screen;
     }
 
-    @Override // android.view.ViewGroup
+    @Override
     public void removeViewAt(int idx) {
         int child_count = getChildCount();
         if (child_count > 0 && idx < child_count) {
