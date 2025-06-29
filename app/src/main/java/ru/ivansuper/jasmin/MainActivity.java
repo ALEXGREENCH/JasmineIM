@@ -28,6 +28,7 @@ public class MainActivity extends Activity implements Handler.Callback {
 
     private static final int FOREGROUND_SERVICE_PERMISSION_REQUEST = 112;
     private static final int READ_PHONE_STATE_PERMISSION_REQUEST = 113;
+    private static final int READ_STORAGE_PERMISSION_REQUEST = 114;
 
     private final Handler handler = new Handler(this);
     private jasminSvc jasminService;
@@ -87,14 +88,22 @@ public class MainActivity extends Activity implements Handler.Callback {
             boolean needsReadPhoneStatePermission =
                     checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED;
 
-            if (needsForegroundServicePermission || needsReadPhoneStatePermission) {
-                String[] permissions = needsForegroundServicePermission && needsReadPhoneStatePermission
-                        ? new String[]{Manifest.permission.FOREGROUND_SERVICE, Manifest.permission.READ_PHONE_STATE}
-                        : (needsForegroundServicePermission
-                        ? new String[]{Manifest.permission.FOREGROUND_SERVICE}
-                        : new String[]{Manifest.permission.READ_PHONE_STATE});
+            boolean needsReadStoragePermission =
+                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
 
-                requestPermissions(permissions, READ_PHONE_STATE_PERMISSION_REQUEST);
+            if (needsForegroundServicePermission || needsReadPhoneStatePermission || needsReadStoragePermission) {
+                int size = 0;
+                if (needsForegroundServicePermission) size++;
+                if (needsReadPhoneStatePermission) size++;
+                if (needsReadStoragePermission) size++;
+                String[] permissions = new String[size];
+                int i = 0;
+                if (needsForegroundServicePermission) permissions[i++] = Manifest.permission.FOREGROUND_SERVICE;
+                if (needsReadPhoneStatePermission) permissions[i++] = Manifest.permission.READ_PHONE_STATE;
+                if (needsReadStoragePermission) permissions[i] = Manifest.permission.READ_EXTERNAL_STORAGE;
+
+                int requestCode = needsReadStoragePermission ? READ_STORAGE_PERMISSION_REQUEST : READ_PHONE_STATE_PERMISSION_REQUEST;
+                requestPermissions(permissions, requestCode);
                 return;
             }
         }
@@ -196,7 +205,9 @@ public class MainActivity extends Activity implements Handler.Callback {
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == FOREGROUND_SERVICE_PERMISSION_REQUEST || requestCode == READ_PHONE_STATE_PERMISSION_REQUEST) {
+        if (requestCode == FOREGROUND_SERVICE_PERMISSION_REQUEST ||
+                requestCode == READ_PHONE_STATE_PERMISSION_REQUEST ||
+                requestCode == READ_STORAGE_PERMISSION_REQUEST) {
             boolean granted = true;
             for (int result : grantResults) {
                 if (result != PackageManager.PERMISSION_GRANTED) {
