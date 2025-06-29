@@ -708,8 +708,8 @@ public class SlideSwitcher extends ViewGroup {
             this.wrap_direction = 0;
             setAnimationState(false);
             if (getWidth() == 0) {
-               /// final int target = screen;
-                post(() -> scrollTo(target));
+                final int scr = screen;
+                post(() -> scrollTo(scr));
             } else {
                 super.scrollTo((getWidth() + this.DIVIDER_WIDTH) * screen, 0);
                 this.currentScreen = screen;
