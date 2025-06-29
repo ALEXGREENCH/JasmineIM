@@ -1,50 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <array name="auth_methods">
+    <string-array name="auth_methods">
         <item>Plain XOR</item>
         <item>MD5</item>
         <item>HTTP</item>
-    </array>
-    <array name="auth_methods_values">
+    </string-array>
+    <string-array name="auth_methods_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
-    </array>
-    <array name="smileys_scale_labels">
+    </string-array>
+    <string-array name="smileys_scale_labels">
         <item>Еще меньше</item>
         <item>Маленькие</item>
         <item>Нормальные</item>
         <item>Чуть больше</item>
         <item>Большие</item>
         <item>Очень большие</item>
-    </array>
-    <array name="smileys_scale_values">
+    </string-array>
+    <string-array name="smileys_scale_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
         <item>3</item>
         <item>4</item>
         <item>5</item>
-    </array>
-    <array name="chat_style_labels">
+    </string-array>
+    <string-array name="chat_style_labels">
         <item>Полосы</item>
         <item>Конверты</item>
-    </array>
-    <array name="chat_style_values">
+    </string-array>
+    <string-array name="chat_style_values">
         <item>0</item>
         <item>1</item>
-    </array>
-    <array name="wallpaper_types">
+    </string-array>
+    <string-array name="wallpaper_types">
         <item>Брать фон у системы</item>
         <item>background.png из папки Skin</item>
         <item>Монотонный цвет</item>
-    </array>
-    <array name="wallpaper_types_values">
+    </string-array>
+    <string-array name="wallpaper_types_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>
-    </array>
-    <array name="reconnects_labels">
+    </string-array>
+    <string-array name="reconnects_labels">
         <item>5</item>
         <item>10</item>
         <item>15</item>
@@ -52,8 +52,8 @@
         <item>25</item>
         <item>30</item>
         <item>-</item>
-    </array>
-    <array name="reconnects_values">
+    </string-array>
+    <string-array name="reconnects_values">
         <item>5</item>
         <item>10</item>
         <item>15</item>
@@ -61,5 +61,5 @@
         <item>25</item>
         <item>30</item>
         <item>9999</item>
-    </array>
+    </string-array>
 </resources>
