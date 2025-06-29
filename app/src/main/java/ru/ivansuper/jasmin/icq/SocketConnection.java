@@ -62,6 +62,7 @@ public abstract class SocketConnection {
             } catch (Exception ignored) {
             }
         }
+        Log.e("SOCKET", "errorOccured, code=" + this.lastErrorCode);
         this.connecting = false;
         this.connected = false;
         if (this.writeThrd != null) {
@@ -83,6 +84,7 @@ public abstract class SocketConnection {
             } catch (Exception ignored) {
             }
         }
+        Log.e("SOCKET", "errorOccuredA, code=" + this.lastErrorCode);
         this.connecting = false;
         this.connected = false;
         if (this.writeThrd != null) {
@@ -102,6 +104,7 @@ public abstract class SocketConnection {
 
     public void write(ByteBuffer source) {
         if (this.connected) {
+            Log.v("SOCKET", "Queue write: " + source.writePos + " bytes");
             this.writeThrd.put(source);
         }
     }
@@ -171,16 +174,23 @@ public abstract class SocketConnection {
         public void run() {
             connecting = true;
             try {
+                Log.v("SOCKET", "Connect thread started");
                 onConnecting();
+                Log.v("SOCKET", "onConnecting() callback fired");
                 socket.setKeepAlive(true);
                 socket.setTcpNoDelay(true);
+                Log.v("SOCKET", "Socket options set: keepAlive, tcpNoDelay");
                 addr = new InetSocketAddress(lastServer, lastPort);
+                Log.v("SOCKET", "Connecting to " + lastServer + ":" + lastPort);
                 socket.connect(addr, popup_log_adapter.INFO_DISPLAY_TIME);
+                Log.v("SOCKET", "Socket connected");
                 socket.setSoTimeout(0);
                 socketIn = socket.getInputStream();
                 socketOut = socket.getOutputStream();
+                Log.v("SOCKET", "I/O streams opened");
                 connecting = false;
                 connected = true;
+                Log.v("SOCKET", "Launching reader and writer threads");
                 connectedThrd = new connectedThread(SocketConnection.this, null);
                 connectedThrd.setName("Socket reader thread");
                 connectedThrd.start();
@@ -190,16 +200,19 @@ public abstract class SocketConnection {
             } catch (UnknownHostException e) {
                 //noinspection CallToPrintStackTrace
                 e.printStackTrace();
+                Log.e("SOCKET", "Unknown host: " + e.getMessage());
                 lastErrorCode = 1;
                 errorOccuredA();
             } catch (IOException e2) {
                 //noinspection CallToPrintStackTrace
                 e2.printStackTrace();
+                Log.e("SOCKET", "I/O exception: " + e2.getMessage());
                 lastErrorCode = 2;
                 errorOccuredA();
             } catch (Exception e3) {
                 //noinspection CallToPrintStackTrace
                 e3.printStackTrace();
+                Log.e("SOCKET", "Unexpected error: " + e3.getMessage());
                 lastErrorCode = 255;
                 errorOccuredA();
             }
@@ -247,6 +260,7 @@ public abstract class SocketConnection {
 
         @Override
         public void run() {
+            Log.v("SOCKET", "writeThread started");
             onConnect();
             while (connected) {
                 try {
@@ -254,6 +268,7 @@ public abstract class SocketConnection {
                         ByteBuffer buffer = get();
                         if (buffer != null) {
                             socketOut.write(ByteBuffer.normalizeBytes(buffer.bytes, buffer.writePos));
+                            Log.v("SOCKET", "Written " + buffer.writePos + " bytes");
                         } else {
                             wait();
                         }
@@ -284,6 +299,7 @@ public abstract class SocketConnection {
 
         @Override
         public void run() {
+            Log.v("SOCKET", "connectedThread started");
             while (connected) {
                 int realyReaded = 0;
                 while (realyReaded < 6) {
@@ -303,6 +319,7 @@ public abstract class SocketConnection {
                 }
                 try {
                     int data_length = (this.flap.bytes[5] & 255) | ((this.flap.bytes[4] & 255) << 8);
+                    Log.v("SOCKET", "Incoming packet length=" + data_length);
                     int realyReaded2 = 0;
                     while (realyReaded2 < data_length) {
                         int readed2 = socketIn.read(this.flap.bytes, realyReaded2 + 6, data_length - realyReaded2);
@@ -313,6 +330,7 @@ public abstract class SocketConnection {
                         }
                         realyReaded2 += readed2;
                     }
+                    Log.v("SOCKET", "Packet received, total=" + (data_length + 6) + " bytes");
                     this.flap.readPos = 0;
                     this.flap.writePos = data_length + 6;
                     if (this.flap.previewByte(0) != 42) {
