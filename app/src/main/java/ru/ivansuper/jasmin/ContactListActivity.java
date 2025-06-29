@@ -2042,54 +2042,93 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         this.CONFIG_LISTENER.listener = (w, h, oldw, oldh) ->
                 onConfigurationChangedLocal(resources.ctx.getResources().getConfiguration(),
                         Math.max(Math.abs(w - oldw), Math.abs(h - oldh)));
+
         Resizer.BIND(findViewById(R.id.contacts_fragment), findViewById(R.id.chat_fragment), findViewById(R.id.contactlist_list_chat_separator));
+
         View chat_contacts_separator = findViewById(R.id.contactlist_list_chat_separator);
         resources.attachContactlistChatDivider(chat_contacts_separator);
         if (!resources.IT_IS_TABLET) {
             chat_contacts_separator.setVisibility(View.GONE);
         }
+
         LinearLayout cl_back = findViewById(R.id.cl_back);
         if (!sp.getBoolean("ms_use_shadow", true)) {
             cl_back.setBackgroundColor(0);
         }
+
         ImageView search_panel_hide = findViewById(R.id.contactlist_search_hide);
         search_panel_hide.setOnClickListener(v -> {
             if (SEARCH_PANEL_VISIBLE) {
                 hideSearchPanel();
             }
         });
+
         this.search_panel = findViewById(R.id.contactlist_search_bar);
         this.search_panel_slot = findViewById(R.id.contactlist_search_panel_slot);
+
         switcher = findViewById(R.id.contactlist);
+
+        // === Создание и добавление вкладок ===
         this.chats_contactlist = new MultiColumnList(this, switcher.attrs);
         this.contactlist = new MultiColumnList(this, switcher.attrs);
         switcher.addView(this.chats_contactlist, resources.getString("s_cl_panel_chats"));
         switcher.addView(this.contactlist, resources.getString("s_cl_panel_contacts"));
-        switcher.post(() -> switcher.scrollTo(1));
+
+        // === Селекторы и фон ===
         resources.attachListSelector(this.chats_contactlist);
         resources.attachListSelector(this.contactlist);
+        if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("ms_use_solid_wallpaper", false)) {
+            resources.attachContactlistBack(this.chats_contactlist);
+            resources.attachContactlistBack(this.contactlist);
+        }
+
+        // === Конфигурация switcher ===
+        switcher.updateConfig();
+        if (PreferenceTable.ms_cl_transition_effect < 0) {
+            switcher.setRandomizedAnimation(true);
+        } else {
+            switcher.setRandomizedAnimation(false);
+            switcher.setAnimationType(PreferenceTable.ms_cl_transition_effect);
+        }
+        switcher.togglePanel(PreferenceTable.ms_two_screens_mode);
+        switcher.setLock(!PreferenceTable.ms_two_screens_mode);
+        updateBlinkState();
+
+        // === Переход на вкладку "контакты" после layout'а ===
+        switcher.post(() -> switcher.scrollTo(1));
+
         connectionStatusPanel = findViewById(R.id.profiles_connection_bars);
         profilesPanel = findViewById(R.id.profilesPanel);
+
         toggle_offline = findViewById(R.id.toggle_offline);
         toggle_offline.setOnClickListener(new ToolsPanelListener());
+
         toggle_vibro = findViewById(R.id.toggle_vibro);
         toggle_vibro.setOnClickListener(new ToolsPanelListener());
+
         toggle_sound = findViewById(R.id.toggle_sound);
         toggle_sound.setOnClickListener(new ToolsPanelListener());
+
         connectionStatusPanel.setBackgroundColor(ColorScheme.getColor(32));
         findViewById(R.id.bottomPanel).setBackgroundColor(ColorScheme.getColor(32));
         BOTTOM_PANEL = findViewById(R.id.bottomPanel);
         if (!BOTTOM_PANEL_VISIBLED) {
             BOTTOM_PANEL.setVisibility(View.GONE);
         }
+
         resources.attachContactlistBottomConnectionStatusPanel(connectionStatusPanel);
         resources.attachContactlistBottomPanel(BOTTOM_PANEL);
+
+        // === Проверка конференций ===
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("ms_use_solid_wallpaper", false)) {
-            resources.attachContactlistBack(this.chats_contactlist);
-            resources.attachContactlistBack(this.contactlist);
+            checkConferences();
+        } else {
+            // даже если фон однотонный — нужно проверить наличие вкладки конференций
+            checkConferences();
         }
-        checkConferences();
+
         switcher.attrs.recycle();
+
         initToolsPanel();
     }
 
