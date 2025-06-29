@@ -356,6 +356,7 @@ public class ICQProfile extends IMProfile {
 
     public final void proceedFlapPacket(ByteBuffer buffer) {
         FLAP flp = new FLAP(buffer);
+        Log.v("ICQProfile", "FLAP channel=" + flp.getChannel());
         switch (flp.getChannel()) {
             case 1:
                 if (this.authFirstStageCompleted) {
@@ -415,6 +416,7 @@ public class ICQProfile extends IMProfile {
 
         try {
             // здесь используется наш новый, правильный CLI_IDENT
+            Log.v("ICQProfile", "handleServerAuthHello: sending XOR login");
             this.BUFFER = ICQProtocol.createXORLogin(this.sequence, this.ID, this.password);
             send();
         } catch (Exception e) {
@@ -429,6 +431,7 @@ public class ICQProfile extends IMProfile {
         String bos = server.getData().readStringAscii(server.length);
         // сохраняем его в поле, чтобы потом на него коннектиться
         this.bos_server = bos;
+        Log.v("ICQProfile", "handleServerXORReply: bos=" + bos + ", cookie length=" + cookie.length);
 
         // логируем и показываем в списке контактов
         String msg = utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{bos});
@@ -450,6 +453,7 @@ public class ICQProfile extends IMProfile {
     private void handleBOSServerHello() {
         jasminSvc.pla.put(this.nickname, resources.getString("s_icq_sending_cookies"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
         this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_sending_cookies"));
+        Log.v("ICQProfile", "handleBOSServerHello: sending cookies length=" + this.cookies.length);
         ByteBuffer buffer = ICQProtocol.createSendCookies(this.cookies, this.ID, this.sequence);
         send(buffer);
     }
@@ -510,6 +514,7 @@ public class ICQProfile extends IMProfile {
             this.pinger.resetTimer();
         }
         SNAC snc = new SNAC(data);
+        Log.v("ICQProfile", "SNAC type=" + snc.getType() + " subtype=" + snc.getSubtype());
         switch (snc.getType()) {
             case 1:
                 switch (snc.getSubtype()) {
