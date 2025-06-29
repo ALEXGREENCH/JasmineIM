@@ -347,8 +347,14 @@ public class SlideSwitcher extends ViewGroup {
                 lastTouchX=accumulatedScrollX;
                 lastTouchY=ev.getY();
                 if (!scroller.isFinished()) {
-                    isDragging=true;
+                    isDragging = true;
                     scroller.forceFinished(true);
+                    if (wrapMode) {
+                        wrapMode = false;
+                        wrapDirection = 0;
+                        setAnimating(false);
+                        scrollTo(currentScreen * (getWidth() + dividerWidth), 0);
+                    }
                     return true;
                 }
                 break;
