@@ -15,6 +15,19 @@ import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
 public class ICQProtocol {
+
+    // Constants describing the legacy ICQ 2000b client string and version data
+    private static final String CLIENT_STRING =
+            "ICQ Inc. - Product of ICQ (TM).2000b.4.65.1.3281.85";
+    private static final byte[] TLV_0X16_DATA = {(byte) 0x01, (byte) 0x0A};
+    private static final byte[] TLV_0X17_MAJOR = {(byte) 0x00, (byte) 0x04};
+    private static final byte[] TLV_0X18_MINOR = {(byte) 0x00, (byte) 0x41};
+    private static final byte[] TLV_0X19_LESSER = {(byte) 0x00, (byte) 0x01};
+    private static final byte[] TLV_0X1A_BUILD = {(byte) 0x0C, (byte) 0xD1};
+    private static final int TLV_0X14_DISTRIBUTION = 0x00000055;
+    private static final String TLV_LANGUAGE = "en";
+    private static final String TLV_COUNTRY = "us";
+
     /** @noinspection unused*/
     public static ByteBuffer createHelloReply(int seq) {
         ByteBuffer buffer = new ByteBuffer(48);
@@ -99,42 +112,37 @@ public class ICQProtocol {
         buffer.write(xor);
 
         buffer.writeWord(0x03);
-        buffer.writePreLengthStringAscii("ICQ Inc. - Product of ICQ (TM).2000b.4.65.1.3281.85");
+        buffer.writePreLengthStringAscii(CLIENT_STRING);
 
         buffer.writeWord(0x16);
-        byte[] FIXED_UNKNOWN = {(byte) 0x01, (byte) 0x0A};
-        buffer.writeWord(FIXED_UNKNOWN.length);
-        buffer.write(FIXED_UNKNOWN);
+        buffer.writeWord(TLV_0X16_DATA.length);
+        buffer.write(TLV_0X16_DATA);
 
         buffer.writeWord(0x17);
-        byte[] FIXED_VER_MAJOR = {(byte) 0x00, (byte) 0x04};
-        buffer.writeWord(FIXED_VER_MAJOR.length);
-        buffer.write(FIXED_VER_MAJOR);
+        buffer.writeWord(TLV_0X17_MAJOR.length);
+        buffer.write(TLV_0X17_MAJOR);
 
         buffer.writeWord(0x18);
-        byte[] FIXED_VER_MINOR = {(byte) 0x00, (byte) 0x41};
-        buffer.writeWord(FIXED_VER_MINOR.length);
-        buffer.write(FIXED_VER_MINOR);
+        buffer.writeWord(TLV_0X18_MINOR.length);
+        buffer.write(TLV_0X18_MINOR);
 
         buffer.writeWord(0x19);
-        byte[] FIXED_VER_LESSER = {(byte) 0x00, (byte) 0x01};
-        buffer.writeWord(FIXED_VER_LESSER.length);
-        buffer.write(FIXED_VER_LESSER);
+        buffer.writeWord(TLV_0X19_LESSER.length);
+        buffer.write(TLV_0X19_LESSER);
 
         buffer.writeWord(0x1A);
-        byte[] FIXED_BUILD = {(byte) 0x0C, (byte) 0xD1};
-        buffer.writeWord(FIXED_BUILD.length);
-        buffer.write(FIXED_BUILD);
+        buffer.writeWord(TLV_0X1A_BUILD.length);
+        buffer.write(TLV_0X1A_BUILD);
 
         buffer.writeWord(0x14);
         buffer.writeWord(4);
-        buffer.writeDWord(0x00000055);
+        buffer.writeDWord(TLV_0X14_DISTRIBUTION);
 
         buffer.writeWord(0x0f);
-        buffer.writeStringAscii("en");
+        buffer.writeStringAscii(TLV_LANGUAGE);
 
         buffer.writeWord(0x0e);
-        buffer.writeStringAscii("us");
+        buffer.writeStringAscii(TLV_COUNTRY);
 
 
         return FLAP.createFlap((byte) 1, seq, buffer);
