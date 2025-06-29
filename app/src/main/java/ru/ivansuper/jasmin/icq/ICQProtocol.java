@@ -99,29 +99,42 @@ public class ICQProtocol {
         buffer.write(xor);
 
         buffer.writeWord(0x03);
-        buffer.writePreLengthStringAscii("Jasmine v666");
+        buffer.writePreLengthStringAscii("ICQ Inc. - Product of ICQ (TM).2000b.4.65.1.3281.85");
 
         buffer.writeWord(0x16);
         byte[] FIXED_UNKNOWN = {(byte) 0x01, (byte) 0x0A};
+        buffer.writeWord(FIXED_UNKNOWN.length);
         buffer.write(FIXED_UNKNOWN);
 
         buffer.writeWord(0x17);
-        byte[] FIXED_VER_MAJOR = {(byte) 0x00, (byte) 0x05};
+        byte[] FIXED_VER_MAJOR = {(byte) 0x00, (byte) 0x04};
+        buffer.writeWord(FIXED_VER_MAJOR.length);
         buffer.write(FIXED_VER_MAJOR);
 
         buffer.writeWord(0x18);
-        byte[] FIXED_VER_MINOR = {(byte) 0x00, (byte) 0x2F};
+        byte[] FIXED_VER_MINOR = {(byte) 0x00, (byte) 0x41};
+        buffer.writeWord(FIXED_VER_MINOR.length);
         buffer.write(FIXED_VER_MINOR);
 
         buffer.writeWord(0x19);
         byte[] FIXED_VER_LESSER = {(byte) 0x00, (byte) 0x01};
+        buffer.writeWord(FIXED_VER_LESSER.length);
         buffer.write(FIXED_VER_LESSER);
 
+        buffer.writeWord(0x1A);
+        byte[] FIXED_BUILD = {(byte) 0x0C, (byte) 0xD1};
+        buffer.writeWord(FIXED_BUILD.length);
+        buffer.write(FIXED_BUILD);
+
+        buffer.writeWord(0x14);
+        buffer.writeWord(4);
+        buffer.writeDWord(0x00000055);
+
         buffer.writeWord(0x0f);
-        buffer.writeStringAscii("ru");
+        buffer.writeStringAscii("en");
 
         buffer.writeWord(0x0e);
-        buffer.writeStringAscii("ru");
+        buffer.writeStringAscii("us");
 
 
         return FLAP.createFlap((byte) 1, seq, buffer);
