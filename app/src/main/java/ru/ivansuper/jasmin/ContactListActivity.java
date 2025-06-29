@@ -221,6 +221,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         }
         setVolumeControlStream(3);
         setContentView(R.layout.contactlist);
+        ru.ivansuper.jasmin.utils.SystemBarUtils.setupTransparentBars(this);
         service = resources.service;
         dialogs = new Vector<>();
         if (getResources().getConfiguration().orientation != 1) {
