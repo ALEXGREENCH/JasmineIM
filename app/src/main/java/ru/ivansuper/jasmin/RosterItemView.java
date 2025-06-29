@@ -20,7 +20,6 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextUtils.TruncateAt;
 import android.view.View;
-import android.view.View.MeasureSpec;
 import android.widget.TextView;
 import ru.ivansuper.jasmin.MMP.MMPContact;
 import ru.ivansuper.jasmin.MMP.MMPGroup;

@@ -718,7 +718,7 @@ public class ICQProfile extends IMProfile {
     }
 
     @SuppressLint("LongLogTag")
-    private final void handleServerLoginReply(ByteBuffer buffer, int flags) {
+    private void handleServerLoginReply(ByteBuffer buffer, int flags) {
         setConnectionStatus(25);
         if (flags == 32768) {
             int len = buffer.readWord();

@@ -8,6 +8,7 @@ import android.widget.ImageView;
 
 import java.util.Collections;
 import java.util.Vector;
+
 import ru.ivansuper.jasmin.icq.xstatus;
 
 public class XStatusAdapter extends BaseAdapter {
