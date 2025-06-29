@@ -1166,7 +1166,7 @@ public class ICQProfile extends IMProfile {
                 Log.v("Jasmine:Message Error!", "receiver/sender blocked");
                 return;
             default:
-                Log.v("Jasmine:Message Error!", "Unknown error");
+                Log.v("Jasmine:Message Error!", "Unknown error code=" + error);
         }
     }
 
