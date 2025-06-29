@@ -139,9 +139,11 @@ public class ICQProtocol {
         buffer.writeDWord(TLV_0X14_DISTRIBUTION);
 
         buffer.writeWord(0x0f);
+        buffer.writeWord(TLV_LANGUAGE.length());
         buffer.writeStringAscii(TLV_LANGUAGE);
 
         buffer.writeWord(0x0e);
+        buffer.writeWord(TLV_COUNTRY.length());
         buffer.writeStringAscii(TLV_COUNTRY);
 
 
