@@ -2069,8 +2069,8 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         switcher = findViewById(R.id.contactlist);
 
         // === Создание и добавление вкладок ===
-        this.chats_contactlist = new MultiColumnList(this, switcher.attrs);
-        this.contactlist = new MultiColumnList(this, switcher.attrs);
+        this.chats_contactlist = new MultiColumnList(this);
+        this.contactlist = new MultiColumnList(this);
         switcher.addView(this.chats_contactlist, resources.getString("s_cl_panel_chats"));
         switcher.addView(this.contactlist, resources.getString("s_cl_panel_contacts"));
 
@@ -2127,7 +2127,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             checkConferences();
         }
 
-        switcher.attrs.recycle();
+        ////switcher.attrs.recycle();
 
         initToolsPanel();
     }
@@ -2137,7 +2137,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             try {
                 boolean confs_present = service.profiles.scanForConferences();
                 if (confs_present && this.confs_contactlist == null) {
-                    this.confs_contactlist = new MultiColumnList(this, switcher.attrs);
+                    this.confs_contactlist = new MultiColumnList(this);
                     resources.attachListSelector(this.confs_contactlist);
                     if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("ms_use_solid_wallpaper", false)) {
                         resources.attachContactlistBack(this.confs_contactlist);

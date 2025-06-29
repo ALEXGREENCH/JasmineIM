@@ -622,7 +622,7 @@ public class resources {
                 slide_switcher_panel_padding = new Rect(1, 1, 1, 1);
             }
 
-            slideSwitcher.panel = new NinePatchDrawable(ctx.getResources(), slide_switcher_panel, slide_switcher_panel.getNinePatchChunk(), slide_switcher_panel_padding, null);
+            slideSwitcher.panelDrawable = new NinePatchDrawable(ctx.getResources(), slide_switcher_panel, slide_switcher_panel.getNinePatchChunk(), slide_switcher_panel_padding, null);
         }
 
     }

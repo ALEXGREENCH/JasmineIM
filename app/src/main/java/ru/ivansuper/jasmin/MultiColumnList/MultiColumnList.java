@@ -75,7 +75,7 @@ public class MultiColumnList extends ViewGroup {
         void onItemLongClick(MultiColumnList multiColumnList, View view, int i, long j);
     }
 
-    public MultiColumnList(Context context, TypedArray attrs) {
+    public MultiColumnList(Context context) {
         super(context);
         this.mTopOverScrollAmount = 0;
         this.mBottomOverScrollAmount = 0;
@@ -114,11 +114,11 @@ public class MultiColumnList extends ViewGroup {
                 MultiColumnList.this.requestLayout();
             }
         };
-        initView(context, attrs);
+        initView(context);
     }
 
     /** @noinspection unused*/
-    private void initView(Context context, TypedArray attrs) {
+    private void initView(Context context) {
         setWillNotDraw(false);
         setDrawingCacheEnabled(true);
         setWillNotCacheDrawing(false);
@@ -144,8 +144,6 @@ public class MultiColumnList extends ViewGroup {
         LinearInterpolator i = new LinearInterpolator();
         this.mScroller = new Scroller(getContext(), i);
         setVerticalScrollBarEnabled(true);
-        // todo;
-        /////initializeScrollbars(attrs);
         setVerticalScrollBarEnabled(true);
         setVerticalFadingEdgeEnabled(true);
         setFadingEdgeLength(48);
