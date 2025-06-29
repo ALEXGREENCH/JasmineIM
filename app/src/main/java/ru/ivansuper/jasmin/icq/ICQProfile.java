@@ -518,6 +518,9 @@ public class ICQProfile extends IMProfile {
         switch (snc.getType()) {
             case 1:
                 switch (snc.getSubtype()) {
+                    case 3:
+                        handleServerFamiliesList(snc.getData());
+                        break;
                     case 5:
                         handleServerServiceRedirect(snc.getData(), snc.getFlags());
                         break;
@@ -680,6 +683,15 @@ public class ICQProfile extends IMProfile {
         this.BUFFER = ICQProtocol.createClientFamilies(this.sequence);
         send();
         setConnectionStatus(60);
+    }
+
+    private void handleServerFamiliesList(ByteBuffer data) {
+        // Server has sent the list of supported service families. According to
+        // the OSCAR specification we must respond with SNAC(01,17) containing
+        // the versions we support. Just send the request without parsing
+        // the family list, as older code never handled this packet at all.
+        this.BUFFER = ICQProtocol.createClientFamilies(this.sequence);
+        send();
     }
 
     private void handleServerMOTD() {
