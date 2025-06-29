@@ -307,16 +307,6 @@ public class SlideSwitcher extends ViewGroup {
             setAnimationState(false);
             postInvalidate();
         } else {
-            int width = getWidth() + DIVIDER_WIDTH;
-            int newScreen = Math.round((float) getScrollX() / width);
-            if (newScreen < 0) {
-                newScreen = 0;
-            }
-            int childCount = getChildCount();
-            if (childCount > 0 && newScreen >= childCount) {
-                newScreen = childCount - 1;
-            }
-            currentScreen = newScreen;
             setAnimationState(false);
         }
     }
