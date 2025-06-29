@@ -83,6 +83,8 @@ public class SlideSwitcher extends ViewGroup {
     private TextPaint labels_;
     private float lastTouchX;
     private float lastTouchY;
+    private float initialTouchX;
+    private float initialTouchY;
     private boolean locked;
     private boolean mIsBeingDragged;
     public Drawable panel;
@@ -124,6 +126,8 @@ public class SlideSwitcher extends ViewGroup {
         this.wrap_mode = false;
         this.wrap_direction = 0;
         this.FADING_LENGTH = 16.0f;
+        this.initialTouchX = 0f;
+        this.initialTouchY = 0f;
         init(context);
     }
 
@@ -144,6 +148,8 @@ public class SlideSwitcher extends ViewGroup {
         this.wrap_direction = 0;
         this.FADING_LENGTH = 16.0f;
         this.attrs = context.obtainStyledAttributes(attrs, R.styleable.SlideSwitcher);
+        this.initialTouchX = 0f;
+        this.initialTouchY = 0f;
         init(context);
     }
 
@@ -271,30 +277,22 @@ public class SlideSwitcher extends ViewGroup {
 
     @Override // android.view.View
     public void computeScroll() {
-        if (!this.mIsBeingDragged) {
-            if (this.scroller.computeScrollOffset()) {
-                scrollTo(this.scroller.getCurrX(), 0);
-                postInvalidate();
-                return;
+        if (this.scroller.computeScrollOffset()) {
+            scrollTo(this.scroller.getCurrX(), 0);
+            postInvalidate();
+            return;
+        }
+        if (this.wrap_mode) {
+            int width = getWidth() + this.DIVIDER_WIDTH;
+            if (this.wrap_direction > 0) {
+                scrollTo(0, 0);
+            } else if (this.wrap_direction < 0) {
+                scrollTo((getChildCount() - 1) * width, 0);
             }
-            if (this.wrap_mode) {
-                if (this.wrap_direction < 0) {
-                    int width = getWidth() + this.DIVIDER_WIDTH;
-                    scrollTo((getChildCount() - 1) * width, 0);
-                    this.wrap_direction = 0;
-                    setAnimationState(false);
-                    return;
-                }
-                if (this.wrap_direction > 0) {
-                    scrollTo(0, 0);
-                    postInvalidate();
-                    this.wrap_direction = 0;
-                    setAnimationState(false);
-                    return;
-                }
-                this.wrap_mode = false;
-                return;
-            }
+            this.wrap_mode = false;
+            this.wrap_direction = 0;
+            setAnimationState(false);
+        } else {
             setAnimationState(false);
         }
     }
@@ -302,17 +300,18 @@ public class SlideSwitcher extends ViewGroup {
     private void wrapToFirst() {
         this.wrap_mode = true;
         this.wrap_direction = 1;
-        this.scroller.startScroll(getScrollX(), 0, 0, 0, this.SCROLLING_TIME);
         int width = getWidth() + this.DIVIDER_WIDTH;
-        this.scroller.setFinalX(getChildCount() * width);
+        this.scroller.startScroll(getScrollX(), 0, width, 0, this.SCROLLING_TIME);
+        setAnimationState(true);
         postInvalidate();
     }
 
     private void wrapToLast() {
         this.wrap_mode = true;
         this.wrap_direction = -1;
-        this.scroller.startScroll(getScrollX(), 0, 0, 0, this.SCROLLING_TIME);
-        this.scroller.setFinalX(-(getWidth() + this.DIVIDER_WIDTH));
+        int width = getWidth() + this.DIVIDER_WIDTH;
+        this.scroller.startScroll(getScrollX(), 0, -width, 0, this.SCROLLING_TIME);
+        setAnimationState(true);
         postInvalidate();
     }
 
@@ -338,31 +337,55 @@ public class SlideSwitcher extends ViewGroup {
     }
 
     private void switchToNext() {
-        if (!this.fully_locked) {
-            if (this.currentScreen == getChildCount() - 1) {
-                this.currentScreen = 0;
-                wrapToFirst();
-            } else {
-                this.currentScreen++;
-                this.scroller.startScroll(getScrollX(), 0, 0, 0, this.SCROLLING_TIME);
-                this.scroller.setFinalX(this.currentScreen * (getWidth() + this.DIVIDER_WIDTH));
-                postInvalidate();
-            }
+        if (this.fully_locked) {
+            smoothScrollToCurrent();
+            return;
+        }
+        int count = getChildCount();
+        if (count == 0) {
+            return;
+        }
+        int width = getWidth() + this.DIVIDER_WIDTH;
+        if (this.currentScreen == count - 1) {
+            this.currentScreen = 0;
+            wrapToFirst();
+        } else {
+            this.currentScreen++;
+            int target = this.currentScreen * width;
+            this.scroller.startScroll(getScrollX(), 0, target - getScrollX(), 0, this.SCROLLING_TIME);
+            setAnimationState(true);
+            postInvalidate();
         }
     }
 
     private void switchToPrev() {
-        if (!this.fully_locked) {
-            if (this.currentScreen == 0) {
-                this.currentScreen = getChildCount() - 1;
-                wrapToLast();
-            } else {
-                this.currentScreen--;
-                this.scroller.startScroll(getScrollX(), 0, 0, 0, this.SCROLLING_TIME);
-                this.scroller.setFinalX(this.currentScreen * (getWidth() + this.DIVIDER_WIDTH));
-                postInvalidate();
-            }
+        if (this.fully_locked) {
+            smoothScrollToCurrent();
+            return;
         }
+        int count = getChildCount();
+        if (count == 0) {
+            return;
+        }
+        int width = getWidth() + this.DIVIDER_WIDTH;
+        if (this.currentScreen == 0) {
+            this.currentScreen = count - 1;
+            wrapToLast();
+        } else {
+            this.currentScreen--;
+            int target = this.currentScreen * width;
+            this.scroller.startScroll(getScrollX(), 0, target - getScrollX(), 0, this.SCROLLING_TIME);
+            setAnimationState(true);
+            postInvalidate();
+        }
+    }
+
+    private void smoothScrollToCurrent() {
+        int width = getWidth() + this.DIVIDER_WIDTH;
+        int target = this.currentScreen * width;
+        this.scroller.startScroll(getScrollX(), 0, target - getScrollX(), 0, this.SCROLLING_TIME);
+        setAnimationState(true);
+        postInvalidate();
     }
 
     @Override // android.view.ViewGroup, android.view.View
@@ -372,72 +395,53 @@ public class SlideSwitcher extends ViewGroup {
         }
         int action = event.getAction();
         switch (action) {
-            case 0:
+            case MotionEvent.ACTION_DOWN:
                 this.locked = false;
-                this.scrollX = event.getX();
-                this.lastTouchX = this.scrollX;
+                this.initialTouchX = event.getX();
+                this.initialTouchY = event.getY();
+                this.lastTouchX = event.getX();
                 this.lastTouchY = event.getY();
-                if (this.scroller.isFinished()) {
-                    this.mIsBeingDragged = false;
-                    break;
-                } else {
-                    this.mIsBeingDragged = true;
-                    this.scroller.forceFinished(true);
-                    if (this.wrap_mode) {
-                        if (this.wrap_direction < 0) {
-                            int width = getWidth() + this.DIVIDER_WIDTH;
-                            scrollTo((getChildCount() - 1) * width, 0);
-                            this.currentScreen = getChildCount() - 1;
-                        } else if (this.wrap_direction > 0) {
-                            scrollTo(0, 0);
-                            this.currentScreen = 0;
-                        }
-                    }
+                if (!this.scroller.isFinished()) {
+                    this.scroller.abortAnimation();
                     this.wrap_mode = false;
                     this.wrap_direction = 0;
                     setAnimationState(false);
-                    return true;
-                }
-            case 1:
-            case 3:
-                if (this.mIsBeingDragged) {
+                    this.mIsBeingDragged = true;
+                } else {
                     this.mIsBeingDragged = false;
-                    float diff = event.getX() - this.lastTouchX;
-                    getChildCount();
-                    if (Math.abs(diff) <= 96.0f || this.fully_locked) {
-                        this.scroller.startScroll(getScrollX(), 0, 0, 0, this.SCROLLING_TIME);
-                        this.scroller.setFinalX(this.currentScreen * (getWidth() + this.DIVIDER_WIDTH));
-                    } else if (diff < 0.0f) {
-                        switchToNext();
-                    } else {
-                        switchToPrev();
-                    }
-                    postInvalidate();
-                    break;
                 }
                 break;
-            case 2:
+            case MotionEvent.ACTION_MOVE:
+                float dx = event.getX() - this.lastTouchX;
+                float totalDx = event.getX() - this.initialTouchX;
+                float dy = Math.abs(event.getY() - this.initialTouchY);
+                if (!this.mIsBeingDragged) {
+                    if (Math.abs(totalDx) > 32.0f && dy < 32.0f && !this.fully_locked) {
+                        this.mIsBeingDragged = true;
+                        setAnimationState(true);
+                    } else if (dy > 32.0f) {
+                        this.locked = true;
+                    }
+                }
                 if (this.mIsBeingDragged) {
-                    scrollBy((int) (this.scrollX - event.getX()), 0);
-                    this.scrollX = event.getX();
-                    break;
-                } else {
-                    float diff_ = Math.abs(this.lastTouchX - event.getX());
-                    float diff_y = Math.abs(event.getY() - this.lastTouchY);
-                    if (diff_ > 32.0f && !this.locked && !this.fully_locked) {
-                        if (diff_y > 32.0f) {
-                            this.locked = true;
+                    scrollBy((int) (-dx), 0);
+                    this.lastTouchX = event.getX();
+                }
+                break;
+            case MotionEvent.ACTION_UP:
+            case MotionEvent.ACTION_CANCEL:
+                if (this.mIsBeingDragged) {
+                    this.mIsBeingDragged = false;
+                    float diff = event.getX() - this.initialTouchX;
+                    int width = getWidth() + this.DIVIDER_WIDTH;
+                    if (Math.abs(diff) > width / 4f && !this.fully_locked) {
+                        if (diff < 0) {
+                            switchToNext();
                         } else {
-                            this.mIsBeingDragged = true;
-                            this.scrollX = event.getX();
-                            this.lastTouchX = this.scrollX;
-                            if (this.ANIMATION_RANDOMIZED) {
-                                Random rnd = new Random(System.currentTimeMillis());
-                                this.ANIMATION_TYPE = rnd.nextInt(8);
-                            }
-                            setAnimationState(true);
+                            switchToPrev();
                         }
-                        break;
+                    } else {
+                        smoothScrollToCurrent();
                     }
                 }
                 break;
@@ -445,8 +449,8 @@ public class SlideSwitcher extends ViewGroup {
         if (!this.mIsBeingDragged) {
             return super.dispatchTouchEvent(event);
         }
-        super.dispatchTouchEvent(MotionEvent.obtain(1L, 1L, 3, event.getX(), event.getY(), 0));
-        return false;
+        super.dispatchTouchEvent(MotionEvent.obtain(event.getDownTime(), event.getEventTime(), MotionEvent.ACTION_CANCEL, event.getX(), event.getY(), 0));
+        return true;
     }
 
     @Override // android.view.View
@@ -763,7 +767,7 @@ public class SlideSwitcher extends ViewGroup {
     public void scrollTo(int screen) {
         int child_count = getChildCount();
         if (child_count > 0 && screen < child_count) {
-            scrollTo((getWidth() + this.DIVIDER_WIDTH) * screen, 0);
+            super.scrollTo((getWidth() + this.DIVIDER_WIDTH) * screen, 0);
             this.currentScreen = screen;
         }
     }
