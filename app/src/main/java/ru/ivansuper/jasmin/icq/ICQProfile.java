@@ -519,6 +519,7 @@ public class ICQProfile extends IMProfile {
                         handleServerExtStatus(snc.getData(), snc.getFlags());
                         break;
                 }
+                break;
             case 3:
                 switch (snc.getSubtype()) {
                     case 11:
@@ -528,6 +529,7 @@ public class ICQProfile extends IMProfile {
                         handleServerUserOffline(snc.getData());
                         break;
                 }
+                break;
             case 4:
                 switch (snc.getSubtype()) {
                     case 1:
@@ -543,6 +545,7 @@ public class ICQProfile extends IMProfile {
                         handleTypingNotification(snc.getData());
                         break;
                 }
+                break;
             case 19:
                 switch (snc.getSubtype()) {
                     case 6:
@@ -586,6 +589,7 @@ public class ICQProfile extends IMProfile {
                         handleServerContactInfo(snc.getData(), snc.getFlags(), snc.getId());
                     }
                 }
+                break;
             case 23:
                 switch (snc.getSubtype()) {
                     case 3:
@@ -595,6 +599,7 @@ public class ICQProfile extends IMProfile {
                         handleServerAuthKeyResponse(snc.getData());
                         break;
                 }
+                break;
         }
     }
 
