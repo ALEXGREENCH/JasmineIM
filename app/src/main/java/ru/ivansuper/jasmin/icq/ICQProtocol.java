@@ -102,7 +102,9 @@ public class ICQProtocol {
 
     public static ByteBuffer createXORLogin(int seq, String uin, String password) throws Exception {
         String pass = password.length() > 8 ? password.substring(0, 8) : password;
-        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE);
+        // Allocate extra space for the long legacy client string and TLVs
+        ByteBuffer buffer =
+                new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE + CLIENT_STRING.length());
         buffer.writeDWord(1);
         buffer.writeWord(1);
         buffer.writePreLengthStringAscii(uin);
