@@ -24,7 +24,6 @@ import android.view.animation.Transformation;
 import android.widget.LinearLayout;
 import android.widget.Scroller;
 
-import java.util.Random;
 import java.util.Vector;
 
 import ru.ivansuper.jasmin.BitmapDrawable;
@@ -60,6 +59,7 @@ public class SlideSwitcher extends ViewGroup {
     public static final int ANIMATION_TYPE_SNAKE = 8;
     /** @noinspection unused*/
     public static final int MODULATOR_SPEED = 10;
+    /** @noinspection unused*/
     private boolean ANIMATION_RANDOMIZED;
     private int ANIMATION_TYPE;
     private int DIVIDER_WIDTH;
@@ -82,12 +82,15 @@ public class SlideSwitcher extends ViewGroup {
     private final Vector<String> labels;
     private TextPaint labels_;
     private float lastTouchX;
+    /** @noinspection FieldCanBeLocal, unused */
     private float lastTouchY;
     private float initialTouchX;
     private float initialTouchY;
+    /** @noinspection unused*/
     private boolean locked;
     private boolean mIsBeingDragged;
     public Drawable panel;
+    /** @noinspection unused*/
     private float scrollX;
     private Scroller scroller;
     private boolean show_panel;
