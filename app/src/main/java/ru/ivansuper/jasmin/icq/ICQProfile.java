@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Vector;
 
@@ -1167,7 +1166,6 @@ public class ICQProfile extends IMProfile {
                 return;
             case 14:
                 Log.v("Jasmine:Message Error!", "authorization required to send message");
-                makeToast(resources.getString("s_icq_message_auth_required"));
                 return;
             default:
                 Log.v("Jasmine:Message Error!", "Unknown error code=" + error);
@@ -2941,7 +2939,8 @@ public class ICQProfile extends IMProfile {
             private reconnect_timer() {
             }
 
-            /** @noinspection unused*/reconnect_timer(reconnector reconnectorVar, reconnect_timer reconnect_timerVar) {
+            /** @noinspection unused*/
+            reconnect_timer(reconnector reconnectorVar, reconnect_timer reconnect_timerVar) {
                 this();
             }
 

@@ -208,7 +208,6 @@ s_reconnection_stop := Переподключение остановлено
 s_reconnection_limit_exceed := Превышен лимит переподключений
 s_try_to_reconnect := Попытка переподключения #%%%1
 s_icq_authorize_text := Пожалуйста, авторизуйте меня
-s_icq_message_auth_required := Сообщение не доставлено. Требуется авторизация
 s_jabber_error_code := Код ошибки
 s_jabber_error_desc := Описание
 s_jabber_error_dialog := %%%1 - ошибка.[NL]%%%2

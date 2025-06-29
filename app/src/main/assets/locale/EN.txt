@@ -208,7 +208,6 @@ s_reconnection_stop := Reconnection stopped
 s_reconnection_limit_exceed := Reconnection limit exceeded
 s_try_to_reconnect := Reconnection attempt #%%%1
 s_icq_authorize_text := Please authorize me
-s_icq_message_auth_required := Message not delivered. Authorization required
 s_jabber_error_code := Error code
 s_jabber_error_desc := Description
 s_jabber_error_dialog := %%%1 - error.[NL]%%%2
