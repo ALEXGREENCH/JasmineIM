@@ -258,6 +258,9 @@ public class SlideSwitcher extends ViewGroup {
             if (child != null) {
                 child.setDrawingCacheEnabled(false);
                 child.setWillNotCacheDrawing(true);
+                // Make sure hardware layers do not keep a faded copy
+                // of the view after the animation is finished
+                child.setAlpha(1f);
             }
         }
     }
