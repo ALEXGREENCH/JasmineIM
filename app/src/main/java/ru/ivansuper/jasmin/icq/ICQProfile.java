@@ -193,6 +193,7 @@ public class ICQProfile extends IMProfile {
             }
         } else if (roster.length() > 0) {
             this.contactlist.loadFromLocalStorage(roster, this);
+            Log.v("ICQProfile", "Loaded " + this.contactlist.getContacts().size() + " contacts from local storage");
         }
         if (autoconnect && enabled) {
             this.status = Manager.getInt(this.ID + "status");
@@ -693,6 +694,7 @@ public class ICQProfile extends IMProfile {
         synchronized (ContactsAdapter.locker) {
             parser.parse(buffer, this);
         }
+        Log.v("ICQProfile", "Roster parsed, contacts=" + this.contactlist.getContacts().size());
         if (flags == 0) {
             setConnectionStatus(100);
             this.BUFFER = ICQProtocol.createSetUserInfo(this.sequence, this.xsts, this.qip_status);
@@ -720,6 +722,7 @@ public class ICQProfile extends IMProfile {
             this.BUFFER = ICQProtocol.createOfflineMsgsRequest(this.sequence, this.ID);
             send();
             this.contactlist.saveToLocalStorage();
+            Log.v("ICQProfile", "Roster saved, contacts=" + this.contactlist.getContacts().size());
             this.contactlist.sort();
             handleProfileConnected();
         }
