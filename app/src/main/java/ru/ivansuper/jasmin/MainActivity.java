@@ -40,6 +40,7 @@ public class MainActivity extends Activity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         getWindowManager().getDefaultDisplay().getMetrics(resources.dm);
         setContentView(R.layout.activity_main);
+        ru.ivansuper.jasmin.utils.SystemBarUtils.setupTransparentBars(this);
 
         initializeViews();
 
