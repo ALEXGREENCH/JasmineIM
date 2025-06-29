@@ -422,7 +422,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 switcher.setAnimationType(PreferenceTable.ms_cl_transition_effect);
             }
             if (!PreferenceTable.ms_two_screens_mode) {
-                switcher.scrollTo(1);
+                switcher.post(() -> switcher.scrollTo(1));
             }
             SlideSwitcher slideSwitcher = switcher;
             if (PreferenceTable.ms_two_screens_mode) {
@@ -2064,7 +2064,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         this.contactlist = new MultiColumnList(this, switcher.attrs);
         switcher.addView(this.chats_contactlist, resources.getString("s_cl_panel_chats"));
         switcher.addView(this.contactlist, resources.getString("s_cl_panel_contacts"));
-        switcher.scrollTo(1);
+        switcher.post(() -> switcher.scrollTo(1));
         resources.attachListSelector(this.chats_contactlist);
         resources.attachListSelector(this.contactlist);
         connectionStatusPanel = findViewById(R.id.profiles_connection_bars);
