@@ -383,6 +383,9 @@ public class SlideSwitcher extends ViewGroup {
                 } else {
                     this.mIsBeingDragged = true;
                     this.scroller.forceFinished(true);
+                    this.wrap_mode = false;
+                    this.wrap_direction = 0;
+                    setAnimationState(false);
                     return true;
                 }
             case 1:
