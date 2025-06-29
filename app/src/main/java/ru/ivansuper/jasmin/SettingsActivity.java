@@ -169,10 +169,10 @@ public class SettingsActivity extends PreferenceActivity {
                 lp.setNegativeButtonText(resources.getString("s_cancel"));
             }
 
-        if (!title.equals("null")) {
+        if (title != null && !title.equals("null")) {
             preference.setTitle(title);
             String desc = resources.getString("s_" + p + "_desc");
-            if (!desc.equals("null")) {
+            if (desc != null && !desc.equals("null")) {
                 preference.setSummary(desc);
             }
         }
