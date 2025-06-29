@@ -1148,7 +1148,7 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    private final void handleServerMessageError(ByteBuffer buffer) {
+    private void handleServerMessageError(ByteBuffer buffer) {
         int error = buffer.readWord();
         switch (error) {
             case 4:
