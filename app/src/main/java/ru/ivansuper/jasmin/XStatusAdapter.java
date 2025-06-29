@@ -5,37 +5,36 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+
+import java.util.Collections;
 import java.util.Vector;
 import ru.ivansuper.jasmin.icq.xstatus;
 
-/* loaded from: classes.dex */
 public class XStatusAdapter extends BaseAdapter {
-    private Vector<Drawable> list = new Vector<>();
+    private final Vector<Drawable> list = new Vector<>();
 
     public XStatusAdapter() {
         Drawable[] items = xstatus.icons;
-        for (Drawable drawable : items) {
-            this.list.add(drawable);
-        }
+        Collections.addAll(this.list, items);
         this.list.add(resources.cross);
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public int getCount() {
         return this.list.size();
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public Drawable getItem(int position) {
         return this.list.get(position);
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public long getItemId(int position) {
         return position;
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ImageView sts = new ImageView(resources.ctx);
         sts.setBackgroundDrawable(resources.ctx.getResources().getDrawable(R.drawable.smiley_and_send_btn));

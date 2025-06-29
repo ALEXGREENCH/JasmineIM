@@ -1332,6 +1332,13 @@ public class ICQProfile extends IMProfile {
                         int len4 = data.readWordLE();
                         data.skip(len4 + 4);
                         if (data.getBytesCountAvailableToRead() >= 4 && data.getBytesCountAvailableToRead() >= (len = data.readDWordLE())) {
+                            if (len < 0 || len > data.getBytesCountAvailableToRead()) {
+                                // Avoid crashes on malformed packets
+                                len = Math.max(len, 0);
+                                if (len > data.getBytesCountAvailableToRead()) {
+                                    len = data.getBytesCountAvailableToRead();
+                                }
+                            }
                             String pluginData = "";
                             if (len > 2) {
                                 int backup = data.readPos;
