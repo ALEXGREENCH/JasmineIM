@@ -437,6 +437,7 @@ public class ICQProfile extends IMProfile {
         // 1) Сначала — если это нормальный ответ на XOR-логин (server+cookie)
         TLV server = list.getTLV(5);
         TLV cookie = list.getTLV(6);
+        Log.v("ICQProfile", "handleDisconnectFlapData: serverTLV=" + (server != null) + ", cookieTLV=" + (cookie != null));
         if (server != null && cookie != null) {
             handleServerXORReply(server, cookie);
             list.recycle();
@@ -458,7 +459,9 @@ public class ICQProfile extends IMProfile {
         // 3) Дальше — ошибки и всё остальное
         TLV error = list.getTLV(8);
         if (error != null) {
-            proceedLoginError(error.getData().readWord());
+            int code = error.getData().readWord();
+            Log.e("ICQProfile", "Disconnect FLAP error code=" + code);
+            proceedLoginError(code);
             list.recycle();
             return;
         }
@@ -727,6 +730,7 @@ public class ICQProfile extends IMProfile {
         TLVList list = new TLVList(buffer, buffer.getBytesCountAvailableToRead(), true);
         TLV server = list.getTLV(5);
         TLV cookie = list.getTLV(6);
+        Log.v("ICQProfile", "handleServerLoginReply: serverTLV=" + (server != null) + ", cookieTLV=" + (cookie != null));
         if (server == null || cookie == null) {
             TLV error_url = list.getTLV(4);
             if (error_url != null) {
@@ -734,7 +738,9 @@ public class ICQProfile extends IMProfile {
                 Log.e("JasmineIM:icqlogin:error:url", url);
             }
             TLV error = list.getTLV(8);
-            proceedLoginError(error == null ? -1 : error.getData().readWord());
+            int code = error == null ? -1 : error.getData().readWord();
+            Log.e("ICQProfile", "Login reply error code=" + code);
+            proceedLoginError(code);
             list.recycle();
             return;
         }
@@ -750,6 +756,11 @@ public class ICQProfile extends IMProfile {
     }
 
     public final void proceedLoginError(int error) {
+        Log.e("ICQProfile", "proceedLoginError code=" + error +
+                " authFirstStageCompleted=" + this.authFirstStageCompleted +
+                " jumpingToBOS=" + this.jumpingToBOS +
+                " connectedToBOS=" + this.connectedToBOS +
+                " connectionStatus=" + this.connection_status);
         if (error == -1) {
             makeToast("Authorization error");
         } else {
@@ -953,9 +964,12 @@ public class ICQProfile extends IMProfile {
         TLVList list = new TLVList(data, data.getBytesCountAvailableToRead(), true);
         TLV server = list.getTLV(5);
         TLV cookie = list.getTLV(6);
+        Log.v("ICQProfile", "handleServerServiceRedirect: serverTLV=" + (server != null) + ", cookieTLV=" + (cookie != null));
         if (server == null || cookie == null) {
             TLV error = list.getTLV(8);
-            proceedLoginError(error == null ? -1 : error.getData().readWord());
+            int code = error == null ? -1 : error.getData().readWord();
+            Log.e("ICQProfile", "Service redirect error code=" + code);
+            proceedLoginError(code);
         }
         if (this.icon_proto == null) {
             this.icon_proto = new AvatarProtocol(this, String.valueOf(server.getData().readStringAscii(server.length)) + ":5190", cookie.getData().readBytes(cookie.length));
@@ -2734,11 +2748,14 @@ public class ICQProfile extends IMProfile {
             this.jumpingToBOS = false;
             handleProfileStatusChanged();
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.svc);
-            switch (Integer.parseInt(sp.getString("ms_auth_method", "0"))) {
+            int method = Integer.parseInt(sp.getString("ms_auth_method", "0"));
+            Log.v("ICQProfile", "startConnecting method=" + method);
+            switch (method) {
                 case 0: // XOR authentication
                     this.http_auth_used = false;
                     String srv = sp.getString("ms_server", "195.66.114.37");
                     String prt = sp.getString("ms_port", "5190");
+                    Log.v("ICQProfile", "Connecting via XOR to " + srv + ":" + prt);
                     setConnectionStatus(10);
                     jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
                     this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}));
@@ -2749,6 +2766,7 @@ public class ICQProfile extends IMProfile {
                     String srv2 = sp.getString("ms_server", "195.66.114.37");
                     String prt2 = sp.getString("ms_port", "5190");
                     this.useMD5Login = true;
+                    Log.v("ICQProfile", "Connecting via MD5 to " + srv2 + ":" + prt2);
                     setConnectionStatus(10);
                     jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
                     this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}));
@@ -2757,12 +2775,14 @@ public class ICQProfile extends IMProfile {
                 case 2: // HTTP authentication
                     this.http_auth_used = true;
                     HTTPAuthorizer authorizer = new HTTPAuthorizer(this, new http_auth_listener(this, null));
+                    Log.v("ICQProfile", "Connecting via HTTP authorizer");
                     authorizer.performAuthorization();
                     break;
                 default:
                     this.http_auth_used = false;
                     String srvD = sp.getString("ms_server", "195.66.114.37");
                     String prtD = sp.getString("ms_port", "5190");
+                    Log.v("ICQProfile", "Connecting via default XOR to " + srvD + ":" + prtD);
                     setConnectionStatus(10);
                     jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srvD, prtD}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
                     this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srvD, prtD}));
@@ -2802,6 +2822,7 @@ public class ICQProfile extends IMProfile {
 
         @Override
         public void onError(int code) {
+            Log.e("ICQProfile", "HTTP authorization error code=" + code);
             ICQProfile.this.proceedLoginError(code);
         }
 
