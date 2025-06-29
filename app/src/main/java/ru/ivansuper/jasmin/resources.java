@@ -2290,7 +2290,12 @@ public class resources {
         am = ctx.getAssets();
         Locale.prepare();
         OS_VERSION = Integer.parseInt(android.os.Build.VERSION.SDK);
-        SD_PATH = Environment.getExternalStorageDirectory().getAbsolutePath();
+        File ext = ctx.getExternalFilesDir(null);
+        if (ext != null) {
+            SD_PATH = ext.getAbsolutePath();
+        } else {
+            SD_PATH = ctx.getFilesDir().getAbsolutePath();
+        }
         JASMINE_SD_PATH = SD_PATH + "/Jasmine/";
         JASMINE_INCOMING_FILES_PATH = JASMINE_SD_PATH + "RcvdFiles/";
         JASMINE_JHA_PATH = JASMINE_SD_PATH + "Jasmine History Archive/";
