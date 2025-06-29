@@ -449,7 +449,10 @@ public class SlideSwitcher extends ViewGroup {
         if (!this.mIsBeingDragged) {
             return super.dispatchTouchEvent(event);
         }
-        super.dispatchTouchEvent(MotionEvent.obtain(event.getDownTime(), event.getEventTime(), MotionEvent.ACTION_CANCEL, event.getX(), event.getY(), 0));
+        MotionEvent cancel = MotionEvent.obtain(event);
+        cancel.setAction(MotionEvent.ACTION_CANCEL);
+        super.dispatchTouchEvent(cancel);
+        cancel.recycle();
         return true;
     }
 
