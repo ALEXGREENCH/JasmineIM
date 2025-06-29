@@ -2064,7 +2064,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         this.contactlist = new MultiColumnList(this, switcher.attrs);
         switcher.addView(this.chats_contactlist, resources.getString("s_cl_panel_chats"));
         switcher.addView(this.contactlist, resources.getString("s_cl_panel_contacts"));
-        switcher.attrs.recycle();
         switcher.scrollTo(1);
         resources.attachListSelector(this.chats_contactlist);
         resources.attachListSelector(this.contactlist);
@@ -2089,6 +2088,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             resources.attachContactlistBack(this.contactlist);
         }
         checkConferences();
+        switcher.attrs.recycle();
         initToolsPanel();
     }
 
