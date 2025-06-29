@@ -104,7 +104,7 @@ public class ICQProfile extends IMProfile {
     private final reconnector rcn = new reconnector();
 
     //private boolean useMD5Login = true; // todo;...
-    private final boolean useMD5Login = false;
+    private boolean useMD5Login = false;
     private screen_controller screen_ctrlr = new screen_controller(this, null);
     private final ArrayList<String> offlineMessages = new ArrayList<>();
     private final ArrayList<FileTransfer> transfers = new ArrayList<>();
@@ -375,50 +375,23 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    /*
-    private void handleServerAuthHello() {
-        jasminSvc.pla.put(this.nickname, resources.getString("s_icq_authentification"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_authentification"));
-        setConnectionStatus(19);
-
-        //if (utilities.isEmail(this.ID)) {
-        //    jasminSvc.pla.put(this.nickname, resources.getString("s_icq_enter_by_email"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        //    this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_enter_by_email"));
-        //    try {
-        //        this.BUFFER = ICQProtocol.createEMAILLogin(this.sequence, this.ID, this.password);
-        //        send();
-        //    } catch (Exception e) {
-        //        makeToast("error at createXORLogin()");
-        //        disconnect();
-        //    }
-        //} else if (this.useMD5Login) {
-        //    this.BUFFER = ICQProtocol.createHelloReply(this.sequence);
-        //    send();
-        //    this.BUFFER = ICQProtocol.createLoginAuthorizationRequest(this.sequence, this.ID);
-        //    send();
-        //} else {
-            try {
-                this.BUFFER = ICQProtocol.createXORLogin(this.sequence, this.ID, this.password);
-                send();
-            } catch (Exception e2) {
-                makeToast("error at createXORLogin()");
-                disconnect();
-            }
-        //}
-    }
-     */
-
-
     private void handleServerAuthHello() {
         jasminSvc.pla.put(this.nickname, resources.getString("s_icq_authentification"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
         this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_authentification"));
         setConnectionStatus(19);
 
         try {
-            // здесь используется наш новый, правильный CLI_IDENT
-            Log.v("ICQProfile", "handleServerAuthHello: sending XOR login");
-            this.BUFFER = ICQProtocol.createXORLogin(this.sequence, this.ID, this.password);
-            send();
+            if (this.useMD5Login) {
+                Log.v("ICQProfile", "handleServerAuthHello: sending MD5 login");
+                this.BUFFER = ICQProtocol.createHelloReply(this.sequence);
+                send();
+                this.BUFFER = ICQProtocol.createLoginAuthorizationRequest(this.sequence, this.ID);
+                send();
+            } else {
+                Log.v("ICQProfile", "handleServerAuthHello: sending XOR login");
+                this.BUFFER = ICQProtocol.createXORLogin(this.sequence, this.ID, this.password);
+                send();
+            }
         } catch (Exception e) {
             makeToast("error at createXORLogin()");
             disconnect();
@@ -2754,9 +2727,8 @@ public class ICQProfile extends IMProfile {
             this.jumpingToBOS = false;
             handleProfileStatusChanged();
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.svc);
-            /* TODO; ...
             switch (Integer.parseInt(sp.getString("ms_auth_method", "0"))) {
-                case 0:
+                case 0: // XOR authentication
                     this.http_auth_used = false;
                     String srv = sp.getString("ms_server", "195.66.114.37");
                     String prt = sp.getString("ms_port", "5190");
@@ -2765,7 +2737,7 @@ public class ICQProfile extends IMProfile {
                     this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}));
                     this.socket.connect(srv + ":" + prt);
                     break;
-                case 1:
+                case 1: // MD5 authentication
                     this.http_auth_used = false;
                     String srv2 = sp.getString("ms_server", "195.66.114.37");
                     String prt2 = sp.getString("ms_port", "5190");
@@ -2775,21 +2747,21 @@ public class ICQProfile extends IMProfile {
                     this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}));
                     this.socket.connect(srv2 + ":" + prt2);
                     break;
-                case 2:
+                case 2: // HTTP authentication
                     this.http_auth_used = true;
                     HTTPAuthorizer authorizer = new HTTPAuthorizer(this, new http_auth_listener(this, null));
                     authorizer.performAuthorization();
                     break;
+                default:
+                    this.http_auth_used = false;
+                    String srvD = sp.getString("ms_server", "195.66.114.37");
+                    String prtD = sp.getString("ms_port", "5190");
+                    setConnectionStatus(10);
+                    jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srvD, prtD}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srvD, prtD}));
+                    this.socket.connect(srvD + ":" + prtD);
+                    break;
             }
-             */
-
-            this.http_auth_used = false;
-            String srv = sp.getString("ms_server", "195.66.114.37");
-            String prt = sp.getString("ms_port", "5190");
-            setConnectionStatus(10);
-            jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-            this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}));
-            this.socket.connect(srv + ":" + prt);
 
             notifyStatusIcon();
             refreshContactList();
