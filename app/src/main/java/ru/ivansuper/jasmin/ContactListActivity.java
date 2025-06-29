@@ -406,6 +406,9 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         }
         if (listAdp != null) {
             refreshContactlist();
+            if (listAdp.getCount() == 0 && service != null && service.profiles != null) {
+                createContactlistFromProfiles();
+            }
         }
         if (switcher != null) {
             switcher.updateConfig();
