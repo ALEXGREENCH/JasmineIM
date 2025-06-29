@@ -1165,6 +1165,10 @@ public class ICQProfile extends IMProfile {
             case 16:
                 Log.v("Jasmine:Message Error!", "receiver/sender blocked");
                 return;
+            case 14:
+                Log.v("Jasmine:Message Error!", "authorization required to send message");
+                makeToast(resources.getString("s_icq_message_auth_required"));
+                return;
             default:
                 Log.v("Jasmine:Message Error!", "Unknown error code=" + error);
         }
