@@ -770,6 +770,12 @@ public class SlideSwitcher extends ViewGroup {
     public void scrollTo(int screen) {
         int child_count = getChildCount();
         if (child_count > 0 && screen < child_count) {
+            if (!this.scroller.isFinished()) {
+                this.scroller.abortAnimation();
+            }
+            this.wrap_mode = false;
+            this.wrap_direction = 0;
+            setAnimationState(false);
             super.scrollTo((getWidth() + this.DIVIDER_WIDTH) * screen, 0);
             this.currentScreen = screen;
         }
