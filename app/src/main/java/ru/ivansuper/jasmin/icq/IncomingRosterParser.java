@@ -24,10 +24,6 @@ public class IncomingRosterParser {
                 if (group == 0) {
                     buffer.skip(additionalLength);
                 } else {
-                    if (itemName.length() > 9 && utilities.isUIN(itemName)) {
-                        //noinspection StringOperationCanBeSimplified
-                        itemName = itemName.substring(itemName.length() - 9, itemName.length());
-                    }
                     ICQContact contact = profile.contactlist.getContactByUIN(itemName);
                     if (contact != null) {
                         contact.ID = itemName;
