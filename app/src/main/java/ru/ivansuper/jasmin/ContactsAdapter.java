@@ -793,7 +793,8 @@ public class ContactsAdapter extends MultiColumnAdapter {
 
         @Override
         protected void onPostExecute(Void result) {
-            // Здесь можно обновить интерфейс, если это необходимо
+            // notify adapter about changed data after background fill
+            notifyDataSetChanged();
         }
     }
 
@@ -907,7 +908,8 @@ public class ContactsAdapter extends MultiColumnAdapter {
 
         @Override
         protected void onPostExecute(Void result) {
-            // Здесь можно обновить интерфейс, если это необходимо
+            // notify adapter about changed data after background fill
+            notifyDataSetChanged();
         }
     }
 
@@ -983,7 +985,8 @@ public class ContactsAdapter extends MultiColumnAdapter {
 
         @Override
         protected void onPostExecute(Void result) {
-            // Здесь можно обновить интерфейс, если это необходимо
+            // notify adapter about changed data after background fill
+            notifyDataSetChanged();
         }
     }
 
