@@ -1,10 +1,10 @@
 package ru.ivansuper.jasmin.chats;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Handler;
 import android.os.Message;
 import android.text.ClipboardManager;
@@ -21,12 +21,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import java.util.Vector;
-
 import ru.ivansuper.jasmin.BufferedDialog;
 import ru.ivansuper.jasmin.ConferenceAdapter;
 import ru.ivansuper.jasmin.ContactListActivity;
@@ -59,17 +56,11 @@ import ru.ivansuper.jasmin.utilities;
 
 public class JConference extends Chat implements Handler.Callback {
     public static final int BANNED_LIST_RECEIVED = 400;
-    public static boolean INITIALIZED;
-    /** @noinspection unused*/
+    public static boolean INITIALIZED = false;
     public static final int SHOW_INFO = 66;
-    /** @noinspection unused*/
     public static final int SHOW_JABBER_FORM = 256;
-    /** @noinspection unused*/
     public static final int SHOW_VCARD = 65;
-    public static boolean TOP_PANEL_VISIBLED = true;
     public static Conference conference;
-    public static boolean is_any_chat_opened = false;
-    public static boolean multiquoting = false;
     public LinearLayout TOP_PANEL;
     public ConferenceAdapter chatAdp;
     public LinearLayout chat_back;
@@ -86,68 +77,32 @@ public class JConference extends Chat implements Handler.Callback {
     public ListView userList;
     public VCard vcard_to_display;
     public ImageView xStatus;
+    public static boolean multiquoting = false;
+    public static boolean is_any_chat_opened = false;
+    public static boolean TOP_PANEL_VISIBLED = true;
 
-    private JConference(ChatInitCallback var1, Conference var2) {
-        this.setScrollStateHash(Integer.toHexString(utilities.getHash(var2)));
-        conference = var2;
-        this.init_callback = var1;
+    private JConference(ChatInitCallback callback, Conference conference_) {
+        setScrollStateHash(Integer.toHexString(utilities.getHash(conference_)));
+        conference = conference_;
+        this.init_callback = callback;
     }
 
-    private void checkAndRunIdentificatedTask(int var1) {
-        //noinspection EmptySynchronizedStatement
-        synchronized(this){}
-        int var2 = 0;
+    private synchronized void putIdentificatedTask(Runnable task, int id) {
+        this.context_menus_runnables.add(new IdentificatedRunnable(task, id));
+    }
 
-        Throwable var10000;
-        while(true) {
-            //noinspection unused
-            boolean var10001;
-            int var3;
-            try {
-                var3 = this.context_menus_runnables.size();
-            } catch (Throwable var10) {
-                var10000 = var10;
+    public synchronized void checkAndRunIdentificatedTask(int id) {
+        for (int i = 0; i < context_menus_runnables.size(); i++) {
+            IdentificatedRunnable task = context_menus_runnables.get(i);
+            if (task.id == id) {
+                context_menus_runnables.remove(i).task.run();
                 break;
             }
-
-            if (var2 >= var3) {
-                return;
-            }
-
-            try {
-                if (this.context_menus_runnables.get(var2).id == var1) {
-                    this.context_menus_runnables.remove(var2).task.run();
-                    return;
-                }
-            } catch (Throwable var9) {
-                var10000 = var9;
-                //noinspection UnusedAssignment
-                var10001 = false;
-                break;
-            }
-
-            ++var2;
-        }
-
-        Throwable var4 = var10000;
-        try {
-            throw var4;
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
         }
     }
 
-    private void checkOrientation() {
-        if (resources.ctx.getResources().getConfiguration().orientation == 2) {
-            if (this.userList != null) {
-                this.mUsersToggleButton.setVisibility(View.VISIBLE);
-                this.toggleUserlistVisibility(false);
-            }
-        } else if (this.userList != null) {
-            this.mUsersToggleButton.setVisibility(View.GONE);
-            this.userList.setVisibility(View.GONE);
-        }
-
+    public static JConference getInstance(Conference conference_, ChatInitCallback callback) {
+        return new JConference(callback, conference_);
     }
 
     public static JConference getInstance(String action, ChatInitCallback callback) {
@@ -163,432 +118,34 @@ public class JConference extends Chat implements Handler.Callback {
         return new JConference(callback, conference_);
     }
 
-    public static JConference getInstance(Conference var0, ChatInitCallback var1) {
-        return new JConference(var1, var0);
-    }
-
-    /** @noinspection unused*/
-    private void handleIncomingTextMessage(HistoryItem var1) {
-        this.chatAdp.refreshList();
-    }
-
-    private void initChat() {
-        this.hdl = new Handler(this);
-        service.chatHdl = this.hdl;
-        this.messageList.setService(service);
-        this.initChatInterface();
-    }
-
-    private void initSettings() {
-        this.sendByEnter = this.sp.getBoolean("ms_send_by_enter", false);
-    }
-
-    private void putIdentificatedTask(Runnable var1, int var2) {
-        //noinspection EmptySynchronizedStatement
-        synchronized(this){}
-        IdentificatedRunnable identificatedRunnable = new IdentificatedRunnable(var1, var2);
-        this.context_menus_runnables.add(identificatedRunnable);
-
-    }
-
-    public void toggleUserlistVisibility(boolean toggle) {
-        boolean visible = Manager.getBoolean("conf_userlist_state", true);
-        if (toggle) {
-            Manager.putBoolean("conf_userlist_state", !visible);
-        }
-        boolean visible2 = Manager.getBoolean("conf_userlist_state", true);
-        if (visible2) {
-            this.userList.setVisibility(View.VISIBLE);
-            this.mUsersToggleButton.setImageResource(R.drawable.conf_userslist_closed);
-            return;
-        }
-        this.userList.setVisibility(View.GONE);
-        this.mUsersToggleButton.setImageResource(R.drawable.conf_userslist_opened);
-    }
-
-    public String computeMultiQuote() {
-        String var1 = "";
-
-        String var4;
-        for(int var2 = 0; var2 < this.chatAdp.getCount(); var1 = var4) {
-            HistoryItem var3 = this.chatAdp.getItem(var2);
-            var4 = var1;
-            if (var3.selected) {
-                var4 = var1 + var3.conf_nick + " [" + var3.formattedDate + "]:\n" + var3.message + "\n";
-            }
-
-            ++var2;
-        }
-
-        return var1;
-    }
-
-    public void doSend() {
-        String var1 = this.input.getText().toString();
-        if (var1.length() > 0) {
-            if (this.input.getText().toString().trim().length() != 0 && conference.isOnline()) {
-                ADB.proceedMessage(var1);
-                HistoryItem var2 = new HistoryItem();
-                var2.confirmed = true;
-                var2.message = var1;
-                var2.conf_nick = conference.nick;
-                var2.conf_profile = conference.profile;
-                conference.sendMessage(var2.message);
-                this.input.setText("");
-                conference.profile.svc.playEvent(7);
-            }
-        } else if (!resources.IT_IS_TABLET) {
-            this.handleChatClosed();
-        }
-
-    }
-
-    @SuppressLint("SetTextI18n")
-    public void drawReceiverData() {
-        if (conference.isOnline()) {
-            this.mainStatus.setImageDrawable(resources.jabber_conference);
-        } else {
-            this.mainStatus.setImageDrawable(resources.jabber_conference_offline);
-        }
-
-        this.xStatus.setVisibility(View.GONE);
-        this.nickname.setText(JProtocol.getNameFromFullID(conference.JID) + " (" + conference.users.size() + ")");
-        this.theme.setText(conference.theme);
-    }
-
-    protected void finalize() throws Throwable {
-        Log.e(this.getClass().getSimpleName(), "Class 0x" + Integer.toHexString(this.hashCode()) + " finalized");
-        super.finalize();
-    }
-
-    public boolean handleMessage(Message var1) {
-        //noinspection unused
-        boolean var10001;
-        Object var11;
-        switch (var1.what) {
-            case 2:
-                this.drawReceiverData();
-                break;
-            case 4:
-                try {
-                    var11 = var1.obj;
-                } catch (Exception var8) {
-                    //noinspection UnusedAssignment
-                    var10001 = false;
-                    break;
-                }
-
-                if (var11 != null) {
-                    try {
-                        if (var11 instanceof Conference && var11.equals(conference)) {
-                            this.handleIncomingTextMessage(null);
-                        }
-                    } catch (Exception var7) {
-                        //noinspection UnusedAssignment
-                        var10001 = false;
-                    }
-                }
-                break;
-            case 5:
-                try {
-                    var11 = var1.obj;
-                } catch (Exception var6) {
-                    //noinspection UnusedAssignment
-                    var10001 = false;
-                    break;
-                }
-
-                if (var11 != null) {
-                    try {
-                        if (var11 instanceof Conference && var11.equals(conference)) {
-                            this.chatAdp.notifyDataSetChanged();
-                        }
-                    } catch (Exception var5) {
-                        //noinspection UnusedAssignment
-                        var10001 = false;
-                    }
-                }
-                break;
-            case 62:
-                this.finish();
-                break;
-            case 65:
-                if (INITIALIZED) {
-                    this.vcard_to_display = (VCard)var1.obj;
-                    this.removeDialog(7);
-                    this.showDialog(7);
-                }
-                break;
-            case 66:
-                if (INITIALIZED) {
-                    BufferedDialog var10 = (BufferedDialog)var1.obj;
-                    if (var10 != null) {
-                        this.dialog_for_display = var10;
-                        this.removeDialog(8);
-                        this.showDialog(8);
-                    }
-                }
-                break;
-            case 97:
-                this.removeDialog(1);
-                this.showDialog(1);
-                break;
-            case 256:
-                final Operation var2 = (Operation)var1.obj;
-                Activity var3 = this.ACTIVITY;
-                ScrollView var4 = var2.form.form;
-                String var9;
-                if (var2.form.TITLE == null) {
-                    var9 = "Jabber form";
-                } else {
-                    var9 = var2.form.TITLE;
-                }
-
-                DialogBuilder.createYesNo(var3, var4, 0, var9, Locale.getString("s_ok"), Locale.getString("s_cancel"), var122 -> var2.profile.stream.write(var2.compile(), var2.profile), var12 -> var2.profile.stream.write(var2.compileCancel(), var2.profile)).show();
-                break;
-            case 400:
-                if (conference.mBannedList != null) {
-                    this.startActivity(new Intent(this.ACTIVITY, BannedListActivity.class));
-                }
-        }
-
-        return false;
-    }
-
-    public void initChatInterface() {
-        service.cancelPersonalMessageNotify(utilities.getHash(conference));
-        conference.item.setHasNoUnreadMessages();
-        conference.unreaded = 0;
-        service.removeMessageNotify(conference.item);
-        service.handleContactlistDatasetChanged();
-        this.drawReceiverData();
-        if (this.chatAdp != null && this.chatAdp.isThatHistory(conference.history)) {
-            this.chatAdp.refreshList();
-        } else {
-            this.chatAdp = new ConferenceAdapter(this.ACTIVITY, conference.history, this.messageList);
-            this.messageList.setAdapter(this.chatAdp);
-            this.restoreScrollState();
-        }
-
-        this.conf_users = new ConfUsersAdapter(this.ACTIVITY, conference.users);
-        this.userList.setAdapter(this.conf_users);
-        this.userList.setOnItemClickListener((var1, var2, var3, var4) -> {
-            JConference.this.context_user = JConference.this.conf_users.getItem(var3);
-            if (JConference.this.input.length() > 0) {
-                EditText editText = JConference.this.input;
-                String var6;
-                if (JConference.this.input.getText().toString().endsWith(" ")) {
-                    var6 = "";
-                } else {
-                    var6 = " ";
-                }
-
-                editText.append(var6 + JConference.this.context_user.nick + " ");
-            } else {
-                JConference.this.input.append(JConference.this.context_user.nick + ": ");
-            }
-
-        });
-        this.userList.setOnItemLongClickListener((var1, var2, var3, var4) -> {
-            JConference.this.context_user = JConference.this.conf_users.getItem(var3);
-            JConference.this.removeDialog(4);
-            JConference.this.removeDialog(6);
-            JConference.this.showDialog(6);
-            return false;
-        });
-        conference.callback = () -> JConference.service.runOnUi(() -> JConference.this.conf_users.notifyDataSetChanged());
-        service.isAnyChatOpened = true;
-        this.nick_.setText(conference.nick);
-        int var1 = this.input.getSelectionStart();
-        this.input.setText(MessageSaveHelper.getMessage(this.SAVE_HASH));
-        int var2;
-        if (received_smile_tag.length() > 0) {
-            var2 = var1;
-            if (var1 == -1) {
-                var2 = 0;
-            }
-
-            var1 = Math.min(var2, this.input.length());
-            String var3 = this.input.getText().toString().substring(0, var1) + received_smile_tag;
-            String var4 = var3 + this.input.getText().toString().substring(var1);
-            received_smile_tag = "";
-            var2 = var3.length();
-            this.input.setText(var4);
-        } else {
-            var2 = this.input.length();
-        }
-
-        this.input.setSelection(var2);
-        if (PreferenceTable.auto_open_keyboard) {
-            service.runOnUi(() -> {
-                JConference.this.input.requestFocus();
-                JConference.input_manager.showSoftInput(JConference.this.input, 0);
-            }, 200L);
-        }
-
-        if (this.init_callback != null) {
-            this.init_callback.chatInitialized();
-            this.init_callback = null;
-        }
-
-    }
-
-    public void initViews() {
-        super.initViews();
-        this.quot_view = (QuotingView)this.findViewById(2131427408);
-        this.chat_back = (LinearLayout)this.findViewById(2131427382);
-        this.mUsersToggleButton = (ImageView)this.findViewById(2131427455);
-        this.mUsersToggleButton.setBackgroundColor(ColorScheme.divideAlpha(ColorScheme.getColor(48), 2));
-        this.mUsersToggleButton.setOnClickListener(var1 -> JConference.this.toggleUserlistVisibility(true));
-        this.mainStatus = (ImageView)this.findViewById(2131427384);
-        this.xStatus = (ImageView)this.findViewById(2131427385);
-        this.nickname = (TextView)this.findViewById(2131427386);
-        this.nickname.setTextColor(ColorScheme.getColor(12));
-        this.userList = (ListView)this.findViewById(2131427454);
-        this.userList.setSelector(resources.getListSelector());
-        this.messageList = (ListViewA)this.findViewById(2131427390);
-        this.messageList.setSelector(resources.getListSelector());
-        this.messageList.setSlideEnabled(false);
-        this.messageList.setUseCustomScrollControl(true);
-        this.messageList.setOnItemLongClickListener(new cl());
-        this.messageList.setDragDropEnabledA(PreferenceTable.ms_dragdrop_quoting);
-        this.messageList.setOnMultitouchListener(new ListViewA.MultitouchListener() {
-            public void onStart(View var1, int var2) {
-                JConference.this.quot_view.capture(var1, var2);
-            }
-
-            public void onStop(float var1, float var2, int var3) {
-                JConference.this.quot_view.stop();
-                int[] var4 = new int[2];
-                JConference.this.input.getLocationOnScreen(var4);
-                if (var2 > (float)var4[1]) {
-                    JConference.this.performQuote(var3);
-                }
-
-            }
-
-            public void onTouch(float var1, float var2) {
-                boolean var3 = false;
-                int[] var4 = new int[2];
-                JConference.this.input.getLocationOnScreen(var4);
-                if (var2 > (float)var4[1]) {
-                    var3 = true;
-                }
-
-                JConference.this.quot_view.updatePoints(var1, var2, var3);
-            }
-        });
-        this.messageList.setOnItemClickListener(new chat_click_listener());
-        if (!PreferenceTable.chat_dividers) {
-            this.messageList.setDivider(null);
-        }
-
-        this.input = (EditText)this.findViewById(2131427405);
-        this.input.setTextSize((float)PreferenceTable.chatTextSize);
-        this.input.setTextColor(ColorScheme.getColor(46));
-        Button menu_btn = (Button)this.findViewById(2131427404);
-        resources.attachButtonStyle(menu_btn);
-        menu_btn.setCompoundDrawables(resources.chat_menu_icon, null, null, null);
-        menu_btn.setOnClickListener(var1 -> {
-            JConference.this.removeDialog(1);
-            JConference.this.showDialog(1);
-        });
-        if (!resources.IT_IS_TABLET) {
-            menu_btn.setVisibility(View.GONE);
-        }
-
-        this.send = (Button)this.findViewById(2131427407);
-        this.send.setOnClickListener(new sndListener());
-        el var2 = new el();
-        this.input.addTextChangedListener(var2);
-        this.input.setOnKeyListener(new inputKeyListener());
-        if (PreferenceTable.auto_cap) {
-            this.input.setInputType(147457);
-        } else {
-            this.input.setInputType(131073);
-        }
-
-        this.smileysSelectBtn = (Button)this.findViewById(2131427406);
-        this.smileysSelectBtn.setCompoundDrawables(resources.smileys_select_icon, null, null, null);
-        this.smileysSelectBtn.setOnClickListener((View.OnClickListener) new smileySelectBtnListener());
-        this.nick_ = (TextView)this.findViewById(2131427403);
-        if (this.sp.getBoolean("ms_old_chat_style", true)) {
-            this.nick_.setVisibility(View.GONE);
-            resources.attachEditText(this.input);
-        } else {
-            this.input.setBackgroundResource(R.drawable.btn_default_transparent);
-            this.input.setTextColor(-1);
-            this.smileysSelectBtn.setBackgroundResource(R.drawable.btn_default_transparent);
-            this.send.setBackgroundResource(R.drawable.btn_default_transparent);
-            menu_btn.setBackgroundResource(R.drawable.btn_default_transparent);
-            if (!resources.attachEditText(this.input)) {
-                this.input.setTextColor(-1);
-            }
-
-        }
-        resources.attachButtonStyle(this.smileysSelectBtn);
-        resources.attachButtonStyle(this.send);
-        resources.attachButtonStyle(menu_btn);
-
-        this.theme = (TextView)this.findViewById(2131427388);
-        if (!Manager.getBoolean("ms_conf_show_theme", true)) {
-            this.theme.setVisibility(View.GONE);
-        }
-
-        this.TOP_PANEL = (LinearLayout)this.findViewById(2131427383);
-        if (!TOP_PANEL_VISIBLED) {
-            this.TOP_PANEL.setVisibility(View.GONE);
-        }
-
-        this.TOP_PANEL.setBackgroundColor(ColorScheme.getColor(11));
-        LinearLayout var3 = (LinearLayout)this.findViewById(2131427394);
-        var3.setBackgroundColor(ColorScheme.getColor(9));
-        if (!this.getDefaultSharedPreferences().getBoolean("ms_use_solid_wallpaper", false)) {
-            resources.attachChatMessagesBack(this.messageList);
-            resources.attachChatMessagesBack(this.userList);
-        }
-
-        resources.attachChatTopPanel(this.TOP_PANEL);
-        resources.attachChatBottomPanel(var3);
-        this.nick_.setTextSize((float)PreferenceTable.chatTextSize);
-        this.input.setTextSize((float)PreferenceTable.chatTextSize);
-        this.nick_.setTextColor(ColorScheme.getColor(22));
-        this.findViewById(2131427393).setVisibility(View.GONE);
-        this.findViewById(2131427392).setVisibility(View.GONE);
-        this.toggleUserlistVisibility(false);
-    }
-
-    public void onActivityResult(int var1, int var2, Intent var3) {
-        if (!JConferenceWindowInterface.dispatchWindowResultEvent(this, var1, var2, var3) && var1 == 162 && var2 == -1) {
-            received_smile_tag = var3.getAction();
-        }
-
-    }
-
-    public void onConfigurationChanged(Configuration var1, int var2) {
-        super.onConfigurationChanged(var1, var2);
-        this.checkOrientation();
-    }
-
+    @Override
     public void onCreate() {
         super.onCreate();
         received_smile_tag = "";
         INITIALIZED = true;
-        this.sp = this.getDefaultSharedPreferences();
-        this.setVolumeControlStream(3);
-        int var1;
-        if (resources.IT_IS_TABLET) {
-            var1 = 2130903060;
-        } else {
-            var1 = 2130903057;
-        }
-
-        this.setContentView(var1);
-        input_manager = (InputMethodManager)this.getSystemService("input_method");
+        this.sp = getDefaultSharedPreferences();
+        setVolumeControlStream(3);
+        setContentView(resources.IT_IS_TABLET ? R.layout.conference_xhigh : R.layout.conference);
+        input_manager = (InputMethodManager) getSystemService("input_method");
         service = resources.service;
     }
 
-    @Override // ru.ivansuper.jasmin.ui.ExFragment
+    @Override
+    public void onStart() {
+        super.onStart();
+        initViews();
+        checkOrientation();
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        boolean catched = JConferenceWindowInterface.dispatchWindowResultEvent(this, requestCode, resultCode, data);
+        if (!catched && requestCode == 162 && resultCode == -1) {
+            received_smile_tag = data.getAction();
+        }
+    }
+
+    @Override
     public Dialog onCreateDialog(int id) {
         Dialog catched = JConferenceWindowInterface.dispatchWindowCreateDialogEvent(this, id);
         if (catched == null) {
@@ -648,7 +205,7 @@ public class JConference extends Chat implements Handler.Callback {
                 resources.attachEditText(count);
                 ad = DialogBuilder.createYesNo(this.ACTIVITY, count, 48, resources.getString("s_clear_messages"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
                     String cnt = count.getText().toString();
-                    if (cnt.length() == 0) {
+                    if (cnt.isEmpty()) {
                         cnt = String.valueOf(JConference.this.chatAdp.getCount());
                     }
                     try {
@@ -662,6 +219,7 @@ public class JConference extends Chat implements Handler.Callback {
                             JConference.this.removeDialog(2);
                         }
                     } catch (Exception e) {
+                        //noinspection CallToPrintStackTrace
                         e.printStackTrace();
                     }
                 }, v -> JConference.this.removeDialog(2));
@@ -692,8 +250,6 @@ public class JConference extends Chat implements Handler.Callback {
                 ad = DialogBuilder.createWithNoHeader(this.ACTIVITY, adp2, 48, new chatMenuListener(adp2));
             }
             if (id == 4) {
-                // from class: ru.ivansuper.jasmin.chats.JConference.3
-// android.widget.AdapterView.OnItemClickListener
                 ad = DialogBuilder.createWithNoHeader(this.ACTIVITY, this.conf_users, 48, (arg0, arg1, arg2, arg3) -> {
                     JConference.this.context_user = JConference.this.conf_users.getItem(arg2);
                     JConference.this.removeDialog(4);
@@ -709,20 +265,16 @@ public class JConference extends Chat implements Handler.Callback {
                 theme.setGravity(51);
                 resources.attachEditText(theme);
                 theme.setHint(resources.getString("s_set_theme_dialog_hint"));
-                // from class: ru.ivansuper.jasmin.chats.JConference.5
-// android.view.View.OnClickListener
-                // from class: ru.ivansuper.jasmin.chats.JConference.4
-// android.view.View.OnClickListener
                 ad = DialogBuilder.createYesNo(this.ACTIVITY, theme, 48, resources.getString("s_set_theme"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
                     String theme_ = theme.getText().toString();
-                    if (theme_.length() == 0) {
+                    if (theme_.isEmpty()) {
                         Toast toast = Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_set_theme_error"), Toast.LENGTH_SHORT);
                         toast.setGravity(48, 0, 0);
                         toast.show();
-                        return;
+                    } else {
+                        JConference.conference.setTheme(theme_);
+                        JConference.this.removeDialog(5);
                     }
-                    JConference.conference.setTheme(theme_);
-                    JConference.this.removeDialog(5);
                 }, v -> JConference.this.removeDialog(5));
             }
             if (id == 6) {
@@ -733,7 +285,7 @@ public class JConference extends Chat implements Handler.Callback {
                 adp3.put(resources.getString("s_user_nick"), 0);
                 adp3.put(resources.getString("s_start_personal_chat"), 1);
                 adp3.put(resources.getString("s_user_vcard"), 2);
-                if (this.context_user.jid != null && this.context_user.jid.length() > 0) {
+                if (this.context_user.jid != null && !this.context_user.jid.isEmpty()) {
                     adp3.put(resources.getString("s_copy_jid"), 5);
                 }
                 adp3.put(resources.getString("s_commands"), 6);
@@ -845,8 +397,6 @@ public class JConference extends Chat implements Handler.Callback {
                         }
                         break;
                 }
-                // from class: ru.ivansuper.jasmin.chats.JConference.6
-// android.widget.AdapterView.OnItemClickListener
                 ad = DialogBuilder.createWithNoHeader(this.ACTIVITY, adp3, 48, (arg0, arg1, arg2, arg3) -> {
                     JConference.this.removeDialog(6);
                     int id2 = (int) arg0.getAdapter().getItemId(arg2);
@@ -858,40 +408,40 @@ public class JConference extends Chat implements Handler.Callback {
                             } else {
                                 JConference.this.input.append(JConference.this.context_user.nick + ": ");
                             }
-                            return;
+                            break;
                         case 1:
                             JContact contact = JConference.conference.profile.createPMContainer(JConference.conference.JID + "/" + JConference.this.context_user.nick, JConference.conference);
                             if (contact != null) {
                                 ((ContactListActivity) JConference.this.ACTIVITY).startFragmentChat(contact);
-                                return;
+                                break;
                             }
-                            return;
+                            break;
                         case 2:
                             JConference.conference.profile.doRequestInfoForDisplayRaw(JConference.conference.JID + "/" + JConference.this.context_user.nick);
-                            return;
+                            break;
                         case 3:
                             JConference.this.moderation_operation = 0;
                             JConference.this.removeDialog(10);
                             JConference.this.showDialog(10);
-                            return;
+                            break;
                         case 4:
                             JConference.this.moderation_operation = 1;
                             JConference.this.removeDialog(10);
                             JConference.this.showDialog(10);
-                            return;
+                            break;
                         case 5:
                             //noinspection deprecation
                             ClipboardManager cm = (ClipboardManager) JConference.this.getSystemService("clipboard");
                             //noinspection deprecation
                             cm.setText(JConference.this.context_user.jid);
                             Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
-                            return;
+                            break;
                         case 6:
                             final Dialog load_progress = DialogBuilder.createProgress(JConference.this.ACTIVITY, Locale.getString("s_getting_commands"), true);
                             load_progress.show();
                             Callback callback = list -> {
                                 load_progress.dismiss();
-                                if (list.size() == 0) {
+                                if (list.isEmpty()) {
                                     JConference.service.showMessageInContactList(Locale.getString("s_information"), Locale.getString("s_no_commands"));
                                     return;
                                 }
@@ -909,29 +459,28 @@ public class JConference extends Chat implements Handler.Callback {
                                 commands.show();
                             };
                             JConference.conference.profile.getCommandList(JConference.conference.JID + "/" + JConference.this.context_user.nick, callback);
-                            return;
+                            break;
                         case 7:
                             JConference.conference.setUserRole(JConference.this.context_user.nick, "visitor");
-                            return;
+                            break;
                         case 8:
                             JConference.conference.setUserRole(JConference.this.context_user.nick, "participant");
-                            return;
+                            break;
                         case 9:
                             JConference.conference.setUserRole(JConference.this.context_user.nick, "moderator");
-                            return;
+                            break;
                         case 10:
                             JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "none");
-                            return;
+                            break;
                         case 11:
                             JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "member");
-                            return;
+                            break;
                         case 12:
                             JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "admin");
-                            return;
+                            break;
                         case 13:
                             JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "owner");
-                            return;
-                        default:
+                            break;
                     }
                 });
             }
@@ -964,20 +513,16 @@ public class JConference extends Chat implements Handler.Callback {
                 nick.setMaxLines(1);
                 nick.setGravity(51);
                 resources.attachEditText(nick);
-                // from class: ru.ivansuper.jasmin.chats.JConference.10
-// android.view.View.OnClickListener
-                // from class: ru.ivansuper.jasmin.chats.JConference.11
-// android.view.View.OnClickListener
                 ad = DialogBuilder.createYesNo(this.ACTIVITY, nick, 48, resources.getString("s_change_nick"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
                     String nick_ = nick.getText().toString().trim();
-                    if (nick_.length() == 0) {
+                    if (nick_.isEmpty()) {
                         Toast toast = Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_change_nick_error"), Toast.LENGTH_SHORT);
                         toast.setGravity(48, 0, 0);
                         toast.show();
-                        return;
+                    } else {
+                        JConference.conference.updateNickname(nick_);
+                        JConference.this.removeDialog(9);
                     }
-                    JConference.conference.updateNickname(nick_);
-                    JConference.this.removeDialog(9);
                 }, v -> JConference.this.removeDialog(9));
             }
             if (id == 10) {
@@ -987,10 +532,6 @@ public class JConference extends Chat implements Handler.Callback {
                 input_.setGravity(51);
                 resources.attachEditText(input_);
                 input_.setHint(resources.getString("s_reason_input"));
-                // from class: ru.ivansuper.jasmin.chats.JConference.12
-// android.view.View.OnClickListener
-                // from class: ru.ivansuper.jasmin.chats.JConference.13
-// android.view.View.OnClickListener
                 ad = DialogBuilder.createYesNo(this.ACTIVITY, input_, 48, resources.getString("s_moderation"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
                     String reason = input_.getText().toString().trim();
                     if (JConference.this.moderation_operation == 0) {
@@ -1002,8 +543,6 @@ public class JConference extends Chat implements Handler.Callback {
                 }, v -> JConference.this.removeDialog(10));
             }
             if (id == 8) {
-                // from class: ru.ivansuper.jasmin.chats.JConference.14
-// android.view.View.OnClickListener
                 ad = DialogBuilder.createOk(this.ACTIVITY, this.dialog_for_display.header, this.dialog_for_display.text, resources.getString("s_close"), 48, v -> JConference.this.removeDialog(8));
             }
             return ad;
@@ -1011,106 +550,464 @@ public class JConference extends Chat implements Handler.Callback {
         return catched;
     }
 
-
-    public void onDestroy() {
-        INITIALIZED = false;
-        if (this.chatAdp != null) {
-            this.resetSelection();
-        }
-
-        if (conference != null) {
-            conference.callback = null;
-        }
-
-        JConferenceWindowInterface.dispatchWindowEvent(this, 3);
-        super.onDestroy();
+    private void initSettings() {
+        this.sendByEnter = this.sp.getBoolean("ms_send_by_enter", false);
     }
 
-    public void onPause() {
-        is_any_chat_opened = false;
-        super.onPause();
-        if (service != null) {
-            service.isAnyChatOpened = false;
-        }
-
-        if (conference != null) {
-            if (this.input != null) {
-                conference.typedText = this.input.getText().toString();
-            }
-            //noinspection DataFlowIssue
-            MessageSaveHelper.putMessage(this.SAVE_HASH, this.input.getText().toString());
-            this.saveScrollState();
-        }
-
-        multiquoting = false;
-        this.messageList.setDragDropEnabled(true);
-        JConferenceWindowInterface.dispatchWindowEvent(this, 1);
-    }
-
+    @Override
     public void onResume() {
         super.onResume();
         is_any_chat_opened = true;
         if (service == null) {
             service = resources.service;
         }
-
-        this.initSettings();
-        this.initChat();
+        initSettings();
+        initChat();
         JConferenceWindowInterface.dispatchWindowEvent(this, 2);
     }
 
-    public void onStart() {
-        super.onStart();
-        this.initViews();
-        this.checkOrientation();
+    @Override
+    public void onPause() {
+        is_any_chat_opened = false;
+        super.onPause();
+        if (service != null) {
+            service.isAnyChatOpened = false;
+        }
+        if (conference != null) {
+            if (this.input != null) {
+                conference.typedText = this.input.getText().toString();
+            }
+            //noinspection DataFlowIssue
+            MessageSaveHelper.putMessage(this.SAVE_HASH, this.input.getText().toString());
+            saveScrollState();
+        }
+        multiquoting = false;
+        this.messageList.setDragDropEnabled(true);
+        JConferenceWindowInterface.dispatchWindowEvent(this, 1);
     }
 
-    public void performQuote(int var1) {
+    @Override
+    public void onDestroy() {
+        INITIALIZED = false;
         if (this.chatAdp != null) {
-            HistoryItem var2 = this.chatAdp.getItem(var1);
-            String var3 = var2.conf_nick + " [" + var2.formattedDate + "]:\n" + var2.message + "\n";
-            var1 = this.input.length();
-            EditText var4 = this.input;
-            String var5;
-            if (var1 > 0) {
-                var5 = "\n";
-            } else {
-                var5 = "";
+            resetSelection();
+        }
+        if (conference != null) {
+            conference.callback = null;
+        }
+        JConferenceWindowInterface.dispatchWindowEvent(this, 3);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration configuration, int diff) {
+        super.onConfigurationChanged(configuration, diff);
+        checkOrientation();
+    }
+
+    protected void finalize() throws Throwable {
+        Log.e(getClass().getSimpleName(), "Class 0x" + Integer.toHexString(hashCode()) + " finalized");
+        super.finalize();
+    }
+
+    private void checkOrientation() {
+        if (resources.ctx.getResources().getConfiguration().orientation == 2) {
+            if (this.userList != null) {
+                this.mUsersToggleButton.setVisibility(View.VISIBLE);
+                toggleUserlistVisibility(false);
+                return;
+            }
+            return;
+        }
+        if (this.userList != null) {
+            this.mUsersToggleButton.setVisibility(View.GONE);
+            this.userList.setVisibility(View.GONE);
+        }
+    }
+
+    private void toggleUserlistVisibility(boolean toggle) {
+        if (toggle) {
+            boolean currentlyVisible = Manager.getBoolean("conf_userlist_state", true);
+            Manager.putBoolean("conf_userlist_state", !currentlyVisible);
+        }
+
+        boolean visible = Manager.getBoolean("conf_userlist_state", true);
+        userList.setVisibility(visible ? View.VISIBLE : View.GONE);
+        mUsersToggleButton.setImageResource(
+                visible ? R.drawable.conf_userslist_closed : R.drawable.conf_userslist_opened
+        );
+    }
+
+    private void initChat() {
+        this.hdl = new Handler(this);
+        service.chatHdl = this.hdl;
+        this.messageList.setService(service);
+        initChatInterface();
+    }
+
+    public void initChatInterface() {
+        service.cancelPersonalMessageNotify(utilities.getHash(conference));
+        conference.item.setHasNoUnreadMessages();
+        conference.unreaded = 0;
+        service.removeMessageNotify(conference.item);
+        service.handleContactlistDatasetChanged();
+        drawReceiverData();
+
+        // История сообщений
+        if (this.chatAdp != null && this.chatAdp.isThatHistory(conference.history)) {
+            this.chatAdp.refreshList();
+        } else {
+            this.chatAdp = new ConferenceAdapter(this.ACTIVITY, conference.history, this.messageList);
+            this.messageList.setAdapter(this.chatAdp);
+            restoreScrollState();
+        }
+
+        // Список пользователей конференции
+        this.conf_users = new ConfUsersAdapter(this.ACTIVITY, conference.users);
+        this.userList.setAdapter(this.conf_users);
+        this.userList.setOnItemClickListener((parent, view, position, id) -> {
+            context_user = conf_users.getItem(position);
+            String append = input.length() > 0 && !input.getText().toString().endsWith(" ") ? " " : "";
+            input.append(append + context_user.nick + (input.length() == 0 ? ": " : " "));
+        });
+        this.userList.setOnItemLongClickListener((parent, view, position, id) -> {
+            context_user = conf_users.getItem(position);
+            removeDialog(4);
+            removeDialog(6);
+            showDialog(6);
+            return false;
+        });
+
+        // Callback обновления списка пользователей
+        conference.callback = () -> service.runOnUi(conf_users::notifyDataSetChanged);
+        service.isAnyChatOpened = true;
+
+        // Ник в верхней панели
+        this.nick_.setText(conference.nick);
+
+        // Восстановление текста из сохранения
+        String savedText = MessageSaveHelper.getMessage(this.SAVE_HASH);
+        int cursorPosition = input.getSelectionStart();
+        input.setText(savedText);
+
+        if (!received_smile_tag.isEmpty()) {
+            if (cursorPosition < 0) cursorPosition = 0;
+            if (cursorPosition > input.length()) cursorPosition = input.length();
+            StringBuilder builder = new StringBuilder(input.getText());
+            builder.insert(cursorPosition, received_smile_tag);
+            input.setText(builder.toString());
+            cursorPosition += received_smile_tag.length();
+            received_smile_tag = "";
+        } else {
+            cursorPosition = input.length();
+        }
+
+        input.setSelection(cursorPosition);
+
+        if (PreferenceTable.auto_open_keyboard) {
+            service.runOnUi(() -> {
+                input.requestFocus();
+                input_manager.showSoftInput(input, 0);
+            }, 200L);
+        }
+
+        if (init_callback != null) {
+            init_callback.chatInitialized();
+            init_callback = null;
+        }
+    }
+
+    @SuppressLint("SetTextI18n")
+    public void drawReceiverData() {
+        if (conference.isOnline()) {
+            this.mainStatus.setImageDrawable(resources.jabber_conference);
+        } else {
+            this.mainStatus.setImageDrawable(resources.jabber_conference_offline);
+        }
+        this.xStatus.setVisibility(View.GONE);
+        this.nickname.setText(JProtocol.getNameFromFullID(conference.JID) + " (" + conference.users.size() + ")");
+        this.theme.setText(conference.theme);
+    }
+
+    @Override
+    public void initViews() {
+        super.initViews();
+
+        // Views
+        quot_view = (QuotingView) findViewById(R.id.chat_quoting_view);
+        chat_back = (LinearLayout) findViewById(R.id.chat_back);
+        mUsersToggleButton = (ImageView) findViewById(R.id.conf_users_toggle_button);
+        mainStatus = (ImageView) findViewById(R.id.mainStatus);
+        xStatus = (ImageView) findViewById(R.id.xStatus);
+        nickname = (TextView) findViewById(R.id.nickname);
+        userList = (ListView) findViewById(R.id.chat_conf_users);
+        messageList = (ListViewA) findViewById(R.id.messages);
+        input = (EditText) findViewById(R.id.input);
+        send = (Button) findViewById(R.id.send);
+        smileysSelectBtn = (Button) findViewById(R.id.chat_smiley_btn);
+        nick_ = (TextView) findViewById(R.id.msg_nick);
+        theme = (TextView) findViewById(R.id.encoding);
+        TOP_PANEL = (LinearLayout) findViewById(R.id.chat_header);
+        LinearLayout bottomPanel = (LinearLayout) findViewById(R.id.chat_bottom_panel);
+        Button menuButton = (Button) findViewById(R.id.chat_menu_btn);
+
+        // User toggle button
+        mUsersToggleButton.setBackgroundColor(ColorScheme.divideAlpha(ColorScheme.getColor(48), 2));
+        mUsersToggleButton.setOnClickListener(v -> toggleUserlistVisibility(true));
+
+        // Nickname
+        nickname.setTextColor(ColorScheme.getColor(12));
+
+        // User list
+        userList.setSelector(resources.getListSelector());
+
+        // Message list
+        messageList.setSelector(resources.getListSelector());
+        messageList.setSlideEnabled(false);
+        messageList.setUseCustomScrollControl(true);
+        messageList.setOnItemLongClickListener(new cl());
+        messageList.setDragDropEnabledA(PreferenceTable.ms_dragdrop_quoting);
+        messageList.setOnMultitouchListener(new ListViewA.MultitouchListener() {
+            @Override
+            public void onStart(View view, int top) {
+                quot_view.capture(view, top);
             }
 
-            var4.append(var5 + var3);
-            this.input.setSelection(this.input.length());
+            @Override
+            public void onTouch(float x1, float y1) {
+                int[] location = new int[2];
+                input.getLocationOnScreen(location);
+                boolean green = y1 > location[1];
+                quot_view.updatePoints(x1, y1, green);
+            }
+
+            @Override
+            public void onStop(float x1, float y1, int itemIdx) {
+                quot_view.stop();
+                int[] location = new int[2];
+                input.getLocationOnScreen(location);
+                if (y1 > location[1]) performQuote(itemIdx);
+            }
+        });
+        messageList.setOnItemClickListener(new chat_click_listener());
+        if (!PreferenceTable.chat_dividers) {
+            messageList.setDivider(null);
         }
 
+        // Input field
+        input.setTextSize(PreferenceTable.chatTextSize);
+        input.setTextColor(ColorScheme.getColor(46));
+        input.addTextChangedListener(new el());
+        input.setOnKeyListener(new inputKeyListener());
+        input.setInputType(PreferenceTable.auto_cap ? 147457 : 131073);
+
+        // Menu button
+        resources.attachButtonStyle(menuButton);
+        menuButton.setCompoundDrawables(resources.chat_menu_icon, null, null, null);
+        menuButton.setOnClickListener(v -> {
+            removeDialog(1);
+            showDialog(1);
+        });
+        if (!resources.IT_IS_TABLET) {
+            menuButton.setVisibility(View.GONE);
+        }
+
+        // Send button
+        send.setOnClickListener(new sndListener());
+
+        // Smileys button
+        smileysSelectBtn.setCompoundDrawables(resources.smileys_select_icon, null, null, null);
+        smileysSelectBtn.setOnClickListener(new Chat.smileySelectBtnListener());
+
+        // Chat style handling
+        if (sp.getBoolean("ms_old_chat_style", true)) {
+            nick_.setVisibility(View.GONE);
+            resources.attachEditText(input);
+        } else {
+            input.setBackgroundResource(R.drawable.btn_default_transparent);
+            input.setTextColor(Color.WHITE);
+            smileysSelectBtn.setBackgroundResource(R.drawable.btn_default_transparent);
+            send.setBackgroundResource(R.drawable.btn_default_transparent);
+            menuButton.setBackgroundResource(R.drawable.btn_default_transparent);
+            if (!resources.attachEditText(input)) {
+                input.setTextColor(Color.WHITE);
+            }
+        }
+
+        // Styles
+        resources.attachButtonStyle(smileysSelectBtn);
+        resources.attachButtonStyle(send);
+        resources.attachButtonStyle(menuButton);
+
+        // Theme
+        if (!Manager.getBoolean("ms_conf_show_theme", true)) {
+            theme.setVisibility(View.GONE);
+        }
+
+        // Top panel
+        if (!TOP_PANEL_VISIBLED) {
+            TOP_PANEL.setVisibility(View.GONE);
+        }
+        TOP_PANEL.setBackgroundColor(ColorScheme.getColor(11));
+
+        // Bottom panel
+        bottomPanel.setBackgroundColor(ColorScheme.getColor(9));
+
+        // Backgrounds
+        if (!getDefaultSharedPreferences().getBoolean("ms_use_solid_wallpaper", false)) {
+            resources.attachChatMessagesBack(messageList);
+            resources.attachChatMessagesBack(userList);
+        }
+        resources.attachChatTopPanel(TOP_PANEL);
+        resources.attachChatBottomPanel(bottomPanel);
+
+        // Text styles
+        nick_.setTextSize(PreferenceTable.chatTextSize);
+        nick_.setTextColor(ColorScheme.getColor(22));
+        input.setTextSize(PreferenceTable.chatTextSize);
+
+        // Arrows
+        findViewById(R.id.chat_scroll_left).setVisibility(View.GONE);
+        findViewById(R.id.chat_scroll_right).setVisibility(View.GONE);
+
+        // Final state
+        toggleUserlistVisibility(false);
     }
 
-    public void resetSelection() {
-        for(int var1 = 0; var1 < this.chatAdp.getCount(); ++var1) {
-            this.chatAdp.getItem(var1).selected = false;
+    public void performQuote(int idx) {
+        if (this.chatAdp != null) {
+            HistoryItem item = this.chatAdp.getItem(idx);
+            String res = item.conf_nick + " [" + item.formattedDate + "]:\n" + item.message + "\n";
+            int length = this.input.length();
+            this.input.append((length > 0 ? "\n" : "") + res);
+            this.input.setSelection(this.input.length());
         }
+    }
 
+    private class sndListener implements View.OnClickListener {
+
+        @Override
+        public void onClick(View v) {
+            JConference.this.doSend();
+        }
+    }
+
+    public void doSend() {
+        String message = this.input.getText().toString();
+        if (!message.isEmpty()) {
+            if (!this.input.getText().toString().trim().isEmpty() && conference.isOnline()) {
+                ADB.proceedMessage(message);
+                HistoryItem hst = new HistoryItem();
+                hst.confirmed = true;
+                hst.message = message;
+                hst.conf_nick = conference.nick;
+                hst.conf_profile = conference.profile;
+                conference.sendMessage(hst.message);
+                this.input.setText("");
+                conference.profile.svc.playEvent(7);
+                return;
+            }
+            return;
+        }
+        if (!resources.IT_IS_TABLET) {
+            handleChatClosed();
+        }
+    }
+
+    private void handleIncomingTextMessage(HistoryItem msg) {
+        this.chatAdp.refreshList();
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+        BufferedDialog dialog;
+        switch (msg.what) {
+            case 2:
+                drawReceiverData();
+                break;
+            case 4:
+                try {
+                    Object cli = msg.obj;
+                    //noinspection ConditionCoveredByFurtherCondition
+                    if (cli != null && (cli instanceof Conference) && cli.equals(conference)) {
+                        handleIncomingTextMessage(null);
+                        break;
+                    }
+                } catch (Exception e) {
+                    break;
+                }
+                break;
+            case 5:
+                try {
+                    Object cli2 = msg.obj;
+                    //noinspection ConditionCoveredByFurtherCondition
+                    if (cli2 != null && (cli2 instanceof Conference) && cli2.equals(conference)) {
+                        this.chatAdp.notifyDataSetChanged();
+                        break;
+                    }
+                } catch (Exception e2) {
+                    break;
+                }
+                break;
+            case Chat.CLOSE /* 62 */:
+                finish();
+                break;
+            case SHOW_VCARD:
+                if (INITIALIZED) {
+                    this.vcard_to_display = (VCard) msg.obj;
+                    removeDialog(7);
+                    showDialog(7);
+                    break;
+                }
+                break;
+            case SHOW_INFO:
+                if (INITIALIZED && (dialog = (BufferedDialog) msg.obj) != null) {
+                    this.dialog_for_display = dialog;
+                    removeDialog(8);
+                    showDialog(8);
+                    break;
+                }
+                break;
+            case Chat.CHAT_SHOW_MENU /* 97 */:
+                removeDialog(1);
+                showDialog(1);
+                break;
+            case SHOW_JABBER_FORM:
+                final Operation op = (Operation) msg.obj;
+                Dialog xform = DialogBuilder.createYesNo(this.ACTIVITY, op.form.form, 0, op.form.TITLE == null ? "Jabber form" : op.form.TITLE, Locale.getString("s_ok"), Locale.getString("s_cancel"), v -> op.profile.stream.write(op.compile(), op.profile), v -> op.profile.stream.write(op.compileCancel(), op.profile));
+                xform.show();
+                break;
+            case BANNED_LIST_RECEIVED /* 400 */:
+                if (conference.mBannedList != null) {
+                    Intent i = new Intent(this.ACTIVITY, BannedListActivity.class);
+                    startActivity(i);
+                    break;
+                }
+                break;
+        }
+        return false;
     }
 
     private class chatMenuListener implements AdapterView.OnItemClickListener {
         UAdapter menu;
 
-        public chatMenuListener(UAdapter var2) {
-            this.menu = var2;
+        public chatMenuListener(UAdapter adp) {
+            this.menu = adp;
         }
 
         @SuppressLint("SetTextI18n")
-        public void onItemClick(AdapterView<?> var1, View var2, int var3, long var4) {
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
             JConference.this.removeDialog(1);
             JConference.this.removeDialog(2);
             JConference.this.removeDialog(3);
-            var3 = (int)this.menu.getItemId(var3);
-            JConference.this.checkAndRunIdentificatedTask(var3 + 1024);
-            HistoryItem var7;
-            Toast var8;
-            switch (var3) {
+            int id = (int) this.menu.getItemId(arg2);
+            JConference.this.checkAndRunIdentificatedTask(id + 1024);
+            switch (id) {
                 case 0:
                     if (JConference.conference.isOnline()) {
                         JConference.conference.profile.logoutConference(JConference.conference.JID);
+                        break;
                     }
                     break;
                 case 1:
@@ -1134,12 +1031,6 @@ public class JConference extends Chat implements Handler.Callback {
                     break;
                 case 5:
                     JConference.conference.profile.joinConference(JConference.conference.JID, JConference.conference.nick, JConference.conference.pass);
-                case 6:
-                case 11:
-                case 12:
-                case 15:
-                case 16:
-                default:
                     break;
                 case 7:
                     JConference.this.removeDialog(2);
@@ -1156,87 +1047,82 @@ public class JConference extends Chat implements Handler.Callback {
                     JConference.conference.showRoomPreferences();
                     break;
                 case 13:
-                    var7 = JConference.this.chatAdp.getItem(JConference.this.last_context_message);
+                    HistoryItem item = JConference.this.chatAdp.getItem(JConference.this.last_context_message);
                     //noinspection deprecation
-                    ((ClipboardManager)JConference.this.getSystemService("clipboard")).setText(var7.conf_nick + " [" + var7.formattedDate + "]:\n" + var7.message + "\n");
-                    var8 = Toast.makeText(JConference.service, resources.getString("s_copied"), Toast.LENGTH_SHORT);
-                    var8.setGravity(48, 0, 0);
-                    var8.show();
+                    ClipboardManager cm = (ClipboardManager) JConference.this.getSystemService("clipboard");
+                    //noinspection deprecation
+                    cm.setText(item.conf_nick + " [" + item.formattedDate + "]:\n" + item.message + "\n");
+                    Toast msg = Toast.makeText(JConference.service, resources.getString("s_copied"), Toast.LENGTH_SHORT);
+                    msg.setGravity(48, 0, 0);
+                    msg.show();
                     break;
                 case 14:
-                    var7 = JConference.this.chatAdp.getItem(JConference.this.last_context_message);
-                    String var11 = var7.conf_nick + " [" + var7.formattedDate + "]:\n" + var7.message + "\n";
-                    JConference.this.input.setText(var11);
-                    JConference.this.input.setSelection(var11.length(), var11.length());
+                    HistoryItem item2 = JConference.this.chatAdp.getItem(JConference.this.last_context_message);
+                    String res = item2.conf_nick + " [" + item2.formattedDate + "]:\n" + item2.message + "\n";
+                    JConference.this.input.setText(res);
+                    JConference.this.input.setSelection(res.length(), res.length());
                     break;
                 case 17:
-                    HistoryItem var10 = JConference.this.chatAdp.getItem(JConference.this.last_context_message);
-                    StringBuilder var9 = new StringBuilder();
-                    boolean var6;
-                    var6 = var10 == null;
-                    Log.e("JChatActivity", var9.append(var6).toString());
+                    HistoryItem item3 = JConference.this.chatAdp.getItem(JConference.this.last_context_message);
+                    Log.e("JChatActivity", String.valueOf(item3 == null));
                     //noinspection DataFlowIssue
-                    JConference.this.input.setText(var10.message + "\n");
-                    JConference.this.input.setSelection(var10.message.length());
+                    JConference.this.input.setText(item3.message + "\n");
+                    JConference.this.input.setSelection(item3.message.length());
                     break;
                 case 18:
-                    var7 = JConference.this.chatAdp.getItem(JConference.this.last_context_message);
+                    HistoryItem item4 = JConference.this.chatAdp.getItem(JConference.this.last_context_message);
                     //noinspection deprecation
-                    ((ClipboardManager)JConference.this.getSystemService("clipboard")).setText(var7.message + "\n");
-                    var8 = Toast.makeText(JConference.service, resources.getString("s_copied"), Toast.LENGTH_SHORT);
-                    var8.setGravity(48, 0, 0);
-                    var8.show();
+                    ClipboardManager cm2 = (ClipboardManager) JConference.this.getSystemService("clipboard");
+                    //noinspection deprecation
+                    cm2.setText(item4.message + "\n");
+                    Toast msg2 = Toast.makeText(JConference.service, resources.getString("s_copied"), Toast.LENGTH_SHORT);
+                    msg2.setGravity(48, 0, 0);
+                    msg2.show();
+                    break;
             }
-
         }
+    }
+
+    public void resetSelection() {
+        for (int i = 0; i < this.chatAdp.getCount(); i++) {
+            this.chatAdp.getItem(i).selected = false;
+        }
+    }
+
+    public String computeMultiQuote() {
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < this.chatAdp.getCount(); i++) {
+            HistoryItem hst = this.chatAdp.getItem(i);
+            if (hst.selected) {
+                res.append(hst.conf_nick).append(" [").append(hst.formattedDate).append("]:\n").append(hst.message).append("\n");
+            }
+        }
+        return res.toString();
     }
 
     private class chat_click_listener implements AdapterView.OnItemClickListener {
-        private chat_click_listener() {
-        }
 
-        public void onItemClick(AdapterView<?> var1, View var2, int var3, long var4) {
-            ConferenceAdapter var7 = (ConferenceAdapter)var1.getAdapter();
-            String var9;
+        @Override
+        public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            ConferenceAdapter adp = (ConferenceAdapter) arg0.getAdapter();
             if (JConference.multiquoting) {
-                HistoryItem var8 = var7.getItem(var3);
-                boolean var6;
-                var6 = !var8.selected;
-
-                var8.selected = var6;
+                HistoryItem hst = adp.getItem(arg2);
+                hst.selected = !hst.selected;
                 JConference.this.chatAdp.notifyDataSetChanged();
-                var9 = JConference.this.computeMultiQuote();
-                JConference.this.input.setText(var9);
-                JConference.this.input.setSelection(var9.length(), var9.length());
-            } else {
-                HistoryItem var10 = var7.getItem(var3);
-                if (!var10.isTheme) {
-                    if (JConference.this.input.length() > 0) {
-                        if (JConference.this.input.getText().toString().endsWith(" ")) {
-                            var9 = "";
-                        } else {
-                            var9 = " ";
-                        }
-
-                        JConference.this.input.append(var9 + var10.conf_nick + " ");
-                    } else {
-                        JConference.this.input.append(var10.conf_nick + ": ");
-                    }
+                String quote = JConference.this.computeMultiQuote();
+                JConference.this.input.setText(quote);
+                JConference.this.input.setSelection(quote.length(), quote.length());
+                return;
+            }
+            HistoryItem hst2 = adp.getItem(arg2);
+            if (!hst2.isTheme) {
+                if (JConference.this.input.length() > 0) {
+                    String append = JConference.this.input.getText().toString().endsWith(" ") ? "" : " ";
+                    JConference.this.input.append(append + hst2.conf_nick + " ");
+                } else {
+                    JConference.this.input.append(hst2.conf_nick + ": ");
                 }
             }
-
-        }
-    }
-
-    private class cl implements AdapterView.OnItemLongClickListener {
-        private cl() {
-        }
-
-        public boolean onItemLongClick(AdapterView<?> var1, View var2, int var3, long var4) {
-            JConference.this.last_context_message = var3;
-            JConference.this.removeDialog(3);
-            JConference.this.showDialog(3);
-            return false;
         }
     }
 
@@ -1249,58 +1135,54 @@ public class JConference extends Chat implements Handler.Callback {
             } else {
                 JConference.this.send.setCompoundDrawables(resources.send_msg_icon, null, null, null);
             }
-
         }
 
-        public void afterTextChanged(Editable var1) {
+        @Override
+        public void afterTextChanged(Editable arg0) {
         }
 
-        public void beforeTextChanged(CharSequence var1, int var2, int var3, int var4) {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
-        public void onTextChanged(CharSequence var1, int var2, int var3, int var4) {
-            if (!this.buffer.equals(var1.toString()) && var1.length() != 0) {
-                if (var1.length() - this.buffer.length() == 1) {
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (!this.buffer.equals(s.toString()) && s.length() != 0) {
+                if (s.length() - this.buffer.length() == 1) {
                     ADB.symbolTyped();
                 }
-
-                this.buffer = var1.toString();
+                this.buffer = s.toString();
             }
-
             if (JConference.conference != null) {
-                if (var1.length() > 0) {
+                if (s.length() > 0) {
                     JConference.this.send.setCompoundDrawables(resources.send_msg_icon, null, null, null);
                 } else if (!resources.IT_IS_TABLET) {
                     JConference.this.send.setCompoundDrawables(resources.back_to_cl_icon, null, null, null);
                 }
             }
-
         }
     }
 
     private class inputKeyListener implements View.OnKeyListener {
-        private inputKeyListener() {
-        }
 
-        public boolean onKey(View var1, int var2, KeyEvent var3) {
-            boolean var4;
-            if (var2 == 66 && JConference.this.sendByEnter && var3.getAction() == 0) {
-                JConference.this.doSend();
-                var4 = true;
-            } else {
-                var4 = false;
+        @Override
+        public boolean onKey(View arg0, int keyCode, KeyEvent action) {
+            if (keyCode != 66 || !JConference.this.sendByEnter || action.getAction() != 0) {
+                return false;
             }
-
-            return var4;
+            JConference.this.doSend();
+            return true;
         }
     }
 
-    private class sndListener implements View.OnClickListener {
-        private sndListener() {
-        }
+    private class cl implements AdapterView.OnItemLongClickListener {
 
-        public void onClick(View var1) {
-            JConference.this.doSend();
+        @Override
+        public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+            JConference.this.last_context_message = arg2;
+            JConference.this.removeDialog(3);
+            JConference.this.showDialog(3);
+            return false;
         }
     }
 }
