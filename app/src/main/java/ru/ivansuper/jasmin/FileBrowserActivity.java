@@ -3,10 +3,11 @@ package ru.ivansuper.jasmin;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 
 import java.io.File;
+
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class FileBrowserActivity extends Activity {
     
@@ -19,11 +20,12 @@ public class FileBrowserActivity extends Activity {
         super.onCreate(savedInstanceState);
         setVolumeControlStream(3);
         setContentView(R.layout.file_browser_activity);
+        SystemBarUtils.setupTransparentBars(this);
         initViews();
         adp = new files_adapter();
         File sd = new File(resources.SD_PATH);
         adp.setData(sd.listFiles(), sd.getParentFile());
-        list.setAdapter((ListAdapter) adp);
+        list.setAdapter(adp);
         list.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
             files_adapter adp = (files_adapter) arg0.getAdapter();
             if (arg2 == 0) {

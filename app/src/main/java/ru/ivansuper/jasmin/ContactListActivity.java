@@ -100,6 +100,7 @@ import ru.ivansuper.jasmin.ui.ExFragmentManager;
 import ru.ivansuper.jasmin.ui.JFragment;
 import ru.ivansuper.jasmin.ui.JFragmentActivity;
 import ru.ivansuper.jasmin.ui.Resizer;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class ContactListActivity extends JFragmentActivity implements Handler.Callback, SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -221,7 +222,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         }
         setVolumeControlStream(3);
         setContentView(R.layout.contactlist);
-        ru.ivansuper.jasmin.utils.SystemBarUtils.setupTransparentBars(this);
+        SystemBarUtils.setupTransparentBars(this);
         service = resources.service;
         dialogs = new Vector<>();
         if (getResources().getConfiguration().orientation != 1) {

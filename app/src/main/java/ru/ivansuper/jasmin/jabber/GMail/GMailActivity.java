@@ -13,6 +13,7 @@ import android.widget.Toast;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.resources;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class GMailActivity extends Activity {
     
@@ -29,11 +30,12 @@ public class GMailActivity extends Activity {
         super.onCreate(savedInstanceState);
         visible = true;
         setContentView(R.layout.google_mail);
-        list = (ListView) findViewById(R.id.gmail_list);
+        SystemBarUtils.setupTransparentBars(this);
+        list = findViewById(R.id.gmail_list);
         adapter = new GMailAdapter(profile.google_mail);
-        TextView title = (TextView) findViewById(R.id.gmail_title);
+        TextView title = findViewById(R.id.gmail_title);
         title.setText(profile.ID + "@" + profile.host + " (" + adapter.getCount() + ")");
-        list.setAdapter((ListAdapter) adapter);
+        list.setAdapter(adapter);
         list.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
             Intent i = new Intent("android.intent.action.VIEW");
             i.setData(Uri.parse(adapter.getItem(arg2).url));
@@ -59,7 +61,7 @@ public class GMailActivity extends Activity {
 
     @SuppressLint("SetTextI18n")
     public void doRefresh() {
-        TextView title = (TextView) findViewById(R.id.gmail_title);
+        TextView title = findViewById(R.id.gmail_title);
         title.setText(profile.ID + "@" + profile.host + " (" + adapter.getCount() + ")");
         adapter.init(profile.google_mail);
     }

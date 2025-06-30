@@ -23,6 +23,7 @@ import java.io.IOException;
 import ru.ivansuper.jasmin.HistoryTools.ExportImportActivity;
 import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.Service.jasminSvc;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class MainActivity extends Activity implements Handler.Callback {
 
@@ -40,7 +41,7 @@ public class MainActivity extends Activity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         getWindowManager().getDefaultDisplay().getMetrics(resources.dm);
         setContentView(R.layout.activity_main);
-        ru.ivansuper.jasmin.utils.SystemBarUtils.setupTransparentBars(this);
+        SystemBarUtils.setupTransparentBars(this);
 
         initializeViews();
 

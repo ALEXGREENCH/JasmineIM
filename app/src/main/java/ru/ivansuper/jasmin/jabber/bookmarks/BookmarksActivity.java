@@ -30,6 +30,7 @@ import ru.ivansuper.jasmin.jabber.forms.FormListMap;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.ui.Spinner;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class BookmarksActivity extends Activity {
 
@@ -65,6 +66,7 @@ public class BookmarksActivity extends Activity {
         }
         setVolumeControlStream(3);
         setContentView(R.layout.bookmarks);
+        SystemBarUtils.setupTransparentBars(this);
         init();
     }
 
@@ -78,7 +80,7 @@ public class BookmarksActivity extends Activity {
         progress = DialogBuilder.createProgress(this, Locale.getString("s_please_wait"), true);
         initViews();
         mAdapter = PROFILE.bookmarks.mAdapter;
-        mList.setAdapter((ListAdapter) mAdapter);
+        mList.setAdapter(mAdapter);
         mList.setOnItemClickListener(new AnonymousClass1());
         PROFILE.bookmarks.listener = () -> progress.dismiss();
         PROFILE.bookmarks.performRequest();
@@ -128,15 +130,15 @@ public class BookmarksActivity extends Activity {
                     case 0:
                         LinearLayout lay = (LinearLayout) View.inflate(resources.ctx, R.layout.bookmark_data, null);
                         ((TextView) lay.findViewById(R.id.l1)).setText(Locale.getString("s_bookmark_type"));
-                        Spinner spinner = (Spinner) lay.findViewById(R.id.bookmark_type_list);
+                        Spinner spinner = lay.findViewById(R.id.bookmark_type_list);
                         FormListMap list = new FormListMap(new String[]{Locale.getString("s_bookmark_type_conference"), Locale.getString("s_bookmark_type_url")}, new String[]{"0", "1"});
                         list.toggleSelection(val$item.type);
                         list.setSelectionMode(false);
                         spinner.setAdapter(list);
-                        final EditText name = (EditText) lay.findViewById(R.id.bookmark_name);
-                        final EditText data = (EditText) lay.findViewById(R.id.bookmark_data);
-                        final EditText nick = (EditText) lay.findViewById(R.id.bookmark_nick);
-                        final EditText pass = (EditText) lay.findViewById(R.id.bookmark_pass);
+                        final EditText name = lay.findViewById(R.id.bookmark_name);
+                        final EditText data = lay.findViewById(R.id.bookmark_data);
+                        final EditText nick = lay.findViewById(R.id.bookmark_nick);
+                        final EditText pass = lay.findViewById(R.id.bookmark_pass);
                         resources.attachEditText(name);
                         resources.attachEditText(data);
                         resources.attachEditText(nick);
@@ -144,7 +146,7 @@ public class BookmarksActivity extends Activity {
                         name.setHint(Locale.getString("s_bookmark_name"));
                         nick.setHint(Locale.getString("s_bookmark_nick"));
                         pass.setHint(Locale.getString("s_bookmark_pass"));
-                        final CheckBox auto = (CheckBox) lay.findViewById(R.id.bookmark_autojoin);
+                        final CheckBox auto = lay.findViewById(R.id.bookmark_autojoin);
                         auto.setText(Locale.getString("s_bookmark_autojoin"));
                         if (val$item.NAME != null) {
                             name.setText(val$item.NAME);
@@ -302,13 +304,13 @@ public class BookmarksActivity extends Activity {
 
     private void initViews() {
         if (!sp.getBoolean("ms_use_shadow", true)) {
-            ((LinearLayout) findViewById(R.id.bookmarks_back)).setBackgroundColor(0);
+            findViewById(R.id.bookmarks_back).setBackgroundColor(0);
         }
         ((TextView) findViewById(R.id.l1)).setText(Locale.getString("s_bookmarks"));
-        mList = (ListView) findViewById(R.id.bookmarks_list);
+        mList = findViewById(R.id.bookmarks_list);
         mList.setDividerHeight(0);
         mList.setSelector(resources.getListSelector());
-        mAddBtn = (Button) findViewById(R.id.bookmark_add_btn);
+        mAddBtn = findViewById(R.id.bookmark_add_btn);
         resources.attachButtonStyle(mAddBtn);
         mAddBtn.setText(Locale.getString("s_do_add"));
         mAddBtn.setOnClickListener(new AnonymousClass3());
@@ -323,15 +325,15 @@ public class BookmarksActivity extends Activity {
         public void onClick(View v) {
             LinearLayout lay = (LinearLayout) View.inflate(resources.ctx, R.layout.bookmark_data, null);
             ((TextView) lay.findViewById(R.id.l1)).setText(Locale.getString("s_bookmark_type"));
-            Spinner spinner = (Spinner) lay.findViewById(R.id.bookmark_type_list);
+            Spinner spinner = lay.findViewById(R.id.bookmark_type_list);
             FormListMap list = new FormListMap(new String[]{Locale.getString("s_bookmark_type_conference"), Locale.getString("s_bookmark_type_url")}, new String[]{"0", "1"});
             list.toggleSelection(0);
             list.setSelectionMode(false);
             spinner.setAdapter(list);
-            final EditText name = (EditText) lay.findViewById(R.id.bookmark_name);
-            final EditText data = (EditText) lay.findViewById(R.id.bookmark_data);
-            final EditText nick = (EditText) lay.findViewById(R.id.bookmark_nick);
-            final EditText pass = (EditText) lay.findViewById(R.id.bookmark_pass);
+            final EditText name = lay.findViewById(R.id.bookmark_name);
+            final EditText data = lay.findViewById(R.id.bookmark_data);
+            final EditText nick = lay.findViewById(R.id.bookmark_nick);
+            final EditText pass = lay.findViewById(R.id.bookmark_pass);
             resources.attachEditText(name);
             resources.attachEditText(data);
             resources.attachEditText(nick);
@@ -340,7 +342,7 @@ public class BookmarksActivity extends Activity {
             data.setHint(Locale.getString("s_bookmark_conf_jid"));
             nick.setHint(Locale.getString("s_bookmark_nick"));
             pass.setHint(Locale.getString("s_bookmark_pass"));
-            final CheckBox auto = (CheckBox) lay.findViewById(R.id.bookmark_autojoin);
+            final CheckBox auto = lay.findViewById(R.id.bookmark_autojoin);
             auto.setText(Locale.getString("s_bookmark_autojoin"));
             spinner.listener = (selected_labels, selected_vals) -> {
                 if (selected_vals[0].equals("0")) {

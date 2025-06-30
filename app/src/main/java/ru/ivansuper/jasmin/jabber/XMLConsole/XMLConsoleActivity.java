@@ -15,6 +15,7 @@ import android.widget.Toast;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.resources;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class XMLConsoleActivity extends Activity implements Handler.Callback {
     
@@ -30,8 +31,9 @@ public class XMLConsoleActivity extends Activity implements Handler.Callback {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.xml_console);
+        SystemBarUtils.setupTransparentBars(this);
         setVolumeControlStream(3);
-        console = (ListView) findViewById(R.id.xml_console_list);
+        console = findViewById(R.id.xml_console_list);
         console.setOnItemLongClickListener((arg0, arg1, arg2, arg3) -> {
             //noinspection deprecation
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
@@ -42,13 +44,13 @@ public class XMLConsoleActivity extends Activity implements Handler.Callback {
             msg.show();
             return false;
         });
-        enabled = (CheckBox) findViewById(R.id.xml_console_enable);
+        enabled = findViewById(R.id.xml_console_enable);
         enabled.setText(resources.getString("s_xml_console_on_off"));
         if (profile != null) {
             enabled.setChecked(profile.CONSOLE_ENABLED);
         }
         enabled.setOnCheckedChangeListener((arg0, checked) -> XMLConsoleActivity.profile.CONSOLE_ENABLED = checked);
-        Button clear = (Button) findViewById(R.id.xml_console_clear);
+        Button clear = findViewById(R.id.xml_console_clear);
         clear.setText(resources.getString("s_xml_console_clear"));
         clear.setOnClickListener(arg0 -> {
             if (XMLConsoleActivity.profile != null) {
@@ -56,7 +58,7 @@ public class XMLConsoleActivity extends Activity implements Handler.Callback {
             }
         });
         adapter = new ConsoleAdapter(profile.CONSOLE);
-        console.setAdapter((ListAdapter) adapter);
+        console.setAdapter(adapter);
         updater = new Handler(this);
     }
 

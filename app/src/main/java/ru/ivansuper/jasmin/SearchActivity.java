@@ -42,6 +42,7 @@ import ru.ivansuper.jasmin.icq.InfoContainer;
 import ru.ivansuper.jasmin.icq.SearchCriteries;
 import ru.ivansuper.jasmin.icq.SearchResultItem;
 import ru.ivansuper.jasmin.icq.SearchResultsAdapter;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class SearchActivity extends Activity implements Handler.Callback {
 
@@ -89,6 +90,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
         resources.attachContactlistBack(getWindow());
         setVolumeControlStream(3);
         setContentView(R.layout.search_activity);
+        SystemBarUtils.setupTransparentBars(this);
         initViews();
     }
 

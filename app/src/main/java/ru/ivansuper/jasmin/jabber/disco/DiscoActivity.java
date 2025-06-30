@@ -25,6 +25,7 @@ import ru.ivansuper.jasmin.jabber.PacketHandler;
 import ru.ivansuper.jasmin.jabber.XML_ENGINE.Node;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class DiscoActivity extends Activity {
 
@@ -68,16 +69,17 @@ public class DiscoActivity extends Activity {
         setVolumeControlStream(3);
         super.onCreate(bundle);
         setContentView(R.layout.disco_activity);
+        SystemBarUtils.setupTransparentBars(this);
         initViews();
     }
 
     private void initViews() {
         if (!sp.getBoolean("ms_use_shadow", true)) {
-            ((LinearLayout) findViewById(R.id.l1)).setBackgroundColor(0);
+            findViewById(R.id.l1).setBackgroundColor(0);
         }
-        mServer = (EditText) findViewById(R.id.disco_source_server);
+        mServer = findViewById(R.id.disco_source_server);
         resources.attachEditText(mServer);
-        mList = (ListView) findViewById(R.id.disco_list);
+        mList = findViewById(R.id.disco_list);
         mList.setSelector(new ColorDrawable(0));
         mList.setDividerHeight(0);
         mList.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
@@ -90,7 +92,7 @@ public class DiscoActivity extends Activity {
             doDisco(item);
         });
         mList.setOnItemLongClickListener(new AnonymousClass2());
-        Button do_disco = (Button) findViewById(R.id.do_disco_btn);
+        Button do_disco = findViewById(R.id.do_disco_btn);
         resources.attachButtonStyle(do_disco);
         do_disco.setText(Locale.getString("s_disco"));
         do_disco.setOnClickListener(v -> {
@@ -256,7 +258,7 @@ public class DiscoActivity extends Activity {
         SERVER_TO_DISCO = mServer.getText().toString();
         Item root = new Item(SERVER_TO_DISCO, null, null, SERVER_TO_DISCO);
         mAdapter = new DiscoAdapter(root);
-        mList.setAdapter((ListAdapter) mAdapter);
+        mList.setAdapter(mAdapter);
     }
 
     public final void buildList() {

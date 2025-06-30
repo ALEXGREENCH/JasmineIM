@@ -21,6 +21,7 @@ import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class BannedListActivity extends Activity {
     
@@ -50,6 +51,7 @@ public class BannedListActivity extends Activity {
         super.onCreate(bundle);
         setVolumeControlStream(3);
         setContentView(R.layout.banned_list);
+        SystemBarUtils.setupTransparentBars(this);
         init();
     }
 

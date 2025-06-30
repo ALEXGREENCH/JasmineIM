@@ -22,6 +22,7 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.UAdapter;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.resources;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class ColorEditorActivity extends Activity {
     
@@ -45,6 +46,7 @@ public class ColorEditorActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.color_editor);
+        SystemBarUtils.setupTransparentBars(this);
         initViews();
     }
 

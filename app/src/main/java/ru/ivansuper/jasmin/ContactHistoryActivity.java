@@ -30,6 +30,7 @@ import ru.ivansuper.jasmin.icq.ICQContact;
 import ru.ivansuper.jasmin.icq.ICQProfile;
 import ru.ivansuper.jasmin.jabber.JContact;
 import ru.ivansuper.jasmin.jabber.JProfile;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class ContactHistoryActivity extends Activity {
 
@@ -66,6 +67,7 @@ public class ContactHistoryActivity extends Activity {
                 break;
         }
         super.onCreate(savedInstanceState);
+        SystemBarUtils.setupTransparentBars(this);
         setVolumeControlStream(3);
         setContentView(R.layout.contact_history);
         initViews();

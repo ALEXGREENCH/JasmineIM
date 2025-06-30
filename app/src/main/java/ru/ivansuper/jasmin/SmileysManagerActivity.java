@@ -16,6 +16,7 @@ import android.widget.Toast;
 import java.io.File;
 
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class SmileysManagerActivity extends Activity {
 
@@ -31,6 +32,7 @@ public class SmileysManagerActivity extends Activity {
         selectedPack = sp.getString("current_smileys_pack", "$*INTERNAL*$");
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         setContentView(R.layout.smileys_manager);
+        SystemBarUtils.setupTransparentBars(this);
         initViews();
         fillList();
     }

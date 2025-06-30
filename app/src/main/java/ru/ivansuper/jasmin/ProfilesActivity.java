@@ -27,6 +27,7 @@ import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.jabber.dns.DNS;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.protocols.IMProfile;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class ProfilesActivity extends Activity {
 
@@ -43,6 +44,7 @@ public class ProfilesActivity extends Activity {
         super.onCreate(savedInstanceState);
         setVolumeControlStream(3);
         setContentView(R.layout.profiles);
+        SystemBarUtils.setupTransparentBars(this);
         initViews();
         this.service = resources.service;
         handleServiceConnected();

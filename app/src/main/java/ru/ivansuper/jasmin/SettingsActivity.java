@@ -20,6 +20,7 @@ import android.widget.LinearLayout;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.security.PasswordManager;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 @SuppressWarnings("deprecation")
 public class SettingsActivity extends PreferenceActivity {
@@ -32,6 +33,7 @@ public class SettingsActivity extends PreferenceActivity {
         super.onCreate(savedInstanceState);
         setVolumeControlStream(3);
         addPreferencesFromResource(R.xml.prefs);
+        SystemBarUtils.setupTransparentBars(this);
     }
 
     @Override

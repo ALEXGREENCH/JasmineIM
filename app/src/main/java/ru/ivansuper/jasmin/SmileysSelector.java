@@ -14,6 +14,7 @@ import android.widget.GridView;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.chats.Chat;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class SmileysSelector extends Activity {
 
@@ -53,6 +54,7 @@ public class SmileysSelector extends Activity {
     private void initializeUI() {
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
         setContentView(R.layout.smileys_selector);
+        SystemBarUtils.setupTransparentBars(this);
         smileys = findViewById(R.id.smileys_selector_field);
         smileys.setSelector(resources.getListSelector());
 

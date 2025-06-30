@@ -21,6 +21,7 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class ExportImportActivity extends Activity {
     
@@ -37,6 +38,7 @@ public class ExportImportActivity extends Activity {
         setTheme(16973833);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.import_history);
+        SystemBarUtils.setupTransparentBars(this);
         initViews();
         boolean any_profiles_connected = resources.service.profiles.isAnyProfileConnected();
         boolean any_chat_opened = resources.service.isAnyChatOpened;

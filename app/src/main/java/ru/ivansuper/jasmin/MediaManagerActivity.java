@@ -16,6 +16,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import ru.ivansuper.jasmin.Service.jasminSvc;
+import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 
 public class MediaManagerActivity extends Activity {
@@ -31,6 +32,7 @@ public class MediaManagerActivity extends Activity {
         super.onCreate(savedInstanceState);
         setVolumeControlStream(3);
         setContentView(R.layout.media_manager);
+        SystemBarUtils.setupTransparentBars(this);
         initViews();
         bindToService();
         fillInterface();
@@ -38,7 +40,7 @@ public class MediaManagerActivity extends Activity {
 
     private void initViews() {
         ((TextView) findViewById(R.id.l1)).setText(resources.getString("s_media_title"));
-        list = (LinearLayout) findViewById(R.id.media_manager_list);
+        list = findViewById(R.id.media_manager_list);
     }
 
     @SuppressLint("ApplySharedPref")
