@@ -50,7 +50,7 @@ public class SlideSwitcher extends ViewGroup {
     public static final int ANIM_FADE_ROTATE    = 9;
     public static final int ANIM_ICS_2          = 10;
 
-    private int animationType      = ANIM_FADE_ROTATE;
+    private int animationType      = ANIM_FLIP_SIMPLE;
     private boolean randomizedAnimation = false;
 
     private final Vector<String> screenLabels = new Vector<>();

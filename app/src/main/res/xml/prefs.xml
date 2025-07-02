@@ -299,7 +299,7 @@
             android:defaultValue="true"
             android:key="ms_use_overscroll" />
         <ru.ivansuper.jasmin.Preferences.TransitionPicker
-            android:defaultValue="7"
+            android:defaultValue="3"
             android:dependency="ms_two_screens_mode"
             android:key="ms_cl_transition_effect" />
     </PreferenceScreen>

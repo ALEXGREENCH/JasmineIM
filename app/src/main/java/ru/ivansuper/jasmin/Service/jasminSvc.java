@@ -1140,7 +1140,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         PreferenceTable.ms_check_tls_certificate = this.sharedPreferences.getBoolean("ms_check_tls_certificate", true);
         PreferenceTable.ms_show_markers_in_chat = this.sharedPreferences.getBoolean("ms_show_markers_in_chat", true);
         PreferenceTable.ms_two_screens_mode = this.sharedPreferences.getBoolean("ms_two_screens_mode", true);
-        PreferenceTable.ms_cl_transition_effect = this.sharedPreferences.getInt("ms_cl_transition_effect", 7);
+        PreferenceTable.ms_cl_transition_effect = this.sharedPreferences.getInt("ms_cl_transition_effect", 3);
         PreferenceTable.ms_rejoin_to_conferences = this.sharedPreferences.getBoolean("ms_restore_conf_presence", false);
         PreferenceTable.ms_use_bookmark_autojoin = this.sharedPreferences.getBoolean("ms_use_bookmark_autojoin", false);
         PreferenceTable.ms_use_messages_merging = this.sharedPreferences.getBoolean("ms_use_messages_merging", false);
