@@ -37,13 +37,12 @@
                         android:focusable="true"
                         android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
                         android:scrollbarTrackVertical="@drawable/scrollbar_track"
-                        android:scrollbars="vertical">
+                        android:scrollbars="vertical" />
 
-                        <ru.ivansuper.jasmin.ConfigListenerView
-                            android:id="@+id/config_listener"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent" />
-                    </ru.ivansuper.jasmin.slide_tools.SlideSwitcher>
+                    <ru.ivansuper.jasmin.ConfigListenerView
+                        android:id="@+id/config_listener"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent" />
 
                     <LinearLayout
                         android:id="@+id/profiles_connection_bars"
