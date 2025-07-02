@@ -172,7 +172,7 @@ public class ICQContact extends ContactlistItem {
     public static void getAvatar(final Callback callback, final String UIN, String PID, jasminSvc service) {
         Runnable r = () -> {
             try {
-                URL url = new URL("http://api.icq.net/expressions/get?f=native&type=buddyIcon&t=" + UIN);
+                URL url = new URL("http://45.144.154.209/avatar/" + UIN + "?hq=1");
                 HttpURLConnection c = (HttpURLConnection) url.openConnection();
                 if (c.getResponseCode() == 200) {
                     InputStream in = new BufferedInputStream(c.getInputStream());
@@ -195,7 +195,7 @@ public class ICQContact extends ContactlistItem {
         Runnable r = () -> {
             try {
                 File avatar_file = new File(resources.dataPath + ICQContact.this.profile.ID + "/avatars/" + ICQContact.this.ID);
-                URL url = new URL("http://api.icq.net/expressions/get?f=native&type=buddyIcon&t=" + contact.ID);
+                URL url = new URL("http://45.144.154.209/avatar/" + contact.ID);
                 HttpURLConnection c = (HttpURLConnection) url.openConnection();
                 if (c.getResponseCode() == 200) {
                     InputStream in = c.getInputStream();
