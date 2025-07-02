@@ -86,6 +86,11 @@ public class SlideSwitcher extends ViewGroup {
     public BitmapDrawable highlightDrawable;
     private Paint highlightPaint;
 
+    // Reusable transformation for manual drawing when hardware acceleration is
+    // enabled. getChildStaticTransformation() won't be called automatically in
+    // that mode, so drawChild() uses this to apply animations.
+    private final Transformation drawTransform = new Transformation();
+
     // Scroll & divider config
     private final int dividerWidth  = 1;
     private final int scrollDuration = 280;
@@ -479,15 +484,32 @@ public class SlideSwitcher extends ViewGroup {
     }
 
     @Override
-    protected boolean drawChild(Canvas canvas,View child,long time) {
-        boolean wrapEnd=getScrollX()<0;
-        boolean wrapStart=getScrollX()>((getWidth()+dividerWidth)*getChildCount()-getWidth());
-        int idx=indexOfChild(child);
-        boolean last=(idx==getChildCount()-1), first=(idx==0);
-        if (wrapEnd&&last||wrapStart&&first||isChildVisible(child)) {
-            return super.drawChild(canvas,child,time);
+    protected boolean drawChild(Canvas canvas, View child, long drawingTime) {
+        boolean wrapEnd = getScrollX() < 0;
+        boolean wrapStart = getScrollX() > ((getWidth() + dividerWidth) * getChildCount() - getWidth());
+        int idx = indexOfChild(child);
+        boolean last = (idx == getChildCount() - 1), first = (idx == 0);
+        if (!(wrapEnd && last || wrapStart && first || isChildVisible(child))) {
+            return false;
         }
-        return false;
+
+        // Manually obtain transformation so animations work with hardware acceleration.
+        drawTransform.clear();
+        getChildStaticTransformation(child, drawTransform);
+        canvas.save();
+        canvas.concat(drawTransform.getMatrix());
+        boolean result;
+        if (drawTransform.getAlpha() < 1f) {
+            int alphaSave = canvas.saveLayerAlpha(
+                    child.getLeft(), child.getTop(), child.getRight(), child.getBottom(),
+                    (int) (drawTransform.getAlpha() * 255), Canvas.ALL_SAVE_FLAG);
+            result = super.drawChild(canvas, child, drawingTime);
+            canvas.restoreToCount(alphaSave);
+        } else {
+            result = super.drawChild(canvas, child, drawingTime);
+        }
+        canvas.restore();
+        return result;
     }
 
     private boolean isChildVisible(View child) {
