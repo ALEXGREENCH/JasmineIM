@@ -496,19 +496,30 @@ public class SlideSwitcher extends ViewGroup {
         // Manually obtain transformation so animations work with hardware acceleration.
         drawTransform.clear();
         getChildStaticTransformation(child, drawTransform);
-        canvas.save();
+
+        final int save = canvas.save();
+        // Apply translation like ViewGroup.drawChild would
+        canvas.translate(child.getLeft() - getScrollX(), child.getTop());
+        // Include the child's own matrix if present
+        if (!child.getMatrix().isIdentity()) {
+            canvas.concat(child.getMatrix());
+        }
+        // Apply our animation matrix
         canvas.concat(drawTransform.getMatrix());
+
         boolean result;
         if (drawTransform.getAlpha() < 1f) {
             int alphaSave = canvas.saveLayerAlpha(
-                    child.getLeft(), child.getTop(), child.getRight(), child.getBottom(),
+                    0, 0, child.getWidth(), child.getHeight(),
                     (int) (drawTransform.getAlpha() * 255), Canvas.ALL_SAVE_FLAG);
-            result = super.drawChild(canvas, child, drawingTime);
+            child.draw(canvas);
             canvas.restoreToCount(alphaSave);
+            result = true;
         } else {
-            result = super.drawChild(canvas, child, drawingTime);
+            child.draw(canvas);
+            result = true;
         }
-        canvas.restore();
+        canvas.restoreToCount(save);
         return result;
     }
 

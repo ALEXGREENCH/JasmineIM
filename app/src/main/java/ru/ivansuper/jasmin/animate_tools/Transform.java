@@ -30,7 +30,7 @@ public class Transform {
      * Применяет искажение в виде "змеи" (влево или вправо).
      */
     public static void applyPolySnake(Matrix m, int width, int height, float angle, int offset) {
-        int shift = Math.abs(offset);
+        int shift = Math.min(Math.abs(offset), width);
         if (angle > 0.0f) {
             // сдвиг влево
             m.setPolyToPoly(
@@ -52,8 +52,8 @@ public class Transform {
      * Применяет трансформацию куба с перспективой.
      */
     public static void applyPolyCube(Matrix m, int width, int height, float angle, int offset) {
-        int shift = Math.abs(offset);
-        int factor = (int) Math.abs(Math.sin(Math.toRadians(angle / 2.0)) * (height * 24 / 100.0));
+        int shift = Math.min(Math.abs(offset), width);
+        int factor = (int) (Math.min(Math.abs(angle), 90f) / 90f * (height * 0.24f));
         if (angle > 0.0f) {
             // Правый поворот
             m.setPolyToPoly(
@@ -75,8 +75,8 @@ public class Transform {
      * Обратная кубическая трансформация, "раскручивающая" искажение.
      */
     public static void applyPolyCubeInv(Matrix m, int width, int height, float angle, int offset) {
-        int shift = Math.abs(offset);
-        int factor = (int) Math.abs(Math.sin(Math.toRadians(angle / 2.0)) * (height * 24 / 100.0));
+        int shift = Math.min(Math.abs(offset), width);
+        int factor = (int) (Math.min(Math.abs(angle), 90f) / 90f * (height * 0.24f));
         if (angle > 0.0f) {
             m.setPolyToPoly(
                     new float[]{0, 0, width, 0, width, height, 0, height}, 0,
