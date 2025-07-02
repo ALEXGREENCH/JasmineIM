@@ -2338,33 +2338,12 @@ public class ICQProfile extends IMProfile {
     }
 
     public final void doChangeAvatar(File file) {
-        Runnable r = () -> {
-            try {
-                int check = 0;
-                for (char c : this.ID.toCharArray()) {
-                    check ^= c;
-                }
-                URL url = new URL("http://45.144.154.209/upload?uin=" + this.ID + "&check=" + check);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setDoOutput(true);
-                conn.setRequestMethod("POST");
-                OutputStream os = new BufferedOutputStream(conn.getOutputStream());
-                FileInputStream fis = new FileInputStream(file);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = fis.read(buf)) > 0) {
-                    os.write(buf, 0, len);
-                }
-                os.flush();
-                os.close();
-                fis.close();
-                conn.getResponseCode();
-            } catch (Exception e) {
-                //noinspection CallToPrintStackTrace
-                e.printStackTrace();
-            }
-        };
-        new Thread(r).start();
+        if (this.icon_proto != null && this.icon_proto.connected) {
+            this.icon_proto.uploadAvatar(file);
+            return;
+        }
+        this.svc.showMessageInContactList(this.nickname, resources.getString("s_icq_avatar_service_notify"));
+        doRequestAvatarService();
     }
 
     public final void updateIconHash() {
