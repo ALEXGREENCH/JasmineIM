@@ -201,7 +201,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         }
     }
 
-    @SuppressLint("InvalidWakeLockTag")
+    @SuppressLint({"InvalidWakeLockTag", "Wakelock"})
     private void updateWake() {
         if (this.wakeLock == null) {
             if (!this.wakeLocks.isEmpty()) {
@@ -370,6 +370,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         startFC();
         this.vibrator = (Vibrator) getSystemService("vibrator");
         this.notificationManager = (NotificationManager) getSystemService("notification");
+        //noinspection deprecation
         this.sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         initSettings();
         this.sharedPreferences.registerOnSharedPreferenceChangeListener(this);
@@ -460,6 +461,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         windowManager.addView(lay, layoutParams);
     }
 
+    /** @noinspection unused*/
     public void handleNetworkStateChanged(int flags) {
     }
 
@@ -595,6 +597,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             }
             if (MESSAGES_DUMP.total_messages > 0 && NotifyManager.count() > 0 && !PreferenceTable.multi_notify) {
                 if (this.notificationManager != null) {
+                    //noinspection DataFlowIssue
                     String description = mNotification.nick.isEmpty() ? "" : mNotification.nick + ": " + mNotification.text;
                     showMessageNotification(utilities.match(resources.getString("s_unread_notify_text"), new String[]{String.valueOf(MESSAGES_DUMP.total_messages), String.valueOf(MESSAGES_DUMP.from_contacts)}), description, MESSAGES_DUMP.total_messages, true, MESSAGE_NOTIFY_ID, mNotification.intent);
                 } else {
@@ -911,6 +914,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         }
     }
 
+    /** @noinspection unused*/
     public void handleIncomingXtrazMessage(ICQProfile profile, ICQContact contact, HistoryItem msg) {
         sendMessage(4, msg, true);
     }
@@ -994,11 +998,14 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         if (this.clHdl != null) {
             if (what == 3) {
                 this.clHdl.removeMessages(3);
+                //noinspection DataFlowIssue
                 this.clHdl.sendMessageDelayed(msg, 0L);
             } else if (what == 2) {
                 this.clHdl.removeMessages(2);
+                //noinspection DataFlowIssue
                 this.clHdl.sendMessageDelayed(msg, 0L);
             } else {
+                //noinspection DataFlowIssue
                 this.clHdl.sendMessageDelayed(msg, 0L);
             }
         }
@@ -1038,12 +1045,15 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         }
     }
 
+    /** @noinspection unused*/
     public void forcePopUp(String variable, Runnable task, Drawable icon) {
         if (this.svcHdl != null) {
             this.svcHdl.sendMessage(Message.obtain(this.svcHdl, 8, new PopupTask(variable, task, icon)));
         }
     }
 
+    /** @noinspection DataFlowIssue*/
+    @SuppressLint("ApplySharedPref")
     private void initSettings() {
         PreferenceTable.vibroEnabled = this.sharedPreferences.getBoolean("ms_vibro", true);
         PreferenceTable.showGroups = this.sharedPreferences.getBoolean("ms_groups", true);
@@ -1180,6 +1190,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
                         task_thread.start();
                         return false;
                     } catch (Exception e) {
+                        //noinspection CallToPrintStackTrace
                         e.printStackTrace();
                         return false;
                     }
