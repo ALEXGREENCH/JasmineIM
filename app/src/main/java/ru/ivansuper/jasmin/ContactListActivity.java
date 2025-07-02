@@ -684,22 +684,22 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void uploadAvatar(File file) {
-        if (file.length() <= 11264) {
+        ////if (file.length() <= 11264) {
             BitmapFactory.Options opts = new BitmapFactory.Options();
             opts.inJustDecodeBounds = true;
             BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
-            if (opts.outWidth <= 64 && opts.outHeight <= 64) {
+        ////if (opts.outWidth <= 64 && opts.outHeight <= 64) {
                 // TODO: ?
                 //if (0 != 0) {
                 //    Toast.makeText(this, resources.getString("s_avatar_size_too_big"), Toast.LENGTH_LONG).show();
                 //} else {
                     contextProfile.doChangeAvatar(file);
                 //}
-                return;
-            }
-            return;
-        }
-        Toast.makeText(this, resources.getString("s_avatar_file_too_big"), Toast.LENGTH_LONG).show();
+        ////return;
+        ////}
+        ////return;
+        ////}
+        ////Toast.makeText(this, resources.getString("s_avatar_file_too_big"), Toast.LENGTH_LONG).show();
     }
 
 

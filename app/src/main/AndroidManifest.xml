@@ -8,8 +8,10 @@
         android:name="ru.ivansuper.jasmin.base.APP"
         android:icon="@drawable/icon"
         android:label="Jasmine IM"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/WallpaperNoTitleTheme"
-        android:requestLegacyExternalStorage="true">
+        tools:ignore="UnusedAttribute">
 
         <activity
             android:name="ru.ivansuper.jasmin.MainActivity"
