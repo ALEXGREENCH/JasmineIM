@@ -118,6 +118,9 @@ public class SlideSwitcher extends ViewGroup {
         setDrawingCacheEnabled(false);
         setWillNotCacheDrawing(true);
         setStaticTransformationsEnabled(true);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
+            setLayerType(LAYER_TYPE_SOFTWARE, null);
+        }
 
         // Label paint
         labelPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
