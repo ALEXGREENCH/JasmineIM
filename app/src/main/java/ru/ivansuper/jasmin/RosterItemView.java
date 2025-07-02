@@ -564,9 +564,8 @@ public class RosterItemView extends View {
                 if (PreferenceTable.s_ms_show_xstatuses) {
                     this.ex_status = contact.xstatus;
                 }
-                if (PreferenceTable.s_ms_show_clients && contact.client.icon != null) {
+                if (PreferenceTable.s_ms_show_clients && contact.client.info_index != -1) {
                     this.client = contact.client.icon;
-                    this.client.setBounds(0, 0, this.client.getIntrinsicWidth(), this.client.getIntrinsicHeight());
                     this.draw_client = true;
                 }
                 if (!contact.authorized) {
@@ -695,8 +694,7 @@ public class RosterItemView extends View {
                 if (PreferenceTable.s_ms_show_clients) {
                     Drawable ic_client = jcontact.getClient();
                     if (ic_client != null) {
-                        this.client = ic_client;
-                        this.client.setBounds(0, 0, this.client.getIntrinsicWidth(), this.client.getIntrinsicHeight());
+                        this.client = jcontact.getClient();
                         this.draw_client = true;
                     }
                 }
