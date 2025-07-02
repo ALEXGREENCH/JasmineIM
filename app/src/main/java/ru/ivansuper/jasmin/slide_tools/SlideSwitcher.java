@@ -118,9 +118,6 @@ public class SlideSwitcher extends ViewGroup {
         setDrawingCacheEnabled(false);
         setWillNotCacheDrawing(true);
         setStaticTransformationsEnabled(true);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.HONEYCOMB) {
-            setLayerType(LAYER_TYPE_SOFTWARE, null);
-        }
 
         // Label paint
         labelPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
@@ -260,11 +257,19 @@ public class SlideSwitcher extends ViewGroup {
         }
     }
 
+    private void invalidateOnAnimationCompat() {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
+            postInvalidateOnAnimation();
+        } else {
+            postInvalidate();
+        }
+    }
+
     @Override
     public void computeScroll() {
         if (!isDragging && scroller.computeScrollOffset()) {
             scrollTo(scroller.getCurrX(), 0);
-            postInvalidate();
+            invalidateOnAnimationCompat();
         } else if (!isDragging) {
             if (wrapMode) {
                 int width = getWidth() + dividerWidth;
@@ -288,7 +293,7 @@ public class SlideSwitcher extends ViewGroup {
         int width = getWidth() + dividerWidth;
         scroller.startScroll(getScrollX(),0,0,0,scrollDuration);
         scroller.setFinalX(getChildCount()*width);
-        postInvalidate();
+        invalidateOnAnimationCompat();
     }
 
     private void wrapToLast() {
@@ -297,7 +302,7 @@ public class SlideSwitcher extends ViewGroup {
         int width = getWidth() + dividerWidth;
         scroller.startScroll(getScrollX(),0,0,0,scrollDuration);
         scroller.setFinalX(-width);
-        postInvalidate();
+        invalidateOnAnimationCompat();
     }
 
     @Override
@@ -323,7 +328,7 @@ public class SlideSwitcher extends ViewGroup {
             int width = getWidth()+dividerWidth;
             scroller.startScroll(getScrollX(),0,0,0,scrollDuration);
             scroller.setFinalX(currentScreen*width);
-            postInvalidate();
+            invalidateOnAnimationCompat();
         }
     }
 
@@ -336,7 +341,7 @@ public class SlideSwitcher extends ViewGroup {
             int width = getWidth()+dividerWidth;
             scroller.startScroll(getScrollX(),0,0,0,scrollDuration);
             scroller.setFinalX(currentScreen*width);
-            postInvalidate();
+            invalidateOnAnimationCompat();
         }
     }
 
@@ -384,7 +389,7 @@ public class SlideSwitcher extends ViewGroup {
                         scroller.startScroll(getScrollX(),0,0,0,scrollDuration);
                         scroller.setFinalX(currentScreen*(getWidth()+dividerWidth));
                     }
-                    postInvalidate();
+                    invalidateOnAnimationCompat();
                 }
                 break;
         }
