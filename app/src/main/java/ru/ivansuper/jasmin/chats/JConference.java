@@ -808,9 +808,6 @@ public class JConference extends Chat implements Handler.Callback {
             removeDialog(1);
             showDialog(1);
         });
-        if (!resources.IT_IS_TABLET) {
-            menuButton.setVisibility(View.GONE);
-        }
 
         // Send button
         send.setOnClickListener(new sndListener());

@@ -469,9 +469,6 @@ public class ICQChatActivity extends Chat {
             ICQChatActivity.this.removeDialog(1);
             ICQChatActivity.this.showDialog(1);
         });
-        if (!resources.IT_IS_TABLET) {
-            button.setVisibility(View.GONE);
-        }
         this.send = (Button) findViewById(R.id.send);
         this.send.setOnClickListener(new sndListener());
         this.input.addTextChangedListener(new el());
