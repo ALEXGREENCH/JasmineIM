@@ -183,7 +183,12 @@ public class JProfile extends IMProfile {
         }
         if (handler != null) {
             if (handler.runOnUi) {
-                this.svc.runOnUi(handler::execute);
+                this.svc.runOnUi(new Runnable() {
+                    @Override
+                    public void run() {
+                        handler.execute();
+                    }
+                });
             } else {
                 handler.execute();
             }
@@ -193,17 +198,23 @@ public class JProfile extends IMProfile {
 
     public final void putIntoConsole(final String xml, final int direction) {
         if (this.CONSOLE_ENABLED) {
-            this.svc.runOnUi(() -> {
-                JProfile.this.CONSOLE.add(new Stanzas(xml, direction));
-                XMLConsoleActivity.update(JProfile.this);
+            this.svc.runOnUi(new Runnable() {
+                @Override
+                public void run() {
+                    JProfile.this.CONSOLE.add(new Stanzas(xml, direction));
+                    XMLConsoleActivity.update(JProfile.this);
+                }
             });
         }
     }
 
     public final void clearConsole() {
-        this.svc.runOnUi(() -> {
-            JProfile.this.CONSOLE.clear();
-            XMLConsoleActivity.update(JProfile.this);
+        this.svc.runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                JProfile.this.CONSOLE.clear();
+                XMLConsoleActivity.update(JProfile.this);
+            }
         });
     }
 
@@ -746,11 +757,14 @@ public class JProfile extends IMProfile {
         hst.jcontact.history.add(hst);
         if (!JChatActivity.is_any_chat_opened || JChatActivity.contact != hst.jcontact) {
             hst.jcontact.setHasUnreadMessages();
-            jasminSvc.pla.put(hst.jcontact.name, receiver.file_name, resources.file_for_chat, hst.jcontact.avatar, popup_log_adapter.MESSAGE_DISPLAY_TIME, () -> {
-                Intent i = new Intent(JProfile.this.svc, ContactListActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.setAction("JBRITEM" + JProfile.this.ID + "@" + JProfile.this.host + "***$$$SEPARATOR$$$***" + hst.jcontact.ID);
-                JProfile.this.svc.startActivity(i);
+            jasminSvc.pla.put(hst.jcontact.name, receiver.file_name, resources.file_for_chat, hst.jcontact.avatar, popup_log_adapter.MESSAGE_DISPLAY_TIME, new Runnable() {
+                @Override
+                public void run() {
+                    Intent i = new Intent(JProfile.this.svc, ContactListActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.setAction("JBRITEM" + JProfile.this.ID + "@" + JProfile.this.host + "***$$$SEPARATOR$$$***" + hst.jcontact.ID);
+                    JProfile.this.svc.startActivity(i);
+                }
             });
             if (PreferenceTable.multi_notify) {
                 this.svc.showPersonalMessageNotify(hst.jcontact.name + "/" + this.ID + "@" + this.host, receiver.file_name, true, utilities.getHash(hst.jcontact), hst.jcontact);
@@ -787,37 +801,46 @@ public class JProfile extends IMProfile {
     }
 
     public final void proceedCommand(final String from, final String id, final Node base) {
-        this.svc.runOnUi(() -> {
-            if (!ContactListActivity.HIDDEN) {
-                JProfile.this.svc.showCommandFormInContactList(new Command(from, id, base, JProfile.this));
+        this.svc.runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                if (!ContactListActivity.HIDDEN) {
+                    JProfile.this.svc.showCommandFormInContactList(new Command(from, id, base, JProfile.this));
+                }
             }
         });
     }
 
     /** @noinspection unused*/
     public final void proceedXForm(String from, final String id, final Node base) {
-        this.svc.runOnUi(() -> {
-            Operation op = new Operation();
-            op.profile = JProfile.this;
-            op.prepareForm(base, id);
-            op.form.build();
-            op.to_type = 3;
-            if (!ContactListActivity.HIDDEN) {
-                JProfile.this.svc.showXFormInContactList(op.form);
+        this.svc.runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                Operation op = new Operation();
+                op.profile = JProfile.this;
+                op.prepareForm(base, id);
+                op.form.build();
+                op.to_type = 3;
+                if (!ContactListActivity.HIDDEN) {
+                    JProfile.this.svc.showXFormInContactList(op.form);
+                }
             }
         });
     }
 
     /** @noinspection unused*/
     private void proceedCaptcha(String from, final String id, final Node base) {
-        this.svc.runOnUi(() -> {
-            Operation op = new Operation();
-            op.profile = JProfile.this;
-            op.prepareForm(base, id);
-            op.form.build();
-            op.to_type = 3;
-            if (!ContactListActivity.HIDDEN) {
-                JProfile.this.svc.showXFormInContactList(op.form);
+        this.svc.runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                Operation op = new Operation();
+                op.profile = JProfile.this;
+                op.prepareForm(base, id);
+                op.form.build();
+                op.to_type = 3;
+                if (!ContactListActivity.HIDDEN) {
+                    JProfile.this.svc.showXFormInContactList(op.form);
+                }
             }
         });
     }
@@ -864,7 +887,12 @@ public class JProfile extends IMProfile {
                         final String subject_ = subject;
                         final String message_ = message;
                         final long timestamp_ = timestamp;
-                        this.svc.runOnUi(() -> conference.incomingMessage(from, JProtocol.getResourceFromFullID(from), subject_, message_, timestamp_));
+                        this.svc.runOnUi(new Runnable() {
+                            @Override
+                            public void run() {
+                                conference.incomingMessage(from, JProtocol.getResourceFromFullID(from), subject_, message_, timestamp_);
+                            }
+                        });
                         return;
                     }
                 } else {
@@ -955,7 +983,12 @@ public class JProfile extends IMProfile {
                 final JContact contact_ = contact2;
                 final String message_2 = message2;
                 final long timestamp_2 = timestamp;
-                this.svc.runOnUi(() -> JProfile.this.handleMessage(contact_, message_2, -1, timestamp_2));
+                this.svc.runOnUi(new Runnable() {
+                    @Override
+                    public void run() {
+                        JProfile.this.handleMessage(contact_, message_2, -1, timestamp_2);
+                    }
+                });
             } else {
                 contact2 = contact;
             }
@@ -1004,11 +1037,14 @@ public class JProfile extends IMProfile {
         from.writeMessageToHistory(hst);
         if (!JChatActivity.is_any_chat_opened || JChatActivity.contact != from) {
             from.setHasUnreadMessages();
-            jasminSvc.pla.put(from.name, SmileysManager.getSmiledText(body2, 0, false), resources.msg_in, from.avatar, popup_log_adapter.MESSAGE_DISPLAY_TIME, () -> {
-                Intent i = new Intent(JProfile.this.svc, ContactListActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                i.setAction("JBRITEM" + JProfile.this.ID + "@" + JProfile.this.host + "***$$$SEPARATOR$$$***" + from.ID);
-                JProfile.this.svc.startActivity(i);
+            jasminSvc.pla.put(from.name, SmileysManager.getSmiledText(body2, 0, false), resources.msg_in, from.avatar, popup_log_adapter.MESSAGE_DISPLAY_TIME, new Runnable() {
+                @Override
+                public void run() {
+                    Intent i = new Intent(JProfile.this.svc, ContactListActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    i.setAction("JBRITEM" + JProfile.this.ID + "@" + JProfile.this.host + "***$$$SEPARATOR$$$***" + from.ID);
+                    JProfile.this.svc.startActivity(i);
+                }
             });
             if (PreferenceTable.multi_notify) {
                 this.svc.showPersonalMessageNotify(from.name + "/" + this.ID + "@" + this.host, body2, true, utilities.getHash(from), from);
@@ -1086,13 +1122,28 @@ public class JProfile extends IMProfile {
                 final String client_ = client;
                 final int status_code_ = status_code;
                 if (sys) {
-                    this.svc.runOnUi(() -> conference.incomingSysMessage(from, "(" + reason_2 + ")", status_code_));
+                    this.svc.runOnUi(new Runnable() {
+                        @Override
+                        public void run() {
+                            conference.incomingSysMessage(from, "(" + reason_2 + ")", status_code_);
+                        }
+                    });
                 }
                 if (type.equals("available")) {
-                    this.svc.runOnUi(() -> conference.userOnline(JProtocol.getResourceFromFullID(from), JProtocol.lowerCaseFullJID(item.getParameter("jid")), item.getParameter("affiliation"), item.getParameter("role"), status_, JProtocol.lowerCaseFullJID(from), reason_2, desc_, client_));
+                    this.svc.runOnUi(new Runnable() {
+                        @Override
+                        public void run() {
+                            conference.userOnline(JProtocol.getResourceFromFullID(from), JProtocol.lowerCaseFullJID(item.getParameter("jid")), item.getParameter("affiliation"), item.getParameter("role"), status_, JProtocol.lowerCaseFullJID(from), reason_2, desc_, client_);
+                        }
+                    });
                 }
                 if (type.equals("unavailable")) {
-                    this.svc.runOnUi(() -> conference.userOffline(JProtocol.getResourceFromFullID(from), item.getParameter("affiliation"), item.getParameter("role"), item.getParameter("nick"), JProtocol.lowerCaseFullJID(from), reason_2, status_code_));
+                    this.svc.runOnUi(new Runnable() {
+                        @Override
+                        public void run() {
+                            conference.userOffline(JProtocol.getResourceFromFullID(from), item.getParameter("affiliation"), item.getParameter("role"), item.getParameter("nick"), JProtocol.lowerCaseFullJID(from), reason_2, status_code_);
+                        }
+                    });
                     return;
                 }
                 return;
@@ -1204,9 +1255,12 @@ public class JProfile extends IMProfile {
             GoogleMail.Mail mail = list.get(0);
             this.google_mail.insertElementAt(mail, 0);
             showGMailNotify(this.ID + "@" + this.host, utilities.match(resources.getString("s_mail_unread_count_1"), new String[]{String.valueOf(this.google_mail.size())}), this.google_mail.size());
-            this.svc.runOnUi(() -> {
-                if (JProfile.this.gmail_listener != null) {
-                    JProfile.this.gmail_listener.onListChanged();
+            this.svc.runOnUi(new Runnable() {
+                @Override
+                public void run() {
+                    if (JProfile.this.gmail_listener != null) {
+                        JProfile.this.gmail_listener.onListChanged();
+                    }
                 }
             });
         }

@@ -14,6 +14,8 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.view.View;
+import android.widget.CompoundButton;
 
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
@@ -104,25 +106,41 @@ public class MediaManagerActivity extends Activity {
         CheckBox onoff = new CheckBox(this);
         onoff.setText(resources.getString("s_media_enabled"));
         onoff.setChecked(MediaTable.auth_accepted_e);
-        onoff.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sp.edit().putBoolean("aa_snd_e", isChecked).commit();
-            MediaTable.forceUpdate();
+        onoff.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("aa_snd_e", isChecked).commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button select = new Button(this);
         resources.attachButtonStyle(select);
         select.setText(resources.getString("s_media_file"));
-        select.setOnClickListener(arg0 -> startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 1));
+        select.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 1);
+            }
+        });
         Button standard = new Button(this);
         resources.attachButtonStyle(standard);
         standard.setText(resources.getString("s_media_std"));
-        standard.setOnClickListener(arg0 -> {
-            sp.edit().putString("aa_snd", "$*INTERNAL*$").commit();
-            MediaTable.forceUpdate();
+        standard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sp.edit().putString("aa_snd", "$*INTERNAL*$").commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button preview = new Button(this);
         resources.attachButtonStyle(preview);
         preview.setText(resources.getString("s_media_listen"));
-        preview.setOnClickListener(v -> service.playEvent(1));
+        preview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                service.playEvent(1);
+            }
+        });
         LinearLayout panel = new LinearLayout(this);
         panel.setOrientation(LinearLayout.HORIZONTAL);
         panel.addView(select);
@@ -147,25 +165,41 @@ public class MediaManagerActivity extends Activity {
         CheckBox onoff1 = new CheckBox(this);
         onoff1.setText(resources.getString("s_media_enabled"));
         onoff1.setChecked(MediaTable.auth_denied_e);
-        onoff1.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sp.edit().putBoolean("ad_snd_e", isChecked).commit();
-            MediaTable.forceUpdate();
+        onoff1.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("ad_snd_e", isChecked).commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button select1 = new Button(this);
         resources.attachButtonStyle(select1);
         select1.setText(resources.getString("s_media_file"));
-        select1.setOnClickListener(arg0 -> startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 2));
+        select1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 2);
+            }
+        });
         Button standard1 = new Button(this);
         resources.attachButtonStyle(standard1);
         standard1.setText(resources.getString("s_media_std"));
-        standard1.setOnClickListener(arg0 -> {
-            sp.edit().putString("ad_snd", "$*INTERNAL*$").commit();
-            MediaTable.forceUpdate();
+        standard1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sp.edit().putString("ad_snd", "$*INTERNAL*$").commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button preview1 = new Button(this);
         resources.attachButtonStyle(preview1);
         preview1.setText(resources.getString("s_media_listen"));
-        preview1.setOnClickListener(v -> service.playEvent(2));
+        preview1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                service.playEvent(2);
+            }
+        });
         LinearLayout panel1 = new LinearLayout(this);
         panel1.setOrientation(LinearLayout.HORIZONTAL);
         panel1.addView(select1);
@@ -190,25 +224,41 @@ public class MediaManagerActivity extends Activity {
         CheckBox onoff2 = new CheckBox(this);
         onoff2.setText(resources.getString("s_media_enabled"));
         onoff2.setChecked(MediaTable.auth_req_e);
-        onoff2.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sp.edit().putBoolean("ar_snd_e", isChecked).commit();
-            MediaTable.forceUpdate();
+        onoff2.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("ar_snd_e", isChecked).commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button select2 = new Button(this);
         resources.attachButtonStyle(select2);
         select2.setText(resources.getString("s_media_file"));
-        select2.setOnClickListener(arg0 -> startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 3));
+        select2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 3);
+            }
+        });
         Button standard2 = new Button(this);
         resources.attachButtonStyle(standard2);
         standard2.setText(resources.getString("s_media_std"));
-        standard2.setOnClickListener(arg0 -> {
-            sp.edit().putString("ar_snd", "$*INTERNAL*$").commit();
-            MediaTable.forceUpdate();
+        standard2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sp.edit().putString("ar_snd", "$*INTERNAL*$").commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button preview2 = new Button(this);
         resources.attachButtonStyle(preview2);
         preview2.setText(resources.getString("s_media_listen"));
-        preview2.setOnClickListener(v -> service.playEvent(3));
+        preview2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                service.playEvent(3);
+            }
+        });
         LinearLayout panel2 = new LinearLayout(this);
         panel2.setOrientation(LinearLayout.HORIZONTAL);
         panel2.addView(select2);
@@ -233,25 +283,41 @@ public class MediaManagerActivity extends Activity {
         CheckBox onoff3 = new CheckBox(this);
         onoff3.setText(resources.getString("s_media_enabled"));
         onoff3.setChecked(MediaTable.contact_in_e);
-        onoff3.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sp.edit().putBoolean("ci_snd_e", isChecked).commit();
-            MediaTable.forceUpdate();
+        onoff3.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("ci_snd_e", isChecked).commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button select3 = new Button(this);
         resources.attachButtonStyle(select3);
         select3.setText(resources.getString("s_media_file"));
-        select3.setOnClickListener(arg0 -> startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 4));
+        select3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 4);
+            }
+        });
         Button standard3 = new Button(this);
         resources.attachButtonStyle(standard3);
         standard3.setText(resources.getString("s_media_std"));
-        standard3.setOnClickListener(arg0 -> {
-            sp.edit().putString("ci_snd", "$*INTERNAL*$").commit();
-            MediaTable.forceUpdate();
+        standard3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sp.edit().putString("ci_snd", "$*INTERNAL*$").commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button preview3 = new Button(this);
         resources.attachButtonStyle(preview3);
         preview3.setText(resources.getString("s_media_listen"));
-        preview3.setOnClickListener(v -> service.playEvent(4));
+        preview3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                service.playEvent(4);
+            }
+        });
         LinearLayout panel3 = new LinearLayout(this);
         panel3.setOrientation(LinearLayout.HORIZONTAL);
         panel3.addView(select3);
@@ -276,25 +342,41 @@ public class MediaManagerActivity extends Activity {
         CheckBox onoff4 = new CheckBox(this);
         onoff4.setText(resources.getString("s_media_enabled"));
         onoff4.setChecked(MediaTable.contact_out_e);
-        onoff4.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sp.edit().putBoolean("co_snd_e", isChecked).commit();
-            MediaTable.forceUpdate();
+        onoff4.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("co_snd_e", isChecked).commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button select4 = new Button(this);
         resources.attachButtonStyle(select4);
         select4.setText(resources.getString("s_media_file"));
-        select4.setOnClickListener(arg0 -> startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 5));
+        select4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 5);
+            }
+        });
         Button standard4 = new Button(this);
         resources.attachButtonStyle(standard4);
         standard4.setText(resources.getString("s_media_std"));
-        standard4.setOnClickListener(arg0 -> {
-            sp.edit().putString("co_snd", "$*INTERNAL*$").commit();
-            MediaTable.forceUpdate();
+        standard4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sp.edit().putString("co_snd", "$*INTERNAL*$").commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button preview4 = new Button(this);
         resources.attachButtonStyle(preview4);
         preview4.setText(resources.getString("s_media_listen"));
-        preview4.setOnClickListener(v -> service.playEvent(5));
+        preview4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                service.playEvent(5);
+            }
+        });
         LinearLayout panel4 = new LinearLayout(this);
         panel4.setOrientation(LinearLayout.HORIZONTAL);
         panel4.addView(select4);
@@ -319,25 +401,41 @@ public class MediaManagerActivity extends Activity {
         CheckBox onoff5 = new CheckBox(this);
         onoff5.setText(resources.getString("s_media_enabled"));
         onoff5.setChecked(MediaTable.inc_file_e);
-        onoff5.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sp.edit().putBoolean("if_snd_e", isChecked).commit();
-            MediaTable.forceUpdate();
+        onoff5.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("if_snd_e", isChecked).commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button select5 = new Button(this);
         resources.attachButtonStyle(select5);
         select5.setText(resources.getString("s_media_file"));
-        select5.setOnClickListener(arg0 -> startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 6));
+        select5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 6);
+            }
+        });
         Button standard5 = new Button(this);
         resources.attachButtonStyle(standard5);
         standard5.setText(resources.getString("s_media_std"));
-        standard5.setOnClickListener(arg0 -> {
-            sp.edit().putString("if_snd", "$*INTERNAL*$").commit();
-            MediaTable.forceUpdate();
+        standard5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sp.edit().putString("if_snd", "$*INTERNAL*$").commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button preview5 = new Button(this);
         resources.attachButtonStyle(preview5);
         preview5.setText(resources.getString("s_media_listen"));
-        preview5.setOnClickListener(v -> service.playEvent(6));
+        preview5.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                service.playEvent(6);
+            }
+        });
         LinearLayout panel5 = new LinearLayout(this);
         panel5.setOrientation(LinearLayout.HORIZONTAL);
         panel5.addView(select5);
@@ -362,25 +460,41 @@ public class MediaManagerActivity extends Activity {
         CheckBox onoff6 = new CheckBox(this);
         onoff6.setText(resources.getString("s_media_enabled"));
         onoff6.setChecked(MediaTable.inc_msg_e);
-        onoff6.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sp.edit().putBoolean("im_snd_e", isChecked).commit();
-            MediaTable.forceUpdate();
+        onoff6.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("im_snd_e", isChecked).commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button select6 = new Button(this);
         resources.attachButtonStyle(select6);
         select6.setText(resources.getString("s_media_file"));
-        select6.setOnClickListener(arg0 -> startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 0));
+        select6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 0);
+            }
+        });
         Button standard6 = new Button(this);
         resources.attachButtonStyle(standard6);
         standard6.setText(resources.getString("s_media_std"));
-        standard6.setOnClickListener(arg0 -> {
-            sp.edit().putString("im_snd", "$*INTERNAL*$").commit();
-            MediaTable.forceUpdate();
+        standard6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sp.edit().putString("im_snd", "$*INTERNAL*$").commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button preview6 = new Button(this);
         resources.attachButtonStyle(preview6);
         preview6.setText(resources.getString("s_media_listen"));
-        preview6.setOnClickListener(v -> service.playEvent(0));
+        preview6.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                service.playEvent(0);
+            }
+        });
         LinearLayout panel6 = new LinearLayout(this);
         panel6.setOrientation(LinearLayout.HORIZONTAL);
         panel6.addView(select6);
@@ -405,25 +519,41 @@ public class MediaManagerActivity extends Activity {
         CheckBox onoff7 = new CheckBox(this);
         onoff7.setText(resources.getString("s_media_enabled"));
         onoff7.setChecked(MediaTable.out_msg_e);
-        onoff7.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sp.edit().putBoolean("om_snd_e", isChecked).commit();
-            MediaTable.forceUpdate();
+        onoff7.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("om_snd_e", isChecked).commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button select7 = new Button(this);
         resources.attachButtonStyle(select7);
         select7.setText(resources.getString("s_media_file"));
-        select7.setOnClickListener(arg0 -> startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 7));
+        select7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 7);
+            }
+        });
         Button standard7 = new Button(this);
         resources.attachButtonStyle(standard7);
         standard7.setText(resources.getString("s_media_std"));
-        standard7.setOnClickListener(arg0 -> {
-            sp.edit().putString("om_snd", "$*INTERNAL*$").commit();
-            MediaTable.forceUpdate();
+        standard7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sp.edit().putString("om_snd", "$*INTERNAL*$").commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button preview7 = new Button(this);
         resources.attachButtonStyle(preview7);
         preview7.setText(resources.getString("s_media_listen"));
-        preview7.setOnClickListener(v -> service.playEvent(7));
+        preview7.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                service.playEvent(7);
+            }
+        });
         LinearLayout panel7 = new LinearLayout(this);
         panel7.setOrientation(LinearLayout.HORIZONTAL);
         panel7.addView(select7);
@@ -448,25 +578,41 @@ public class MediaManagerActivity extends Activity {
         CheckBox onoff8 = new CheckBox(this);
         onoff8.setText(resources.getString("s_media_enabled"));
         onoff8.setChecked(MediaTable.transfer_rejected_e);
-        onoff8.setOnCheckedChangeListener((buttonView, isChecked) -> {
-            sp.edit().putBoolean("tr_snd_e", isChecked).commit();
-            MediaTable.forceUpdate();
+        onoff8.setOnCheckedChangeListener(new CheckBox.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                sp.edit().putBoolean("tr_snd_e", isChecked).commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button select8 = new Button(this);
         resources.attachButtonStyle(select8);
         select8.setText(resources.getString("s_media_file"));
-        select8.setOnClickListener(arg0 -> startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 8));
+        select8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                startActivityForResult(new Intent(resources.ctx, FileBrowserActivity.class), 8);
+            }
+        });
         Button standard8 = new Button(this);
         resources.attachButtonStyle(standard8);
         standard8.setText(resources.getString("s_media_std"));
-        standard8.setOnClickListener(arg0 -> {
-            sp.edit().putString("tr_snd", "$*INTERNAL*$").commit();
-            MediaTable.forceUpdate();
+        standard8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View arg0) {
+                sp.edit().putString("tr_snd", "$*INTERNAL*$").commit();
+                MediaTable.forceUpdate();
+            }
         });
         Button preview8 = new Button(this);
         resources.attachButtonStyle(preview8);
         preview8.setText(resources.getString("s_media_listen"));
-        preview8.setOnClickListener(v -> service.playEvent(8));
+        preview8.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                service.playEvent(8);
+            }
+        });
         LinearLayout panel8 = new LinearLayout(this);
         panel8.setOrientation(LinearLayout.HORIZONTAL);
         panel8.addView(select8);
