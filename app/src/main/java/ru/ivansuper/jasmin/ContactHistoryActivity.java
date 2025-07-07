@@ -15,7 +15,6 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,8 +50,10 @@ public class ContactHistoryActivity extends Activity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        //noinspection deprecation
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
+        //noinspection DataFlowIssue
         switch (wallpaper_type) {
             case "0":
                 setTheme(R.style.WallpaperNoTitleTheme);
@@ -80,9 +81,7 @@ public class ContactHistoryActivity extends Activity {
         if (event.getAction() == 0) {
             switch (code) {
                 case 82:
-                    //noinspection deprecation
                     removeDialog(1);
-                    //noinspection deprecation
                     showDialog(1);
                     return true;
                 case 4:
@@ -94,9 +93,9 @@ public class ContactHistoryActivity extends Activity {
     }
 
     private void initViews() {
-        nickname = (TextView) findViewById(R.id.history_wnd_nickname);
+        nickname = findViewById(R.id.history_wnd_nickname);
         resources.attachChatTopPanel(findViewById(R.id.history_header_layout));
-        EditText search_input = (EditText) findViewById(R.id.search_input);
+        EditText search_input = findViewById(R.id.search_input);
         resources.attachEditText(search_input);
         search_input.addTextChangedListener(new TextWatcher() {
             @Override
@@ -110,14 +109,16 @@ public class ContactHistoryActivity extends Activity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {}
         });
-        messagesList = (ListView) findViewById(R.id.history_wnd_msglist);
+        messagesList = findViewById(R.id.history_wnd_msglist);
         messagesList.setSelector(resources.getListSelector());
+        //noinspection deprecation
         if (!PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("ms_use_shadow", true)) {
             messagesList.setBackgroundColor(0);
         }
         if (!PreferenceTable.chat_dividers) {
             messagesList.setDivider(null);
         }
+        //noinspection deprecation
         if (PreferenceManager.getDefaultSharedPreferences(this).getBoolean("ms_use_solid_wallpaper", false)) {
             resources.attachChatMessagesBack(messagesList);
         }
@@ -201,10 +202,13 @@ public class ContactHistoryActivity extends Activity {
                         mcontact.loadHistory(temp);
                         break;
                 }
-                Runnable r = () -> {
-                    progress.dismiss();
-                    adp = new HistoryAdapter(ContactHistoryActivity.this, temp);
-                    messagesList.setAdapter((ListAdapter) adp);
+                Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        progress.dismiss();
+                        adp = new HistoryAdapter(ContactHistoryActivity.this, temp);
+                        messagesList.setAdapter(adp);
+                    }
                 };
                 service.runOnUi(r);
             }
@@ -246,29 +250,32 @@ public class ContactHistoryActivity extends Activity {
             adp.put(resources.getString("s_turn_off_multiquote"), 2);
         }
         //noinspection UnnecessaryLocalVariable
-        Dialog ad = DialogBuilder.createWithNoHeader(this, adp, 48, (arg0, arg1, arg2, arg3) -> {
-            int idx = (int) adp.getItemId(arg2);
-            removeDialog(1);
-            switch (idx) {
-                case 1:
-                    ContactHistoryActivity.multiquoting = true;
-                    messagesList.setItemsCanFocus(false);
-                    adp.notifyDataSetChanged();
-                    return;
-                case 2:
-                    ContactHistoryActivity.multiquoting = false;
-                    messagesList.setItemsCanFocus(true);
-                    resetSelection();
-                    adp.notifyDataSetChanged();
-                    return;
-                case 3:
-                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    cm.setText(computeMultiQuote());
-                    Toast msg = Toast.makeText(service, resources.getString("s_copied"), Toast.LENGTH_SHORT);
-                    msg.setGravity(48, 0, 0);
-                    msg.show();
-                    return;
-                default:
+        Dialog ad = DialogBuilder.createWithNoHeader(this, adp, 48, new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                int idx = (int) adp.getItemId(i);
+                removeDialog(1);
+                switch (idx) {
+                    case 1:
+                        ContactHistoryActivity.multiquoting = true;
+                        messagesList.setItemsCanFocus(false);
+                        adp.notifyDataSetChanged();
+                        return;
+                    case 2:
+                        ContactHistoryActivity.multiquoting = false;
+                        messagesList.setItemsCanFocus(true);
+                        resetSelection();
+                        adp.notifyDataSetChanged();
+                        return;
+                    case 3:
+                        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        cm.setText(computeMultiQuote());
+                        Toast msg = Toast.makeText(service, resources.getString("s_copied"), Toast.LENGTH_SHORT);
+                        msg.setGravity(48, 0, 0);
+                        msg.show();
+                        return;
+                    default:
+                }
             }
         });
         return ad;
@@ -324,7 +331,6 @@ public class ContactHistoryActivity extends Activity {
         public boolean onItemLongClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
             HistoryAdapter adp = (HistoryAdapter) arg0.getAdapter();
             HistoryItem item = adp.getItem(arg2);
-            //noinspection deprecation
             ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
             //noinspection deprecation
             cm.setText(item.formattedDate + ":\n" + item.message);

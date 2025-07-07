@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -59,7 +58,6 @@ public class ColorEditorActivity extends Activity {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     protected Dialog onCreateDialog(int type) {
         if (type != 0) {
@@ -75,21 +73,24 @@ public class ColorEditorActivity extends Activity {
             adp.put("Экспорт (/Jasmine/colors.cfg)", 2);
         }
         //noinspection UnnecessaryLocalVariable
-        Dialog ad = DialogBuilder.createWithNoHeader(this, adp, 48, (arg0, arg1, arg2, arg3) -> {
-            removeDialog(0);
-            switch (arg2) {
-                case 0:
-                    ColorScheme.setDefault();
-                    applyAndSave();
-                    return;
-                case 1:
-                    ColorScheme.fillFromExternalFile();
-                    applyAndSave();
-                    return;
-                case 2:
-                    ColorScheme.saveToExternalFile();
-                    return;
-                default:
+        Dialog ad = DialogBuilder.createWithNoHeader(this, adp, 48, new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                removeDialog(0);
+                switch (i) {
+                    case 0:
+                        ColorScheme.setDefault();
+                        applyAndSave();
+                        return;
+                    case 1:
+                        ColorScheme.fillFromExternalFile();
+                        applyAndSave();
+                        return;
+                    case 2:
+                        ColorScheme.saveToExternalFile();
+                        return;
+                    default:
+                }
             }
         });
         return ad;
@@ -97,15 +98,13 @@ public class ColorEditorActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        //noinspection deprecation
         removeDialog(0);
-        //noinspection deprecation
         showDialog(0);
         return false;
     }
 
     private void initViews() {
-        color_hex = (EditText) findViewById(R.id.color_editor_hex);
+        color_hex = findViewById(R.id.color_editor_hex);
         resources.attachEditText(color_hex);
         color_hex.addTextChangedListener(new TextWatcher() {
             @Override
@@ -125,26 +124,26 @@ public class ColorEditorActivity extends Activity {
                 }
             }
         });
-        colors = (ListView) findViewById(R.id.color_editor_list);
+        colors = findViewById(R.id.color_editor_list);
         colors.setSelector(resources.getListSelector());
-        colors.setAdapter((ListAdapter) new ColorsAdapter(this));
+        colors.setAdapter(new ColorsAdapter(this));
         colors.setOnItemClickListener(new ColorListListener());
-        selector = (LinearLayout) findViewById(R.id.color_editor_selector);
-        preview = (ImageView) findViewById(R.id.color_editor_dialog_preview);
-        alpha = (SeekBar) findViewById(R.id.color_editor_dialog_alpha);
-        red = (SeekBar) findViewById(R.id.color_editor_dialog_red);
-        green = (SeekBar) findViewById(R.id.color_editor_dialog_green);
-        blue = (SeekBar) findViewById(R.id.color_editor_dialog_blue);
+        selector = findViewById(R.id.color_editor_selector);
+        preview = findViewById(R.id.color_editor_dialog_preview);
+        alpha = findViewById(R.id.color_editor_dialog_alpha);
+        red = findViewById(R.id.color_editor_dialog_red);
+        green = findViewById(R.id.color_editor_dialog_green);
+        blue = findViewById(R.id.color_editor_dialog_blue);
         alpha.setOnSeekBarChangeListener(new SeekListener());
         red.setOnSeekBarChangeListener(new SeekListener());
         green.setOnSeekBarChangeListener(new SeekListener());
         blue.setOnSeekBarChangeListener(new SeekListener());
         preview.setBackgroundColor(getColorFromBars());
-        apply = (Button) findViewById(R.id.color_editor_dialog_apply);
+        apply = findViewById(R.id.color_editor_dialog_apply);
         resources.attachButtonStyle(apply);
         apply.setText(resources.getString("s_apply"));
         apply.setOnClickListener(new ApplyListener());
-        cancel = (Button) findViewById(R.id.color_editor_dialog_cancel);
+        cancel = findViewById(R.id.color_editor_dialog_cancel);
         resources.attachButtonStyle(cancel);
         cancel.setText(resources.getString("s_cancel"));
         cancel.setOnClickListener(new CancelListener());

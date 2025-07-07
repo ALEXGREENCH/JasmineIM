@@ -1,5 +1,6 @@
 package ru.ivansuper.jasmin;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -17,6 +18,7 @@ import ru.ivansuper.jasmin.animate_tools.Movie;
 import ru.ivansuper.jasmin.animate_tools.MySpan;
 
 public class SmileysManager {
+    @SuppressLint("StaticFieldLeak")
     private static Context ctx;
     public static boolean loading = false;
     public static int max_height = 1;
@@ -28,6 +30,7 @@ public class SmileysManager {
     public static Vector<String> tags = new Vector();
 
     public static void forceChangeScale() {
+        //noinspection deprecation
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
         int scaleValue = Integer.parseInt(preferences.getString("ms_smileys_scale", "3"));
 
@@ -82,7 +85,7 @@ public class SmileysManager {
                     break;
                 }
 
-                if (!utilities.isThereLinks(result, new int[]{startIdx, startIdx + tagLength})) {
+                if (!utilities.isThereLinks(result, startIdx, startIdx + tagLength)) {
                     String beforeTag = textString.substring(0, startIdx);
                     textString = textString.substring(startIdx + tagLength);
                     textString = beforeTag + plomb + textString;
@@ -133,6 +136,7 @@ public class SmileysManager {
         File smileysDir = new File(resources.SD_PATH + "/Jasmine/Smileys");
 
         if (!smileysDir.isDirectory() || !smileysDir.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             smileysDir.mkdirs();
         }
     }
@@ -244,19 +248,24 @@ public class SmileysManager {
     }
 
     public static void loadPack() {
-        String smilePackPath = PreferenceManager.getDefaultSharedPreferences(ctx).getString("current_smileys_pack", "$*INTERNAL*$");
+        final String smilePackPath = PreferenceManager.getDefaultSharedPreferences(ctx).getString("current_smileys_pack", "$*INTERNAL*$");
 
-        Runnable loadRunnable = () -> {
-            try {
-                if (smilePackPath.equals("$*INTERNAL*$")) {
-                    SmileysManager.loadFromAssets();
-                } else {
-                    File packDirectory = new File(resources.SD_PATH, "Jasmine/Smileys/" + smilePackPath);
-                    SmileysManager.loadFromFile(packDirectory);
+        Runnable loadRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    //noinspection DataFlowIssue
+                    if (smilePackPath.equals("$*INTERNAL*$")) {
+                        SmileysManager.loadFromAssets();
+                    } else {
+                        File packDirectory = new File(resources.SD_PATH, "Jasmine/Smileys/" + smilePackPath);
+                        SmileysManager.loadFromFile(packDirectory);
+                    }
+                } catch (OutOfMemoryError e) {
+                    Log.e("SmileysManager", "====== SMILEYS PACK NOT LOADED! OUT OF MEMORY ERROR! ======");
+                    //noinspection CallToPrintStackTrace
+                    e.printStackTrace();
                 }
-            } catch (OutOfMemoryError e) {
-                Log.e("SmileysManager", "====== SMILEYS PACK NOT LOADED! OUT OF MEMORY ERROR! ======");
-                e.printStackTrace();
             }
         };
 

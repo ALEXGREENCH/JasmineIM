@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
@@ -21,12 +22,15 @@ public class CustomPopupWindow {
         this.anchor = anchor;
         this.window = new PopupWindow(anchor.getContext());
 
-        this.window.setTouchInterceptor((v, event) -> {
-            if (event.getAction() != 4) {
-                return false;
+        this.window.setTouchInterceptor(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() != 4) {
+                    return false;
+                }
+                CustomPopupWindow.this.dismiss();
+                return true;
             }
-            CustomPopupWindow.this.dismiss();
-            return true;
         });
         this.windowManager = (WindowManager) anchor.getContext().getSystemService(Context.WINDOW_SERVICE);
         onCreate();
@@ -44,7 +48,6 @@ public class CustomPopupWindow {
         }
         onShow();
         if (this.background == null) {
-            //noinspection deprecation
             this.window.setBackgroundDrawable(new BitmapDrawable());
         } else {
             this.window.setBackgroundDrawable(this.background);

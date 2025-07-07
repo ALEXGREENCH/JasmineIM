@@ -15,7 +15,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,8 +43,10 @@ public class BookmarksActivity extends Activity {
 
     @Override
     public void onCreate(Bundle bundle) {
+        //noinspection deprecation
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
+        //noinspection DataFlowIssue
         switch (wallpaper_type) {
             case "0":
                 setTheme(R.style.WallpaperNoTitleTheme);
@@ -82,7 +83,12 @@ public class BookmarksActivity extends Activity {
         mAdapter = PROFILE.bookmarks.mAdapter;
         mList.setAdapter(mAdapter);
         mList.setOnItemClickListener(new AnonymousClass1());
-        PROFILE.bookmarks.listener = () -> progress.dismiss();
+        PROFILE.bookmarks.listener = new BookmarkList.OnResultListener() {
+            @Override
+            public void OnResult() {
+                progress.dismiss();
+            }
+        };
         PROFILE.bookmarks.performRequest();
         progress.show();
     }
@@ -172,19 +178,22 @@ public class BookmarksActivity extends Activity {
                                 data.setHint(Locale.getString("s_bookmark_url"));
                                 break;
                         }
-                        spinner.listener = (selected_labels, selected_vals) -> {
-                            if (selected_vals[0].equals("0")) {
-                                nick.setVisibility(View.VISIBLE);
-                                pass.setVisibility(View.VISIBLE);
-                                auto.setVisibility(View.VISIBLE);
-                                data.setHint(Locale.getString("s_bookmark_conf_jid"));
-                                mode = 0;
-                            } else if (selected_vals[0].equals("1")) {
-                                nick.setVisibility(View.GONE);
-                                pass.setVisibility(View.GONE);
-                                auto.setVisibility(View.GONE);
-                                data.setHint(Locale.getString("s_bookmark_url"));
-                                mode = 1;
+                        spinner.listener = new Spinner.OnSelectListener() {
+                            @Override
+                            public void OnSelect(String[] selected_labels, String[] selected_vals) {
+                                if (selected_vals[0].equals("0")) {
+                                    nick.setVisibility(View.VISIBLE);
+                                    pass.setVisibility(View.VISIBLE);
+                                    auto.setVisibility(View.VISIBLE);
+                                    data.setHint(Locale.getString("s_bookmark_conf_jid"));
+                                    mode = 0;
+                                } else if (selected_vals[0].equals("1")) {
+                                    nick.setVisibility(View.GONE);
+                                    pass.setVisibility(View.GONE);
+                                    auto.setVisibility(View.GONE);
+                                    data.setHint(Locale.getString("s_bookmark_url"));
+                                    mode = 1;
+                                }
                             }
                         };
                         BookmarksActivity bookmarksActivity = BookmarksActivity.this;
@@ -192,29 +201,37 @@ public class BookmarksActivity extends Activity {
                         String string2 = Locale.getString("s_ok");
                         String string3 = Locale.getString("s_cancel");
                         final BookmarkItem bookmarkItem = val$item;
-                        d_ = DialogBuilder.createYesNo(bookmarksActivity, lay, 0, string, string2, string3, v -> {
-                            String n = name.getText().toString().trim();
-                            String d = data.getText().toString().trim().toLowerCase();
-                            if (n.length() != 0 && d.length() != 0) {
-                                bookmarkItem.NAME = n;
-                                bookmarkItem.JID_OR_URL = d;
-                                bookmarkItem.autojoin = auto.isChecked();
-                                bookmarkItem.type = mode;
-                                if (mode == 0) {
-                                    String nick_ = nick.getText().toString().trim();
-                                    String pass_ = pass.getText().toString().trim();
-                                    if (nick_.length() > 0) {
-                                        bookmarkItem.nick = nick_;
+                        d_ = DialogBuilder.createYesNo(bookmarksActivity, lay, 0, string, string2, string3, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String n = name.getText().toString().trim();
+                                String d = data.getText().toString().trim().toLowerCase();
+                                if (!n.isEmpty() && !d.isEmpty()) {
+                                    bookmarkItem.NAME = n;
+                                    bookmarkItem.JID_OR_URL = d;
+                                    bookmarkItem.autojoin = auto.isChecked();
+                                    bookmarkItem.type = mode;
+                                    if (mode == 0) {
+                                        String nick_ = nick.getText().toString().trim();
+                                        String pass_ = pass.getText().toString().trim();
+                                        if (!nick_.isEmpty()) {
+                                            bookmarkItem.nick = nick_;
+                                        }
+                                        if (!pass_.isEmpty()) {
+                                            bookmarkItem.password = pass_;
+                                        }
                                     }
-                                    if (pass_.length() > 0) {
-                                        bookmarkItem.password = pass_;
-                                    }
+                                    PROFILE.bookmarks.update();
+                                    d_.dismiss();
+                                    progress.show();
                                 }
-                                PROFILE.bookmarks.update();
-                                d_.dismiss();
-                                progress.show();
                             }
-                        }, v -> d_.dismiss());
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                d_.dismiss();
+                            }
+                        });
                         d_.show();
                         return;
                     case 1:
@@ -224,11 +241,19 @@ public class BookmarksActivity extends Activity {
                         String string6 = Locale.getString("s_yes");
                         String string7 = Locale.getString("s_no");
                         final BookmarkItem bookmarkItem2 = val$item;
-                        sure = DialogBuilder.createYesNo(bookmarksActivity2, 0, string4, string5, string6, string7, v -> {
-                            sure.dismiss();
-                            PROFILE.bookmarks.remove(bookmarkItem2);
-                            progress.show();
-                        }, v -> sure.dismiss());
+                        sure = DialogBuilder.createYesNo(bookmarksActivity2, 0, string4, string5, string6, string7, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                sure.dismiss();
+                                PROFILE.bookmarks.remove(bookmarkItem2);
+                                progress.show();
+                            }
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                sure.dismiss();
+                            }
+                        });
                         sure.show();
                         return;
                     case 2:
@@ -240,12 +265,12 @@ public class BookmarksActivity extends Activity {
                         if (val$item.JID_OR_URL != null) {
                             d = val$item.JID_OR_URL;
                         }
-                        if (n.length() == 0 || d.length() == 0 || d.split("@").length != 2) {
+                        if (n.isEmpty() || d.isEmpty() || d.split("@").length != 2) {
                             Toast.makeText(BookmarksActivity.this, Locale.getString("s_conf_join_error"), Toast.LENGTH_SHORT).show();
                             return;
                         }
                         String nick_ = PROFILE.ID;
-                        if (val$item.nick != null && val$item.nick.length() > 0) {
+                        if (val$item.nick != null && !val$item.nick.isEmpty()) {
                             nick_ = val$item.nick;
                         }
                         String pass_ = "";
@@ -265,11 +290,11 @@ public class BookmarksActivity extends Activity {
                             return;
                         }
                         String name_ = JProtocol.getNameFromFullID(jid);
-                        if (val$item.NAME != null && val$item.NAME.length() > 0) {
+                        if (val$item.NAME != null && !val$item.NAME.isEmpty()) {
                             name_ = val$item.NAME;
                         }
                         String nick_2 = PROFILE.ID;
-                        if (val$item.nick != null && val$item.nick.length() > 0) {
+                        if (val$item.nick != null && !val$item.nick.isEmpty()) {
                             nick_2 = val$item.nick;
                         }
                         String pass_2 = "";
@@ -290,7 +315,6 @@ public class BookmarksActivity extends Activity {
                         startActivity(intent);
                         return;
                     case 5:
-                        //noinspection deprecation
                         ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
                         //noinspection deprecation
                         cm.setText(val$item.JID_OR_URL);
@@ -344,49 +368,60 @@ public class BookmarksActivity extends Activity {
             pass.setHint(Locale.getString("s_bookmark_pass"));
             final CheckBox auto = lay.findViewById(R.id.bookmark_autojoin);
             auto.setText(Locale.getString("s_bookmark_autojoin"));
-            spinner.listener = (selected_labels, selected_vals) -> {
-                if (selected_vals[0].equals("0")) {
-                    nick.setVisibility(View.VISIBLE);
-                    pass.setVisibility(View.VISIBLE);
-                    auto.setVisibility(View.VISIBLE);
-                    data.setHint(Locale.getString("s_bookmark_conf_jid"));
-                    mode = 0;
-                } else if (selected_vals[0].equals("1")) {
-                    nick.setVisibility(View.GONE);
-                    pass.setVisibility(View.GONE);
-                    auto.setVisibility(View.GONE);
-                    data.setHint(Locale.getString("s_bookmark_url"));
-                    mode = 1;
+            spinner.listener = new Spinner.OnSelectListener() {
+                @Override
+                public void OnSelect(String[] selected_labels, String[] selected_vals) {
+                    if (selected_vals[0].equals("0")) {
+                        nick.setVisibility(View.VISIBLE);
+                        pass.setVisibility(View.VISIBLE);
+                        auto.setVisibility(View.VISIBLE);
+                        data.setHint(Locale.getString("s_bookmark_conf_jid"));
+                        mode = 0;
+                    } else if (selected_vals[0].equals("1")) {
+                        nick.setVisibility(View.GONE);
+                        pass.setVisibility(View.GONE);
+                        auto.setVisibility(View.GONE);
+                        data.setHint(Locale.getString("s_bookmark_url"));
+                        mode = 1;
+                    }
                 }
             };
-            d = DialogBuilder.createYesNo(BookmarksActivity.this, lay, 0, Locale.getString("s_do_add"), Locale.getString("s_ok"), Locale.getString("s_cancel"), v2 -> {
-                String n = name.getText().toString().trim();
-                String d_ = data.getText().toString().trim().toLowerCase();
-                if (n.length() != 0 && d_.length() != 0) {
-                    BookmarkItem item = new BookmarkItem();
-                    item.NAME = n;
-                    item.JID_OR_URL = d_;
-                    if (PROFILE.bookmarks.itIsExist(item)) {
-                        Toast.makeText(BookmarksActivity.this, Locale.getString("s_bookmark_already_exist"), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    item.autojoin = auto.isChecked();
-                    if (mode == 0) {
-                        String nick_ = nick.getText().toString().trim();
-                        String pass_ = pass.getText().toString().trim();
-                        if (nick_.length() > 0) {
-                            item.nick = nick_;
+            d = DialogBuilder.createYesNo(BookmarksActivity.this, lay, 0, Locale.getString("s_do_add"), Locale.getString("s_ok"), Locale.getString("s_cancel"), new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String n = name.getText().toString().trim();
+                    String d_ = data.getText().toString().trim().toLowerCase();
+                    if (!n.isEmpty() && !d_.isEmpty()) {
+                        BookmarkItem item = new BookmarkItem();
+                        item.NAME = n;
+                        item.JID_OR_URL = d_;
+                        if (PROFILE.bookmarks.itIsExist(item)) {
+                            Toast.makeText(BookmarksActivity.this, Locale.getString("s_bookmark_already_exist"), Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                        if (pass_.length() > 0) {
-                            item.password = pass_;
+                        item.autojoin = auto.isChecked();
+                        if (mode == 0) {
+                            String nick_ = nick.getText().toString().trim();
+                            String pass_ = pass.getText().toString().trim();
+                            if (!nick_.isEmpty()) {
+                                item.nick = nick_;
+                            }
+                            if (!pass_.isEmpty()) {
+                                item.password = pass_;
+                            }
                         }
+                        item.type = mode;
+                        PROFILE.bookmarks.add(item);
+                        d.dismiss();
+                        progress.show();
                     }
-                    item.type = mode;
-                    PROFILE.bookmarks.add(item);
-                    d.dismiss();
-                    progress.show();
                 }
-            }, v2 -> d.dismiss(), false);
+            }, new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    d.dismiss();
+                }
+            }, false);
             d.show();
         }
     }

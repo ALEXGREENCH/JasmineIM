@@ -10,6 +10,7 @@ import android.os.Message;
 import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -203,26 +204,34 @@ public class JConference extends Chat implements Handler.Callback {
                 count.setHint(resources.getString("s_clear_msgs_dialog_hint") + "(" + this.chatAdp.getCount() + ")");
                 count.setInputType(8194);
                 resources.attachEditText(count);
-                ad = DialogBuilder.createYesNo(this.ACTIVITY, count, 48, resources.getString("s_clear_messages"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    String cnt = count.getText().toString();
-                    if (cnt.isEmpty()) {
-                        cnt = String.valueOf(JConference.this.chatAdp.getCount());
-                    }
-                    try {
-                        int cnt_ = Integer.parseInt(cnt);
-                        if (cnt_ != 0) {
-                            if (cnt_ > JConference.this.chatAdp.getCount()) {
-                                cnt_ = JConference.this.chatAdp.getCount();
-                            }
-                            JConference.this.chatAdp.cutoff(cnt_);
-                            Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_messages_cleared"), Toast.LENGTH_SHORT).show();
-                            JConference.this.removeDialog(2);
+                ad = DialogBuilder.createYesNo(this.ACTIVITY, count, 48, resources.getString("s_clear_messages"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String cnt = count.getText().toString();
+                        if (cnt.isEmpty()) {
+                            cnt = String.valueOf(JConference.this.chatAdp.getCount());
                         }
-                    } catch (Exception e) {
-                        //noinspection CallToPrintStackTrace
-                        e.printStackTrace();
+                        try {
+                            int cnt_ = Integer.parseInt(cnt);
+                            if (cnt_ != 0) {
+                                if (cnt_ > JConference.this.chatAdp.getCount()) {
+                                    cnt_ = JConference.this.chatAdp.getCount();
+                                }
+                                JConference.this.chatAdp.cutoff(cnt_);
+                                Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_messages_cleared"), Toast.LENGTH_SHORT).show();
+                                JConference.this.removeDialog(2);
+                            }
+                        } catch (Exception e) {
+                            //noinspection CallToPrintStackTrace
+                            e.printStackTrace();
+                        }
                     }
-                }, v -> JConference.this.removeDialog(2));
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        JConference.this.removeDialog(2);
+                    }
+                });
             }
             if (id == 3) {
                 UAdapter adp2 = new UAdapter();
@@ -250,11 +259,14 @@ public class JConference extends Chat implements Handler.Callback {
                 ad = DialogBuilder.createWithNoHeader(this.ACTIVITY, adp2, 48, new chatMenuListener(adp2));
             }
             if (id == 4) {
-                ad = DialogBuilder.createWithNoHeader(this.ACTIVITY, this.conf_users, 48, (arg0, arg1, arg2, arg3) -> {
-                    JConference.this.context_user = JConference.this.conf_users.getItem(arg2);
-                    JConference.this.removeDialog(4);
-                    JConference.this.removeDialog(6);
-                    JConference.this.showDialog(6);
+                ad = DialogBuilder.createWithNoHeader(this.ACTIVITY, this.conf_users, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        JConference.this.context_user = JConference.this.conf_users.getItem(i);
+                        JConference.this.removeDialog(4);
+                        JConference.this.removeDialog(6);
+                        JConference.this.showDialog(6);
+                    }
                 });
             }
             if (id == 5) {
@@ -265,17 +277,25 @@ public class JConference extends Chat implements Handler.Callback {
                 theme.setGravity(51);
                 resources.attachEditText(theme);
                 theme.setHint(resources.getString("s_set_theme_dialog_hint"));
-                ad = DialogBuilder.createYesNo(this.ACTIVITY, theme, 48, resources.getString("s_set_theme"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    String theme_ = theme.getText().toString();
-                    if (theme_.isEmpty()) {
-                        Toast toast = Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_set_theme_error"), Toast.LENGTH_SHORT);
-                        toast.setGravity(48, 0, 0);
-                        toast.show();
-                    } else {
-                        JConference.conference.setTheme(theme_);
+                ad = DialogBuilder.createYesNo(this.ACTIVITY, theme, 48, resources.getString("s_set_theme"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String theme_ = theme.getText().toString();
+                        if (theme_.isEmpty()) {
+                            Toast toast = Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_set_theme_error"), Toast.LENGTH_SHORT);
+                            toast.setGravity(48, 0, 0);
+                            toast.show();
+                        } else {
+                            JConference.conference.setTheme(theme_);
+                            JConference.this.removeDialog(5);
+                        }
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         JConference.this.removeDialog(5);
                     }
-                }, v -> JConference.this.removeDialog(5));
+                });
             }
             if (id == 6) {
                 UAdapter adp3 = new UAdapter();
@@ -397,90 +417,99 @@ public class JConference extends Chat implements Handler.Callback {
                         }
                         break;
                 }
-                ad = DialogBuilder.createWithNoHeader(this.ACTIVITY, adp3, 48, (arg0, arg1, arg2, arg3) -> {
-                    JConference.this.removeDialog(6);
-                    int id2 = (int) arg0.getAdapter().getItemId(arg2);
-                    JConference.this.checkAndRunIdentificatedTask(id2);
-                    switch (id2) {
-                        case 0:
-                            if (JConference.this.input.length() > 0) {
-                                JConference.this.input.append((JConference.this.input.getText().toString().endsWith(" ") ? "" : " ") + JConference.this.context_user.nick + " ");
-                            } else {
-                                JConference.this.input.append(JConference.this.context_user.nick + ": ");
-                            }
-                            break;
-                        case 1:
-                            JContact contact = JConference.conference.profile.createPMContainer(JConference.conference.JID + "/" + JConference.this.context_user.nick, JConference.conference);
-                            if (contact != null) {
-                                ((ContactListActivity) JConference.this.ACTIVITY).startFragmentChat(contact);
+                ad = DialogBuilder.createWithNoHeader(this.ACTIVITY, adp3, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        JConference.this.removeDialog(6);
+                        int id2 = (int) adapterView.getAdapter().getItemId(i);
+                        JConference.this.checkAndRunIdentificatedTask(id2);
+                        switch (id2) {
+                            case 0:
+                                if (JConference.this.input.length() > 0) {
+                                    JConference.this.input.append((JConference.this.input.getText().toString().endsWith(" ") ? "" : " ") + JConference.this.context_user.nick + " ");
+                                } else {
+                                    JConference.this.input.append(JConference.this.context_user.nick + ": ");
+                                }
                                 break;
-                            }
-                            break;
-                        case 2:
-                            JConference.conference.profile.doRequestInfoForDisplayRaw(JConference.conference.JID + "/" + JConference.this.context_user.nick);
-                            break;
-                        case 3:
-                            JConference.this.moderation_operation = 0;
-                            JConference.this.removeDialog(10);
-                            JConference.this.showDialog(10);
-                            break;
-                        case 4:
-                            JConference.this.moderation_operation = 1;
-                            JConference.this.removeDialog(10);
-                            JConference.this.showDialog(10);
-                            break;
-                        case 5:
-                            //noinspection deprecation
-                            ClipboardManager cm = (ClipboardManager) JConference.this.getSystemService("clipboard");
-                            //noinspection deprecation
-                            cm.setText(JConference.this.context_user.jid);
-                            Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
-                            break;
-                        case 6:
-                            final Dialog load_progress = DialogBuilder.createProgress(JConference.this.ACTIVITY, Locale.getString("s_getting_commands"), true);
-                            load_progress.show();
-                            Callback callback = list -> {
-                                load_progress.dismiss();
-                                if (list.isEmpty()) {
-                                    JConference.service.showMessageInContactList(Locale.getString("s_information"), Locale.getString("s_no_commands"));
-                                    return;
+                            case 1:
+                                JContact contact = JConference.conference.profile.createPMContainer(JConference.conference.JID + "/" + JConference.this.context_user.nick, JConference.conference);
+                                if (contact != null) {
+                                    ((ContactListActivity) JConference.this.ACTIVITY).startFragmentChat(contact);
+                                    break;
                                 }
-                                UAdapter adp4 = new UAdapter();
-                                adp4.setMode(2);
-                                adp4.setPadding(14);
-                                for (int i3 = 0; i3 < list.size(); i3++) {
-                                    CommandItem item = list.get(i3);
-                                    adp4.put(item.name, i3);
-                                }
-                                Dialog commands = DialogBuilder.createWithNoHeader(JConference.this.ACTIVITY, adp4, 0, (arg02, arg12, arg22, arg32) -> {
-                                    CommandItem item2 = list.get(arg22);
-                                    JConference.conference.profile.executeCommand(item2.jid, item2.node);
-                                });
-                                commands.show();
-                            };
-                            JConference.conference.profile.getCommandList(JConference.conference.JID + "/" + JConference.this.context_user.nick, callback);
-                            break;
-                        case 7:
-                            JConference.conference.setUserRole(JConference.this.context_user.nick, "visitor");
-                            break;
-                        case 8:
-                            JConference.conference.setUserRole(JConference.this.context_user.nick, "participant");
-                            break;
-                        case 9:
-                            JConference.conference.setUserRole(JConference.this.context_user.nick, "moderator");
-                            break;
-                        case 10:
-                            JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "none");
-                            break;
-                        case 11:
-                            JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "member");
-                            break;
-                        case 12:
-                            JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "admin");
-                            break;
-                        case 13:
-                            JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "owner");
-                            break;
+                                break;
+                            case 2:
+                                JConference.conference.profile.doRequestInfoForDisplayRaw(JConference.conference.JID + "/" + JConference.this.context_user.nick);
+                                break;
+                            case 3:
+                                JConference.this.moderation_operation = 0;
+                                JConference.this.removeDialog(10);
+                                JConference.this.showDialog(10);
+                                break;
+                            case 4:
+                                JConference.this.moderation_operation = 1;
+                                JConference.this.removeDialog(10);
+                                JConference.this.showDialog(10);
+                                break;
+                            case 5:
+                                //noinspection deprecation
+                                ClipboardManager cm = (ClipboardManager) JConference.this.getSystemService("clipboard");
+                                //noinspection deprecation
+                                cm.setText(JConference.this.context_user.jid);
+                                Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
+                                break;
+                            case 6:
+                                final Dialog load_progress = DialogBuilder.createProgress(JConference.this.ACTIVITY, Locale.getString("s_getting_commands"), true);
+                                load_progress.show();
+                                Callback callback = new Callback() {
+                                    @Override
+                                    public void onListLoaded(final Vector<CommandItem> list) {
+                                        load_progress.dismiss();
+                                        if (list.isEmpty()) {
+                                            JConference.service.showMessageInContactList(Locale.getString("s_information"), Locale.getString("s_no_commands"));
+                                            return;
+                                        }
+                                        UAdapter adp4 = new UAdapter();
+                                        adp4.setMode(2);
+                                        adp4.setPadding(14);
+                                        for (int i3 = 0; i3 < list.size(); i3++) {
+                                            CommandItem item = list.get(i3);
+                                            adp4.put(item.name, i3);
+                                        }
+                                        Dialog commands = DialogBuilder.createWithNoHeader(JConference.this.ACTIVITY, adp4, 0, new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                CommandItem item2 = list.get(i);
+                                                JConference.conference.profile.executeCommand(item2.jid, item2.node);
+                                            }
+                                        });
+                                        commands.show();
+                                    }
+                                };
+                                JConference.conference.profile.getCommandList(JConference.conference.JID + "/" + JConference.this.context_user.nick, callback);
+                                break;
+                            case 7:
+                                JConference.conference.setUserRole(JConference.this.context_user.nick, "visitor");
+                                break;
+                            case 8:
+                                JConference.conference.setUserRole(JConference.this.context_user.nick, "participant");
+                                break;
+                            case 9:
+                                JConference.conference.setUserRole(JConference.this.context_user.nick, "moderator");
+                                break;
+                            case 10:
+                                JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "none");
+                                break;
+                            case 11:
+                                JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "member");
+                                break;
+                            case 12:
+                                JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "admin");
+                                break;
+                            case 13:
+                                JConference.conference.setUserAffiliation(JConference.this.context_user.nick, "owner");
+                                break;
+                        }
                     }
                 });
             }
@@ -492,19 +521,41 @@ public class JConference extends Chat implements Handler.Callback {
                     vcard_avatar.setImageBitmap(this.vcard_to_display.avatar);
                 }
                 vcard_desc.setText(this.vcard_to_display.desc);
-                vcard_desc.setFilters(new InputFilter[]{(source, arg1, arg2, dest, dstart, dend) -> source.length() < 1 ? dest.subSequence(dstart, dend) : ""});
-                ad = DialogBuilder.createYesNo(this.ACTIVITY, vcard_lay, 48, resources.getString("s_user_vcard"), resources.getString("s_copy"), resources.getString("s_close"), v -> {
-                    //noinspection deprecation
-                    ClipboardManager cm = (ClipboardManager) JConference.this.getSystemService("clipboard");
-                    //noinspection deprecation
-                    cm.setText(JConference.this.vcard_to_display.desc);
-                    Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
-                    JConference.this.vcard_to_display = null;
-                    JConference.this.removeDialog(7);
-                }, v -> {
-                    JConference.this.vcard_to_display = null;
-                    JConference.this.removeDialog(7);
+                vcard_desc.setFilters(new InputFilter[]{
+                        new InputFilter() {
+                            @Override
+                            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                                return source.length() < 1 ? dest.subSequence(dstart, dend) : "";
+                            }
+                        }
                 });
+
+                ad = DialogBuilder.createYesNo(
+                        JConference.this.ACTIVITY,
+                        vcard_lay,
+                        48,
+                        resources.getString("s_user_vcard"),
+                        resources.getString("s_copy"),
+                        resources.getString("s_close"),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ClipboardManager cm = (ClipboardManager) JConference.this.getSystemService("clipboard");
+                                //noinspection deprecation
+                                cm.setText(JConference.this.vcard_to_display.desc);
+                                Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
+                                JConference.this.vcard_to_display = null;
+                                JConference.this.removeDialog(7);
+                            }
+                        },
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                JConference.this.vcard_to_display = null;
+                                JConference.this.removeDialog(7);
+                            }
+                        }
+                );
             }
             if (id == 9) {
                 final EditText nick = new EditText(this.ACTIVITY);
@@ -513,17 +564,35 @@ public class JConference extends Chat implements Handler.Callback {
                 nick.setMaxLines(1);
                 nick.setGravity(51);
                 resources.attachEditText(nick);
-                ad = DialogBuilder.createYesNo(this.ACTIVITY, nick, 48, resources.getString("s_change_nick"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    String nick_ = nick.getText().toString().trim();
-                    if (nick_.isEmpty()) {
-                        Toast toast = Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_change_nick_error"), Toast.LENGTH_SHORT);
-                        toast.setGravity(48, 0, 0);
-                        toast.show();
-                    } else {
-                        JConference.conference.updateNickname(nick_);
-                        JConference.this.removeDialog(9);
-                    }
-                }, v -> JConference.this.removeDialog(9));
+
+                ad = DialogBuilder.createYesNo(
+                        this.ACTIVITY,
+                        nick,
+                        48,
+                        resources.getString("s_change_nick"),
+                        resources.getString("s_ok"),
+                        resources.getString("s_cancel"),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String nick_ = nick.getText().toString().trim();
+                                if (nick_.isEmpty()) {
+                                    Toast toast = Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_change_nick_error"), Toast.LENGTH_SHORT);
+                                    toast.setGravity(48, 0, 0);
+                                    toast.show();
+                                } else {
+                                    JConference.conference.updateNickname(nick_);
+                                    JConference.this.removeDialog(9);
+                                }
+                            }
+                        },
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                JConference.this.removeDialog(9);
+                            }
+                        }
+                );
             }
             if (id == 10) {
                 final EditText input_ = new EditText(this.ACTIVITY);
@@ -532,18 +601,41 @@ public class JConference extends Chat implements Handler.Callback {
                 input_.setGravity(51);
                 resources.attachEditText(input_);
                 input_.setHint(resources.getString("s_reason_input"));
-                ad = DialogBuilder.createYesNo(this.ACTIVITY, input_, 48, resources.getString("s_moderation"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    String reason = input_.getText().toString().trim();
-                    if (JConference.this.moderation_operation == 0) {
-                        JConference.conference.kickUser(JConference.this.context_user, xml_utils.encodeString(reason));
-                    } else if (JConference.this.moderation_operation == 1) {
-                        JConference.conference.banUser(JConference.this.context_user, xml_utils.encodeString(reason));
-                    }
-                    JConference.this.removeDialog(10);
-                }, v -> JConference.this.removeDialog(10));
+
+                ad = DialogBuilder.createYesNo(
+                        this.ACTIVITY,
+                        input_,
+                        48,
+                        resources.getString("s_moderation"),
+                        resources.getString("s_ok"),
+                        resources.getString("s_cancel"),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                String reason = input_.getText().toString().trim();
+                                if (JConference.this.moderation_operation == 0) {
+                                    JConference.conference.kickUser(JConference.this.context_user, xml_utils.encodeString(reason));
+                                } else if (JConference.this.moderation_operation == 1) {
+                                    JConference.conference.banUser(JConference.this.context_user, xml_utils.encodeString(reason));
+                                }
+                                JConference.this.removeDialog(10);
+                            }
+                        },
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                JConference.this.removeDialog(10);
+                            }
+                        }
+                );
             }
             if (id == 8) {
-                ad = DialogBuilder.createOk(this.ACTIVITY, this.dialog_for_display.header, this.dialog_for_display.text, resources.getString("s_close"), 48, v -> JConference.this.removeDialog(8));
+                ad = DialogBuilder.createOk(this.ACTIVITY, this.dialog_for_display.header, this.dialog_for_display.text, resources.getString("s_close"), 48, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        JConference.this.removeDialog(8);
+                    }
+                });
             }
             return ad;
         }
@@ -665,21 +757,39 @@ public class JConference extends Chat implements Handler.Callback {
         // Список пользователей конференции
         this.conf_users = new ConfUsersAdapter(this.ACTIVITY, conference.users);
         this.userList.setAdapter(this.conf_users);
-        this.userList.setOnItemClickListener((parent, view, position, id) -> {
-            context_user = conf_users.getItem(position);
-            String append = input.length() > 0 && !input.getText().toString().endsWith(" ") ? " " : "";
-            input.append(append + context_user.nick + (input.length() == 0 ? ": " : " "));
+        this.userList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                context_user = conf_users.getItem(position);
+                String append = input.length() > 0 && !input.getText().toString().endsWith(" ") ? " " : "";
+                input.append(append + context_user.nick + (input.length() == 0 ? ": " : " "));
+            }
         });
-        this.userList.setOnItemLongClickListener((parent, view, position, id) -> {
-            context_user = conf_users.getItem(position);
-            removeDialog(4);
-            removeDialog(6);
-            showDialog(6);
-            return false;
+
+        this.userList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                context_user = conf_users.getItem(position);
+                removeDialog(4);
+                removeDialog(6);
+                showDialog(6);
+                return false;
+            }
         });
 
         // Callback обновления списка пользователей
-        conference.callback = () -> service.runOnUi(conf_users::notifyDataSetChanged);
+        conference.callback = new Conference.RefreshCallback() {
+            @Override
+            public void update() {
+                service.runOnUi(new Runnable() {
+                    @Override
+                    public void run() {
+                        conf_users.notifyDataSetChanged();
+                    }
+                });
+            }
+        };
+
         service.isAnyChatOpened = true;
 
         // Ник в верхней панели
@@ -705,9 +815,12 @@ public class JConference extends Chat implements Handler.Callback {
         input.setSelection(cursorPosition);
 
         if (PreferenceTable.auto_open_keyboard) {
-            service.runOnUi(() -> {
-                input.requestFocus();
-                input_manager.showSoftInput(input, 0);
+            service.runOnUi(new Runnable() {
+                @Override
+                public void run() {
+                    input.requestFocus();
+                    input_manager.showSoftInput(input, 0);
+                }
             }, 200L);
         }
 
@@ -753,7 +866,12 @@ public class JConference extends Chat implements Handler.Callback {
 
         // User toggle button
         mUsersToggleButton.setBackgroundColor(ColorScheme.divideAlpha(ColorScheme.getColor(48), 2));
-        mUsersToggleButton.setOnClickListener(v -> toggleUserlistVisibility(true));
+        mUsersToggleButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggleUserlistVisibility(true);
+            }
+        });
 
         // Nickname
         nickname.setTextColor(ColorScheme.getColor(12));
@@ -804,9 +922,12 @@ public class JConference extends Chat implements Handler.Callback {
         // Menu button
         resources.attachButtonStyle(menuButton);
         menuButton.setCompoundDrawables(resources.chat_menu_icon, null, null, null);
-        menuButton.setOnClickListener(v -> {
-            removeDialog(1);
-            showDialog(1);
+        menuButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeDialog(1);
+                showDialog(1);
+            }
         });
 
         // Send button
@@ -971,7 +1092,17 @@ public class JConference extends Chat implements Handler.Callback {
                 break;
             case SHOW_JABBER_FORM:
                 final Operation op = (Operation) msg.obj;
-                Dialog xform = DialogBuilder.createYesNo(this.ACTIVITY, op.form.form, 0, op.form.TITLE == null ? "Jabber form" : op.form.TITLE, Locale.getString("s_ok"), Locale.getString("s_cancel"), v -> op.profile.stream.write(op.compile(), op.profile), v -> op.profile.stream.write(op.compileCancel(), op.profile));
+                Dialog xform = DialogBuilder.createYesNo(this.ACTIVITY, op.form.form, 0, op.form.TITLE == null ? "Jabber form" : op.form.TITLE, Locale.getString("s_ok"), Locale.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        op.profile.stream.write(op.compile(), op.profile);
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        op.profile.stream.write(op.compileCancel(), op.profile);
+                    }
+                });
                 xform.show();
                 break;
             case BANNED_LIST_RECEIVED /* 400 */:

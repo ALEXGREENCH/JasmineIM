@@ -318,9 +318,12 @@ public class ICQChatActivity extends Chat {
         rebuildChatsMarkers();
         buildTransferField();
         if (PreferenceTable.auto_open_keyboard && !sliding) {
-            service.runOnUi(() -> {
-                ICQChatActivity.this.input.requestFocus();
-                ICQChatActivity.input_manager.showSoftInput(ICQChatActivity.this.input, 0);
+            service.runOnUi(new Runnable() {
+                @Override
+                public void run() {
+                    ICQChatActivity.this.input.requestFocus();
+                    ICQChatActivity.input_manager.showSoftInput(ICQChatActivity.this.input, 0);
+                }
             }, 200L);
         }
         if (this.init_callback != null) {
@@ -465,9 +468,12 @@ public class ICQChatActivity extends Chat {
         Button button = (Button) findViewById(R.id.chat_menu_btn);
         resources.attachButtonStyle(button);
         button.setCompoundDrawables(resources.chat_menu_icon, null, null, null);
-        button.setOnClickListener(v -> {
-            ICQChatActivity.this.removeDialog(1);
-            ICQChatActivity.this.showDialog(1);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ICQChatActivity.this.removeDialog(1);
+                ICQChatActivity.this.showDialog(1);
+            }
         });
         this.send = (Button) findViewById(R.id.send);
         this.send.setOnClickListener(new sndListener());
@@ -515,21 +521,27 @@ public class ICQChatActivity extends Chat {
         opened_chats_markers = (LinearLayout) findViewById(R.id.chat_chats_markers);
         opened_chats_markers.setVisibility(PreferenceTable.ms_show_markers_in_chat ? View.VISIBLE : View.GONE);
         Button button2 = (Button) findViewById(R.id.chat_scroll_left);
-        button2.setOnClickListener(arg0 -> {
-            Log.i("Scroller", "To right");
-            if (ICQChatActivity.service.opened_chats.size() < 2) {
-                ICQChatActivity.this.messageList.startAnimation(AnimationCalculator.calculateCancelAnimation(32.0f, ICQChatActivity.this.messageList.getWidth()));
-            } else {
-                ICQChatActivity.this.handleFling(true, 0.0f);
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("Scroller", "To right");
+                if (ICQChatActivity.service.opened_chats.size() < 2) {
+                    ICQChatActivity.this.messageList.startAnimation(AnimationCalculator.calculateCancelAnimation(32.0f, ICQChatActivity.this.messageList.getWidth()));
+                } else {
+                    ICQChatActivity.this.handleFling(true, 0.0f);
+                }
             }
         });
         Button button3 = (Button) findViewById(R.id.chat_scroll_right);
-        button3.setOnClickListener(arg0 -> {
-            Log.i("Scroller", "To left");
-            if (ICQChatActivity.service.opened_chats.size() < 2) {
-                ICQChatActivity.this.messageList.startAnimation(AnimationCalculator.calculateCancelAnimation(-32.0f, ICQChatActivity.this.messageList.getWidth()));
-            } else {
-                ICQChatActivity.this.handleFling(false, 0.0f);
+        button3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Log.i("Scroller", "To left");
+                if (ICQChatActivity.service.opened_chats.size() < 2) {
+                    ICQChatActivity.this.messageList.startAnimation(AnimationCalculator.calculateCancelAnimation(-32.0f, ICQChatActivity.this.messageList.getWidth()));
+                } else {
+                    ICQChatActivity.this.handleFling(false, 0.0f);
+                }
             }
         });
         if (this.sp.getBoolean("ms_scroll_arrows", false)) {
@@ -765,13 +777,23 @@ public class ICQChatActivity extends Chat {
         byte[] c = contact.transfer_cookie;
         if (c != null && (t = contact.profile.getTransfer(c)) != null) {
             field.setVisibility(View.VISIBLE);
-            decline.setOnClickListener(v -> ICQChatActivity.contact.profile.cancelTransferAndSendRejection(t.cookie));
+            decline.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    ICQChatActivity.contact.profile.cancelTransferAndSendRejection(t.cookie);
+                }
+            });
             if (t.direction == 1) {
                 final FileReceiver r = (FileReceiver) t;
                 if (!r.accepted) {
                     progress_field.setVisibility(View.GONE);
                     accept.setVisibility(View.VISIBLE);
-                    accept.setOnClickListener(v -> r.init());
+                    accept.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            r.init();
+                        }
+                    });
                     if (r.files_count == 1) {
                         label.setText(utilities.match(resources.getString("s_incoming_file"), new String[]{r.file_name.trim(), FileTransfer.getSizeLabel(r.file_size)}));
                     } else {

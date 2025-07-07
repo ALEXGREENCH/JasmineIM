@@ -35,6 +35,7 @@ import android.widget.ListView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import java.lang.reflect.Method;
 import java.util.Vector;
 
 import ru.ivansuper.jasmin.BReceiver;
@@ -158,7 +159,12 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     private synchronized void holdWake(long id) {
         final String ID = "WAKE_HOLDER_" + utilities.RANDOM.nextLong();
         addWakeLock(ID);
-        runOnUi(() -> jasminSvc.this.removeWakeLock(ID), 2500L);
+        runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                jasminSvc.this.removeWakeLock(ID);
+            }
+        }, 2500L);
     }
 
     public synchronized void attachTimedTask(PendingIntentHandler handler, long interval) {
@@ -313,37 +319,75 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         notificationManager.createNotificationChannel(channel);
     }
 
+    @SuppressWarnings("deprecation")
     private Notification getNotification(int icon) {
-        Notification.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder = new Notification.Builder(this, CHANNEL_ID);
-        } else {
-            builder = new Notification.Builder(this);
-        }
-        builder.setSmallIcon(icon);
-        builder.setContentTitle("Jasmine IM");
-        builder.setContentText("");
+        Notification notification;
 
         Intent intent = new Intent(this, MainActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 this,
                 0,
                 intent,
-                PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+                        : PendingIntent.FLAG_UPDATE_CURRENT
         );
-        builder.setContentIntent(contentIntent);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder.setChannelId(CHANNEL_ID);
-        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) { // API 11+
+            Notification.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                builder = new Notification.Builder(this, CHANNEL_ID);
+            } else {
+                builder = new Notification.Builder(this);
+            }
 
-        //noinspection deprecation
-        if ((builder.getNotification().flags & Notification.FLAG_AUTO_CANCEL) == Notification.FLAG_AUTO_CANCEL) {
+            builder.setSmallIcon(icon);
+            builder.setContentTitle("Jasmine IM");
+            builder.setContentText("");
+            builder.setContentIntent(contentIntent);
             builder.setAutoCancel(true);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                notification = builder.build(); // API 16+
+            } else {
+                notification = builder.getNotification(); // API 11–15
+            }
+
+        } else {
+            // Для API 10 и ниже — вручную создаём Notification
+            try {
+                // setLatestEventInfo устарел, но нужен для API <= 10
+                //noinspection JavaReflectionMemberAccess
+                Method setLatestEventInfo = Notification.class.getMethod(
+                        "setLatestEventInfo",
+                        Context.class,
+                        CharSequence.class,
+                        CharSequence.class,
+                        PendingIntent.class
+                );
+
+                notification = new Notification();
+                notification.icon = icon;
+                notification.when = System.currentTimeMillis();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                setLatestEventInfo.invoke(
+                        notification,
+                        this,
+                        "Jasmine IM",
+                        "",
+                        contentIntent
+                );
+            } catch (Exception e) {
+                //noinspection CallToPrintStackTrace
+                e.printStackTrace();
+                // fallback
+                notification = new Notification(icon, "Jasmine IM", System.currentTimeMillis());
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            }
         }
 
-        //noinspection deprecation
-        return builder.getNotification();
+        return notification;
     }
 
     public class itf extends Binder {
@@ -493,48 +537,142 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     @SuppressLint("NotificationPermission")
     public void showInBarNotify(CharSequence header, CharSequence message, boolean led) {
-        Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.icq_msg_in)
-                .setContentTitle(header)
-                .setContentText(message);
+        Notification notification;
 
         Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE);
-        builder.setContentIntent(contentIntent);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        ? PendingIntent.FLAG_MUTABLE
+                        : 0
+        );
 
-        if (led) {
-            builder.setLights(0xFF00FF00, 1000, 1000); // Зеленый цвет вибрации в течение 1 секунды
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.icq_msg_in)
+                    .setContentTitle(header)
+                    .setContentText(message)
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true);
+
+            if (led) {
+                builder.setLights(0xFF00FF00, 1000, 1000);
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                notification = builder.build(); // API 16+
+            } else {
+                notification = builder.getNotification(); // API 11–15
+            }
+
+        } else {
+            // API 10 и ниже — через рефлексию
+            try {
+                notification = new Notification();
+                notification.icon = R.drawable.icq_msg_in;
+                notification.when = System.currentTimeMillis();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                if (led) {
+                    notification.ledARGB = 0xFF00FF00;
+                    notification.ledOnMS = 1000;
+                    notification.ledOffMS = 1000;
+                    notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+                }
+
+                Method setLatestEventInfo = Notification.class.getMethod(
+                        "setLatestEventInfo",
+                        Context.class,
+                        CharSequence.class,
+                        CharSequence.class,
+                        PendingIntent.class
+                );
+
+                setLatestEventInfo.invoke(notification, this, header, message, contentIntent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                // fallback
+                notification = new Notification(R.drawable.icq_msg_in, header, System.currentTimeMillis());
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            }
         }
-
-        Notification notification = builder.build();
 
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         nm.notify((int) SystemClock.uptimeMillis(), notification);
     }
 
     @SuppressLint("NotificationPermission")
-    public void showPersonalMessageNotify(CharSequence header, CharSequence message, boolean led, int id, ContactlistItem contact) {
-        if (PreferenceTable.multi_notify) {
-            Intent intent = new Intent(this, MainActivity.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE);
+    public void showPersonalMessageNotify(final CharSequence header, final CharSequence message, final boolean led, final int id, final ContactlistItem contact) {
+        if (!PreferenceTable.multi_notify) return;
 
+        Notification notification;
+
+        Intent intent = new Intent(this, MainActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        ? PendingIntent.FLAG_MUTABLE
+                        : 0
+        );
+
+        int messagesCount = getMessagesCount(contact);
+        int iconResId = resources.getTrayMessageIconResId(messagesCount);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             Notification.Builder builder = new Notification.Builder(this)
-                    .setSmallIcon(R.drawable.icq_msg_in)
+                    .setSmallIcon(iconResId)
                     .setContentTitle(header)
                     .setContentText(message)
-                    .setContentIntent(contentIntent);
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true);
 
             if (led) {
-                builder.setLights(0xFF00FF00, 1000, 1000); // Зеленый цвет вибрации в течение 1 секунды
+                builder.setLights(0xFF00FF00, 1000, 1000);
             }
 
-            int messagesCount = getMessagesCount(contact);
-            builder.setSmallIcon(resources.getTrayMessageIconResId(messagesCount));
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                notification = builder.build();
+            } else {
+                notification = builder.getNotification();
+            }
 
-            Notification notification = builder.build();
+        } else {
+            try {
+                notification = new Notification();
+                notification.icon = iconResId;
+                notification.when = System.currentTimeMillis();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
 
-            this.notificationManager.notify(id, notification);
+                if (led) {
+                    notification.ledARGB = 0xFF00FF00;
+                    notification.ledOnMS = 1000;
+                    notification.ledOffMS = 1000;
+                    notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+                }
+
+                Method setLatestEventInfo = Notification.class.getMethod(
+                        "setLatestEventInfo",
+                        Context.class,
+                        CharSequence.class,
+                        CharSequence.class,
+                        PendingIntent.class
+                );
+                setLatestEventInfo.invoke(notification, this, header, message, contentIntent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                // fallback для совсем древних API
+                notification = new Notification(iconResId, header, System.currentTimeMillis());
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            }
         }
+
+        this.notificationManager.notify(id, notification);
     }
 
     private static int getMessagesCount(ContactlistItem contact) {
@@ -552,29 +690,40 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     }
 
     public synchronized void putMessageNotify(final ContactlistItem contact, final String nick, final String text) {
-        runOnUi(() -> {
-            MNotification mn = new MNotification();
-            Intent intent = new Intent(jasminSvc.this, MainActivity.class);
-            String scheme = IMProfile.getSchema(contact);
-            intent.setAction(scheme);
-            mn.intent = intent;
-            mn.nick = nick;
-            mn.text = text;
-            mn.schema = IMProfile.getSchema(contact);
-            NotifyManager.put(mn);
-            jasminSvc.this.updateNotifyInternal();
+        runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                MNotification mn = new MNotification();
+                Intent intent = new Intent(jasminSvc.this, MainActivity.class);
+                String scheme = IMProfile.getSchema(contact);
+                intent.setAction(scheme);
+                mn.intent = intent;
+                mn.nick = nick;
+                mn.text = text;
+                mn.schema = IMProfile.getSchema(contact);
+                NotifyManager.put(mn);
+                jasminSvc.this.updateNotifyInternal();
+            }
         });
     }
 
     public synchronized void removeMessageNotify(final ContactlistItem contact) {
-        runOnUi(() -> {
-            NotifyManager.remove(IMProfile.getSchema(contact));
-            jasminSvc.this.updateNotifyInternal();
+        runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                NotifyManager.remove(IMProfile.getSchema(contact));
+                jasminSvc.this.updateNotifyInternal();
+            }
         });
     }
 
     public synchronized void updateNotify() {
-        runOnUi(jasminSvc.this::updateNotifyInternal);
+        runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                updateNotifyInternal();
+            }
+        });
     }
 
     @SuppressLint("NotificationPermission")
@@ -621,22 +770,69 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     }
 
     @SuppressLint("NotificationPermission")
-    public void showMessageNotification(CharSequence header, CharSequence message, int count, boolean led, int id, Intent intent) {
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+    public void showMessageNotification(final CharSequence header, final CharSequence message, final int count, final boolean led, final int id, final Intent intent) {
+        Notification notification;
 
-        Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.icq_msg_in)
-                .setContentTitle(header)
-                .setContentText(message)
-                .setContentIntent(contentIntent);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+                        : PendingIntent.FLAG_UPDATE_CURRENT
+        );
 
-        if (led) {
-            builder.setLights(-16711936, 1000, 1000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.icq_msg_in)
+                    .setContentTitle(header)
+                    .setContentText(message)
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true);
+
+            if (led) {
+                builder.setLights(0xFF00FF00, 1000, 1000);
+            }
+
+            // setNumber доступен с API 11
+            builder.setNumber(count);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                notification = builder.build();
+            } else {
+                notification = builder.getNotification();
+            }
+
+        } else {
+            // API 10 и ниже — ручная сборка
+            try {
+                notification = new Notification();
+                notification.icon = R.drawable.icq_msg_in;
+                notification.when = System.currentTimeMillis();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                if (led) {
+                    notification.ledARGB = 0xFF00FF00;
+                    notification.ledOnMS = 1000;
+                    notification.ledOffMS = 1000;
+                    notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+                }
+
+                Method setLatestEventInfo = Notification.class.getMethod(
+                        "setLatestEventInfo",
+                        Context.class,
+                        CharSequence.class,
+                        CharSequence.class,
+                        PendingIntent.class
+                );
+                setLatestEventInfo.invoke(notification, this, header, message, contentIntent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                notification = new Notification(R.drawable.icq_msg_in, header, System.currentTimeMillis());
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            }
         }
-
-        builder.setNumber(count);
-
-        Notification notification = builder.build();
 
         this.notificationManager.notify(id, notification);
     }
@@ -647,37 +843,93 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     /** @noinspection unused*/
     @SuppressLint("NotificationPermission")
-    public void showMailMessageNotify(CharSequence header, CharSequence message, boolean led, int id, int count, String JID) {
+    public void showMailMessageNotify(final CharSequence header, final CharSequence message, final boolean led, final int id, final int count, final String JID) {
         Intent intent = new Intent(this, MainActivity.class);
         intent.setAction("%GMAIL%" + JID);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE);
 
-        Notification.Builder builder = new Notification.Builder(this);
-        builder.setSmallIcon(R.drawable.google_mail)
-                .setContentTitle(header)
-                .setContentText(message)
-                .setContentIntent(contentIntent)
-                .setPriority(Notification.PRIORITY_DEFAULT)
-                .setAutoCancel(true);
-
-        if (led) {
-            builder.setLights(-16711936, 1000, 1000);
-        }
-
-        builder.setNumber(count);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        ? PendingIntent.FLAG_MUTABLE
+                        : 0
+        );
 
         Notification notification;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "Channel Name", NotificationManager.IMPORTANCE_DEFAULT);
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-            builder.setChannelId(CHANNEL_ID);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.google_mail)
+                    .setContentTitle(header)
+                    .setContentText(message)
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                builder.setPriority(Notification.PRIORITY_DEFAULT);
+            }
+
+            if (led) {
+                builder.setLights(0xFF00FF00, 1000, 1000); // зелёный
+            }
+
+            builder.setNumber(count);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                NotificationChannel channel = new NotificationChannel(
+                        CHANNEL_ID,
+                        "Channel Name",
+                        NotificationManager.IMPORTANCE_DEFAULT
+                );
+                NotificationManager notificationManager = getSystemService(NotificationManager.class);
+                if (notificationManager != null) {
+                    notificationManager.createNotificationChannel(channel);
+                }
+                builder.setChannelId(CHANNEL_ID);
+            }
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                notification = builder.build(); // API 16+
+            } else {
+                notification = builder.getNotification(); // API 11–15
+            }
+
+        } else {
+            // API 10 и ниже — ручная сборка через рефлексию
+            try {
+                notification = new Notification();
+                notification.icon = R.drawable.google_mail;
+                notification.when = System.currentTimeMillis();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                if (led) {
+                    notification.ledARGB = 0xFF00FF00;
+                    notification.ledOnMS = 1000;
+                    notification.ledOffMS = 1000;
+                    notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+                }
+
+                Method setLatestEventInfo = Notification.class.getMethod(
+                        "setLatestEventInfo",
+                        Context.class,
+                        CharSequence.class,
+                        CharSequence.class,
+                        PendingIntent.class
+                );
+                setLatestEventInfo.invoke(notification, this, header, message, contentIntent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                notification = new Notification(R.drawable.google_mail, header, System.currentTimeMillis());
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            }
         }
 
-        notification = builder.build();
-
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        notificationManager.notify(id, notification);
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.notify(id, notification);
+        }
     }
 
     public void cancelPersonalMessageNotify(int id) {
@@ -686,7 +938,6 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     @SuppressLint("NotificationPermission")
     public void showAntispamNotify(String id, String message) {
-        //noinspection deprecation
         this.notification = new Notification(R.drawable.cross, resources.getString("s_antispam_notify") + " " + id, System.currentTimeMillis());
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_MUTABLE);
         RemoteViews rv = new RemoteViews(getPackageName(), R.layout.notify_remote_view);
@@ -703,18 +954,58 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     }
 
     @SuppressLint("NotificationPermission")
-    public void showTransferNotify(int id, String desc, String intent_scheme) {
+    public void showTransferNotify(final int id, final String desc, final String intent_scheme) {
+        Notification notification;
+
         Intent intent = new Intent(this, ContactListActivity.class);
         intent.setAction(intent_scheme);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
-        Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.file)
-                .setContentTitle(resources.getString("s_file_transfer_notify"))
-                .setContentText(desc)
-                .setContentIntent(contentIntent);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        ? PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT
+                        : PendingIntent.FLAG_UPDATE_CURRENT
+        );
 
-        Notification notification = builder.build();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.file)
+                    .setContentTitle(resources.getString("s_file_transfer_notify"))
+                    .setContentText(desc)
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                notification = builder.build(); // API 16+
+            } else {
+                notification = builder.getNotification(); // API 11–15
+            }
+
+        } else {
+            try {
+                notification = new Notification();
+                notification.icon = R.drawable.file;
+                notification.when = System.currentTimeMillis();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                Method setLatestEventInfo = Notification.class.getMethod(
+                        "setLatestEventInfo",
+                        Context.class,
+                        CharSequence.class,
+                        CharSequence.class,
+                        PendingIntent.class
+                );
+                setLatestEventInfo.invoke(notification, this, resources.getString("s_file_transfer_notify"), desc, contentIntent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                // fallback
+                notification = new Notification(R.drawable.file, resources.getString("s_file_transfer_notify"), System.currentTimeMillis());
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            }
+        }
 
         this.notificationManager.notify(id, notification);
     }
@@ -725,19 +1016,70 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     /** @noinspection unused*/
     @SuppressLint("NotificationPermission")
-    public void showMulticonnectNotify(String id) {
+    public void showMulticonnectNotify(final String id) {
+        Notification notification;
+
         Intent intent = new Intent(this, MainActivity.class);
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_MUTABLE);
+        PendingIntent contentIntent = PendingIntent.getActivity(
+                this,
+                0,
+                intent,
+                Build.VERSION.SDK_INT >= Build.VERSION_CODES.M
+                        ? PendingIntent.FLAG_MUTABLE
+                        : 0
+        );
 
-        Notification.Builder builder = new Notification.Builder(this)
-                .setSmallIcon(R.drawable.cross)
-                .setContentTitle("!!!")
-                .setContentText(resources.getString("s_moltilogin_notify_desc"))
-                .setContentIntent(contentIntent);
+        String title = "!!!";
+        String text = resources.getString("s_moltilogin_notify_desc");
+        String bigText = resources.getString("s_moltilogin_notify") + " " + id;
 
-        builder.setStyle(new Notification.BigTextStyle().bigText(resources.getString("s_moltilogin_notify") + " " + id));
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            // API 16+ — с BigTextStyle и build()
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.cross)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setContentIntent(contentIntent)
+                    .setStyle(new Notification.BigTextStyle().bigText(bigText))
+                    .setAutoCancel(true);
 
-        Notification notification = builder.build();
+            notification = builder.build();
+
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            // API 11–15 — без BigTextStyle
+            Notification.Builder builder = new Notification.Builder(this)
+                    .setSmallIcon(R.drawable.cross)
+                    .setContentTitle(title)
+                    .setContentText(text)
+                    .setContentIntent(contentIntent)
+                    .setAutoCancel(true);
+
+            notification = builder.getNotification();
+
+        } else {
+            // API ≤ 10 — вручную через рефлексию
+            try {
+                notification = new Notification();
+                notification.icon = R.drawable.cross;
+                notification.when = System.currentTimeMillis();
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+
+                Method setLatestEventInfo = Notification.class.getMethod(
+                        "setLatestEventInfo",
+                        Context.class,
+                        CharSequence.class,
+                        CharSequence.class,
+                        PendingIntent.class
+                );
+                setLatestEventInfo.invoke(notification, this, title, bigText, contentIntent);
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                // fallback
+                notification = new Notification(R.drawable.cross, title, System.currentTimeMillis());
+                notification.flags |= Notification.FLAG_AUTO_CANCEL;
+            }
+        }
 
         this.notificationManager.notify(MULTICONNECT_NOTIFY_ID, notification);
     }
@@ -910,7 +1252,12 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     public synchronized void playEvent(final int event) {
         if (PreferenceTable.soundEnabled) {
-            runOnUi(() -> jasminSvc.this.media.playEvent(event), 50L);
+            runOnUi(new Runnable() {
+                @Override
+                public void run() {
+                    jasminSvc.this.media.playEvent(event);
+                }
+            }, 50L);
         }
     }
 
@@ -1216,17 +1563,33 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     }
 
     /** @noinspection unused*/
+    @SuppressWarnings("deprecation")
     public final void moveToClipboard(String text) {
-        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        //noinspection deprecation
-        cm.setText(text);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            // API 11+ — новый ClipboardManager
+            android.content.ClipboardManager cm = (android.content.ClipboardManager)
+                    getSystemService(Context.CLIPBOARD_SERVICE);
+            android.content.ClipData clip = android.content.ClipData.newPlainText("copied_text", text);
+            cm.setPrimaryClip(clip);
+        } else {
+            // API 10 и ниже — устаревший ClipboardManager из android.text
+            android.text.ClipboardManager cm = (android.text.ClipboardManager)
+                    getSystemService(Context.CLIPBOARD_SERVICE);
+            cm.setText(text);
+        }
+
         Toast toast = Toast.makeText(this, Locale.getString("s_copied"), Toast.LENGTH_SHORT);
         toast.setGravity(48, 0, 0);
         toast.show();
     }
 
     public final void showToast(final String text, final int length) {
-        runOnUi(() -> Toast.makeText(jasminSvc.this, text, length).show());
+        runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(jasminSvc.this, text, length).show();
+            }
+        });
     }
 
     private static class NotifyManager {

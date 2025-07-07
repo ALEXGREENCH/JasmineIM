@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -244,10 +245,13 @@ public class MyTextView extends View implements Handler.Callback {
                     if (!(span instanceof URLSpan)) {
                         return true;
                     }
-                    postDelayed(() -> {
-                        if (!MyTextView.this.mClickHandled) {
-                            MyTextView.this.mLongClickHandled = true;
-                            MyTextView.this.showMyContextMenu();
+                    postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (!MyTextView.this.mClickHandled) {
+                                MyTextView.this.mLongClickHandled = true;
+                                MyTextView.this.showMyContextMenu();
+                            }
                         }
                     }, 600L);
                     this.mContextURL = (URLSpan) span;
@@ -319,39 +323,44 @@ public class MyTextView extends View implements Handler.Callback {
         list.setDividerHeight(0);
         list.setSelector(resources.getListSelector());
         list.setAdapter(adp);
-        list.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
-            MyTextView.this.mContextMenu.dismiss();
-            int id = (int) adp.getItemId(arg2);
-            if (id < 2) {
-                switch (id) {
-                    case 0:
-                        MyTextView.this.mContextURL.onClick(MyTextView.this);
-                        break;
-                    case 1:
-                        //noinspection deprecation
-                        ClipboardManager cm = (ClipboardManager) MyTextView.this.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
-                        //noinspection deprecation
-                        cm.setText(MyTextView.this.mContextURL.getURL());
-                        Toast.makeText(MyTextView.this.getContext(), Locale.getString("s_copied"), Toast.LENGTH_SHORT).show();
-                        break;
-                }
-                return;
-            }
-            final JProfile p2 = connected.get(id - 2);
-            if (p2.connected) {
-                final BookmarkItem item = new BookmarkItem();
-                item.type = 1;
-                item.JID_OR_URL = MyTextView.this.mContextURL.getURL();
-                final Dialog progress = DialogBuilder.createProgress(MyTextView.this.getContext(), Locale.getString("s_please_wait"), true);
-                progress.show();
-                HttpDisco.getInstance().discoveryAsync(MyTextView.this.mContextURL.getURL(), result -> {
-                    item.NAME = result;
-                    if (p2.bookmarks.itIsExist(item)) {
-                        resources.service.showToast(Locale.getString("s_bookmark_already_exist"), 0);
-                    } else {
-                        p2.bookmarks.add(item, progress);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                MyTextView.this.mContextMenu.dismiss();
+                int id = (int) adp.getItemId(i);
+                if (id < 2) {
+                    switch (id) {
+                        case 0:
+                            MyTextView.this.mContextURL.onClick(MyTextView.this);
+                            break;
+                        case 1:
+                            ClipboardManager cm = (ClipboardManager) MyTextView.this.getContext().getSystemService(Context.CLIPBOARD_SERVICE);
+                            //noinspection deprecation
+                            cm.setText(MyTextView.this.mContextURL.getURL());
+                            Toast.makeText(MyTextView.this.getContext(), Locale.getString("s_copied"), Toast.LENGTH_SHORT).show();
+                            break;
                     }
-                });
+                    return;
+                }
+                final JProfile p2 = connected.get(id - 2);
+                if (p2.connected) {
+                    final BookmarkItem item = new BookmarkItem();
+                    item.type = 1;
+                    item.JID_OR_URL = MyTextView.this.mContextURL.getURL();
+                    final Dialog progress = DialogBuilder.createProgress(MyTextView.this.getContext(), Locale.getString("s_please_wait"), true);
+                    progress.show();
+                    HttpDisco.getInstance().discoveryAsync(MyTextView.this.mContextURL.getURL(), new HttpDisco.OnDiscoListener() {
+                        @Override
+                        public void OnDisco(String result) {
+                            item.NAME = result;
+                            if (p2.bookmarks.itIsExist(item)) {
+                                resources.service.showToast(Locale.getString("s_bookmark_already_exist"), 0);
+                            } else {
+                                p2.bookmarks.add(item, progress);
+                            }
+                        }
+                    });
+                }
             }
         });
         lay.addView(list);

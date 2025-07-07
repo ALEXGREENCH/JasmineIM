@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.ClipboardManager;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
-import android.widget.ListAdapter;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -34,27 +36,37 @@ public class XMLConsoleActivity extends Activity implements Handler.Callback {
         SystemBarUtils.setupTransparentBars(this);
         setVolumeControlStream(3);
         console = findViewById(R.id.xml_console_list);
-        console.setOnItemLongClickListener((arg0, arg1, arg2, arg3) -> {
-            //noinspection deprecation
-            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            //noinspection deprecation
-            cm.setText(((Stanzas) arg0.getAdapter().getItem(arg2)).xml.toString());
-            Toast msg = Toast.makeText(XMLConsoleActivity.this, resources.getString("s_copied"), Toast.LENGTH_SHORT);
-            msg.setGravity(48, 0, 0);
-            msg.show();
-            return false;
+        console.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                //noinspection deprecation
+                cm.setText(((Stanzas) adapterView.getAdapter().getItem(i)).xml.toString());
+                Toast msg = Toast.makeText(XMLConsoleActivity.this, resources.getString("s_copied"), Toast.LENGTH_SHORT);
+                msg.setGravity(48, 0, 0);
+                msg.show();
+                return false;
+            }
         });
         enabled = findViewById(R.id.xml_console_enable);
         enabled.setText(resources.getString("s_xml_console_on_off"));
         if (profile != null) {
             enabled.setChecked(profile.CONSOLE_ENABLED);
         }
-        enabled.setOnCheckedChangeListener((arg0, checked) -> XMLConsoleActivity.profile.CONSOLE_ENABLED = checked);
+        enabled.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                XMLConsoleActivity.profile.CONSOLE_ENABLED = checked;
+            }
+        });
         Button clear = findViewById(R.id.xml_console_clear);
         clear.setText(resources.getString("s_xml_console_clear"));
-        clear.setOnClickListener(arg0 -> {
-            if (XMLConsoleActivity.profile != null) {
-                XMLConsoleActivity.profile.clearConsole();
+        clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (XMLConsoleActivity.profile != null) {
+                    XMLConsoleActivity.profile.clearConsole();
+                }
             }
         });
         adapter = new ConsoleAdapter(profile.CONSOLE);

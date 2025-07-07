@@ -56,7 +56,12 @@ public class LanguagePicker extends DialogPreference {
             RadioButton r = new RadioButton(getContext());
             r.setText(language.NAME + "\n" + resources.getString("s_ms_select_language_language") + " " + language.LANGUAGE + "\n" + resources.getString("s_ms_select_language_author") + " " + language.AUTHOR);
             final int ii = i;
-            r.setOnClickListener(arg0 -> LanguagePicker.this.current = ii);
+            r.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    LanguagePicker.this.current = ii;
+                }
+            });
             rg.addView(r);
             if (this.current == i) {
                 r.setChecked(true);

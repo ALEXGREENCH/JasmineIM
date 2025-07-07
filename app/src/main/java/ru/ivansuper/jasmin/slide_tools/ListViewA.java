@@ -130,9 +130,12 @@ public class ListViewA extends ListView {
                 setTranscriptMode(0);
                 //noinspection ConstantValue
                 super.onLayout(changed, l, t, r, b);
-                post(() -> {
-                    ListViewA.this.setTranscriptMode(1);
-                    ListViewA.this.requestLayout();
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        ListViewA.this.setTranscriptMode(1);
+                        ListViewA.this.requestLayout();
+                    }
                 });
             } else {
                 setTranscriptMode(1);

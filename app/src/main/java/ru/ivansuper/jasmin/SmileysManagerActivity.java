@@ -20,7 +20,6 @@ import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class SmileysManagerActivity extends Activity {
 
-    private Button apply;
     private LinearLayout list;
     private String selectedPack = "";
     private SharedPreferences sp;
@@ -28,6 +27,7 @@ public class SmileysManagerActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //noinspection deprecation
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         selectedPack = sp.getString("current_smileys_pack", "$*INTERNAL*$");
         setVolumeControlStream(AudioManager.STREAM_MUSIC);
@@ -46,12 +46,15 @@ public class SmileysManagerActivity extends Activity {
 
         list = findViewById(R.id.smileys_manager_pack_list);
 
-        apply = findViewById(R.id.smileys_manager_apply);
+        Button apply = findViewById(R.id.smileys_manager_apply);
         apply.setText(resources.getString("s_smileys_manager_apply"));
-        apply.setOnClickListener(v -> {
-            sp.edit().putString("current_smileys_pack", selectedPack).apply();
-            SmileysManager.loadPack();
-            Toast.makeText(this, resources.getString("s_selection_saved"), Toast.LENGTH_SHORT).show();
+        apply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sp.edit().putString("current_smileys_pack", selectedPack).apply();
+                SmileysManager.loadPack();
+                Toast.makeText(SmileysManagerActivity.this, resources.getString("s_selection_saved"), Toast.LENGTH_SHORT).show();
+            }
         });
     }
 

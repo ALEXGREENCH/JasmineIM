@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -16,17 +17,16 @@ import android.os.Message;
 import android.preference.PreferenceManager;
 import android.text.ClipboardManager;
 import android.text.InputFilter;
+import android.text.Spanned;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +35,7 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
+import ru.ivansuper.jasmin.icq.Callback;
 import ru.ivansuper.jasmin.icq.ICQContact;
 import ru.ivansuper.jasmin.icq.ICQGroup;
 import ru.ivansuper.jasmin.icq.ICQProfile;
@@ -76,6 +77,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //noinspection deprecation
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (sp.getBoolean("ms_sys_wallpaper", false)) {
             setTheme(R.style.WallpaperNoTitleTheme);
@@ -125,14 +127,14 @@ public class SearchActivity extends Activity implements Handler.Callback {
             case 0:
                 LinearLayout lay = (LinearLayout) View.inflate(this, R.layout.search_criteries_dialog, null);
                 ((TextView) lay.findViewById(R.id.l1)).setText(resources.getString("s_search_param_gender"));
-                final EditText nick = (EditText) lay.findViewById(R.id.criteries_nick);
+                final EditText nick = lay.findViewById(R.id.criteries_nick);
                 nick.setHint(resources.getString("s_search_param_nick"));
-                final EditText name = (EditText) lay.findViewById(R.id.criteries_name);
+                final EditText name = lay.findViewById(R.id.criteries_name);
                 name.setHint(resources.getString("s_search_param_name"));
-                final EditText lastname = (EditText) lay.findViewById(R.id.criteries_lastname);
+                final EditText lastname = lay.findViewById(R.id.criteries_lastname);
                 lastname.setHint(resources.getString("s_search_param_surname"));
-                final Spinner gender = (Spinner) lay.findViewById(R.id.criteries_gender);
-                final EditText city = (EditText) lay.findViewById(R.id.criteries_city);
+                final Spinner gender = lay.findViewById(R.id.criteries_gender);
+                final EditText city = lay.findViewById(R.id.criteries_city);
                 city.setHint(resources.getString("s_search_param_city"));
                 UAdapter genders = new UAdapter();
                 genders.setMode(2);
@@ -147,32 +149,40 @@ public class SearchActivity extends Activity implements Handler.Callback {
                 name.setText(criteries.name);
                 lastname.setText(criteries.lastname);
                 city.setText(criteries.city);
-                ad = DialogBuilder.createYesNo(this, lay, 48, resources.getString("s_search_params"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    removeDialog(0);
-                    String Nick = nick.getText().toString().trim();
-                    String Name = name.getText().toString().trim();
-                    String LastName = lastname.getText().toString().trim();
-                    String City = city.getText().toString().trim();
-                    int gnd = gender.getSelectedItemPosition();
-                    SearchCriteries searchCriteries = criteries;
-                    if (gnd == -1) {
-                        gnd = 0;
+                ad = DialogBuilder.createYesNo(this, lay, 48, resources.getString("s_search_params"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(0);
+                        String Nick = nick.getText().toString().trim();
+                        String Name = name.getText().toString().trim();
+                        String LastName = lastname.getText().toString().trim();
+                        String City = city.getText().toString().trim();
+                        int gnd = gender.getSelectedItemPosition();
+                        SearchCriteries searchCriteries = criteries;
+                        if (gnd == -1) {
+                            gnd = 0;
+                        }
+                        searchCriteries.gender = gnd;
+                        criteries.nick = Nick;
+                        criteries.name = Name;
+                        criteries.lastname = LastName;
+                        criteries.city = City;
+                        page_to_request = 0;
+                        do_search.setText(resources.getString("s_search"));
+                        if (isSearchAvailable()) {
+                            do_search.setEnabled(true);
+                            status.setText(resources.getString("s_press_search_button"));
+                            return;
+                        }
+                        do_search.setEnabled(false);
+                        status.setText(resources.getString("s_search_without_params_error"));
                     }
-                    searchCriteries.gender = gnd;
-                    criteries.nick = Nick;
-                    criteries.name = Name;
-                    criteries.lastname = LastName;
-                    criteries.city = City;
-                    page_to_request = 0;
-                    do_search.setText(resources.getString("s_search"));
-                    if (isSearchAvailable()) {
-                        do_search.setEnabled(true);
-                        status.setText(resources.getString("s_press_search_button"));
-                        return;
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(0);
                     }
-                    do_search.setEnabled(false);
-                    status.setText(resources.getString("s_search_without_params_error"));
-                }, v -> removeDialog(0));
+                });
                 break;
             case 1:
                 final UAdapter adp = new UAdapter();
@@ -182,23 +192,26 @@ public class SearchActivity extends Activity implements Handler.Callback {
                 adp.put(resources.getString("s_copy_uin"), 0);
                 adp.put(resources.getString("s_contact_info"), 1);
                 adp.put(resources.getString("s_add_contact"), 2);
-                ad = DialogBuilder.createWithNoHeader(this, adp, 48, (arg0, arg1, arg2, arg3) -> {
-                    if (context_item != null) {
-                        removeDialog(1);
-                        switch ((int) adp.getItemId(arg2)) {
-                            case 0:
-                                ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                                cm.setText(context_item.uin);
-                                Toast.makeText(SearchActivity.this, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
-                                return;
-                            case 1:
-                                profile.doRequestContactInfoForDisplayInSearch(context_item.uin);
-                                return;
-                            case 2:
-                                removeDialog(3);
-                                showDialog(3);
-                                return;
-                            default:
+                ad = DialogBuilder.createWithNoHeader(this, adp, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        if (context_item != null) {
+                            removeDialog(1);
+                            switch ((int) adp.getItemId(i)) {
+                                case 0:
+                                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                    cm.setText(context_item.uin);
+                                    Toast.makeText(SearchActivity.this, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
+                                    return;
+                                case 1:
+                                    profile.doRequestContactInfoForDisplayInSearch(context_item.uin);
+                                    return;
+                                case 2:
+                                    removeDialog(3);
+                                    showDialog(3);
+                                    return;
+                                default:
+                            }
                         }
                     }
                 });
@@ -206,27 +219,69 @@ public class SearchActivity extends Activity implements Handler.Callback {
             case 2:
                 if (tempContactForDisplayInfo != null) {
                     LinearLayout info_lay = (LinearLayout) View.inflate(this, R.layout.vcard, null);
-                    final ImageView vcard_avatar = (ImageView) info_lay.findViewById(R.id.vcard_avatar);
-                    EditText vcard_desc = (EditText) info_lay.findViewById(R.id.vcard_desc);
+                    final ImageView vcard_avatar = info_lay.findViewById(R.id.vcard_avatar);
+                    EditText vcard_desc = info_lay.findViewById(R.id.vcard_desc);
                     final String data = resources.getString("s_icq_info_nick") + ": " + tempContactForDisplayInfo.nickname + "\n" + resources.getString("s_icq_info_name") + ": " + tempContactForDisplayInfo.name + "\n" + resources.getString("s_icq_info_surname") + ": " + tempContactForDisplayInfo.surname + "\n" + resources.getString("s_icq_info_city") + ": " + tempContactForDisplayInfo.city + "\n\n" + resources.getString("s_icq_info_birthdate") + ": " + tempContactForDisplayInfo.birthday + "/" + tempContactForDisplayInfo.birthmonth + "/" + tempContactForDisplayInfo.birthyear + "\n" + resources.getString("s_icq_info_age") + ": " + tempContactForDisplayInfo.age + "\n" + resources.getString("s_icq_info_gender") + ": " + tempContactForDisplayInfo.sex + "\n\n" + resources.getString("s_icq_info_homepage") + "\n" + tempContactForDisplayInfo.homepage + "\n\nE-Mail:\n" + tempContactForDisplayInfo.email + "\n\n" + resources.getString("s_icq_info_about") + "\n" + tempContactForDisplayInfo.about;
                     vcard_avatar.setImageDrawable(tempContactForDisplayInfo.avatar);
-                    tempContactForDisplayInfo.setRedirect((object, args) -> {
-                        //noinspection UnnecessaryLocalVariable
-                        ImageView imageView = vcard_avatar;
-                        //noinspection UnnecessaryLocalVariable
-                        final ImageView imageView2 = vcard_avatar;
-                        imageView.post(() -> imageView2.setImageDrawable((Drawable) object));
+                    tempContactForDisplayInfo.setRedirect(new Callback() {
+                        @Override
+                        public void notify(final Object object, int args) {
+                            //noinspection UnnecessaryLocalVariable
+                            ImageView imageView = vcard_avatar;
+                            //noinspection UnnecessaryLocalVariable
+                            final ImageView imageView2 = vcard_avatar;
+                            imageView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    imageView2.setImageDrawable((Drawable) object);
+                                }
+                            });
+                        }
                     });
                     vcard_desc.setText(data);
-                    vcard_desc.setFilters(new InputFilter[]{(source, arg1, arg2, dest, dstart, dend) -> source.length() < 1 ? dest.subSequence(dstart, dend) : ""});
+                    vcard_desc.setFilters(new InputFilter[]{
+                            new InputFilter() {
+                                @Override
+                                public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                                    return source.length() < 1 ? dest.subSequence(dstart, dend) : "";
+                                }
+                            }
+                    });
+
                     //noinspection deprecation
-                    ad = DialogBuilder.createYesNo(this, info_lay, 48, resources.getString("s_icq_info") + "[" + tempContactForDisplayInfo.uin + "]", resources.getString("s_copy"), resources.getString("s_close"), v -> {
-                        ClipboardManager cb = (ClipboardManager) service.getSystemService(Context.CLIPBOARD_SERVICE);
-                        cb.setText(data);
-                        Toast.makeText(service, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
-                        //noinspection deprecation
-                        removeDialog(2);
-                    }, v -> removeDialog(2));
+                    ad = DialogBuilder.createYesNo(
+                            this,
+                            info_lay,
+                            48,
+                            resources.getString("s_icq_info") + "[" + tempContactForDisplayInfo.uin + "]",
+                            resources.getString("s_copy"),
+                            resources.getString("s_close"),
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                                        android.content.ClipboardManager cb = (android.content.ClipboardManager)
+                                                service.getSystemService(Context.CLIPBOARD_SERVICE);
+                                        android.content.ClipData clip = android.content.ClipData.newPlainText("text", data);
+                                        cb.setPrimaryClip(clip);
+                                    } else {
+                                        android.text.ClipboardManager cb = (android.text.ClipboardManager)
+                                                service.getSystemService(Context.CLIPBOARD_SERVICE);
+                                        cb.setText(data);
+                                    }
+
+                                    Toast.makeText(service, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
+                                    //noinspection deprecation
+                                    removeDialog(2);
+                                }
+                            },
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    removeDialog(2);
+                                }
+                            }
+                    );
                     break;
                 } else {
                     return null;
@@ -241,58 +296,65 @@ public class SearchActivity extends Activity implements Handler.Callback {
                 for (ICQGroup group : groups) {
                     adp1.put(group.name, group.id);
                 }
-                final LinearLayout lay1 = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.add_contact_dialog, (ViewGroup) null);
+                final LinearLayout lay1 = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.add_contact_dialog, null);
                 if (context_item != null) {
                     @SuppressLint("CutPasteId")
-                    EditText uin = (EditText) lay1.findViewById(R.id.add_contact_uin);
+                    EditText uin = lay1.findViewById(R.id.add_contact_uin);
                     uin.setText(context_item.uin);
                     @SuppressLint("CutPasteId")
-                    EditText name1 = (EditText) lay1.findViewById(R.id.add_contact_name);
+                    EditText name1 = lay1.findViewById(R.id.add_contact_name);
                     name1.setText(context_item.nick);
                     name1.requestFocus();
                 }
                 @SuppressLint("CutPasteId")
-                Spinner spn = (Spinner) lay1.findViewById(R.id.add_contact_groups);
-                spn.setAdapter((SpinnerAdapter) adp1);
-                //noinspection deprecation
-                ad = DialogBuilder.createYesNo(this, lay1, 48, resources.getString("s_add_contact"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    @SuppressLint("CutPasteId")
-                    EditText uin2 = (EditText) lay1.findViewById(R.id.add_contact_uin);
-                    resources.attachEditText(uin2);
-                    String sUIN = uin2.getText().toString();
-                    if (sUIN.length() < 4) {
-                        Toast.makeText(SearchActivity.this, resources.getString("s_incorrect_uin"), Toast.LENGTH_SHORT).show();
-                    } else if (!utilities.isUIN(sUIN)) {
-                        Toast.makeText(SearchActivity.this, resources.getString("s_incorrect_uin"), Toast.LENGTH_SHORT).show();
-                    } else {
+                Spinner spn = lay1.findViewById(R.id.add_contact_groups);
+                spn.setAdapter(adp1);
+                ad = DialogBuilder.createYesNo(this, lay1, 48, resources.getString("s_add_contact"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         @SuppressLint("CutPasteId")
-                        EditText name2 = (EditText) lay1.findViewById(R.id.add_contact_name);
-                        resources.attachEditText(name2);
-                        String sNAME = name2.getText().toString();
-                        if (sNAME.length() == 0) {
-                            sNAME = sUIN;
+                        EditText uin2 = lay1.findViewById(R.id.add_contact_uin);
+                        resources.attachEditText(uin2);
+                        String sUIN = uin2.getText().toString();
+                        if (sUIN.length() < 4) {
+                            Toast.makeText(SearchActivity.this, resources.getString("s_incorrect_uin"), Toast.LENGTH_SHORT).show();
+                        } else if (!utilities.isUIN(sUIN)) {
+                            Toast.makeText(SearchActivity.this, resources.getString("s_incorrect_uin"), Toast.LENGTH_SHORT).show();
+                        } else {
+                            @SuppressLint("CutPasteId")
+                            EditText name2 = lay1.findViewById(R.id.add_contact_name);
+                            resources.attachEditText(name2);
+                            String sNAME = name2.getText().toString();
+                            if (sNAME.isEmpty()) {
+                                sNAME = sUIN;
+                            }
+                            @SuppressLint("CutPasteId")
+                            Spinner spn2 = lay1.findViewById(R.id.add_contact_groups);
+                            UAdapter adp2 = (UAdapter) spn2.getAdapter();
+                            int groupId = (int) adp2.getItemId(spn2.getSelectedItemPosition());
+                            ICQContact contact = new ICQContact();
+                            contact.ID = sUIN;
+                            contact.name = sNAME;
+                            contact.group = groupId;
+                            contact.id = utilities.getRandomSSIId();
+                            contact.profile = profile;
+                            contact.init();
+                            try {
+                                profile.doAddContact(contact, 0);
+                            } catch (Exception e) {
+                                Toast.makeText(SearchActivity.this, resources.getString("s_icq_contact_add_error"), Toast.LENGTH_SHORT).show();
+                                //noinspection CallToPrintStackTrace
+                                e.printStackTrace();
+                            }
+                            removeDialog(3);
                         }
-                        @SuppressLint("CutPasteId")
-                        Spinner spn2 = (Spinner) lay1.findViewById(R.id.add_contact_groups);
-                        UAdapter adp2 = (UAdapter) spn2.getAdapter();
-                        int groupId = (int) adp2.getItemId(spn2.getSelectedItemPosition());
-                        ICQContact contact = new ICQContact();
-                        contact.ID = sUIN;
-                        contact.name = sNAME;
-                        contact.group = groupId;
-                        contact.id = utilities.getRandomSSIId();
-                        contact.profile = profile;
-                        contact.init();
-                        try {
-                            profile.doAddContact(contact, 0);
-                        } catch (Exception e) {
-                            Toast.makeText(SearchActivity.this, resources.getString("s_icq_contact_add_error"), Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                        }
-                        //noinspection deprecation
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(3);
                     }
-                }, v -> removeDialog(3));
+                });
                 break;
         }
         return ad;
@@ -326,36 +388,41 @@ public class SearchActivity extends Activity implements Handler.Callback {
     }
 
     private void initViews() {
-        set_criteries = (Button) findViewById(R.id.set_criteries_btn);
+        set_criteries = findViewById(R.id.set_criteries_btn);
         set_criteries.setText(resources.getString("s_search_set_params_btn"));
         resources.attachButtonStyle(set_criteries);
-        set_criteries.setOnClickListener(v -> {
-            //noinspection deprecation
-            removeDialog(0);
-            //noinspection deprecation
-            showDialog(0);
+        set_criteries.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeDialog(0);
+                showDialog(0);
+            }
         });
-        do_search = (Button) findViewById(R.id.do_search_btn);
+        do_search = findViewById(R.id.do_search_btn);
         do_search.setText(resources.getString("s_search"));
         resources.attachButtonStyle(do_search);
-        do_search.setOnClickListener(v -> {
-            adapter.clear();
-            item_per_request = 0;
-            status.setText(resources.getString("s_search_in_progress"));
-            sendRequest();
+        do_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.clear();
+                item_per_request = 0;
+                status.setText(resources.getString("s_search_in_progress"));
+                sendRequest();
+            }
         });
         do_search.setEnabled(false);
-        results = (ListView) findViewById(R.id.search_results_list);
+        results = findViewById(R.id.search_results_list);
         results.setSelector(resources.getListSelector());
-        results.setAdapter((ListAdapter) adapter);
-        results.setOnItemClickListener((arg0, arg1, pos, arg3) -> {
-            context_item = adapter.getItem(pos);
-            //noinspection deprecation
-            removeDialog(1);
-            //noinspection deprecation
-            showDialog(1);
+        results.setAdapter(adapter);
+        results.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                context_item = adapter.getItem(i);
+                removeDialog(1);
+                showDialog(1);
+            }
         });
-        status = (TextView) findViewById(R.id.search_status);
+        status = findViewById(R.id.search_status);
         status.setText(resources.getString("s_search_instruction"));
     }
 
@@ -368,7 +435,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
     }
 
     public boolean isSearchAvailable() {
-        return criteries.nick.length() > 0 || criteries.name.length() > 0 || criteries.lastname.length() > 0 || criteries.gender > 0 || criteries.city.length() > 0;
+        return !criteries.nick.isEmpty() || !criteries.name.isEmpty() || !criteries.lastname.isEmpty() || criteries.gender > 0 || !criteries.city.isEmpty();
     }
 
     @Override
@@ -403,9 +470,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
             case 1:
                 tempContactForDisplayInfo = (InfoContainer) msg.obj;
                 if (tempContactForDisplayInfo != null) {
-                    //noinspection deprecation
                     removeDialog(2);
-                    //noinspection deprecation
                     showDialog(2);
                     break;
                 }

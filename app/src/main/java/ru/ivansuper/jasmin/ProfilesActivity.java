@@ -49,11 +49,12 @@ public class ProfilesActivity extends Activity {
         this.service = resources.service;
         handleServiceConnected();
 
-        findViewById(R.id.ic_menu).setOnClickListener(v -> {
-            //noinspection deprecation
-            removeDialog(4);
-            //noinspection deprecation
-            showDialog(4);
+        findViewById(R.id.ic_menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeDialog(4);
+                showDialog(4);
+            }
         });
     }
 
@@ -75,9 +76,7 @@ public class ProfilesActivity extends Activity {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_MENU:
-                    //noinspection deprecation
                     removeDialog(4);
-                    //noinspection deprecation
                     showDialog(4);
                     return true;
                 case KeyEvent.KEYCODE_BACK:
@@ -98,22 +97,29 @@ public class ProfilesActivity extends Activity {
     }
 
     @SuppressLint("SetTextI18n")
-    @SuppressWarnings("deprecation")
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
             case 0:
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad = DialogBuilder.createYesNo(this, 48, resources.getString("s_delete_profile"), this.pa.getItem(this.selectedIdx).id + ":\n" + resources.getString("s_are_you_sure"), resources.getString("s_yes"), resources.getString("s_no"), v -> {
-                    removeDialog(0);
-                    Toast.makeText(ProfilesActivity.this, resources.getString("s_deleting_successful"), Toast.LENGTH_SHORT).show();
-                    service.profiles.getProfiles().remove(selectedIdx).disconnect();
-                    pa.remove(selectedIdx);
-                    service.profiles.writeProfilesToFile();
-                    service.handleProfileChanged();
-                    service.handleContactlistCheckConferences();
-                    service.handleContactlistNeedRemake();
-                }, v -> removeDialog(0));
+                Dialog ad = DialogBuilder.createYesNo(this, 48, resources.getString("s_delete_profile"), this.pa.getItem(this.selectedIdx).id + ":\n" + resources.getString("s_are_you_sure"), resources.getString("s_yes"), resources.getString("s_no"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(0);
+                        Toast.makeText(ProfilesActivity.this, resources.getString("s_deleting_successful"), Toast.LENGTH_SHORT).show();
+                        service.profiles.getProfiles().remove(selectedIdx).disconnect();
+                        pa.remove(selectedIdx);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistCheckConferences();
+                        service.handleContactlistNeedRemake();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(0);
+                    }
+                });
                 return ad;
             case 1:
                 @SuppressLint("InflateParams")
@@ -133,27 +139,35 @@ public class ProfilesActivity extends Activity {
                 enabled.setChecked(this.pa.getItem(this.selectedIdx).enabled);
                 autoconnect.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad2 = DialogBuilder.createYesNo(this, lay, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
-                    String uin = login_edit.getText().toString().trim();
-                    if (!utilities.isUIN(uin) && !utilities.isEmail(uin)) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
-                    } else if (uin.length() >= 3) {
-                        pdata.id = uin;
-                        String pass = password_edit.getText().toString();
-                        if (pass.length() >= 3) {
-                            pdata.pass = pass;
-                            pdata.autoconnect = autoconnect.isChecked();
-                            pdata.enabled = enabled.isChecked();
-                            pa.notifyDataSetChanged();
-                            ((ICQProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
-                            service.profiles.writeProfilesToFile();
-                            service.handleProfileChanged();
-                            service.handleContactlistNeedRemake();
-                            removeDialog(1);
+                Dialog ad2 = DialogBuilder.createYesNo(this, lay, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
+                        String uin = login_edit.getText().toString().trim();
+                        if (!utilities.isUIN(uin) && !utilities.isEmail(uin)) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
+                        } else if (uin.length() >= 3) {
+                            pdata.id = uin;
+                            String pass = password_edit.getText().toString();
+                            if (pass.length() >= 3) {
+                                pdata.pass = pass;
+                                pdata.autoconnect = autoconnect.isChecked();
+                                pdata.enabled = enabled.isChecked();
+                                pa.notifyDataSetChanged();
+                                ((ICQProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                                service.profiles.writeProfilesToFile();
+                                service.handleProfileChanged();
+                                service.handleContactlistNeedRemake();
+                                removeDialog(1);
+                            }
                         }
                     }
-                }, v -> removeDialog(1));
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(1);
+                    }
+                });
                 return ad2;
             case 2:
                 final UAdapter adp_ = new UAdapter();
@@ -169,70 +183,73 @@ public class ProfilesActivity extends Activity {
                 adp_.put(resources.getString("s_change_profile"), 0);
                 adp_.put(resources.getString("s_delete_profile"), 1);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad3 = DialogBuilder.createWithNoHeader(this, adp_, 48, (arg0, arg1, arg2, arg3) -> {
-                    removeDialog(2);
-                    switch ((int) adp_.getItemId(arg2)) {
-                        case 0:
-                            switch (pa.getItem(selectedIdx).profile_type) {
-                                case 0:
-                                    removeDialog(1);
-                                    showDialog(1);
-                                    return;
-                                case 1:
-                                    switch (pa.getItem(selectedIdx).proto_type) {
-                                        case 0:
-                                            removeDialog(6);
-                                            showDialog(6);
-                                            return;
-                                        case 1:
-                                            removeDialog(8);
-                                            showDialog(8);
-                                            return;
-                                        case 2:
-                                            removeDialog(10);
-                                            showDialog(10);
-                                            return;
-                                        case 3:
-                                            removeDialog(16);
-                                            showDialog(16);
-                                            return;
-                                        case 4:
-                                            removeDialog(14);
-                                            showDialog(14);
-                                            return;
-                                        default:
-                                            return;
-                                    }
-                                case 2:
-                                    removeDialog(12);
-                                    showDialog(12);
-                                    return;
-                                default:
-                                    return;
-                            }
-                        case 1:
-                            removeDialog(0);
-                            showDialog(0);
-                            return;
-                        case 2:
-                            Vector<IMProfile> profiles = service.profiles.getProfiles();
-                            IMProfile profile = profiles.remove(selectedIdx);
-                            profiles.add(selectedIdx + 1, profile);
-                            fillFromProfilesManager();
-                            service.profiles.writeProfilesToFile();
-                            service.handleProfileChanged();
-                            service.handleContactlistNeedRemake();
-                            return;
-                        case 3:
-                            Vector<IMProfile> profiles2 = service.profiles.getProfiles();
-                            IMProfile profile2 = profiles2.remove(selectedIdx);
-                            profiles2.add(selectedIdx - 1, profile2);
-                            fillFromProfilesManager();
-                            service.profiles.writeProfilesToFile();
-                            service.handleProfileChanged();
-                            service.handleContactlistNeedRemake();
-                            return;
-                        default:
+                Dialog ad3 = DialogBuilder.createWithNoHeader(this, adp_, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        removeDialog(2);
+                        switch ((int) adp_.getItemId(i)) {
+                            case 0:
+                                switch (pa.getItem(selectedIdx).profile_type) {
+                                    case 0:
+                                        removeDialog(1);
+                                        showDialog(1);
+                                        return;
+                                    case 1:
+                                        switch (pa.getItem(selectedIdx).proto_type) {
+                                            case 0:
+                                                removeDialog(6);
+                                                showDialog(6);
+                                                return;
+                                            case 1:
+                                                removeDialog(8);
+                                                showDialog(8);
+                                                return;
+                                            case 2:
+                                                removeDialog(10);
+                                                showDialog(10);
+                                                return;
+                                            case 3:
+                                                removeDialog(16);
+                                                showDialog(16);
+                                                return;
+                                            case 4:
+                                                removeDialog(14);
+                                                showDialog(14);
+                                                return;
+                                            default:
+                                                return;
+                                        }
+                                    case 2:
+                                        removeDialog(12);
+                                        showDialog(12);
+                                        return;
+                                    default:
+                                        return;
+                                }
+                            case 1:
+                                removeDialog(0);
+                                showDialog(0);
+                                return;
+                            case 2:
+                                Vector<IMProfile> profiles = service.profiles.getProfiles();
+                                IMProfile profile = profiles.remove(selectedIdx);
+                                profiles.add(selectedIdx + 1, profile);
+                                fillFromProfilesManager();
+                                service.profiles.writeProfilesToFile();
+                                service.handleProfileChanged();
+                                service.handleContactlistNeedRemake();
+                                return;
+                            case 3:
+                                Vector<IMProfile> profiles2 = service.profiles.getProfiles();
+                                IMProfile profile2 = profiles2.remove(selectedIdx);
+                                profiles2.add(selectedIdx - 1, profile2);
+                                fillFromProfilesManager();
+                                service.profiles.writeProfilesToFile();
+                                service.handleProfileChanged();
+                                service.handleContactlistNeedRemake();
+                                return;
+                            default:
+                        }
                     }
                 });
                 return ad3;
@@ -250,34 +267,42 @@ public class ProfilesActivity extends Activity {
                 final CheckBox autoconnect1 = lay2.findViewById(R.id.icq_profile_add_autoconnect);
                 autoconnect1.setText(resources.getString("s_dialog_autologin"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad4 = DialogBuilder.createYesNo(this, lay2, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = new ProfilesAdapterItem();
-                    pdata.profile_type = 0;
-                    String uin = login_edit1.getText().toString().trim();
-                    if (utilities.isUIN(uin) || utilities.isEmail(uin)) {
-                        if (!service.profiles.isProfileAlreadyExist(uin) && uin.length() >= 3) {
-                            pdata.id = uin;
-                            String pass = password_edit1.getText().toString();
-                            if (pass.length() >= 3) {
-                                pdata.pass = pass;
-                                pdata.autoconnect = autoconnect1.isChecked();
-                                pdata.enabled = enabled1.isChecked();
-                                pa.add(pdata);
-                                ICQProfile profile = new ICQProfile(pdata.id, pdata.pass, service, pdata.autoconnect, pdata.enabled);
-                                service.profiles.addProfile(profile);
-                                service.profiles.writeProfilesToFile();
-                                service.handleProfileChanged();
-                                service.handleContactlistCheckConferences();
-                                service.handleContactlistNeedRemake();
-                                removeDialog(3);
+                Dialog ad4 = DialogBuilder.createYesNo(this, lay2, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = new ProfilesAdapterItem();
+                        pdata.profile_type = 0;
+                        String uin = login_edit1.getText().toString().trim();
+                        if (utilities.isUIN(uin) || utilities.isEmail(uin)) {
+                            if (!service.profiles.isProfileAlreadyExist(uin) && uin.length() >= 3) {
+                                pdata.id = uin;
+                                String pass = password_edit1.getText().toString();
+                                if (pass.length() >= 3) {
+                                    pdata.pass = pass;
+                                    pdata.autoconnect = autoconnect1.isChecked();
+                                    pdata.enabled = enabled1.isChecked();
+                                    pa.add(pdata);
+                                    ICQProfile profile = new ICQProfile(pdata.id, pdata.pass, service, pdata.autoconnect, pdata.enabled);
+                                    service.profiles.addProfile(profile);
+                                    service.profiles.writeProfilesToFile();
+                                    service.handleProfileChanged();
+                                    service.handleContactlistCheckConferences();
+                                    service.handleContactlistNeedRemake();
+                                    removeDialog(3);
+                                    return;
+                                }
                                 return;
                             }
                             return;
                         }
-                        return;
+                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
-                }, v -> removeDialog(3));
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(3);
+                    }
+                });
                 return ad4;
             case 4:
                 final UAdapter adp = new UAdapter();
@@ -291,38 +316,41 @@ public class ProfilesActivity extends Activity {
                 adp.put(this.service.getResources().getDrawable(R.drawable.qip_online), resources.getString("s_profile_type_qip"), 5);
                 adp.put(this.service.getResources().getDrawable(R.drawable.gtalk_online), resources.getString("s_profile_type_gtalk"), 6);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad5 = DialogBuilder.create(this, resources.getString("s_add_profile"), adp, (arg0, arg1, arg2, arg3) -> {
-                    removeDialog(4);
-                    switch ((int) adp.getItemId(arg2)) {
-                        case 0:
-                            removeDialog(3);
-                            showDialog(3);
-                            return;
-                        case 1:
-                            removeDialog(5);
-                            showDialog(5);
-                            return;
-                        case 2:
-                            removeDialog(7);
-                            showDialog(7);
-                            return;
-                        case 3:
-                            removeDialog(9);
-                            showDialog(9);
-                            return;
-                        case 4:
-                            removeDialog(11);
-                            showDialog(11);
-                            return;
-                        case 5:
-                            removeDialog(13);
-                            showDialog(13);
-                            return;
-                        case 6:
-                            removeDialog(15);
-                            showDialog(15);
-                            return;
-                        default:
+                Dialog ad5 = DialogBuilder.create(this, resources.getString("s_add_profile"), adp, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        removeDialog(4);
+                        switch ((int) adp.getItemId(i)) {
+                            case 0:
+                                removeDialog(3);
+                                showDialog(3);
+                                return;
+                            case 1:
+                                removeDialog(5);
+                                showDialog(5);
+                                return;
+                            case 2:
+                                removeDialog(7);
+                                showDialog(7);
+                                return;
+                            case 3:
+                                removeDialog(9);
+                                showDialog(9);
+                                return;
+                            case 4:
+                                removeDialog(11);
+                                showDialog(11);
+                                return;
+                            case 5:
+                                removeDialog(13);
+                                showDialog(13);
+                                return;
+                            case 6:
+                                removeDialog(15);
+                                showDialog(15);
+                                return;
+                            default:
+                        }
                     }
                 });
                 return ad5;
@@ -352,73 +380,87 @@ public class ProfilesActivity extends Activity {
                 autoconnect2.setText(resources.getString("s_dialog_autologin"));
                 zlib.setText(resources.getString("s_dialog_compression"));
                 tls.setText(resources.getString("s_dialog_tls"));
-                detect_srv.setOnClickListener(v -> {
-                    String JID = jid.getText().toString().toLowerCase().trim();
-                    String[] parts = JID.split("@");
-                    if (parts.length == 2) {
-                        final Dialog progress = DialogBuilder.createProgress(ProfilesActivity.this, Locale.getString("s_please_wait"), true);
-                        progress.show();
-                        String str = parts[1];
-                        //noinspection UnnecessaryLocalVariable
-                        final EditText editText = server;
-                        DNS.resolve(str, server_ -> {
-                            editText.setText(server_);
-                            progress.dismiss();
-                        });
+                detect_srv.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String JID = jid.getText().toString().toLowerCase().trim();
+                        String[] parts = JID.split("@");
+                        if (parts.length == 2) {
+                            final Dialog progress = DialogBuilder.createProgress(ProfilesActivity.this, Locale.getString("s_please_wait"), true);
+                            progress.show();
+                            String str = parts[1];
+                            //noinspection UnnecessaryLocalVariable
+                            final EditText editText = server;
+                            DNS.resolve(str, new DNS.DNSListener() {
+                                @Override
+                                public void onResult(String server_) {
+                                    editText.setText(server_);
+                                    progress.dismiss();
+                                }
+                            });
+                        }
                     }
                 });
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad6 = DialogBuilder.createYesNo(this, lay3, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = new ProfilesAdapterItem();
-                    pdata.profile_type = 1;
-                    String JID = jid.getText().toString().toLowerCase().trim();
-                    String[] parts = JID.split("@");
-                    if (parts.length == 2) {
-                        if (service.profiles.isProfileAlreadyExist(JID)) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
-                            return;
-                        } else if (JID.length() < 3) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_2"), Toast.LENGTH_SHORT).show();
-                            return;
-                        } else {
-                            pdata.id = parts[0];
-                            pdata.host = parts[1];
-                            String pass = password.getText().toString();
-                            if (pass.length() < 2) {
-                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                Dialog ad6 = DialogBuilder.createYesNo(this, lay3, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = new ProfilesAdapterItem();
+                        pdata.profile_type = 1;
+                        String JID = jid.getText().toString().toLowerCase().trim();
+                        String[] parts = JID.split("@");
+                        if (parts.length == 2) {
+                            if (service.profiles.isProfileAlreadyExist(JID)) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
+                                return;
+                            } else if (JID.length() < 3) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_2"), Toast.LENGTH_SHORT).show();
+                                return;
+                            } else {
+                                pdata.id = parts[0];
+                                pdata.host = parts[1];
+                                String pass = password.getText().toString();
+                                if (pass.length() < 2) {
+                                    Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                pdata.pass = pass;
+                                String Server = server.getText().toString().trim();
+                                if (Server.length() < 2) {
+                                    Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_5"), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                pdata.server = Server;
+                                String Port = port.getText().toString().trim();
+                                if (Port.length() < 2) {
+                                    Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_6"), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                pdata.enabled = enabled2.isChecked();
+                                pdata.port = Integer.parseInt(Port);
+                                pdata.autoconnect = autoconnect2.isChecked();
+                                pdata.compression = zlib.isChecked();
+                                pdata.tls = tls.isChecked();
+                                pdata.proto_type = 0;
+                                pa.add(pdata);
+                                JProfile profile = new JProfile(service, parts[0], parts[1], pdata.server, pdata.port, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                                service.profiles.addProfile(profile);
+                                service.profiles.writeProfilesToFile();
+                                service.handleProfileChanged();
+                                service.handleContactlistCheckConferences();
+                                service.handleContactlistNeedRemake();
+                                removeDialog(5);
                                 return;
                             }
-                            pdata.pass = pass;
-                            String Server = server.getText().toString().trim();
-                            if (Server.length() < 2) {
-                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_5"), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            pdata.server = Server;
-                            String Port = port.getText().toString().trim();
-                            if (Port.length() < 2) {
-                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_6"), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            pdata.enabled = enabled2.isChecked();
-                            pdata.port = Integer.parseInt(Port);
-                            pdata.autoconnect = autoconnect2.isChecked();
-                            pdata.compression = zlib.isChecked();
-                            pdata.tls = tls.isChecked();
-                            pdata.proto_type = 0;
-                            pa.add(pdata);
-                            JProfile profile = new JProfile(service, parts[0], parts[1], pdata.server, pdata.port, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                            service.profiles.addProfile(profile);
-                            service.profiles.writeProfilesToFile();
-                            service.handleProfileChanged();
-                            service.handleContactlistCheckConferences();
-                            service.handleContactlistNeedRemake();
-                            removeDialog(5);
-                            return;
                         }
+                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_2"), Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_2"), Toast.LENGTH_SHORT).show();
-                }, v -> removeDialog(5));
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(5);
+                    }
+                });
                 return ad6;
             case 6:
                 @SuppressLint("InflateParams")
@@ -454,64 +496,78 @@ public class ProfilesActivity extends Activity {
                 autoconnect3.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 zlib3.setChecked(this.pa.getItem(this.selectedIdx).compression);
                 tls3.setChecked(this.pa.getItem(this.selectedIdx).tls);
-                detect_srv3.setOnClickListener(v -> {
-                    String JID = jid3.getText().toString().toLowerCase().trim();
-                    String[] parts = JID.split("@");
-                    if (parts.length == 2) {
-                        final Dialog progress = DialogBuilder.createProgress(ProfilesActivity.this, Locale.getString("s_please_wait"), true);
-                        progress.show();
-                        String str = parts[1];
-                        //noinspection UnnecessaryLocalVariable
-                        final EditText editText = server3;
-                        DNS.resolve(str, server_ -> {
-                            editText.setText(server_);
-                            progress.dismiss();
-                        });
+                detect_srv3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String JID = jid3.getText().toString().toLowerCase().trim();
+                        String[] parts = JID.split("@");
+                        if (parts.length == 2) {
+                            final Dialog progress = DialogBuilder.createProgress(ProfilesActivity.this, Locale.getString("s_please_wait"), true);
+                            progress.show();
+                            String str = parts[1];
+                            //noinspection UnnecessaryLocalVariable
+                            final EditText editText = server3;
+                            DNS.resolve(str, new DNS.DNSListener() {
+                                @Override
+                                public void onResult(String server_) {
+                                    editText.setText(server_);
+                                    progress.dismiss();
+                                }
+                            });
+                        }
                     }
                 });
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad7 = DialogBuilder.createYesNo(this, lay4, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
-                    pdata.profile_type = 1;
-                    String JID = jid3.getText().toString().toLowerCase().trim();
-                    String[] parts = JID.split("@");
-                    if (parts.length != 2) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_2"), Toast.LENGTH_SHORT).show();
-                    } else if (JID.length() < 3) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_2"), Toast.LENGTH_SHORT).show();
-                    } else {
-                        pdata.id = parts[0];
-                        pdata.host = parts[1];
-                        String pass = password3.getText().toString();
-                        if (pass.length() < 2) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                            return;
+                Dialog ad7 = DialogBuilder.createYesNo(this, lay4, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
+                        pdata.profile_type = 1;
+                        String JID = jid3.getText().toString().toLowerCase().trim();
+                        String[] parts = JID.split("@");
+                        if (parts.length != 2) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_2"), Toast.LENGTH_SHORT).show();
+                        } else if (JID.length() < 3) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_2"), Toast.LENGTH_SHORT).show();
+                        } else {
+                            pdata.id = parts[0];
+                            pdata.host = parts[1];
+                            String pass = password3.getText().toString();
+                            if (pass.length() < 2) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.pass = pass;
+                            String Server = server3.getText().toString().trim();
+                            if (Server.length() < 3) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_5"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            String Port = port3.getText().toString().trim();
+                            if (Port.length() < 2) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_6"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.enabled = enabled3.isChecked();
+                            pdata.port = Integer.parseInt(Port);
+                            pdata.server = Server;
+                            pdata.autoconnect = autoconnect3.isChecked();
+                            pdata.compression = zlib3.isChecked();
+                            pdata.tls = tls3.isChecked();
+                            pa.notifyDataSetChanged();
+                            ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(6);
                         }
-                        pdata.pass = pass;
-                        String Server = server3.getText().toString().trim();
-                        if (Server.length() < 3) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_5"), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        String Port = port3.getText().toString().trim();
-                        if (Port.length() < 2) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_6"), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        pdata.enabled = enabled3.isChecked();
-                        pdata.port = Integer.parseInt(Port);
-                        pdata.server = Server;
-                        pdata.autoconnect = autoconnect3.isChecked();
-                        pdata.compression = zlib3.isChecked();
-                        pdata.tls = tls3.isChecked();
-                        pa.notifyDataSetChanged();
-                        ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistNeedRemake();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(6);
                     }
-                }, v -> removeDialog(6));
+                });
                 return ad7;
             case 7:
                 @SuppressLint("InflateParams")
@@ -529,38 +585,46 @@ public class ProfilesActivity extends Activity {
                 final CheckBox tls4 = lay5.findViewById(R.id.xmpp_profile_add_tls);
                 autoconnect4.setText(resources.getString("s_dialog_autologin"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad8 = DialogBuilder.createYesNo(this, lay5, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = new ProfilesAdapterItem();
-                    pdata.profile_type = 1;
-                    String JID = jid4.getText().toString().toLowerCase().trim();
-                    if (service.profiles.isProfileAlreadyExist(JID + "@vk.com")) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
-                    } else if (JID.length() < 3) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
-                    } else {
-                        pdata.id = JID;
-                        String pass = password4.getText().toString();
-                        if (pass.length() < 3) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                            return;
+                Dialog ad8 = DialogBuilder.createYesNo(this, lay5, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = new ProfilesAdapterItem();
+                        pdata.profile_type = 1;
+                        String JID = jid4.getText().toString().toLowerCase().trim();
+                        if (service.profiles.isProfileAlreadyExist(JID + "@vk.com")) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
+                        } else if (JID.length() < 3) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
+                        } else {
+                            pdata.id = JID;
+                            String pass = password4.getText().toString();
+                            if (pass.length() < 3) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.enabled = enabled4.isChecked();
+                            pdata.pass = pass;
+                            pdata.server = "vkmessenger.com";
+                            pdata.autoconnect = autoconnect4.isChecked();
+                            pdata.sasl = sasl4.isChecked();
+                            pdata.tls = tls4.isChecked();
+                            pdata.proto_type = 1;
+                            pa.add(pdata);
+                            JProfile profile = new JProfile(service, pdata.id, "vk.com", pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                            service.profiles.addProfile(profile);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistCheckConferences();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(7);
                         }
-                        pdata.enabled = enabled4.isChecked();
-                        pdata.pass = pass;
-                        pdata.server = "vkmessenger.com";
-                        pdata.autoconnect = autoconnect4.isChecked();
-                        pdata.sasl = sasl4.isChecked();
-                        pdata.tls = tls4.isChecked();
-                        pdata.proto_type = 1;
-                        pa.add(pdata);
-                        JProfile profile = new JProfile(service, pdata.id, "vk.com", pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                        service.profiles.addProfile(profile);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistCheckConferences();
-                        service.handleContactlistNeedRemake();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(7);
                     }
-                }, v -> removeDialog(7));
+                });
                 return ad8;
             case 8:
                 @SuppressLint("InflateParams")
@@ -583,33 +647,41 @@ public class ProfilesActivity extends Activity {
                 password5.setText(this.pa.getItem(this.selectedIdx).pass);
                 autoconnect5.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad9 = DialogBuilder.createYesNo(this, lay6, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
-                    pdata.profile_type = 1;
-                    String JID = jid5.getText().toString().toLowerCase().trim();
-                    if (JID.length() < 3) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
-                        return;
+                Dialog ad9 = DialogBuilder.createYesNo(this, lay6, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
+                        pdata.profile_type = 1;
+                        String JID = jid5.getText().toString().toLowerCase().trim();
+                        if (JID.length() < 3) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        pdata.id = JID;
+                        pdata.host = "vk.com";
+                        String pass = password5.getText().toString();
+                        if (pass.length() < 3) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        pdata.enabled = enabled5.isChecked();
+                        pdata.pass = pass;
+                        pdata.autoconnect = autoconnect5.isChecked();
+                        pdata.sasl = sasl5.isChecked();
+                        pdata.tls = tls5.isChecked();
+                        pa.notifyDataSetChanged();
+                        ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(8);
                     }
-                    pdata.id = JID;
-                    pdata.host = "vk.com";
-                    String pass = password5.getText().toString();
-                    if (pass.length() < 3) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                        return;
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(8);
                     }
-                    pdata.enabled = enabled5.isChecked();
-                    pdata.pass = pass;
-                    pdata.autoconnect = autoconnect5.isChecked();
-                    pdata.sasl = sasl5.isChecked();
-                    pdata.tls = tls5.isChecked();
-                    pa.notifyDataSetChanged();
-                    ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
-                    service.profiles.writeProfilesToFile();
-                    service.handleProfileChanged();
-                    service.handleContactlistNeedRemake();
-                    removeDialog(8);
-                }, v -> removeDialog(8));
+                });
                 return ad9;
             case 9:
                 @SuppressLint("InflateParams")
@@ -629,44 +701,52 @@ public class ProfilesActivity extends Activity {
                 zlib7.setText(resources.getString("s_dialog_compression"));
                 tls7.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad10 = DialogBuilder.createYesNo(this, lay7, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = new ProfilesAdapterItem();
-                    pdata.profile_type = 1;
-                    String JID = jid7.getText().toString().toLowerCase().trim();
-                    if (service.profiles.isProfileAlreadyExist(JID)) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    String[] parts2 = JID.split("@");
-                    if (parts2.length != 2 || parts2[1].split("\\.").length < 2) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                    } else if (JID.length() < 3) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                    } else {
-                        pdata.id = parts2[0];
-                        pdata.host = parts2[1];
-                        String pass = password7.getText().toString();
-                        if (pass.length() < 3) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                Dialog ad10 = DialogBuilder.createYesNo(this, lay7, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = new ProfilesAdapterItem();
+                        pdata.profile_type = 1;
+                        String JID = jid7.getText().toString().toLowerCase().trim();
+                        if (service.profiles.isProfileAlreadyExist(JID)) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
                             return;
                         }
-                        pdata.enabled = enabled7.isChecked();
-                        pdata.pass = pass;
-                        pdata.server = "xmpp.yandex.ru";
-                        pdata.autoconnect = autoconnect7.isChecked();
-                        pdata.compression = zlib7.isChecked();
-                        pdata.tls = tls7.isChecked();
-                        pdata.proto_type = 2;
-                        pa.add(pdata);
-                        JProfile profile = new JProfile(service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                        service.profiles.addProfile(profile);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistCheckConferences();
-                        service.handleContactlistNeedRemake();
+                        String[] parts2 = JID.split("@");
+                        if (parts2.length != 2 || parts2[1].split("\\.").length < 2) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                        } else if (JID.length() < 3) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                        } else {
+                            pdata.id = parts2[0];
+                            pdata.host = parts2[1];
+                            String pass = password7.getText().toString();
+                            if (pass.length() < 3) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.enabled = enabled7.isChecked();
+                            pdata.pass = pass;
+                            pdata.server = "xmpp.yandex.ru";
+                            pdata.autoconnect = autoconnect7.isChecked();
+                            pdata.compression = zlib7.isChecked();
+                            pdata.tls = tls7.isChecked();
+                            pdata.proto_type = 2;
+                            pa.add(pdata);
+                            JProfile profile = new JProfile(service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                            service.profiles.addProfile(profile);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistCheckConferences();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(9);
+                        }
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(9);
                     }
-                }, v -> removeDialog(9));
+                });
                 return ad10;
             case 10:
                 @SuppressLint("InflateParams")
@@ -692,36 +772,44 @@ public class ProfilesActivity extends Activity {
                 tls6.setText(resources.getString("s_dialog_tls"));
                 autoconnect6.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad11 = DialogBuilder.createYesNo(this, lay8, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
-                    pdata.profile_type = 1;
-                    String JID = jid6.getText().toString().toLowerCase().trim();
-                    String[] parts2 = JID.split("@");
-                    if (parts2.length != 2 || parts2[1].split("\\.").length < 2) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                    } else if (JID.length() < 3) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                    } else {
-                        pdata.id = parts2[0];
-                        pdata.host = parts2[1];
-                        String pass = password6.getText().toString();
-                        if (pass.length() < 3) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                            return;
+                Dialog ad11 = DialogBuilder.createYesNo(this, lay8, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
+                        pdata.profile_type = 1;
+                        String JID = jid6.getText().toString().toLowerCase().trim();
+                        String[] parts2 = JID.split("@");
+                        if (parts2.length != 2 || parts2[1].split("\\.").length < 2) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                        } else if (JID.length() < 3) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                        } else {
+                            pdata.id = parts2[0];
+                            pdata.host = parts2[1];
+                            String pass = password6.getText().toString();
+                            if (pass.length() < 3) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.enabled = enabled6.isChecked();
+                            pdata.tls = tls6.isChecked();
+                            pdata.compression = zlib6.isChecked();
+                            pdata.pass = pass;
+                            pdata.autoconnect = autoconnect6.isChecked();
+                            pa.notifyDataSetChanged();
+                            ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(10);
                         }
-                        pdata.enabled = enabled6.isChecked();
-                        pdata.tls = tls6.isChecked();
-                        pdata.compression = zlib6.isChecked();
-                        pdata.pass = pass;
-                        pdata.autoconnect = autoconnect6.isChecked();
-                        pa.notifyDataSetChanged();
-                        ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistNeedRemake();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(10);
                     }
-                }, v -> removeDialog(10));
+                });
                 return ad11;
             case 11:
                 @SuppressLint("InflateParams")
@@ -738,37 +826,45 @@ public class ProfilesActivity extends Activity {
                 final CheckBox mmp_autoconnect = lay9.findViewById(R.id.mrim_profile_add_autoconnect);
                 mmp_autoconnect.setText(resources.getString("s_dialog_autologin"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad12 = DialogBuilder.createYesNo(this, lay9, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = new ProfilesAdapterItem();
-                    pdata.profile_type = 2;
-                    String ID = mmp_login_edit.getText().toString().toLowerCase().trim();
-                    if (!utilities.isMrim(ID)) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                    } else if (ID.length() >= 7) {
-                        if (service.profiles.isProfileAlreadyExist(ID)) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
-                            return;
+                Dialog ad12 = DialogBuilder.createYesNo(this, lay9, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = new ProfilesAdapterItem();
+                        pdata.profile_type = 2;
+                        String ID = mmp_login_edit.getText().toString().toLowerCase().trim();
+                        if (!utilities.isMrim(ID)) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                        } else if (ID.length() >= 7) {
+                            if (service.profiles.isProfileAlreadyExist(ID)) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.id = ID;
+                            String pass = mmp_password_edit.getText().toString();
+                            if (pass.length() < 3) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.enabled = mmp_enabled.isChecked();
+                            pdata.pass = pass;
+                            pdata.autoconnect = mmp_autoconnect.isChecked();
+                            pa.add(pdata);
+                            MMPProfile mmp_profile = new MMPProfile(service, pdata.id, pdata.pass, pdata.autoconnect, pdata.enabled);
+                            service.profiles.addProfile(mmp_profile);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(11);
+                        } else {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
                         }
-                        pdata.id = ID;
-                        String pass = mmp_password_edit.getText().toString();
-                        if (pass.length() < 3) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        pdata.enabled = mmp_enabled.isChecked();
-                        pdata.pass = pass;
-                        pdata.autoconnect = mmp_autoconnect.isChecked();
-                        pa.add(pdata);
-                        MMPProfile mmp_profile = new MMPProfile(service, pdata.id, pdata.pass, pdata.autoconnect, pdata.enabled);
-                        service.profiles.addProfile(mmp_profile);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistNeedRemake();
-                        removeDialog(11);
-                    } else {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
                     }
-                }, v -> removeDialog(11));
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(11);
+                    }
+                });
                 return ad12;
             case 12:
                 @SuppressLint("InflateParams")
@@ -789,32 +885,40 @@ public class ProfilesActivity extends Activity {
                 mmp_enabled2.setChecked(this.pa.getItem(this.selectedIdx).enabled);
                 mmp_autoconnect2.setChecked(item.autoconnect);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad13 = DialogBuilder.createYesNo(this, lay10, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
-                    pdata.profile_type = 2;
-                    String ID = mmp_login_edit2.getText().toString().toLowerCase().trim();
-                    if (!utilities.isMrim(ID)) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                    } else if (ID.length() < 7) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                    } else {
-                        pdata.id = ID;
-                        String pass = mmp_password_edit2.getText().toString();
-                        if (pass.length() < 3) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                            return;
+                Dialog ad13 = DialogBuilder.createYesNo(this, lay10, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
+                        pdata.profile_type = 2;
+                        String ID = mmp_login_edit2.getText().toString().toLowerCase().trim();
+                        if (!utilities.isMrim(ID)) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                        } else if (ID.length() < 7) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                        } else {
+                            pdata.id = ID;
+                            String pass = mmp_password_edit2.getText().toString();
+                            if (pass.length() < 3) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.pass = pass;
+                            pdata.autoconnect = mmp_autoconnect2.isChecked();
+                            pdata.enabled = mmp_enabled2.isChecked();
+                            MMPProfile mmp_profile = (MMPProfile) service.profiles.getProfiles().get(selectedIdx);
+                            mmp_profile.reinitParams(pdata);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(12);
                         }
-                        pdata.pass = pass;
-                        pdata.autoconnect = mmp_autoconnect2.isChecked();
-                        pdata.enabled = mmp_enabled2.isChecked();
-                        MMPProfile mmp_profile = (MMPProfile) service.profiles.getProfiles().get(selectedIdx);
-                        mmp_profile.reinitParams(pdata);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistNeedRemake();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(12);
                     }
-                }, v -> removeDialog(12));
+                });
                 return ad13;
             case 13:
                 @SuppressLint("InflateParams")
@@ -835,40 +939,48 @@ public class ProfilesActivity extends Activity {
                 zlib8.setText(resources.getString("s_dialog_compression"));
                 tls8.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad14 = DialogBuilder.createYesNo(this, lay11, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = new ProfilesAdapterItem();
-                    pdata.profile_type = 1;
-                    String JID = jid8.getText().toString().toLowerCase().trim();
-                    String[] parts2 = JID.split("@");
-                    if (service.profiles.isProfileAlreadyExist(JID)) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
-                    } else if (JID.length() < 3 || parts2.length < 2) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
-                    } else {
-                        pdata.id = parts2[0];
-                        pdata.host = parts2[1];
-                        String pass = password8.getText().toString();
-                        if (pass.length() < 3) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                            return;
+                Dialog ad14 = DialogBuilder.createYesNo(this, lay11, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = new ProfilesAdapterItem();
+                        pdata.profile_type = 1;
+                        String JID = jid8.getText().toString().toLowerCase().trim();
+                        String[] parts2 = JID.split("@");
+                        if (service.profiles.isProfileAlreadyExist(JID)) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
+                        } else if (JID.length() < 3 || parts2.length < 2) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
+                        } else {
+                            pdata.id = parts2[0];
+                            pdata.host = parts2[1];
+                            String pass = password8.getText().toString();
+                            if (pass.length() < 3) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.enabled = enabled8.isChecked();
+                            pdata.pass = pass;
+                            pdata.server = "webim.qip.ru";
+                            pdata.autoconnect = autoconnect8.isChecked();
+                            pdata.compression = zlib8.isChecked();
+                            pdata.tls = tls8.isChecked();
+                            pdata.proto_type = 4;
+                            pa.add(pdata);
+                            JProfile profile = new JProfile(service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                            service.profiles.addProfile(profile);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistCheckConferences();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(13);
                         }
-                        pdata.enabled = enabled8.isChecked();
-                        pdata.pass = pass;
-                        pdata.server = "webim.qip.ru";
-                        pdata.autoconnect = autoconnect8.isChecked();
-                        pdata.compression = zlib8.isChecked();
-                        pdata.tls = tls8.isChecked();
-                        pdata.proto_type = 4;
-                        pa.add(pdata);
-                        JProfile profile = new JProfile(service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                        service.profiles.addProfile(profile);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistCheckConferences();
-                        service.handleContactlistNeedRemake();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(13);
                     }
-                }, v -> removeDialog(13));
+                });
                 return ad14;
             case 14:
                 @SuppressLint("InflateParams")
@@ -894,36 +1006,44 @@ public class ProfilesActivity extends Activity {
                 zlib9.setText(resources.getString("s_dialog_compression"));
                 tls9.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad15 = DialogBuilder.createYesNo(this, lay12, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
-                    pdata.profile_type = 1;
-                    String JID = jid9.getText().toString().toLowerCase().trim();
-                    String[] parts2 = JID.split("@");
-                    if (JID.length() < 3 || parts2.length < 2) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
-                        return;
+                Dialog ad15 = DialogBuilder.createYesNo(this, lay12, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
+                        pdata.profile_type = 1;
+                        String JID = jid9.getText().toString().toLowerCase().trim();
+                        String[] parts2 = JID.split("@");
+                        if (JID.length() < 3 || parts2.length < 2) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_1"), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        pdata.id = parts2[0];
+                        pdata.host = parts2[1];
+                        String pass = password9.getText().toString();
+                        if (pass.length() < 3) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        pdata.enabled = enabled9.isChecked();
+                        pdata.pass = pass;
+                        pdata.server = "webim.qip.ru";
+                        pdata.autoconnect = autoconnect9.isChecked();
+                        pdata.sasl = true;
+                        pdata.tls = tls9.isChecked();
+                        pdata.proto_type = 4;
+                        pa.notifyDataSetChanged();
+                        ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(14);
                     }
-                    pdata.id = parts2[0];
-                    pdata.host = parts2[1];
-                    String pass = password9.getText().toString();
-                    if (pass.length() < 3) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                        return;
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(14);
                     }
-                    pdata.enabled = enabled9.isChecked();
-                    pdata.pass = pass;
-                    pdata.server = "webim.qip.ru";
-                    pdata.autoconnect = autoconnect9.isChecked();
-                    pdata.sasl = true;
-                    pdata.tls = tls9.isChecked();
-                    pdata.proto_type = 4;
-                    pa.notifyDataSetChanged();
-                    ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
-                    service.profiles.writeProfilesToFile();
-                    service.handleProfileChanged();
-                    service.handleContactlistNeedRemake();
-                    removeDialog(14);
-                }, v -> removeDialog(14));
+                });
                 return ad15;
             case 15:
                 @SuppressLint("InflateParams")
@@ -943,44 +1063,52 @@ public class ProfilesActivity extends Activity {
                 zlib10.setText(resources.getString("s_dialog_compression"));
                 tls10.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad16 = DialogBuilder.createYesNo(this, lay13, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = new ProfilesAdapterItem();
-                    pdata.profile_type = 1;
-                    String JID = jid10.getText().toString().toLowerCase().trim();
-                    if (service.profiles.isProfileAlreadyExist(JID)) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
-                    } else if (JID.length() < 11) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                    } else {
-                        String[] parts2 = JID.split("@");
-                        if (parts2.length != 2) {
+                Dialog ad16 = DialogBuilder.createYesNo(this, lay13, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = new ProfilesAdapterItem();
+                        pdata.profile_type = 1;
+                        String JID = jid10.getText().toString().toLowerCase().trim();
+                        if (service.profiles.isProfileAlreadyExist(JID)) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_3"), Toast.LENGTH_SHORT).show();
+                        } else if (JID.length() < 11) {
                             Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                            return;
+                        } else {
+                            String[] parts2 = JID.split("@");
+                            if (parts2.length != 2) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.id = parts2[0];
+                            String pass = password10.getText().toString();
+                            if (pass.length() < 3) {
+                                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                                return;
+                            }
+                            pdata.enabled = enabled10.isChecked();
+                            pdata.pass = pass;
+                            pdata.server = "talk.google.com";
+                            pdata.host = parts2[1];
+                            pdata.autoconnect = autoconnect10.isChecked();
+                            pdata.compression = zlib10.isChecked();
+                            pdata.tls = tls10.isChecked();
+                            pdata.proto_type = 3;
+                            pa.add(pdata);
+                            JProfile profile = new JProfile(service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
+                            service.profiles.addProfile(profile);
+                            service.profiles.writeProfilesToFile();
+                            service.handleProfileChanged();
+                            service.handleContactlistCheckConferences();
+                            service.handleContactlistNeedRemake();
+                            removeDialog(15);
                         }
-                        pdata.id = parts2[0];
-                        String pass = password10.getText().toString();
-                        if (pass.length() < 3) {
-                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                            return;
-                        }
-                        pdata.enabled = enabled10.isChecked();
-                        pdata.pass = pass;
-                        pdata.server = "talk.google.com";
-                        pdata.host = parts2[1];
-                        pdata.autoconnect = autoconnect10.isChecked();
-                        pdata.compression = zlib10.isChecked();
-                        pdata.tls = tls10.isChecked();
-                        pdata.proto_type = 3;
-                        pa.add(pdata);
-                        JProfile profile = new JProfile(service, pdata.id, pdata.host, pdata.server, 5222, pdata.pass, null, pdata.compression, pdata.tls, pdata.sasl, pdata.autoconnect, pdata.enabled, pdata.proto_type);
-                        service.profiles.addProfile(profile);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistCheckConferences();
-                        service.handleContactlistNeedRemake();
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(15);
                     }
-                }, v -> removeDialog(15));
+                });
                 return ad16;
             case 16:
                 @SuppressLint("InflateParams") LinearLayout lay14 = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.xmpp_ya_profile_add, null);
@@ -1004,38 +1132,46 @@ public class ProfilesActivity extends Activity {
                 zlib11.setText(resources.getString("s_dialog_compression"));
                 tls11.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad17 = DialogBuilder.createYesNo(this, lay14, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), v -> {
-                    ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
-                    pdata.profile_type = 1;
-                    String JID = jid11.getText().toString().toLowerCase().trim();
-                    if (JID.length() < 11) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                        return;
+                Dialog ad17 = DialogBuilder.createYesNo(this, lay14, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
+                        pdata.profile_type = 1;
+                        String JID = jid11.getText().toString().toLowerCase().trim();
+                        if (JID.length() < 11) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        String[] parts2 = JID.split("@");
+                        if (parts2.length != 2) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        pdata.id = parts2[0];
+                        pdata.host = parts2[1];
+                        String pass = password11.getText().toString();
+                        if (pass.length() < 3) {
+                            Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        pdata.enabled = enabled11.isChecked();
+                        pdata.pass = pass;
+                        pdata.autoconnect = autoconnect11.isChecked();
+                        pdata.tls = tls11.isChecked();
+                        pdata.compression = zlib11.isChecked();
+                        pa.notifyDataSetChanged();
+                        ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
+                        service.profiles.writeProfilesToFile();
+                        service.handleProfileChanged();
+                        service.handleContactlistNeedRemake();
+                        removeDialog(16);
                     }
-                    String[] parts2 = JID.split("@");
-                    if (parts2.length != 2) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_7"), Toast.LENGTH_SHORT).show();
-                        return;
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(16);
                     }
-                    pdata.id = parts2[0];
-                    pdata.host = parts2[1];
-                    String pass = password11.getText().toString();
-                    if (pass.length() < 3) {
-                        Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_4"), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    pdata.enabled = enabled11.isChecked();
-                    pdata.pass = pass;
-                    pdata.autoconnect = autoconnect11.isChecked();
-                    pdata.tls = tls11.isChecked();
-                    pdata.compression = zlib11.isChecked();
-                    pa.notifyDataSetChanged();
-                    ((JProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
-                    service.profiles.writeProfilesToFile();
-                    service.handleProfileChanged();
-                    service.handleContactlistNeedRemake();
-                    removeDialog(16);
-                }, v -> removeDialog(16));
+                });
                 return ad17;
             default:
                 return null;
@@ -1107,9 +1243,7 @@ public class ProfilesActivity extends Activity {
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
             selectedIdx = arg2;
-            //noinspection deprecation
             removeDialog(2);
-            //noinspection deprecation
             showDialog(2);
         }
     }

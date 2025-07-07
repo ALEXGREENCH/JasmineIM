@@ -10,6 +10,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.Service.jasminSvc;
@@ -87,7 +88,12 @@ public abstract class Chat extends ExFragment implements Handler.Callback {
         if (parcel != null) {
             this.messageList.onRestoreInstanceState(parcel);
         }
-        this.messageList.post(() -> Chat.this.messageList.setTranscriptMode(mTranscript));
+        this.messageList.post(new Runnable() {
+            @Override
+            public void run() {
+                Chat.this.messageList.setTranscriptMode(mTranscript);
+            }
+        });
     }
 
     @Override
@@ -100,7 +106,12 @@ public abstract class Chat extends ExFragment implements Handler.Callback {
     public void initViews() {
         View close_btn = findViewById(R.id.chat_close_btn);
         if (resources.IT_IS_TABLET) {
-            close_btn.setOnClickListener(v -> Chat.this.handleChatClosed());
+            close_btn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Chat.this.handleChatClosed();
+                }
+            });
         }
     }
 
@@ -116,7 +127,6 @@ public abstract class Chat extends ExFragment implements Handler.Callback {
         @Override
         public void onClick(View v) {
             if (resources.IT_IS_TABLET) {
-                // from class: ru.ivansuper.jasmin.chats.Chat.smileySelectBtnListener.1
                 Chat.this.LAST_QUICK_ACTION = PopupBuilder.buildGrid(
                         new smileys_adapter(),
                         v,
@@ -124,24 +134,27 @@ public abstract class Chat extends ExFragment implements Handler.Callback {
                         PreferenceTable.smileysSelectorColumns,
                         JConference.BANNED_LIST_RECEIVED,
                         -1,
-                        (arg0, arg1, arg2, arg3) -> {
-                    Chat.this.LAST_QUICK_ACTION.dismiss();
-                    Chat.received_smile_tag = ((smileys_adapter) arg0.getAdapter()).getTag(arg2);
-                    int pos = Chat.this.input.getSelectionStart();
-                    if (pos == -1) {
-                        pos = 0;
-                    }
-                    String typed = Chat.this.input.getText().toString();
-                    if (pos > typed.length()) {
-                        pos = typed.length();
-                    }
-                    String first_part = typed.substring(0, pos) + " " + Chat.received_smile_tag + " ";
-                    String current_text = first_part + typed.substring(pos);
-                    Chat.received_smile_tag = "";
-                    Chat.this.input.setText(current_text);
-                    int cursor_pos = first_part.length();
-                    Chat.this.input.setSelection(cursor_pos);
-                });
+                        new AdapterView.OnItemClickListener() {
+                            @Override
+                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                Chat.this.LAST_QUICK_ACTION.dismiss();
+                                Chat.received_smile_tag = ((smileys_adapter) adapterView.getAdapter()).getTag(i);
+                                int pos = Chat.this.input.getSelectionStart();
+                                if (pos == -1) {
+                                    pos = 0;
+                                }
+                                String typed = Chat.this.input.getText().toString();
+                                if (pos > typed.length()) {
+                                    pos = typed.length();
+                                }
+                                String first_part = typed.substring(0, pos) + " " + Chat.received_smile_tag + " ";
+                                String current_text = first_part + typed.substring(pos);
+                                Chat.received_smile_tag = "";
+                                Chat.this.input.setText(current_text);
+                                int cursor_pos = first_part.length();
+                                Chat.this.input.setSelection(cursor_pos);
+                            }
+                        });
                 Chat.this.LAST_QUICK_ACTION.show();
             } else {
                 Intent i = new Intent(Chat.this.ACTIVITY, SmileysSelector.class);

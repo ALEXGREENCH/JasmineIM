@@ -3,6 +3,7 @@ package ru.ivansuper.jasmin;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
@@ -17,6 +18,7 @@ import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.InputFilter;
 import android.text.SpannableStringBuilder;
+import android.text.Spanned;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
 import android.text.style.URLSpan;
@@ -58,12 +60,14 @@ import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.base.ach.ADB;
 import ru.ivansuper.jasmin.base.destroyer;
+import ru.ivansuper.jasmin.chats.ChatInitCallback;
 import ru.ivansuper.jasmin.chats.ICQChatActivity;
 import ru.ivansuper.jasmin.chats.JChatActivity;
 import ru.ivansuper.jasmin.chats.JConference;
 import ru.ivansuper.jasmin.chats.MMPChatActivity;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
+import ru.ivansuper.jasmin.icq.Callback;
 import ru.ivansuper.jasmin.icq.ICQContact;
 import ru.ivansuper.jasmin.icq.ICQGroup;
 import ru.ivansuper.jasmin.icq.ICQProfile;
@@ -202,8 +206,10 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         this.IT_IS_PORTRAIT = true;
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
+        //noinspection deprecation
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
+        //noinspection DataFlowIssue
         switch (wallpaper_type) {
             case "0":
                 setTheme(R.style.WallpaperNoTitleTheme);
@@ -245,6 +251,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 return;
             }
         }
+        //noinspection DataFlowIssue
         if (!sp.getString("chlver", "0.0.0").equals(resources.VERSION)) {
             showDialogA(26);
             sp.edit().putString("chlver", resources.VERSION).commit();
@@ -258,7 +265,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             checkPwd();
         }
 
-        findViewById(R.id.toggle_menu).setOnClickListener(v -> handleMenuKey());
+        findViewById(R.id.toggle_menu).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                handleMenuKey();
+            }
+        });
     }
 
     private void checkPwd() {
@@ -275,19 +287,26 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     Locale.getString("s_ms_use_pass_security_hint"),
                     Locale.getString("s_ok"),
                     0,
-                    v -> {
+                    new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                        }
                     },
                     true
             );
-            d.setOnDismissListener(dialog -> {
-                if (PasswordManager.verifyPassword(pass.getText().toString())) {
-                    lp.alpha = 1.0f;
-                    getWindow().setAttributes(lp);
-                    PasswordManager.TYPED = true;
-                    return;
+            d.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialog) {
+                    if (PasswordManager.verifyPassword(pass.getText().toString())) {
+                        lp.alpha = 1.0f;
+                        getWindow().setAttributes(lp);
+                        PasswordManager.TYPED = true;
+                        return;
+                    }
+                    exiting = true;
+                    finish();
                 }
-                exiting = true;
-                finish();
             });
             d.show();
         }
@@ -327,17 +346,25 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void copyDumpsToSD() {
+        //noinspection deprecation
         new CopyFilesTask().execute();
     }
 
+    /** @noinspection deprecation*/
     @SuppressLint("StaticFieldLeak")
     private static class CopyFilesTask extends AsyncTask<Void, Void, Void> {
 
+        /** @noinspection deprecation*/
         @Override
         protected Void doInBackground(Void... params) {
             byte[] buffer = new byte[16384];
             File data_dir = new File(resources.dataPath);
-            FilenameFilter filter = (dir, filename) -> filename.endsWith(".st");
+            FilenameFilter filter = new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    return filename.endsWith(".st");
+                }
+            };
             File[] dumps = data_dir.listFiles(filter);
             assert dumps != null;
             for (File dump : dumps) {
@@ -346,6 +373,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     FileOutputStream fos = new FileOutputStream(out);
                     FileInputStream fis = new FileInputStream(dump);
                     while (fis.available() > 0) {
+                        //noinspection SpellCheckingInspection
                         int readed = fis.read(buffer, 0, 16384);
                         fos.write(buffer, 0, readed);
                     }
@@ -354,6 +382,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     //noinspection ResultOfMethodCallIgnored
                     dump.delete();
                 } catch (Exception e) {
+                    //noinspection CallToPrintStackTrace
                     e.printStackTrace();
                 }
             }
@@ -424,7 +453,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 switcher.setAnimationType(PreferenceTable.ms_cl_transition_effect);
             }
             if (!PreferenceTable.ms_two_screens_mode) {
-                switcher.post(() -> switcher.scrollTo(1));
+                switcher.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        switcher.scrollTo(1);
+                    }
+                });
             }
             SlideSwitcher slideSwitcher = switcher;
             if (PreferenceTable.ms_two_screens_mode) {
@@ -521,7 +555,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         if (!resources.IT_IS_TABLET && !CURRENT_IS_CONTACTS) {
             service.showChatMenu();
         } else {
-            //noinspection deprecation
             removeDialog(2);
             showDialogA(2);
         }
@@ -616,6 +649,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         BOTTOM_PANEL.startAnimation(t2);
     }
 
+    /** @noinspection NullableProblems*/
     @Override
     public void onConfigurationChanged(Configuration configuration) {
         onConfigurationChangedLocal(configuration, 0);
@@ -624,8 +658,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
 
     public void onConfigurationChangedLocal(final Configuration configuration, final int diff) {
         this.IT_IS_PORTRAIT = getResources().getConfiguration().orientation == 1;
-        //noinspection Convert2MethodRef
-        service.runOnUi(() -> updateUI(), 100L);
+        service.runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+            }
+        }, 100L);
         if (last_quick_action != null) {
             last_quick_action.dismiss();
         }
@@ -647,6 +685,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         });
         if (requestCode == ICQ_AVATAR_REQUEST && resultCode != 0) {
             String file_name = data.getAction();
+            //noinspection DataFlowIssue
             if (file_name.toLowerCase().endsWith(".gif")) {
                 File file = new File(data.getAction());
                 uploadAvatar(file);
@@ -665,6 +704,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         }
         if (requestCode == JABBER_AVATAR_REQUEST && resultCode != 0) {
             String file_name2 = data.getAction();
+            //noinspection DataFlowIssue
             if (file_name2.toLowerCase().endsWith(".gif")) {
                 File file5 = new File(data.getAction());
                 uploadJabberAvatar(file5);
@@ -685,16 +725,16 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
 
     private void uploadAvatar(File file) {
         ////if (file.length() <= 11264) {
-            BitmapFactory.Options opts = new BitmapFactory.Options();
-            opts.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
+        BitmapFactory.Options opts = new BitmapFactory.Options();
+        opts.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(file.getAbsolutePath(), opts);
         ////if (opts.outWidth <= 64 && opts.outHeight <= 64) {
-                // TODO: ?
-                //if (0 != 0) {
-                //    Toast.makeText(this, resources.getString("s_avatar_size_too_big"), Toast.LENGTH_LONG).show();
-                //} else {
-                    contextProfile.doChangeAvatar(file);
-                //}
+        // TODO: ?
+        //if (0 != 0) {
+        //    Toast.makeText(this, resources.getString("s_avatar_size_too_big"), Toast.LENGTH_LONG).show();
+        //} else {
+        contextProfile.doChangeAvatar(file);
+        //}
         ////return;
         ////}
         ////return;
@@ -711,7 +751,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
 
     public void showDialogA(int id) {
         if (!HIDDEN) {
-            //noinspection deprecation
             showDialog(id);
         }
     }
@@ -734,56 +773,59 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 adp_0.put(resources.getString("s_icq_global_search"), 3);
                 adp_0.put(resources.getString("s_do_refresh_avatars"), 4);
                 adp_0.put(resources.getString("s_do_change_own_info"), 5);
-                ad = DialogBuilder.createWithNoHeader(this, adp_0, 48, (arg0, arg1, arg2, arg3) -> {
-                    removeDialog(0);
-                    int id2 = (int) adp_0.getItemId(arg2);
-                    switch (id2) {
-                        case 0:
-                            removeDialog(6);
-                            showDialogA(6);
-                            return;
-                        case 1:
-                            Intent i = new Intent();
-                            i.setClass(this, FileBrowserActivity.class);
-                            startActivityForResult(i, ICQ_AVATAR_REQUEST);
-                            contextProfile.checkRosterRecord();
-                            return;
-                        case 2:
-                            removeDialog(24);
-                            showDialogA(24);
-                            return;
-                        case 3:
-                            Intent search = new Intent();
-                            search.setClass(this, SearchActivity.class);
-                            search.setAction(contextProfile.ID);
-                            startActivity(search);
-                            return;
-                        case 4:
-                            Thread t = new Thread() {
-                                @Override
-                                public void run() {
-                                    setPriority(1);
-                                    Vector<ICQContact> list = contextProfile.contactlist.getContacts();
-                                    for (ICQContact contact : list) {
-                                        contact.getAvatar(contact, service);
-                                        try {
-                                            Thread.sleep(1000L);
-                                        } catch (InterruptedException ignored) {
+                ad = DialogBuilder.createWithNoHeader(this, adp_0, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                        removeDialog(0);
+                        int id2 = (int) adp_0.getItemId(index);
+                        switch (id2) {
+                            case 0:
+                                removeDialog(6);
+                                showDialogA(6);
+                                return;
+                            case 1:
+                                Intent i = new Intent();
+                                i.setClass(ContactListActivity.this, FileBrowserActivity.class);
+                                startActivityForResult(i, ICQ_AVATAR_REQUEST);
+                                contextProfile.checkRosterRecord();
+                                return;
+                            case 2:
+                                removeDialog(24);
+                                showDialogA(24);
+                                return;
+                            case 3:
+                                Intent search = new Intent();
+                                search.setClass(ContactListActivity.this, SearchActivity.class);
+                                search.setAction(contextProfile.ID);
+                                startActivity(search);
+                                return;
+                            case 4:
+                                Thread t = new Thread() {
+                                    @Override
+                                    public void run() {
+                                        setPriority(1);
+                                        Vector<ICQContact> list = contextProfile.contactlist.getContacts();
+                                        for (ICQContact contact : list) {
+                                            contact.getAvatar(contact, service);
+                                            try {
+                                                Thread.sleep(1000L);
+                                            } catch (InterruptedException ignored) {
+                                            }
                                         }
                                     }
-                                }
-                            };
-                            t.start();
-                            return;
-                        case 5:
-                            removeDialog(27);
-                            showDialogA(27);
-                            return;
-                        case 6:
-                            removeDialog(31);
-                            showDialogA(31);
-                            return;
-                        default:
+                                };
+                                t.start();
+                                return;
+                            case 5:
+                                removeDialog(27);
+                                showDialogA(27);
+                                return;
+                            case 6:
+                                removeDialog(31);
+                                showDialogA(31);
+                                return;
+                            default:
+                        }
                     }
                 });
                 break;
@@ -805,91 +847,98 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     adp_11.put(Locale.getString("s_achs"), 8);
                 }
                 adp_11.put(resources.getString("s_exit"), 4);
-                ad = DialogBuilder.create(this, resources.getString("s_main_menu"), adp_11, 48, (arg0, arg1, arg2, arg3) -> {
-                    removeDialog(2);
-                    int id2 = (int) adp_11.getItemId(arg2);
-                    switch (id2) {
-                        case 1:
-                            removeDialog(4);
-                            showDialogA(4);
-                            return;
-                        case 2:
-                            Intent sts = new Intent();
-                            sts.setClass(this, SettingsActivity.class);
-                            startActivity(sts);
-                            return;
-                        case 3:
-                            removeDialog(3);
-                            showDialogA(3);
-                            return;
-                        case 4:
-                            removeDialog(16);
-                            showDialogA(16);
-                            return;
-                        case 5:
-                            removeDialog(18);
-                            showDialogA(18);
-                            return;
-                        case 6:
-                            if (!resources.sd_mounted()) {
-                                Toast.makeText(this, resources.getString("s_plug_in_a_memory_card"), Toast.LENGTH_SHORT).show();
+                ad = DialogBuilder.create(this, resources.getString("s_main_menu"), adp_11, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                        removeDialog(2);
+                        int id2 = (int) adp_11.getItemId(index);
+                        switch (id2) {
+                            case 1:
+                                removeDialog(4);
+                                showDialogA(4);
                                 return;
-                            }
-                            removeDialog(19);
-                            showDialogA(19);
-                            return;
-                        case 7:
-                            if (!SEARCH_PANEL_VISIBLE) {
-                                SEARCH_PANEL_VISIBLE = true;
-                                search_panel.setVisibility(View.VISIBLE);
-                                EditText search_panel_input = new EditText(this);
-                                resources.attachEditText(search_panel_input);
-                                search_panel_slot.removeAllViews();
-                                search_panel_slot.addView(search_panel_input);
-                                search_panel_input.addTextChangedListener(new TextWatcher() {
-                                    @Override
-                                    public void afterTextChanged(Editable s) {
-                                        if (listAdp != null) {
-                                            listAdp.setFilter(s.toString());
-                                        }
-                                    }
-
-                                    @Override
-                                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                                    }
-
-                                    @Override
-                                    public void onTextChanged(CharSequence s, int start, int before, int count) {
-                                    }
-                                });
+                            case 2:
+                                Intent sts = new Intent();
+                                sts.setClass(ContactListActivity.this, SettingsActivity.class);
+                                startActivity(sts);
                                 return;
-                            }
-                            return;
-                        case 8:
-                            UAdapter achs_list = new UAdapter();
-                            achs_list.setMode(2);
-                            achs_list.setPadding(10);
-                            achs_list.setTextSize(16);
-                            Vector<ADB.Item> achs = ADB.getAll();
-                            int i = 0;
-                            for (ADB.Item ach : achs) {
-                                achs_list.put(ach.desc, i);
-                                if (ach.activated) {
-                                    achs_list.toggleSelection(achs_list.getLastIndex());
+                            case 3:
+                                removeDialog(3);
+                                showDialogA(3);
+                                return;
+                            case 4:
+                                removeDialog(16);
+                                showDialogA(16);
+                                return;
+                            case 5:
+                                removeDialog(18);
+                                showDialogA(18);
+                                return;
+                            case 6:
+                                if (!resources.sd_mounted()) {
+                                    Toast.makeText(ContactListActivity.this, resources.getString("s_plug_in_a_memory_card"), Toast.LENGTH_SHORT).show();
+                                    return;
                                 }
-                                i++;
-                            }
-                            Dialog achs_ = DialogBuilder.create(
-                                    this,
-                                    Locale.getString("s_achs"),
-                                    achs_list,
-                                    (arg02, arg12, arg22, arg32) -> {
-                                    },
-                                    false
-                            );
-                            achs_.show();
-                            return;
-                        default:
+                                removeDialog(19);
+                                showDialogA(19);
+                                return;
+                            case 7:
+                                if (!SEARCH_PANEL_VISIBLE) {
+                                    SEARCH_PANEL_VISIBLE = true;
+                                    search_panel.setVisibility(View.VISIBLE);
+                                    EditText search_panel_input = new EditText(ContactListActivity.this);
+                                    resources.attachEditText(search_panel_input);
+                                    search_panel_slot.removeAllViews();
+                                    search_panel_slot.addView(search_panel_input);
+                                    search_panel_input.addTextChangedListener(new TextWatcher() {
+                                        @Override
+                                        public void afterTextChanged(Editable s) {
+                                            if (listAdp != null) {
+                                                listAdp.setFilter(s.toString());
+                                            }
+                                        }
+
+                                        @Override
+                                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                                        }
+
+                                        @Override
+                                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                                        }
+                                    });
+                                    return;
+                                }
+                                return;
+                            case 8:
+                                UAdapter achs_list = new UAdapter();
+                                achs_list.setMode(2);
+                                achs_list.setPadding(10);
+                                achs_list.setTextSize(16);
+                                Vector<ADB.Item> achs = ADB.getAll();
+                                int i = 0;
+                                for (ADB.Item ach : achs) {
+                                    achs_list.put(ach.desc, i);
+                                    if (ach.activated) {
+                                        achs_list.toggleSelection(achs_list.getLastIndex());
+                                    }
+                                    i++;
+                                }
+                                Dialog achs_ = DialogBuilder.create(
+                                        ContactListActivity.this,
+                                        Locale.getString("s_achs"),
+                                        achs_list,
+                                        new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+                                            }
+                                        },
+                                        false
+                                );
+                                achs_.show();
+                                return;
+                            default:
+                        }
                     }
                 });
                 break;
@@ -912,25 +961,38 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         service.logAdapter,
                         resources.getString("s_log_list"),
                         resources.getString("s_clear"),
-                        v -> {
-                            service.logAdapter.clear();
-                            removeDialog(4);
-                        },
-                        (arg0, arg1, arg2, arg3) -> {
-                            String item = service.logAdapter.getItem(arg2);
-                            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                            cm.setText(item);
-                            Toast.makeText(this, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
-                            return false;
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                service.logAdapter.clear();
+                                removeDialog(4);
+                            }
+                        }, new AdapterView.OnItemLongClickListener() {
+                            @Override
+                            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                String item = service.logAdapter.getItem(i);
+                                ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                cm.setText(item);
+                                Toast.makeText(ContactListActivity.this, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
+                                return false;
+                            }
                         });
                 break;
             case 5:
-                ad = DialogBuilder.createYesNo(resources.ctx, 0, resources.getString("s_information"), client_info, Locale.getString("s_copy"), Locale.getString("s_close"), arg0 -> {
-                    service.showToast(Locale.getString("s_copied"), 0);
-                    ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                    cm.setText(client_info);
-                    removeDialog(5);
-                }, arg0 -> removeDialog(5));
+                ad = DialogBuilder.createYesNo(resources.ctx, 0, resources.getString("s_information"), client_info, Locale.getString("s_copy"), Locale.getString("s_close"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        service.showToast(Locale.getString("s_copied"), 0);
+                        ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                        cm.setText(client_info);
+                        removeDialog(5);
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(5);
+                    }
+                });
                 break;
             case 6:
                 UAdapter adp = new UAdapter();
@@ -942,8 +1004,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 for (ICQGroup group : groups) {
                     adp.put(group.name, group.id);
                 }
-                @SuppressLint("InflateParams")
-                final LinearLayout lay = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.add_contact_dialog, null);
+                @SuppressLint("InflateParams") final LinearLayout lay = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.add_contact_dialog, null);
                 ((TextView) lay.findViewById(R.id.l1)).setText(resources.getString("s_contact_id"));
                 ((TextView) lay.findViewById(R.id.l2)).setText(resources.getString("s_contact_name"));
                 ((TextView) lay.findViewById(R.id.l3)).setText(resources.getString("s_contact_group"));
@@ -962,45 +1023,54 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 Spinner spn = lay.findViewById(R.id.add_contact_groups);
                 spn.setAdapter(adp);
                 tempContactForAddingDialog = null;
-                ad = DialogBuilder.createYesNo(this, lay, 48, resources.getString("s_add_contact"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    if (groups.size() == 0) {
-                        Toast.makeText(this, resources.getString("s_you_must_add_group"), Toast.LENGTH_SHORT).show();
-                        return;
+                ad = DialogBuilder.createYesNo(this, lay, 48, resources.getString("s_add_contact"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (groups.isEmpty()) {
+                            Toast.makeText(ContactListActivity.this, resources.getString("s_you_must_add_group"), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        @SuppressLint("CutPasteId")
+                        EditText uin2 = lay.findViewById(R.id.add_contact_uin);
+                        String sUIN = uin2.getText().toString();
+                        if (sUIN.length() < 4) {
+                            Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_icq_id"), Toast.LENGTH_SHORT).show();
+                        } else if (!utilities.isUIN(sUIN) && !utilities.isMrim(sUIN)) {
+                            Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_icq_id"), Toast.LENGTH_SHORT).show();
+                        } else {
+                            @SuppressLint("CutPasteId")
+                            EditText name2 = lay.findViewById(R.id.add_contact_name);
+                            String sNAME = name2.getText().toString();
+                            if (sNAME.isEmpty()) {
+                                sNAME = sUIN;
+                            }
+                            @SuppressLint("CutPasteId")
+                            Spinner spn2 = lay.findViewById(R.id.add_contact_groups);
+                            UAdapter adp2 = (UAdapter) spn2.getAdapter();
+                            int groupId = (int) adp2.getItemId(spn2.getSelectedItemPosition());
+                            ICQContact contact = new ICQContact();
+                            contact.ID = sUIN;
+                            contact.name = sNAME;
+                            contact.group = groupId;
+                            contact.id = utilities.getRandomSSIId();
+                            contact.profile = contextProfile;
+                            contact.init();
+                            try {
+                                contextProfile.doAddContact(contact, 0);
+                            } catch (Exception e) {
+                                Toast.makeText(ContactListActivity.this, resources.getString("s_icq_contact_add_error"), Toast.LENGTH_SHORT).show();
+                                //noinspection CallToPrintStackTrace
+                                e.printStackTrace();
+                            }
+                            removeDialog(6);
+                        }
                     }
-                    @SuppressLint("CutPasteId")
-                    EditText uin2 = lay.findViewById(R.id.add_contact_uin);
-                    String sUIN = uin2.getText().toString();
-                    if (sUIN.length() < 4) {
-                        Toast.makeText(this, resources.getString("s_incorrect_icq_id"), Toast.LENGTH_SHORT).show();
-                    } else if (!utilities.isUIN(sUIN) && !utilities.isMrim(sUIN)) {
-                        Toast.makeText(this, resources.getString("s_incorrect_icq_id"), Toast.LENGTH_SHORT).show();
-                    } else {
-                        @SuppressLint("CutPasteId")
-                        EditText name2 = lay.findViewById(R.id.add_contact_name);
-                        String sNAME = name2.getText().toString();
-                        if (sNAME.length() == 0) {
-                            sNAME = sUIN;
-                        }
-                        @SuppressLint("CutPasteId")
-                        Spinner spn2 = lay.findViewById(R.id.add_contact_groups);
-                        UAdapter adp2 = (UAdapter) spn2.getAdapter();
-                        int groupId = (int) adp2.getItemId(spn2.getSelectedItemPosition());
-                        ICQContact contact = new ICQContact();
-                        contact.ID = sUIN;
-                        contact.name = sNAME;
-                        contact.group = groupId;
-                        contact.id = utilities.getRandomSSIId();
-                        contact.profile = contextProfile;
-                        contact.init();
-                        try {
-                            contextProfile.doAddContact(contact, 0);
-                        } catch (Exception e) {
-                            Toast.makeText(this, resources.getString("s_icq_contact_add_error"), Toast.LENGTH_SHORT).show();
-                            e.printStackTrace();
-                        }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(6);
                     }
-                }, v -> removeDialog(6));
+                });
                 break;
             case 7:
                 if (contextContact != null) {
@@ -1053,73 +1123,73 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     break;
                 } else //noinspection ConstantConditions
                     if (contextContact == null && contextJContact != null && contextMMPContact == null) {
-                    UAdapter adp3 = new UAdapter();
-                    adp3.setMode(2);
-                    adp3.setPadding(15);
-                    adp3.setTextSize(18);
-                    if (contextJContact.isChating) {
-                        adp3.put(resources.getString("s_close_chat"), 0);
-                    }
-                    if (service.opened_chats.size() > 1) {
-                        adp3.put(resources.getString("s_close_all_chats"), 14);
-                    }
-                    if (contextJContact.profile.connected) {
-                        adp3.put(resources.getString("s_user_vcard"), 18);
-                    }
-                    if (!contextJContact.conf_pm) {
-                        if (contextJContact.profile.connected) {
-                            adp3.put(resources.getString("s_do_update_avatar"), 19);
-                            adp3.put(resources.getString("s_do_update_nick"), 30);
-                            adp3.put(resources.getString("s_do_rename"), 28);
-                            adp3.put(resources.getString("s_move"), 27);
-                        }
-                        if (contextJContact.isOnline()) {
-                            adp3.put(resources.getString("s_commands"), 29);
-                        }
-                        adp3.put(resources.getString("s_copy_jid"), 20);
-                        adp3.put(resources.getString("s_copy_nick"), 21);
-                        if (contextJContact.isOnline()) {
-                            adp3.put(resources.getString("s_jabber_resources"), 16);
-                        }
-                        if (contextJContact.profile.connected) {
-                            if (contextJContact.subscription != 2 && contextJContact.subscription != 3) {
-                                adp3.put(resources.getString("s_do_req_auth"), 17);
-                            }
-                            if (JProtocol.itIsServer(contextJContact.ID)) {
-                                adp3.put(Locale.getString("s_jabber_server_login"), 31);
-                                adp3.put(Locale.getString("s_jabber_server_logout"), 32);
-                            }
-                        }
-                    }
-                    adp3.put(resources.getString("s_delete_history"), 25);
-                    if (contextJContact.conf_pm) {
-                        adp3.put(resources.getString("s_do_delete"), 2);
-                    } else if (contextJContact.profile.connected) {
-                        adp3.put(resources.getString("s_do_delete"), 2);
-                    }
-                    ad = DialogBuilder.createWithNoHeader(this, adp3, 48, new ContactContextMenuListener(adp3));
-                    break;
-                } else //noinspection ConstantConditions
-                    if (contextContact == null && contextJContact == null && contextMMPContact != null) {
-                        UAdapter adp4 = new UAdapter();
-                        adp4.setMode(2);
-                        adp4.setPadding(15);
-                        adp4.setTextSize(18);
-                        if (contextMMPContact.isChating) {
-                            adp4.put(resources.getString("s_close_chat"), 0);
+                        UAdapter adp3 = new UAdapter();
+                        adp3.setMode(2);
+                        adp3.setPadding(15);
+                        adp3.setTextSize(18);
+                        if (contextJContact.isChating) {
+                            adp3.put(resources.getString("s_close_chat"), 0);
                         }
                         if (service.opened_chats.size() > 1) {
-                            adp4.put(resources.getString("s_close_all_chats"), 14);
+                            adp3.put(resources.getString("s_close_all_chats"), 14);
                         }
-                        adp4.put(resources.getString("s_copy_email"), 23);
-                        adp4.put(resources.getString("s_copy_nick"), 24);
-                        if (contextMMPContact.profile.connected) {
-                            adp4.put(resources.getString("s_do_update_avatar"), 22);
+                        if (contextJContact.profile.connected) {
+                            adp3.put(resources.getString("s_user_vcard"), 18);
                         }
-                        adp4.put(resources.getString("s_delete_history"), 26);
-                        ad = DialogBuilder.createWithNoHeader(this, adp4, 48, new ContactContextMenuListener(adp4));
+                        if (!contextJContact.conf_pm) {
+                            if (contextJContact.profile.connected) {
+                                adp3.put(resources.getString("s_do_update_avatar"), 19);
+                                adp3.put(resources.getString("s_do_update_nick"), 30);
+                                adp3.put(resources.getString("s_do_rename"), 28);
+                                adp3.put(resources.getString("s_move"), 27);
+                            }
+                            if (contextJContact.isOnline()) {
+                                adp3.put(resources.getString("s_commands"), 29);
+                            }
+                            adp3.put(resources.getString("s_copy_jid"), 20);
+                            adp3.put(resources.getString("s_copy_nick"), 21);
+                            if (contextJContact.isOnline()) {
+                                adp3.put(resources.getString("s_jabber_resources"), 16);
+                            }
+                            if (contextJContact.profile.connected) {
+                                if (contextJContact.subscription != 2 && contextJContact.subscription != 3) {
+                                    adp3.put(resources.getString("s_do_req_auth"), 17);
+                                }
+                                if (JProtocol.itIsServer(contextJContact.ID)) {
+                                    adp3.put(Locale.getString("s_jabber_server_login"), 31);
+                                    adp3.put(Locale.getString("s_jabber_server_logout"), 32);
+                                }
+                            }
+                        }
+                        adp3.put(resources.getString("s_delete_history"), 25);
+                        if (contextJContact.conf_pm) {
+                            adp3.put(resources.getString("s_do_delete"), 2);
+                        } else if (contextJContact.profile.connected) {
+                            adp3.put(resources.getString("s_do_delete"), 2);
+                        }
+                        ad = DialogBuilder.createWithNoHeader(this, adp3, 48, new ContactContextMenuListener(adp3));
                         break;
-                    }
+                    } else //noinspection ConstantConditions
+                        if (contextContact == null && contextJContact == null && contextMMPContact != null) {
+                            UAdapter adp4 = new UAdapter();
+                            adp4.setMode(2);
+                            adp4.setPadding(15);
+                            adp4.setTextSize(18);
+                            if (contextMMPContact.isChating) {
+                                adp4.put(resources.getString("s_close_chat"), 0);
+                            }
+                            if (service.opened_chats.size() > 1) {
+                                adp4.put(resources.getString("s_close_all_chats"), 14);
+                            }
+                            adp4.put(resources.getString("s_copy_email"), 23);
+                            adp4.put(resources.getString("s_copy_nick"), 24);
+                            if (contextMMPContact.profile.connected) {
+                                adp4.put(resources.getString("s_do_update_avatar"), 22);
+                            }
+                            adp4.put(resources.getString("s_delete_history"), 26);
+                            ad = DialogBuilder.createWithNoHeader(this, adp4, 48, new ContactContextMenuListener(adp4));
+                            break;
+                        }
                 break;
             case 10:
                 if (tempContactForDisplayInfo == null) {
@@ -1130,9 +1200,27 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 EditText vcard_desc = info_lay.findViewById(R.id.vcard_desc);
                 final String data = resources.getString("s_icq_info_nick") + ": " + tempContactForDisplayInfo.nickname + "\n" + resources.getString("s_icq_info_name") + ": " + tempContactForDisplayInfo.name + "\n" + resources.getString("s_icq_info_surname") + ": " + tempContactForDisplayInfo.surname + "\n" + resources.getString("s_icq_info_city") + ": " + tempContactForDisplayInfo.city + "\n\n" + resources.getString("s_icq_info_birthdate") + ": " + tempContactForDisplayInfo.birthday + "/" + tempContactForDisplayInfo.birthmonth + "/" + tempContactForDisplayInfo.birthyear + "\n" + resources.getString("s_icq_info_age") + ": " + tempContactForDisplayInfo.age + "\n" + resources.getString("s_icq_info_gender") + ": " + tempContactForDisplayInfo.sex + "\n\n" + resources.getString("s_icq_info_homepage") + "\n" + tempContactForDisplayInfo.homepage + "\n\nE-Mail:\n" + tempContactForDisplayInfo.email + "\n\n" + resources.getString("s_icq_info_about") + "\n" + tempContactForDisplayInfo.about;
                 vcard_avatar.setImageDrawable(tempContactForDisplayInfo.avatar);
-                tempContactForDisplayInfo.setRedirect((object, args) -> vcard_avatar.post(() -> vcard_avatar.setImageDrawable((Drawable) object)));
+                tempContactForDisplayInfo.setRedirect(new Callback() {
+                    @Override
+                    public void notify(final Object object, int args) {
+                        vcard_avatar.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                vcard_avatar.setImageDrawable((Drawable) object);
+                            }
+                        });
+                    }
+                });
                 vcard_desc.setText(data);
-                vcard_desc.setFilters(new InputFilter[]{(source, arg1, arg2, dest, dstart, dend) -> source.length() < 1 ? dest.subSequence(dstart, dend) : ""});
+                vcard_desc.setFilters(new InputFilter[]{
+                        new InputFilter() {
+                            @Override
+                            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                                return source.length() < 1 ? dest.subSequence(dstart, dend) : "";
+                            }
+                        }
+                });
+
                 ad = DialogBuilder.createYesNo(
                         this,
                         info_lay,
@@ -1140,13 +1228,21 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         resources.getString("s_icq_info") + "[" + tempContactForDisplayInfo.uin + "]",
                         resources.getString("s_copy"),
                         resources.getString("s_close"),
-                        v -> {
-                            ClipboardManager cb = (ClipboardManager) service.getSystemService(Context.CLIPBOARD_SERVICE);
-                            cb.setText(data);
-                            Toast.makeText(service, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
-                            removeDialog(10);
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ClipboardManager cb = (ClipboardManager) service.getSystemService(Context.CLIPBOARD_SERVICE);
+                                cb.setText(data);
+                                Toast.makeText(service, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
+                                removeDialog(10);
+                            }
                         },
-                        v -> removeDialog(10)
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                removeDialog(10);
+                            }
+                        }
                 );
                 break;
             case 11:
@@ -1162,13 +1258,21 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         resources.getString("s_renaming"),
                         resources.getString("s_ok"),
                         resources.getString("s_cancel"),
-                        v -> {
-                            if (edt.length() != 0) {
-                                contextContact.profile.doRenameContact(contextContact, edt.getText().toString().trim());
-                                removeDialog(11);
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (edt.length() != 0) {
+                                    contextContact.profile.doRenameContact(contextContact, edt.getText().toString().trim());
+                                    removeDialog(11);
+                                }
                             }
                         },
-                        v -> removeDialog(11)
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                removeDialog(11);
+                            }
+                        }
                 );
                 break;
             case 12:
@@ -1190,44 +1294,57 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 } else {
                     adp_2.put(resources.ignore, resources.getString("s_add_to_ignore"), 5);
                 }
-                ad = DialogBuilder.createWithNoHeader(this, adp_2, 48, (arg0, arg1, arg2, arg3) -> {
-                    removeDialog(12);
-                    int id2 = (int) adp_2.getItemId(arg2);
-                    switch (id2) {
-                        case 0:
-                            ssi_item i = contextContact.profile.isInVisible(contextContact.ID);
-                            contextContact.profile.doRemoveFromLists(i, i.listType);
-                            return;
-                        case 1:
-                            ssi_item i2 = new ssi_item();
-                            i2.uin = contextContact.ID;
-                            i2.id = utilities.getRandomSSIId();
-                            i2.listType = 2;
-                            contextContact.profile.doAddToLists(i2, i2.listType);
-                            return;
-                        case 2:
-                            ssi_item i3 = contextContact.profile.isInInvisible(contextContact.ID);
-                            contextContact.profile.doRemoveFromLists(i3, i3.listType);
-                            return;
-                        case 3:
-                            ssi_item i4 = new ssi_item();
-                            i4.uin = contextContact.ID;
-                            i4.id = utilities.getRandomSSIId();
-                            i4.listType = 3;
-                            contextContact.profile.doAddToLists(i4, i4.listType);
-                            return;
-                        case 4:
-                            ssi_item i5 = contextContact.profile.isInIgnore(contextContact.ID);
-                            contextContact.profile.doRemoveFromLists(i5, i5.listType);
-                            return;
-                        case 5:
-                            ssi_item i6 = new ssi_item();
-                            i6.uin = contextContact.ID;
-                            i6.id = utilities.getRandomSSIId();
-                            i6.listType = 14;
-                            contextContact.profile.doAddToLists(i6, i6.listType);
-                            return;
-                        default:
+                ad = DialogBuilder.createWithNoHeader(this, adp_2, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
+                        removeDialog(12);
+                        int id2 = (int) adp_2.getItemId(arg2);
+                        switch (id2) {
+                            case 0: {
+                                ssi_item i = contextContact.profile.isInVisible(contextContact.ID);
+                                //noinspection DataFlowIssue
+                                contextContact.profile.doRemoveFromLists(i, i.listType);
+                                return;
+                            }
+                            case 1: {
+                                ssi_item i2 = new ssi_item();
+                                i2.uin = contextContact.ID;
+                                i2.id = utilities.getRandomSSIId();
+                                i2.listType = 2;
+                                contextContact.profile.doAddToLists(i2, i2.listType);
+                                return;
+                            }
+                            case 2: {
+                                ssi_item i3 = contextContact.profile.isInInvisible(contextContact.ID);
+                                //noinspection DataFlowIssue
+                                contextContact.profile.doRemoveFromLists(i3, i3.listType);
+                                return;
+                            }
+                            case 3: {
+                                ssi_item i4 = new ssi_item();
+                                i4.uin = contextContact.ID;
+                                i4.id = utilities.getRandomSSIId();
+                                i4.listType = 3;
+                                contextContact.profile.doAddToLists(i4, i4.listType);
+                                return;
+                            }
+                            case 4: {
+                                ssi_item i5 = contextContact.profile.isInIgnore(contextContact.ID);
+                                //noinspection DataFlowIssue
+                                contextContact.profile.doRemoveFromLists(i5, i5.listType);
+                                return;
+                            }
+                            case 5: {
+                                ssi_item i6 = new ssi_item();
+                                i6.uin = contextContact.ID;
+                                i6.id = utilities.getRandomSSIId();
+                                i6.listType = 14;
+                                contextContact.profile.doAddToLists(i6, i6.listType);
+                                return;
+                            }
+                            default:
+                                break;
+                        }
                     }
                 });
                 break;
@@ -1240,36 +1357,76 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 resources.attachEditText(xdesc);
                 xtitle.setHint(resources.getString("s_xstatus_hint_title"));
                 xdesc.setHint(resources.getString("s_xstatus_hint_desc"));
-                ad = DialogBuilder.createYesNo(this, lay_1, 48, resources.getString("s_status_text"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    contextProfile.xtitle = xtitle.getText().toString();
-                    contextProfile.xdesc = xdesc.getText().toString();
-                    contextProfile.xsts = selectedX;
-                    contextProfile.saveXStatus();
-                    contextProfile.updateUserInfo();
-                    contextProfile.notifyStatusIcon();
-                    removeDialog(13);
-                }, v -> removeDialog(13));
+                ad = DialogBuilder.createYesNo(
+                        this,
+                        lay_1,
+                        48,
+                        resources.getString("s_status_text"),
+                        resources.getString("s_ok"),
+                        resources.getString("s_cancel"),
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                contextProfile.xtitle = xtitle.getText().toString();
+                                contextProfile.xdesc = xdesc.getText().toString();
+                                contextProfile.xsts = selectedX;
+                                contextProfile.saveXStatus();
+                                contextProfile.updateUserInfo();
+                                contextProfile.notifyStatusIcon();
+                                removeDialog(13);
+                            }
+                        },
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                removeDialog(13);
+                            }
+                        }
+                );
                 break;
             case 14:
                 LastContextAction = 0;
                 ContextConfirmListener confirm_listener = new ContextConfirmListener();
-                ad = DialogBuilder.createYesNo(this, 48, contextContact == null ? contextJContact.name : contextContact.name, resources.getString("s_delete_confirm"), resources.getString("s_yes"), resources.getString("s_no"), confirm_listener, v -> removeDialog(14));
+                ad = DialogBuilder.createYesNo(this, 48, contextContact == null ? contextJContact.name : contextContact.name, resources.getString("s_delete_confirm"), resources.getString("s_yes"), resources.getString("s_no"), confirm_listener, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(14);
+                    }
+                });
                 break;
             case 15:
                 LastContextAction = 1;
                 ContextConfirmListener confirm_listener2 = new ContextConfirmListener();
-                ad = DialogBuilder.createYesNo(this, 48, contextContact.name, resources.getString("s_delete_confirm"), resources.getString("s_yes"), resources.getString("s_no"), confirm_listener2, v -> removeDialog(15));
+                ad = DialogBuilder.createYesNo(this, 48, contextContact.name, resources.getString("s_delete_confirm"), resources.getString("s_yes"), resources.getString("s_no"), confirm_listener2, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(15);
+                    }
+                });
                 break;
             case 16:
                 LastContextAction = 2;
                 ContextConfirmListener confirm_listener3 = new ContextConfirmListener();
-                ad = DialogBuilder.createYesNo(this, 48, resources.getString("s_exit"), resources.getString("s_exit_confirm"), resources.getString("s_yes"), resources.getString("s_no"), confirm_listener3, v -> removeDialog(16));
+                ad = DialogBuilder.createYesNo(this, 48, resources.getString("s_exit"), resources.getString("s_exit_confirm"), resources.getString("s_yes"), resources.getString("s_no"), confirm_listener3, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(16);
+                    }
+                });
                 break;
             case 17:
-                ad = DialogBuilder.createYesNo(this, 48, resources.getString("s_information"), resources.getString("s_no_profiles_notify"), resources.getString("s_yes"), resources.getString("s_no"), v -> {
-                    intentProfilesManager();
-                    removeDialog(17);
-                }, v -> removeDialog(17));
+                ad = DialogBuilder.createYesNo(this, 48, resources.getString("s_information"), resources.getString("s_no_profiles_notify"), resources.getString("s_yes"), resources.getString("s_no"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        intentProfilesManager();
+                        removeDialog(17);
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(17);
+                    }
+                });
                 break;
             case 18:
                 URLSpan span = new URLSpan("market://details?id=ru.ivansuper.jasmindonate");
@@ -1281,27 +1438,40 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 if (dialog_for_display == null) {
                     return null;
                 }
-                ad = DialogBuilder.createOk(this, dialog_for_display.header, dialog_for_display.text, resources.getString("s_close"), 48, v -> removeDialog(23));
+                ad = DialogBuilder.createOk(this, dialog_for_display.header, dialog_for_display.text, resources.getString("s_close"), 48, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(23);
+                    }
+                });
                 break;
             case 24:
                 final EditText raw_uin = new EditText(this);
                 raw_uin.setInputType(8194);
                 resources.attachEditText(raw_uin);
-                ad = DialogBuilder.createOk(this, raw_uin, resources.getString("s_icq_search_by_uin"), resources.getString("s_ok"), 48, v -> {
-                    String uin2 = raw_uin.getText().toString().trim();
-                    if (uin2.length() < 4 || uin2.length() > 9 || !utilities.isUIN(uin2)) {
-                        Toast.makeText(this, resources.getString("s_incorrect_uin"), Toast.LENGTH_SHORT).show();
-                        return;
+                ad = DialogBuilder.createOk(this, raw_uin, resources.getString("s_icq_search_by_uin"), resources.getString("s_ok"), 48, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String uin2 = raw_uin.getText().toString().trim();
+                        if (uin2.length() < 4 || uin2.length() > 9 || !utilities.isUIN(uin2)) {
+                            Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_uin"), Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                        removeDialog(24);
+                        contextProfile.doRequestContactInfoForDisplay(uin2);
                     }
-                    removeDialog(24);
-                    contextProfile.doRequestContactInfoForDisplay(uin2);
                 });
                 break;
             case 25:
                 ad = DialogBuilder.create(this, resources.getString("s_information"), resources.getString("s_force_close_info"), 48);
                 break;
             case 26:
-                ad = DialogBuilder.createOk(this, "Список изменений\n(changelog)", resources.VERSION + " (english version at bottom):\n" + utilities.readChangeLog(), resources.getString("s_close"), 48, v -> removeDialog(26));
+                ad = DialogBuilder.createOk(this, "Список изменений\n(changelog)", resources.VERSION + " (english version at bottom):\n" + utilities.readChangeLog(), resources.getString("s_close"), 48, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(26);
+                    }
+                });
                 break;
             case 27:
                 if (!contextProfile.connected) {
@@ -1370,37 +1540,45 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             resources.getString("s_do_change_own_info"),
                             resources.getString("s_ok"),
                             resources.getString("s_cancel"),
-                            v -> {
-                                contextProfile.info_container.nickname = nick_e.getText().toString();
-                                contextProfile.info_container.name = name_e.getText().toString();
-                                contextProfile.info_container.surname = surname_e.getText().toString();
-                                contextProfile.info_container.email = email_e.getText().toString();
-                                contextProfile.info_container.homepage = homepage_e.getText().toString();
-                                contextProfile.info_container.city = city_e.getText().toString();
-                                contextProfile.info_container.about = about_e.getText().toString();
-                                if (gender_m.isChecked()) {
-                                    contextProfile.info_container.sex_ = 2;
-                                }
-                                if (gender_w.isChecked()) {
-                                    contextProfile.info_container.sex_ = 1;
-                                }
-                                if (gender_none.isChecked()) {
-                                    contextProfile.info_container.sex_ = 0;
-                                }
-                                try {
-                                    int year = Integer.parseInt(b_year.getText().toString().trim());
-                                    int month = Integer.parseInt(b_month.getText().toString().trim());
-                                    int day = Integer.parseInt(b_day.getText().toString().trim());
-                                    contextProfile.info_container.birthyear = year;
-                                    contextProfile.info_container.birthmonth = month;
-                                    contextProfile.info_container.birthday = day;
-                                    contextProfile.doUpdateInfo();
-                                    removeDialog(27);
-                                } catch (Exception e) {
-                                    Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_birthdayя"), Toast.LENGTH_SHORT).show();
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    contextProfile.info_container.nickname = nick_e.getText().toString();
+                                    contextProfile.info_container.name = name_e.getText().toString();
+                                    contextProfile.info_container.surname = surname_e.getText().toString();
+                                    contextProfile.info_container.email = email_e.getText().toString();
+                                    contextProfile.info_container.homepage = homepage_e.getText().toString();
+                                    contextProfile.info_container.city = city_e.getText().toString();
+                                    contextProfile.info_container.about = about_e.getText().toString();
+                                    if (gender_m.isChecked()) {
+                                        contextProfile.info_container.sex_ = 2;
+                                    }
+                                    if (gender_w.isChecked()) {
+                                        contextProfile.info_container.sex_ = 1;
+                                    }
+                                    if (gender_none.isChecked()) {
+                                        contextProfile.info_container.sex_ = 0;
+                                    }
+                                    try {
+                                        int year = Integer.parseInt(b_year.getText().toString().trim());
+                                        int month = Integer.parseInt(b_month.getText().toString().trim());
+                                        int day = Integer.parseInt(b_day.getText().toString().trim());
+                                        contextProfile.info_container.birthyear = year;
+                                        contextProfile.info_container.birthmonth = month;
+                                        contextProfile.info_container.birthday = day;
+                                        contextProfile.doUpdateInfo();
+                                        removeDialog(27);
+                                    } catch (Exception e) {
+                                        Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_birthdayя"), Toast.LENGTH_SHORT).show();
+                                    }
                                 }
                             },
-                            v -> removeDialog(27)
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    removeDialog(27);
+                                }
+                            }
                     );
                 }
                 break;
@@ -1411,19 +1589,22 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 group_actions.setPadding(15);
                 group_actions.put(resources.getString("s_do_rename"), 0);
                 group_actions.put(resources.getString("s_do_delete"), 1);
-                ad = DialogBuilder.create(this, resources.getString("s_group_tools"), group_actions, (arg0, arg1, arg2, arg3) -> {
-                    switch (arg2) {
-                        case 0:
-                            removeDialog(28);
-                            removeDialog(29);
-                            showDialogA(29);
-                            return;
-                        case 1:
-                            removeDialog(28);
-                            removeDialog(30);
-                            showDialogA(30);
-                            return;
-                        default:
+                ad = DialogBuilder.create(this, resources.getString("s_group_tools"), group_actions, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        switch (i) {
+                            case 0:
+                                removeDialog(28);
+                                removeDialog(29);
+                                showDialogA(29);
+                                return;
+                            case 1:
+                                removeDialog(28);
+                                removeDialog(30);
+                                showDialogA(30);
+                                return;
+                            default:
+                        }
                     }
                 });
                 break;
@@ -1433,33 +1614,54 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 final EditText edt1 = lay_2.findViewById(R.id.rename_nick);
                 resources.attachEditText(edt1);
                 edt1.setText(contextGroup.name);
-                ad = DialogBuilder.createYesNo(this, lay_2, 48, resources.getString("s_renaming"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    if (edt1.getText().toString().trim().length() != 0) {
-                        contextGroup.profile.doRenameGroup(contextGroup, edt1.getText().toString());
+                ad = DialogBuilder.createYesNo(this, lay_2, 48, resources.getString("s_renaming"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!edt1.getText().toString().trim().isEmpty()) {
+                            contextGroup.profile.doRenameGroup(contextGroup, edt1.getText().toString());
+                            removeDialog(29);
+                        }
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(29);
                     }
-                }, v -> removeDialog(29));
+                });
                 break;
             case 30:
                 LastContextAction = 10;
                 ContextConfirmListener confirm_listener4 = new ContextConfirmListener();
-                ad = DialogBuilder.createYesNo(this, 48, contextGroup.name, resources.getString("s_delete_confirm"), resources.getString("s_yes"), resources.getString("s_no"), confirm_listener4, v -> removeDialog(30));
+                ad = DialogBuilder.createYesNo(this, 48, contextGroup.name, resources.getString("s_delete_confirm"), resources.getString("s_yes"), resources.getString("s_no"), confirm_listener4, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(30);
+                    }
+                });
                 break;
             case SHOW_NOTIFY:
                 @SuppressLint("InflateParams")
                 LinearLayout lay_3 = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.rename_dialog, null);
                 final EditText edt2 = lay_3.findViewById(R.id.rename_nick);
                 resources.attachEditText(edt2);
-                ad = DialogBuilder.createYesNo(this, lay_3, 48, resources.getString("s_add_group"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    if (edt2.getText().toString().trim().length() != 0) {
-                        ICQGroup group2 = new ICQGroup();
-                        group2.name = edt2.getText().toString().trim();
-                        group2.id = utilities.getRandomSSIId();
-                        group2.profile = contextProfile;
-                        contextProfile.doAddGroup(group2);
+                ad = DialogBuilder.createYesNo(this, lay_3, 48, resources.getString("s_add_group"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!edt2.getText().toString().trim().isEmpty()) {
+                            ICQGroup group2 = new ICQGroup();
+                            group2.name = edt2.getText().toString().trim();
+                            group2.id = utilities.getRandomSSIId();
+                            group2.profile = contextProfile;
+                            contextProfile.doAddGroup(group2);
+                            removeDialog(31);
+                        }
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(31);
                     }
-                }, v -> removeDialog(31));
+                });
                 break;
             case SHOW_PROGRESS_DIALOG:
                 @SuppressLint("InflateParams")
@@ -1474,11 +1676,19 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         resources.getString("s_status_text"),
                         resources.getString("s_ok"),
                         resources.getString("s_cancel"),
-                        v -> {
-                            contextProfile.setAwayText(away_text.getText().toString().trim());
-                            removeDialog(32);
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                contextProfile.setAwayText(away_text.getText().toString().trim());
+                                removeDialog(32);
+                            }
                         },
-                        v -> removeDialog(32)
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                removeDialog(32);
+                            }
+                        }
                 );
                 break;
             case HIDE_PROGRESS_DIALOG:
@@ -1492,61 +1702,64 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 adp_1.put(resources.getString("s_do_refresh_names"), 3);
                 adp_1.put(resources.getString("s_do_change_avatar"), 4);
                 adp_1.put(resources.getString("s_edit_vcard"), 5);
-                ad = DialogBuilder.createWithNoHeader(this, adp_1, 48, (arg0, arg1, arg2, arg3) -> {
-                    removeDialog(33);
-                    int id2 = (int) adp_1.getItemId(arg2);
-                    switch (id2) {
-                        case 0:
-                            removeDialog(36);
-                            showDialogA(36);
-                            return;
-                        case 1:
-                            removeDialog(37);
-                            showDialogA(37);
-                            return;
-                        case 2:
-                            Thread t = new Thread() {
-                                @Override
-                                public void run() {
-                                    setPriority(1);
-                                    Vector<JContact> list = contextJProfile.getOnlyContacts();
-                                    for (JContact contact : list) {
-                                        contact.getAvatar();
-                                        try {
-                                            Thread.sleep(1000L);
-                                        } catch (InterruptedException ignored) {
+                ad = DialogBuilder.createWithNoHeader(this, adp_1, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                        removeDialog(33);
+                        int id2 = (int) adp_1.getItemId(index);
+                        switch (id2) {
+                            case 0:
+                                removeDialog(36);
+                                showDialogA(36);
+                                return;
+                            case 1:
+                                removeDialog(37);
+                                showDialogA(37);
+                                return;
+                            case 2:
+                                Thread t = new Thread() {
+                                    @Override
+                                    public void run() {
+                                        setPriority(1);
+                                        Vector<JContact> list = contextJProfile.getOnlyContacts();
+                                        for (JContact contact : list) {
+                                            contact.getAvatar();
+                                            try {
+                                                Thread.sleep(1000L);
+                                            } catch (InterruptedException ignored) {
+                                            }
                                         }
                                     }
-                                }
-                            };
-                            t.start();
-                            return;
-                        case 3:
-                            Thread t2 = new Thread() {
-                                @Override
-                                public void run() {
-                                    setPriority(1);
-                                    Vector<JContact> list = contextJProfile.getOnlyContacts();
-                                    for (JContact contact : list) {
-                                        contact.updateNick();
-                                        try {
-                                            Thread.sleep(1000L);
-                                        } catch (InterruptedException ignored) {
+                                };
+                                t.start();
+                                return;
+                            case 3:
+                                Thread t2 = new Thread() {
+                                    @Override
+                                    public void run() {
+                                        setPriority(1);
+                                        Vector<JContact> list = contextJProfile.getOnlyContacts();
+                                        for (JContact contact : list) {
+                                            contact.updateNick();
+                                            try {
+                                                Thread.sleep(1000L);
+                                            } catch (InterruptedException ignored) {
+                                            }
                                         }
                                     }
-                                }
-                            };
-                            t2.start();
-                            return;
-                        case 4:
-                            Intent i = new Intent();
-                            i.setClass(this, FileBrowserActivity.class);
-                            startActivityForResult(i, JABBER_AVATAR_REQUEST);
-                            return;
-                        case 5:
-                            service.showVCardEditor(contextJProfile.my_vcard);
-                            return;
-                        default:
+                                };
+                                t2.start();
+                                return;
+                            case 4:
+                                Intent i = new Intent();
+                                i.setClass(ContactListActivity.this, FileBrowserActivity.class);
+                                startActivityForResult(i, JABBER_AVATAR_REQUEST);
+                                return;
+                            case 5:
+                                service.showVCardEditor(contextJProfile.my_vcard);
+                                return;
+                            default:
+                        }
                     }
                 });
                 break;
@@ -1580,11 +1793,19 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         resources.getString("s_status_text"),
                         resources.getString("s_ok"),
                         resources.getString("s_cancel"),
-                        v -> {
-                            contextJProfile.setStatusDescription(jstatus_text.getText().toString().trim());
-                            removeDialog(35);
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                contextJProfile.setStatusDescription(jstatus_text.getText().toString().trim());
+                                removeDialog(35);
+                            }
                         },
-                        v -> removeDialog(35)
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                removeDialog(35);
+                            }
+                        }
                 );
                 break;
             case 36:
@@ -1597,8 +1818,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 for (JGroup group2 : j_groups) {
                     jgroups.put(group2.name, group2.id);
                 }
-                @SuppressLint("InflateParams")
-                final LinearLayout layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.add_contact_dialog, null);
+                @SuppressLint("InflateParams") final LinearLayout layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.add_contact_dialog, null);
                 ((TextView) layout.findViewById(R.id.l1)).setText(resources.getString("s_contact_id"));
                 ((TextView) layout.findViewById(R.id.l2)).setText(resources.getString("s_contact_name"));
                 ((TextView) layout.findViewById(R.id.l3)).setText(resources.getString("s_contact_group"));
@@ -1616,38 +1836,47 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         resources.getString("s_add_contact"),
                         resources.getString("s_ok"),
                         resources.getString("s_cancel"),
-                        v -> {
-                            EditText ID = layout.findViewById(R.id.add_contact_uin);
-                            String sID = ID.getText().toString().toLowerCase().trim();
-                            String[] parts = sID.split("@");
-                            if (parts.length != 2 || parts[1].length() == 0) {
-                                Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_jid"), Toast.LENGTH_SHORT).show();
-                                return;
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                EditText ID = layout.findViewById(R.id.add_contact_uin);
+                                String sID = ID.getText().toString().toLowerCase().trim();
+                                String[] parts = sID.split("@");
+                                if (parts.length != 2 || parts[1].isEmpty()) {
+                                    Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_jid"), Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                EditText name2 = layout.findViewById(R.id.add_contact_name);
+                                String sNAME = name2.getText().toString();
+                                if (sNAME.isEmpty()) {
+                                    sNAME = sID;
+                                }
+                                Spinner spn3 = layout.findViewById(R.id.add_contact_groups);
+                                String groupId = "";
+                                if (!j_groups.isEmpty()) {
+                                    UAdapter adp5 = (UAdapter) spn3.getAdapter();
+                                    groupId = adp5.getItem(spn3.getSelectedItemPosition());
+                                }
+                                JContact contact = new JContact(contextJProfile, sID);
+                                contact.name = sNAME;
+                                contact.group = groupId;
+                                contact.profile = contextJProfile;
+                                try {
+                                    contextJProfile.doAddContact(contact);
+                                } catch (Exception e) {
+                                    Toast.makeText(ContactListActivity.this, resources.getString("s_icq_contact_add_error"), Toast.LENGTH_SHORT).show();
+                                    //noinspection CallToPrintStackTrace
+                                    e.printStackTrace();
+                                }
+                                removeDialog(36);
                             }
-                            EditText name2 = layout.findViewById(R.id.add_contact_name);
-                            String sNAME = name2.getText().toString();
-                            if (sNAME.length() == 0) {
-                                sNAME = sID;
-                            }
-                            Spinner spn3 = layout.findViewById(R.id.add_contact_groups);
-                            String groupId = "";
-                            if (j_groups.size() != 0) {
-                                UAdapter adp5 = (UAdapter) spn3.getAdapter();
-                                groupId = adp5.getItem(spn3.getSelectedItemPosition());
-                            }
-                            JContact contact = new JContact(contextJProfile, sID);
-                            contact.name = sNAME;
-                            contact.group = groupId;
-                            contact.profile = contextJProfile;
-                            try {
-                                contextJProfile.doAddContact(contact);
-                            } catch (Exception e) {
-                                Toast.makeText(ContactListActivity.this, resources.getString("s_icq_contact_add_error"), Toast.LENGTH_SHORT).show();
-                                e.printStackTrace();
-                            }
-                            removeDialog(36);
                         },
-                        v -> removeDialog(36)
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                removeDialog(36);
+                            }
+                        }
                 );
                 break;
             case 37:
@@ -1662,44 +1891,59 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         resources.getString("s_add_group"),
                         resources.getString("s_ok"),
                         resources.getString("s_cancel"),
-                        v -> {
-                            if (edt3.getText().toString().trim().length() != 0) {
-                                String name2 = edt3.getText().toString().trim();
-                                JGroup group3 = new JGroup(contextJProfile, name2);
-                                contextJProfile.doAddGroup(group3);
-                                removeDialog(37);
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                if (!edt3.getText().toString().trim().isEmpty()) {
+                                    String name2 = edt3.getText().toString().trim();
+                                    JGroup group3 = new JGroup(contextJProfile, name2);
+                                    contextJProfile.doAddGroup(group3);
+                                    removeDialog(37);
+                                }
                             }
                         },
-                        v -> removeDialog(37)
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                removeDialog(37);
+                            }
+                        }
                 );
                 break;
             case 38:
-                @SuppressLint("InflateParams")
-                final LinearLayout sms_layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.send_sms, null);
+                @SuppressLint("InflateParams") final LinearLayout sms_layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.send_sms, null);
                 ((TextView) sms_layout.findViewById(R.id.l1)).setText(resources.getString("s_send_sms_dialog_hint_1"));
                 ((TextView) sms_layout.findViewById(R.id.l2)).setText(resources.getString("s_send_sms_dialog_hint_2"));
                 @SuppressLint("CutPasteId") EditText phone = sms_layout.findViewById(R.id.send_sms_phone);
                 resources.attachEditText(phone);
                 @SuppressLint("CutPasteId") EditText message_text = sms_layout.findViewById(R.id.send_sms_text);
                 resources.attachEditText(message_text);
-                ad = DialogBuilder.createYesNo(this, sms_layout, 48, resources.getString("s_send_sms"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    @SuppressLint("CutPasteId") EditText phone2 = sms_layout.findViewById(R.id.send_sms_phone);
-                    String sPHONE = phone2.getText().toString().trim();
-                    if (sPHONE.length() != 12 && !sPHONE.startsWith("+")) {
-                        Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_phone"), Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    @SuppressLint("CutPasteId") EditText message_text2 = sms_layout.findViewById(R.id.send_sms_text);
-                    String sTEXT = message_text2.getText().toString();
-                    if (sTEXT.length() != 0) {
-                        if (contextMrimProfile != null) {
-                            contextMrimProfile.doSendSMS(sPHONE, sTEXT);
+                ad = DialogBuilder.createYesNo(this, sms_layout, 48, resources.getString("s_send_sms"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        @SuppressLint("CutPasteId") EditText phone2 = sms_layout.findViewById(R.id.send_sms_phone);
+                        String sPHONE = phone2.getText().toString().trim();
+                        if (sPHONE.length() != 12 && !sPHONE.startsWith("+")) {
+                            Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_phone"), Toast.LENGTH_SHORT).show();
+                            return;
                         }
-                        removeDialog(38);
-                        return;
+                        @SuppressLint("CutPasteId") EditText message_text2 = sms_layout.findViewById(R.id.send_sms_text);
+                        String sTEXT = message_text2.getText().toString();
+                        if (!sTEXT.isEmpty()) {
+                            if (contextMrimProfile != null) {
+                                contextMrimProfile.doSendSMS(sPHONE, sTEXT);
+                            }
+                            removeDialog(38);
+                            return;
+                        }
+                        Toast.makeText(ContactListActivity.this, resources.getString("s_empty_sms_error"), Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(ContactListActivity.this, resources.getString("s_empty_sms_error"), Toast.LENGTH_SHORT).show();
-                }, v -> removeDialog(38));
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removeDialog(38);
+                    }
+                });
                 break;
             case 42:
                 @SuppressLint("InflateParams")
@@ -1732,7 +1976,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 }
                 server.setText("conference." + contextJProfile.host);
                 servers.setAdapter(srvs);
-                server_select.setOnClickListener(v -> servers.performClick());
+                server_select.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        servers.performClick();
+                    }
+                });
                 servers.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                     @Override
                     public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
@@ -1751,20 +2000,28 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         resources.getString("s_jabber_join_conference_dialog"),
                         resources.getString("s_join"),
                         resources.getString("s_cancel"),
-                        v -> {
-                            String room_ = room.getText().toString();
-                            String nick = nickname.getText().toString();
-                            if (room_.length() == 0 || nick.length() == 0) {
-                                Toast toast = Toast.makeText(ContactListActivity.this, resources.getString("s_join_parameters_required"), Toast.LENGTH_SHORT);
-                                toast.setGravity(48, 0, 0);
-                                toast.show();
-                                return;
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String room_ = room.getText().toString();
+                                String nick = nickname.getText().toString();
+                                if (room_.isEmpty() || nick.isEmpty()) {
+                                    Toast toast = Toast.makeText(ContactListActivity.this, resources.getString("s_join_parameters_required"), Toast.LENGTH_SHORT);
+                                    toast.setGravity(48, 0, 0);
+                                    toast.show();
+                                    return;
+                                }
+                                String server_ = server.getText().toString().trim();
+                                contextJProfile.joinConference((room_ + "@" + server_).toLowerCase(), nick, pass.getText().toString());
+                                removeDialog(42);
                             }
-                            String server_ = server.getText().toString().trim();
-                            contextJProfile.joinConference((room_ + "@" + server_).toLowerCase(), nick, pass.getText().toString());
-                            removeDialog(42);
                         },
-                        v -> removeDialog(42)
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                removeDialog(42);
+                            }
+                        }
                 );
                 break;
             case 43:
@@ -1781,40 +2038,46 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     adp5.put(Locale.getString("s_add_to_bookmarks"), 3);
                 }
                 adp5.put(resources.getString("s_delete_conference"), 2);
-                ad = DialogBuilder.createWithNoHeader(this, adp5, 48, (arg0, arg1, arg2, arg3) -> {
-                    switch ((int) arg0.getAdapter().getItemId(arg2)) {
-                        case 0:
-                            contextConference.conference.profile.logoutConference(contextConference.conference.JID);
-                            break;
-                        case 1:
-                            contextConference.conference.profile.joinConference(contextConference.conference.JID, contextConference.conference.nick, contextConference.conference.pass);
-                            break;
-                        case 2:
-                            new AreYouSureHelper(ContactListActivity.this, Locale.getString("s_delete_conference"), v -> {
-                                if (contextConference.conference.isOnline()) {
-                                    contextConference.conference.profile.logoutConference(contextConference.conference.JID);
+                ad = DialogBuilder.createWithNoHeader(this, adp5, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        switch ((int) adapterView.getAdapter().getItemId(i)) {
+                            case 0:
+                                contextConference.conference.profile.logoutConference(contextConference.conference.JID);
+                                break;
+                            case 1:
+                                contextConference.conference.profile.joinConference(contextConference.conference.JID, contextConference.conference.nick, contextConference.conference.pass);
+                                break;
+                            case 2:
+                                new AreYouSureHelper(ContactListActivity.this, Locale.getString("s_delete_conference"), new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        if (contextConference.conference.isOnline()) {
+                                            contextConference.conference.profile.logoutConference(contextConference.conference.JID);
+                                        }
+                                        contextConference.conference.profile.removeConference(contextConference.conference.JID);
+                                    }
+                                }, null);
+                                break;
+                            case 3:
+                                BookmarkList bl = contextConference.conference.profile.bookmarks;
+                                if (bl.itIsExist(contextConference.conference.JID)) {
+                                    Toast.makeText(ContactListActivity.this, Locale.getString("s_bookmark_already_exist"), Toast.LENGTH_SHORT).show();
+                                    return;
                                 }
-                                contextConference.conference.profile.removeConference(contextConference.conference.JID);
-                            }, null);
-                            break;
-                        case 3:
-                            BookmarkList bl = contextConference.conference.profile.bookmarks;
-                            if (bl.itIsExist(contextConference.conference.JID)) {
-                                Toast.makeText(ContactListActivity.this, Locale.getString("s_bookmark_already_exist"), Toast.LENGTH_SHORT).show();
-                                return;
-                            }
-                            BookmarkItem item = new BookmarkItem();
-                            item.type = 0;
-                            item.NAME = contextConference.conference.JID;
-                            item.JID_OR_URL = item.NAME;
-                            item.autojoin = false;
-                            item.nick = contextConference.conference.nick;
-                            item.password = contextConference.conference.pass;
-                            bl.add(item);
-                            Toast.makeText(ContactListActivity.this, Locale.getString("s_saved"), Toast.LENGTH_SHORT).show();
-                            break;
+                                BookmarkItem item = new BookmarkItem();
+                                item.type = 0;
+                                item.NAME = contextConference.conference.JID;
+                                item.JID_OR_URL = item.NAME;
+                                item.autojoin = false;
+                                item.nick = contextConference.conference.nick;
+                                item.password = contextConference.conference.pass;
+                                bl.add(item);
+                                Toast.makeText(ContactListActivity.this, Locale.getString("s_saved"), Toast.LENGTH_SHORT).show();
+                                break;
+                        }
+                        removeDialog(43);
                     }
-                    removeDialog(43);
                 });
                 break;
             case 44:
@@ -1826,7 +2089,15 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     vcard_avatar1.setImageBitmap(vcard_to_display.avatar);
                 }
                 vcard_desc1.setText(vcard_to_display.desc);
-                vcard_desc1.setFilters(new InputFilter[]{(source, arg1, arg2, dest, dstart, dend) -> source.length() < 1 ? dest.subSequence(dstart, dend) : ""});
+                vcard_desc1.setFilters(new InputFilter[]{
+                        new InputFilter() {
+                            @Override
+                            public CharSequence filter(CharSequence source, int start, int end, Spanned dest, int dstart, int dend) {
+                                return source.length() < 1 ? dest.subSequence(dstart, dend) : "";
+                            }
+                        }
+                });
+
                 ad = DialogBuilder.createYesNo(
                         this,
                         vcard_lay,
@@ -1834,16 +2105,22 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         resources.getString("s_user_vcard"),
                         resources.getString("s_copy"),
                         resources.getString("s_close"),
-                        v -> {
-                            ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                            cm.setText(vcard_to_display.desc);
-                            Toast.makeText(ContactListActivity.this, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
-                            vcard_to_display = null;
-                            removeDialog(44);
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                ClipboardManager cm = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+                                cm.setText(vcard_to_display.desc);
+                                Toast.makeText(ContactListActivity.this, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
+                                vcard_to_display = null;
+                                removeDialog(44);
+                            }
                         },
-                        v -> {
-                            vcard_to_display = null;
-                            removeDialog(44);
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                vcard_to_display = null;
+                                removeDialog(44);
+                            }
                         }
                 );
                 break;
@@ -1853,30 +2130,32 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 adp_21.setTextSize(18);
                 adp_21.setPadding(15);
                 adp_21.put(resources.getString("s_do_refresh_avatars"), 2);
-                ad = DialogBuilder.createWithNoHeader(this, adp_21, 48, (arg0, arg1, arg2, arg3) -> {
-                    removeDialog(45);
-                    int id2 = (int) adp_21.getItemId(arg2);
-                    switch (id2) {
-                        case 0:
-                        case 1:
-                        default:
-                            return;
-                        case 2:
-                            Thread t = new Thread() {
-                                @Override
-                                public void run() {
-                                    setPriority(1);
-                                    Vector<MMPContact> list = contextMrimProfile.getContacts();
-                                    for (MMPContact contact : list) {
-                                        contact.getAvatar(contact, service);
-                                        try {
-                                            sleep(1000L);
-                                        } catch (InterruptedException ignored) {
+                ad = DialogBuilder.createWithNoHeader(this, adp_21, 48, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        removeDialog(45);
+                        int id2 = (int) adp_21.getItemId(i);
+                        switch (id2) {
+                            case 0:
+                            case 1:
+                            case 2:
+                                Thread t = new Thread() {
+                                    @Override
+                                    public void run() {
+                                        setPriority(1);
+                                        Vector<MMPContact> list = contextMrimProfile.getContacts();
+                                        for (MMPContact contact : list) {
+                                            contact.getAvatar(contact, service);
+                                            try {
+                                                sleep(1000L);
+                                            } catch (InterruptedException ignored) {
+                                            }
                                         }
                                     }
-                                }
-                            };
-                            t.start();
+                                };
+                                t.start();
+                            default:
+                        }
                     }
                 });
                 break;
@@ -1890,25 +2169,28 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 for (JGroup jGroup : group_list) {
                     groups_list.put(jGroup.name, 0);
                 }
-                ad = DialogBuilder.create(this, resources.getString("s_moving"), groups_list, (arg0, arg1, arg2, arg3) -> {
-                    String new_group;
-                    String group3 = groups_list.getItem(arg2);
-                    //noinspection unused
-                    String str = contextJContact.group;
-                    //noinspection ConstantConditions
-                    if (contextJContact != null) {
-                        if (contextJContact.group.equals(group3)) {
-                            Toast.makeText(ContactListActivity.this, resources.getString("s_contact_already_in_this_group"), Toast.LENGTH_SHORT).show();
-                        } else if (contextJContact.group.equals("") && arg2 == 0) {
-                            Toast.makeText(ContactListActivity.this, resources.getString("s_contact_already_in_this_group"), Toast.LENGTH_SHORT).show();
-                        } else {
-                            if (arg2 == 0) {
-                                new_group = "";
+                ad = DialogBuilder.create(this, resources.getString("s_moving"), groups_list, new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                        String new_group;
+                        String group3 = groups_list.getItem(i);
+                        //noinspection unused
+                        String str = contextJContact.group;
+                        //noinspection ConstantConditions
+                        if (contextJContact != null) {
+                            if (contextJContact.group.equals(group3)) {
+                                Toast.makeText(ContactListActivity.this, resources.getString("s_contact_already_in_this_group"), Toast.LENGTH_SHORT).show();
+                            } else if (contextJContact.group.isEmpty() && i == 0) {
+                                Toast.makeText(ContactListActivity.this, resources.getString("s_contact_already_in_this_group"), Toast.LENGTH_SHORT).show();
                             } else {
-                                new_group = group3;
+                                if (i == 0) {
+                                    new_group = "";
+                                } else {
+                                    new_group = group3;
+                                }
+                                contextJContact.profile.doModifyContactRaw(contextJContact.subscription, contextJContact.ID, contextJContact.name, new_group);
+                                removeDialog(46);
                             }
-                            contextJContact.profile.doModifyContactRaw(contextJContact.subscription, contextJContact.ID, contextJContact.name, new_group);
-                            removeDialog(46);
                         }
                     }
                 });
@@ -1925,19 +2207,28 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         resources.getString("s_jabber_priority"),
                         resources.getString("s_ok"),
                         resources.getString("s_cancel"),
-                        v -> {
-                            String prior = priority.getText().toString();
-                            if (prior.length() != 0) {
-                                try {
-                                    int priority_ = Integer.parseInt(prior);
-                                    contextJProfile.changePriority(priority_);
-                                    removeDialog(47);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                String prior = priority.getText().toString();
+                                if (!prior.isEmpty()) {
+                                    try {
+                                        int priority_ = Integer.parseInt(prior);
+                                        contextJProfile.changePriority(priority_);
+                                        removeDialog(47);
+                                    } catch (Exception e) {
+                                        //noinspection CallToPrintStackTrace
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
                         },
-                        v -> removeDialog(47)
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                removeDialog(47);
+                            }
+                        }
                 );
                 break;
             case 48:
@@ -1946,17 +2237,30 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 final EditText edt11 = lay_11.findViewById(R.id.rename_nick);
                 resources.attachEditText(edt11);
                 edt11.setText(contextJContact.name);
-                ad = DialogBuilder.createYesNo(this, lay_11, 48, resources.getString("s_renaming"), resources.getString("s_ok"), resources.getString("s_cancel"), v -> {
-                    if (edt11.length() != 0) {
-                        contextJContact.profile.doModifyContactRaw(contextJContact.subscription, contextJContact.ID, edt11.getText().toString().trim(), contextJContact.group);
+                ad = DialogBuilder.createYesNo(this, lay_11, 48, resources.getString("s_renaming"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (edt11.length() != 0) {
+                            contextJContact.profile.doModifyContactRaw(contextJContact.subscription, contextJContact.ID, edt11.getText().toString().trim(), contextJContact.group);
+                            removeDialog(48);
+                        }
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         removeDialog(48);
                     }
-                }, v -> removeDialog(48));
+                });
                 break;
         }
         last_shown_notify_dialog = ad;
         if (last_shown_notify_dialog != null) {
-            last_shown_notify_dialog.setOnDismissListener(arg0 -> checkForBufferedDialogs());
+            last_shown_notify_dialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    checkForBufferedDialogs();
+                }
+            });
         }
         return ad;
     }
@@ -1986,7 +2290,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     jasminSvc jasminsvc = service;
                     //noinspection UnnecessaryLocalVariable
                     final RoomsPreviewAdapter roomsPreviewAdapter = adp;
-                    jasminsvc.runOnUi(() -> roomsPreviewAdapter.fill(list2));
+                    jasminsvc.runOnUi(new Runnable() {
+                        @Override
+                        public void run() {
+                            roomsPreviewAdapter.fill(list2);
+                        }
+                    });
                 }
 
                 @Override
@@ -1994,7 +2303,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     jasminSvc jasminsvc = service;
                     //noinspection UnnecessaryLocalVariable
                     final RoomsPreviewAdapter roomsPreviewAdapter = adp;
-                    jasminsvc.runOnUi(roomsPreviewAdapter::error);
+                    jasminsvc.runOnUi(new Runnable() {
+                        @Override
+                        public void run() {
+                            roomsPreviewAdapter.error();
+                        }
+                    });
                 }
             };
             filter.addTextChangedListener(new TextWatcher() {
@@ -2015,11 +2329,14 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 }
             });
             final EditText editText = this.val$room;
-            list.setOnItemClickListener((arg02, arg1, arg2, arg3) -> {
-                if (adp.init) {
-                    String jid = adp.getItem(arg2).desc;
-                    editText.setText(JProtocol.getNameFromFullID(jid));
-                    AnonymousClass59.this.d.dismiss();
+            list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    if (adp.init) {
+                        String jid = adp.getItem(i).desc;
+                        editText.setText(JProtocol.getNameFromFullID(jid));
+                        AnonymousClass59.this.d.dismiss();
+                    }
                 }
             });
             contextJProfile.requestRoomsList(this.val$server.getText().toString().trim(), callback);
@@ -2040,9 +2357,13 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
 
     private void initViews() {
         this.CONFIG_LISTENER = findViewById(R.id.config_listener);
-        this.CONFIG_LISTENER.listener = (w, h, oldw, oldh) ->
-                onConfigurationChangedLocal(resources.ctx.getResources().getConfiguration(),
-                        Math.max(Math.abs(w - oldw), Math.abs(h - oldh)));
+        this.CONFIG_LISTENER.listener = new ConfigListenerView.OnLayoutListener() {
+            @Override
+            public void onNewLayout(int w, int h, int oldw, int oldh) {
+                int diff = Math.max(Math.abs(w - oldw), Math.abs(h - oldh));
+                onConfigurationChangedLocal(resources.ctx.getResources().getConfiguration(), diff);
+            }
+        };
 
         Resizer.BIND(findViewById(R.id.contacts_fragment), findViewById(R.id.chat_fragment), findViewById(R.id.contactlist_list_chat_separator));
 
@@ -2058,9 +2379,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         }
 
         ImageView search_panel_hide = findViewById(R.id.contactlist_search_hide);
-        search_panel_hide.setOnClickListener(v -> {
-            if (SEARCH_PANEL_VISIBLE) {
-                hideSearchPanel();
+        search_panel_hide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (SEARCH_PANEL_VISIBLE) {
+                    hideSearchPanel();
+                }
             }
         });
 
@@ -2078,6 +2402,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         // === Селекторы и фон ===
         resources.attachListSelector(this.chats_contactlist);
         resources.attachListSelector(this.contactlist);
+        //noinspection deprecation
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("ms_use_solid_wallpaper", false)) {
             resources.attachContactlistBack(this.chats_contactlist);
             resources.attachContactlistBack(this.contactlist);
@@ -2096,7 +2421,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         updateBlinkState();
 
         // === Переход на вкладку "контакты" после layout'а ===
-        switcher.post(() -> switcher.scrollTo(1));
+        switcher.post(new Runnable() {
+            @Override
+            public void run() {
+                switcher.scrollTo(1);
+            }
+        });
 
         connectionStatusPanel = findViewById(R.id.profiles_connection_bars);
         profilesPanel = findViewById(R.id.profilesPanel);
@@ -2121,6 +2451,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         resources.attachContactlistBottomPanel(BOTTOM_PANEL);
 
         // === Проверка конференций ===
+        //noinspection IfStatementWithIdenticalBranches,deprecation
         if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("ms_use_solid_wallpaper", false)) {
             checkConferences();
         } else {
@@ -2140,6 +2471,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 if (confs_present && this.confs_contactlist == null) {
                     this.confs_contactlist = new MultiColumnList(this);
                     resources.attachListSelector(this.confs_contactlist);
+                    //noinspection deprecation
                     if (!PreferenceManager.getDefaultSharedPreferences(this).getBoolean("ms_use_solid_wallpaper", false)) {
                         resources.attachContactlistBack(this.confs_contactlist);
                     }
@@ -2159,6 +2491,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void initToolsPanel() {
+        //noinspection deprecation
         SharedPreferences sp2 = PreferenceManager.getDefaultSharedPreferences(this);
         boolean hideOffline = sp2.getBoolean("ms_offline", true);
         if (hideOffline) {
@@ -2264,26 +2597,34 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void checkConnectionPanelVisibility() {
-        new Thread(() -> {
-            boolean visible = false;
-            int count = connectionStatusPanel.getChildCount();
-            int i = 0;
-            while (true) {
-                if (i >= count) {
-                    break;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean visible = false;
+                int count = connectionStatusPanel.getChildCount();
+                int i = 0;
+                while (true) {
+                    if (i >= count) {
+                        break;
+                    }
+                    View v = connectionStatusPanel.getChildAt(i);
+                    if (v.getVisibility() != View.VISIBLE) {
+                        i++;
+                    } else {
+                        visible = true;
+                        break;
+                    }
                 }
-                View v = connectionStatusPanel.getChildAt(i);
-                if (v.getVisibility() != View.VISIBLE) {
-                    i++;
-                } else {
-                    visible = true;
-                    break;
-                }
+
+                final boolean finalVisible = visible;
+
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        connectionStatusPanel.setVisibility(finalVisible ? View.VISIBLE : View.GONE);
+                    }
+                });
             }
-
-            final boolean finalVisible = visible;
-
-            runOnUiThread(() -> connectionStatusPanel.setVisibility(finalVisible ? View.VISIBLE : View.GONE));
         }).start();
     }
 
@@ -2322,32 +2663,34 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         // todo; 32 dp - hardcode
                         status2.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
 
-                        //noinspection deprecation
                         status2.setBackgroundDrawable(resources.getListSelector());
-                        status2.setOnClickListener(view -> {
-                            contextProfile = icqProfile;
-                            UAdapter list2 = new UAdapter();
-                            list2.setTextSize(18);
-                            list2.setPadding(5);
-                            list2.put(resources.profile_tools, resources.getString("s_more_tools"), 13);
-                            list2.put(resources.away_text, resources.getString("s_status_text"), 12);
-                            list2.put_separator();
-                            list2.put(resources.online, resources.getString("s_status_online"), 0);
-                            list2.put(resources.offline, resources.getString("s_status_offline"), 11);
-                            list2.put_separator();
-                            list2.put(resources.away, resources.getString("s_status_away"), 2);
-                            list2.put(resources.oc, resources.getString("s_status_oc"), 3);
-                            list2.put(resources.dnd, resources.getString("s_status_dnd"), 5);
-                            list2.put(resources.na, resources.getString("s_status_na"), 4);
-                            list2.put_separator();
-                            list2.put(resources.chat, resources.getString("s_status_chat"), 1);
-                            list2.put(resources.eat, resources.getString("s_status_eat"), 6);
-                            list2.put(resources.evil, resources.getString("s_status_angry"), 7);
-                            list2.put(resources.depress, resources.getString("s_status_depress"), 8);
-                            list2.put(resources.home, resources.getString("s_status_at_home"), 9);
-                            list2.put(resources.work, resources.getString("s_status_at_work"), 10);
-                            last_quick_action = PopupBuilder.buildList(list2, view, icqProfile.nickname, RETURN_TO_CONTACTS, -2, new statusListListener(icqProfile));
-                            last_quick_action.show();
+                        status2.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                contextProfile = icqProfile;
+                                UAdapter list2 = new UAdapter();
+                                list2.setTextSize(18);
+                                list2.setPadding(5);
+                                list2.put(resources.profile_tools, resources.getString("s_more_tools"), 13);
+                                list2.put(resources.away_text, resources.getString("s_status_text"), 12);
+                                list2.put_separator();
+                                list2.put(resources.online, resources.getString("s_status_online"), 0);
+                                list2.put(resources.offline, resources.getString("s_status_offline"), 11);
+                                list2.put_separator();
+                                list2.put(resources.away, resources.getString("s_status_away"), 2);
+                                list2.put(resources.oc, resources.getString("s_status_oc"), 3);
+                                list2.put(resources.dnd, resources.getString("s_status_dnd"), 5);
+                                list2.put(resources.na, resources.getString("s_status_na"), 4);
+                                list2.put_separator();
+                                list2.put(resources.chat, resources.getString("s_status_chat"), 1);
+                                list2.put(resources.eat, resources.getString("s_status_eat"), 6);
+                                list2.put(resources.evil, resources.getString("s_status_angry"), 7);
+                                list2.put(resources.depress, resources.getString("s_status_depress"), 8);
+                                list2.put(resources.home, resources.getString("s_status_at_home"), 9);
+                                list2.put(resources.work, resources.getString("s_status_at_work"), 10);
+                                last_quick_action = PopupBuilder.buildList(list2, view, icqProfile.nickname, RETURN_TO_CONTACTS, -2, new statusListListener(icqProfile));
+                                last_quick_action.show();
+                            }
                         });
                         profilesPanel.addView(status2);
                         final ImageView status3 = new ImageView(this);
@@ -2357,31 +2700,35 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         // todo; 32 dp - hardcode
                         status3.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
 
-                        //noinspection deprecation
                         status3.setBackgroundDrawable(resources.getListSelector());
-                        status3.setOnClickListener(view -> {
-                            XStatusAdapter list2 = new XStatusAdapter();
-                            String str = icqProfile.nickname;
-                            //noinspection UnnecessaryLocalVariable
-                            final ICQProfile iCQProfile = icqProfile;
-                            last_quick_action = PopupBuilder.buildGrid(list2, view, str, 6, -2, -2, (arg0, arg1, pos, arg3) -> {
-                                last_quick_action.dismiss();
-                                contextProfile = iCQProfile;
-                                selectedX = pos;
-                                if (selectedX != 37) {
-                                    //noinspection deprecation
-                                    removeDialog(13);
-                                    showDialogA(13);
-                                    xtitle.setText(contextProfile.getSavedXTitle(selectedX));
-                                    xdesc.setText(contextProfile.getSavedXDesc(selectedX));
-                                    return;
-                                }
-                                iCQProfile.xsts = -1;
-                                iCQProfile.saveXStatus();
-                                iCQProfile.updateUserInfo();
-                                iCQProfile.notifyStatusIcon();
-                            });
-                            last_quick_action.show();
+                        status3.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                XStatusAdapter list2 = new XStatusAdapter();
+                                String str = icqProfile.nickname;
+                                //noinspection UnnecessaryLocalVariable
+                                final ICQProfile iCQProfile = icqProfile;
+                                last_quick_action = PopupBuilder.buildGrid(list2, view, str, 6, -2, -2, new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        last_quick_action.dismiss();
+                                        contextProfile = iCQProfile;
+                                        selectedX = i;
+                                        if (selectedX != 37) {
+                                            removeDialog(13);
+                                            showDialogA(13);
+                                            xtitle.setText(contextProfile.getSavedXTitle(selectedX));
+                                            xdesc.setText(contextProfile.getSavedXDesc(selectedX));
+                                            return;
+                                        }
+                                        iCQProfile.xsts = -1;
+                                        iCQProfile.saveXStatus();
+                                        iCQProfile.updateUserInfo();
+                                        iCQProfile.notifyStatusIcon();
+                                    }
+                                });
+                                last_quick_action.show();
+                            }
                         });
                         profilesPanel.addView(status3);
                         final ImageView status4 = new ImageView(this);
@@ -2391,63 +2738,68 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         // todo; 32 dp - hardcode
                         status4.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
 
-                        //noinspection deprecation
                         status4.setBackgroundDrawable(resources.getListSelector());
-                        status4.setOnClickListener(view -> {
-                            UAdapter vlist = new UAdapter();
-                            vlist.setTextSize(18);
-                            vlist.setPadding(5);
-                            vlist.put(resources.for_all, resources.getString("s_vis_1"), 0);
-                            vlist.put(resources.for_vl, resources.getString("s_vis_2"), 1);
-                            vlist.put(resources.for_all_e_invl, resources.getString("s_vis_3"), 2);
-                            vlist.put(resources.for_cl, resources.getString("s_vis_4"), 3);
-                            vlist.put(resources.ivn_for_all, resources.getString("s_vis_5"), 4);
-                            switch (icqProfile.visibilityStatus) {
-                                case 1:
-                                    vlist.setSelected(0);
-                                    break;
-                                case 2:
-                                    vlist.setSelected(4);
-                                    break;
-                                case 3:
-                                    vlist.setSelected(1);
-                                    break;
-                                case 4:
-                                    vlist.setSelected(2);
-                                    break;
-                                case 5:
-                                    vlist.setSelected(3);
-                                    break;
-                            }
-                            String str = icqProfile.nickname;
-                            //noinspection UnnecessaryLocalVariable
-                            final ICQProfile iCQProfile = icqProfile;
-                            last_quick_action = PopupBuilder.buildList(vlist, view, str, 450, -2, (arg0, arg1, arg2, arg3) -> {
-                                last_quick_action.dismiss();
-                                contextProfile = iCQProfile;
-                                //noinspection ConstantConditions
-                                if (contextProfile != null) {
-                                    switch (arg2) {
-                                        case 0:
-                                            contextProfile.setVisibility(1);
-                                            break;
-                                        case 1:
-                                            contextProfile.setVisibility(3);
-                                            break;
-                                        case 2:
-                                            contextProfile.setVisibility(4);
-                                            break;
-                                        case 3:
-                                            contextProfile.setVisibility(5);
-                                            break;
-                                        case 4:
-                                            contextProfile.setVisibility(2);
-                                            break;
-                                    }
-                                    iCQProfile.notifyStatusIcon();
+                        status4.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                UAdapter vlist = new UAdapter();
+                                vlist.setTextSize(18);
+                                vlist.setPadding(5);
+                                vlist.put(resources.for_all, resources.getString("s_vis_1"), 0);
+                                vlist.put(resources.for_vl, resources.getString("s_vis_2"), 1);
+                                vlist.put(resources.for_all_e_invl, resources.getString("s_vis_3"), 2);
+                                vlist.put(resources.for_cl, resources.getString("s_vis_4"), 3);
+                                vlist.put(resources.ivn_for_all, resources.getString("s_vis_5"), 4);
+                                switch (icqProfile.visibilityStatus) {
+                                    case 1:
+                                        vlist.setSelected(0);
+                                        break;
+                                    case 2:
+                                        vlist.setSelected(4);
+                                        break;
+                                    case 3:
+                                        vlist.setSelected(1);
+                                        break;
+                                    case 4:
+                                        vlist.setSelected(2);
+                                        break;
+                                    case 5:
+                                        vlist.setSelected(3);
+                                        break;
                                 }
-                            });
-                            last_quick_action.show();
+                                String str = icqProfile.nickname;
+                                //noinspection UnnecessaryLocalVariable
+                                final ICQProfile iCQProfile = icqProfile;
+                                last_quick_action = PopupBuilder.buildList(vlist, view, str, 450, -2, new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        last_quick_action.dismiss();
+                                        contextProfile = iCQProfile;
+                                        //noinspection ConstantConditions
+                                        if (contextProfile != null) {
+                                            switch (i) {
+                                                case 0:
+                                                    contextProfile.setVisibility(1);
+                                                    break;
+                                                case 1:
+                                                    contextProfile.setVisibility(3);
+                                                    break;
+                                                case 2:
+                                                    contextProfile.setVisibility(4);
+                                                    break;
+                                                case 3:
+                                                    contextProfile.setVisibility(5);
+                                                    break;
+                                                case 4:
+                                                    contextProfile.setVisibility(2);
+                                                    break;
+                                            }
+                                            iCQProfile.notifyStatusIcon();
+                                        }
+                                    }
+                                });
+                                last_quick_action.show();
+                            }
                         });
                         profilesPanel.addView(status4);
                         icqProfile.setNotifier(new IMProfile.BottomPanelNotifier() {
@@ -2457,7 +2809,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                     if (icqProfile.qip_status != null) {
                                         status2.setImageDrawable(qip_statuses.getIcon(icqProfile.qip_status));
                                     } else {
-                                        //noinspection deprecation
                                         status2.setImageDrawable(resources.getStatusIcon(icqProfile.status));
                                     }
                                 } else if (icqProfile.connecting) {
@@ -2514,381 +2865,398 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         // todo; 32 dp - hardcode
                         status.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
 
-                        //noinspection deprecation
                         status.setBackgroundDrawable(resources.getListSelector());
                         profilesPanel.addView(status);
                         switch (jprofile.type) {
                             case 0:
-                                status.setOnClickListener(view -> {
-                                    contextJProfile = jprofile;
-                                    UAdapter vlist = new UAdapter();
-                                    vlist.setTextSize(18);
-                                    vlist.setPadding(5);
-                                    if (jprofile.connected) {
-                                        vlist.put(resources.jabber_conference, resources.getString("s_create_or_join_conference"), 4);
-                                    }
-                                    vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 5);
-                                    vlist.put_separator();
-                                    vlist.put(resources.jabber_online, resources.getString("s_status_online"), 0);
-                                    vlist.put(resources.jabber_offline, resources.getString("s_status_offline"), 1);
-                                    vlist.put_separator();
-                                    vlist.put(resources.jabber_chat, resources.getString("s_status_chat"), 6);
-                                    vlist.put(resources.jabber_away, resources.getString("s_status_away"), 7);
-                                    vlist.put(resources.jabber_dnd, resources.getString("s_status_dnd"), 8);
-                                    vlist.put(resources.jabber_na, resources.getString("s_status_na"), 9);
-                                    vlist.put_separator();
-                                    vlist.put(resources.away_text, resources.getString("s_status_text"), 2);
-                                    vlist.put(resources.jabber_priority, resources.getString("s_jabber_priority"), 10);
-                                    if (jprofile.connected) {
-                                        vlist.put(resources.bookmarks, resources.getString("s_bookmarks"), 13);
-                                        vlist.put(resources.jabber_disco, resources.getString("s_service_discovery"), 12);
-                                    }
-                                    vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 11);
-                                    String str = jprofile.nickname;
-                                    //noinspection UnnecessaryLocalVariable
-                                    final JProfile jProfile = jprofile;
-                                    last_quick_action = PopupBuilder.buildList(vlist, view, str, 320, -2, (arg0, arg1, arg2, arg3) -> {
-                                        last_quick_action.dismiss();
-                                        switch ((int) arg0.getAdapter().getItemId(arg2)) {
-                                            case 0:
-                                                jProfile.setStatus(1);
-                                                if (jProfile.connected || jProfile.connecting) {
-                                                    return;
-                                                }
-                                                jProfile.startConnectingChosed();
-                                                return;
-                                            case 1:
-                                                jProfile.disconnect();
-                                                return;
-                                            case 2:
-                                                //noinspection deprecation
-                                                removeDialog(35);
-                                                showDialogA(35);
-                                                return;
-                                            case 3:
-                                                //noinspection deprecation
-                                                removeDialog(40);
-                                                showDialogA(40);
-                                                return;
-                                            case 4:
-                                                //noinspection deprecation
-                                                removeDialog(42);
-                                                showDialogA(42);
-                                                return;
-                                            case 5:
-                                                if (!jProfile.connected) {
-                                                    Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
-                                                    return;
-                                                }
-                                                //noinspection deprecation
-                                                removeDialog(33);
-                                                showDialogA(33);
-                                                return;
-                                            case 6:
-                                                jProfile.setStatus(0);
-                                                if (jProfile.connected || jProfile.connecting) {
-                                                    return;
-                                                }
-                                                jProfile.startConnectingChosed();
-                                                return;
-                                            case 7:
-                                                jProfile.setStatus(2);
-                                                if (jProfile.connected || jProfile.connecting) {
-                                                    return;
-                                                }
-                                                jProfile.startConnectingChosed();
-                                                return;
-                                            case 8:
-                                                jProfile.setStatus(3);
-                                                if (jProfile.connected || jProfile.connecting) {
-                                                    return;
-                                                }
-                                                jProfile.startConnectingChosed();
-                                                return;
-                                            case 9:
-                                                jProfile.setStatus(4);
-                                                if (jProfile.connected || jProfile.connecting) {
-                                                    return;
-                                                }
-                                                jProfile.startConnectingChosed();
-                                                return;
-                                            case 10:
-                                                //noinspection deprecation
-                                                removeDialog(47);
-                                                showDialogA(47);
-                                                return;
-                                            case 11:
-                                                XMLConsoleActivity.profile = contextJProfile;
-                                                Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
-                                                startActivity(i2);
-                                                return;
-                                            case 12:
-                                                DiscoActivity.putSources(contextJProfile.host, contextJProfile);
-                                                Intent disco = new Intent(ContactListActivity.this, DiscoActivity.class);
-                                                startActivity(disco);
-                                                return;
-                                            case 13:
-                                                Intent bookmarks = new Intent(ContactListActivity.this, BookmarksActivity.class);
-                                                BookmarksActivity.PROFILE = contextJProfile;
-                                                startActivity(bookmarks);
-                                                return;
-                                            default:
+                                status.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        contextJProfile = jprofile;
+                                        UAdapter vlist = new UAdapter();
+                                        vlist.setTextSize(18);
+                                        vlist.setPadding(5);
+                                        if (jprofile.connected) {
+                                            vlist.put(resources.jabber_conference, resources.getString("s_create_or_join_conference"), 4);
                                         }
-                                    });
-                                    last_quick_action.show();
+                                        vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 5);
+                                        vlist.put_separator();
+                                        vlist.put(resources.jabber_online, resources.getString("s_status_online"), 0);
+                                        vlist.put(resources.jabber_offline, resources.getString("s_status_offline"), 1);
+                                        vlist.put_separator();
+                                        vlist.put(resources.jabber_chat, resources.getString("s_status_chat"), 6);
+                                        vlist.put(resources.jabber_away, resources.getString("s_status_away"), 7);
+                                        vlist.put(resources.jabber_dnd, resources.getString("s_status_dnd"), 8);
+                                        vlist.put(resources.jabber_na, resources.getString("s_status_na"), 9);
+                                        vlist.put_separator();
+                                        vlist.put(resources.away_text, resources.getString("s_status_text"), 2);
+                                        vlist.put(resources.jabber_priority, resources.getString("s_jabber_priority"), 10);
+                                        if (jprofile.connected) {
+                                            vlist.put(resources.bookmarks, resources.getString("s_bookmarks"), 13);
+                                            vlist.put(resources.jabber_disco, resources.getString("s_service_discovery"), 12);
+                                        }
+                                        vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 11);
+                                        String str = jprofile.nickname;
+                                        //noinspection UnnecessaryLocalVariable
+                                        final JProfile jProfile = jprofile;
+                                        last_quick_action = PopupBuilder.buildList(vlist, view, str, 320, -2, new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                last_quick_action.dismiss();
+                                                switch ((int) adapterView.getAdapter().getItemId(i)) {
+                                                    case 0:
+                                                        jProfile.setStatus(1);
+                                                        if (jProfile.connected || jProfile.connecting) {
+                                                            return;
+                                                        }
+                                                        jProfile.startConnectingChosed();
+                                                        return;
+                                                    case 1:
+                                                        jProfile.disconnect();
+                                                        return;
+                                                    case 2:
+                                                        removeDialog(35);
+                                                        showDialogA(35);
+                                                        return;
+                                                    case 3:
+                                                        removeDialog(40);
+                                                        showDialogA(40);
+                                                        return;
+                                                    case 4:
+                                                        removeDialog(42);
+                                                        showDialogA(42);
+                                                        return;
+                                                    case 5:
+                                                        if (!jProfile.connected) {
+                                                            Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
+                                                            return;
+                                                        }
+                                                        removeDialog(33);
+                                                        showDialogA(33);
+                                                        return;
+                                                    case 6:
+                                                        jProfile.setStatus(0);
+                                                        if (jProfile.connected || jProfile.connecting) {
+                                                            return;
+                                                        }
+                                                        jProfile.startConnectingChosed();
+                                                        return;
+                                                    case 7:
+                                                        jProfile.setStatus(2);
+                                                        if (jProfile.connected || jProfile.connecting) {
+                                                            return;
+                                                        }
+                                                        jProfile.startConnectingChosed();
+                                                        return;
+                                                    case 8:
+                                                        jProfile.setStatus(3);
+                                                        if (jProfile.connected || jProfile.connecting) {
+                                                            return;
+                                                        }
+                                                        jProfile.startConnectingChosed();
+                                                        return;
+                                                    case 9:
+                                                        jProfile.setStatus(4);
+                                                        if (jProfile.connected || jProfile.connecting) {
+                                                            return;
+                                                        }
+                                                        jProfile.startConnectingChosed();
+                                                        return;
+                                                    case 10:
+                                                        removeDialog(47);
+                                                        showDialogA(47);
+                                                        return;
+                                                    case 11:
+                                                        XMLConsoleActivity.profile = contextJProfile;
+                                                        Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
+                                                        startActivity(i2);
+                                                        return;
+                                                    case 12:
+                                                        DiscoActivity.putSources(contextJProfile.host, contextJProfile);
+                                                        Intent disco = new Intent(ContactListActivity.this, DiscoActivity.class);
+                                                        startActivity(disco);
+                                                        return;
+                                                    case 13:
+                                                        Intent bookmarks = new Intent(ContactListActivity.this, BookmarksActivity.class);
+                                                        BookmarksActivity.PROFILE = contextJProfile;
+                                                        startActivity(bookmarks);
+                                                        return;
+                                                    default:
+                                                }
+                                            }
+                                        });
+                                        last_quick_action.show();
+                                    }
                                 });
                                 break;
                             case 1:
-                                status.setOnClickListener(view -> {
-                                    contextJProfile = jprofile;
-                                    UAdapter vlist = new UAdapter();
-                                    vlist.setTextSize(18);
-                                    vlist.setPadding(5);
-                                    vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 2);
-                                    vlist.put_separator();
-                                    vlist.put(resources.vk_online, resources.getString("s_status_online"), 0);
-                                    vlist.put(resources.vk_offline, resources.getString("s_status_offline"), 1);
-                                    vlist.put_separator();
-                                    vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 3);
-                                    //noinspection UnnecessaryLocalVariable
-                                    final JProfile jProfile = jprofile;
-                                    last_quick_action = PopupBuilder.buildList(vlist, view, jprofile.ID + "@" + jprofile.host, 450, -2, (arg0, arg1, arg2, arg3) -> {
-                                        last_quick_action.dismiss();
-                                        switch ((int) arg0.getAdapter().getItemId(arg2)) {
-                                            case 0:
-                                                jProfile.setStatus(1);
-                                                jProfile.startConnecting();
-                                                return;
-                                            case 1:
-                                                jProfile.disconnect();
-                                                return;
-                                            case 2:
-                                                if (!jProfile.connected) {
-                                                    Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
-                                                    return;
+                                status.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        contextJProfile = jprofile;
+                                        UAdapter vlist = new UAdapter();
+                                        vlist.setTextSize(18);
+                                        vlist.setPadding(5);
+                                        vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 2);
+                                        vlist.put_separator();
+                                        vlist.put(resources.vk_online, resources.getString("s_status_online"), 0);
+                                        vlist.put(resources.vk_offline, resources.getString("s_status_offline"), 1);
+                                        vlist.put_separator();
+                                        vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 3);
+                                        //noinspection UnnecessaryLocalVariable
+                                        final JProfile jProfile = jprofile;
+                                        last_quick_action = PopupBuilder.buildList(vlist, view, jprofile.ID + "@" + jprofile.host, 450, -2, new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                last_quick_action.dismiss();
+                                                switch ((int) adapterView.getAdapter().getItemId(i)) {
+                                                    case 0:
+                                                        jProfile.setStatus(1);
+                                                        jProfile.startConnecting();
+                                                        return;
+                                                    case 1:
+                                                        jProfile.disconnect();
+                                                        return;
+                                                    case 2:
+                                                        if (!jProfile.connected) {
+                                                            Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
+                                                            return;
+                                                        }
+                                                        removeDialog(33);
+                                                        showDialogA(33);
+                                                        return;
+                                                    case 3:
+                                                        XMLConsoleActivity.profile = contextJProfile;
+                                                        Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
+                                                        startActivity(i2);
+                                                        return;
+                                                    default:
                                                 }
-                                                //noinspection deprecation
-                                                removeDialog(33);
-                                                showDialogA(33);
-                                                return;
-                                            case 3:
-                                                XMLConsoleActivity.profile = contextJProfile;
-                                                Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
-                                                startActivity(i2);
-                                                return;
-                                            default:
-                                        }
-                                    });
-                                    last_quick_action.show();
+                                            }
+                                        });
+                                        last_quick_action.show();
+                                    }
                                 });
                                 break;
                             case 2:
-                                status.setOnClickListener(view -> {
-                                    contextJProfile = jprofile;
-                                    UAdapter vlist = new UAdapter();
-                                    vlist.setTextSize(18);
-                                    vlist.setPadding(5);
-                                    if (jprofile.connected) {
-                                        vlist.put(resources.jabber_conference, resources.getString("s_create_or_join_conference"), 6);
-                                    }
-                                    vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 2);
-                                    vlist.put_separator();
-                                    vlist.put(resources.yandex_online, resources.getString("s_status_online"), 0);
-                                    vlist.put(resources.yandex_offline, resources.getString("s_status_offline"), 1);
-                                    vlist.put_separator();
-                                    if (jprofile.connected) {
-                                        vlist.put(resources.bookmarks, resources.getString("s_bookmarks"), 5);
-                                        vlist.put(resources.jabber_disco, resources.getString("s_service_discovery"), 4);
-                                    }
-                                    vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 3);
-                                    String str = jprofile.ID;
-                                    //noinspection UnnecessaryLocalVariable
-                                    final JProfile jProfile = jprofile;
-                                    last_quick_action = PopupBuilder.buildList(vlist, view, str, 450, -2, (arg0, arg1, arg2, arg3) -> {
-                                        last_quick_action.dismiss();
-                                        switch ((int) arg0.getAdapter().getItemId(arg2)) {
-                                            case 0:
-                                                jProfile.setStatus(1);
-                                                jProfile.startConnecting();
-                                                return;
-                                            case 1:
-                                                jProfile.disconnect();
-                                                return;
-                                            case 2:
-                                                if (!jProfile.connected) {
-                                                    Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
-                                                    return;
-                                                }
-                                                //noinspection deprecation
-                                                removeDialog(33);
-                                                showDialogA(33);
-                                                return;
-                                            case 3:
-                                                XMLConsoleActivity.profile = contextJProfile;
-                                                Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
-                                                startActivity(i2);
-                                                return;
-                                            case 4:
-                                                DiscoActivity.putSources(contextJProfile.host, contextJProfile);
-                                                Intent disco = new Intent(ContactListActivity.this, DiscoActivity.class);
-                                                startActivity(disco);
-                                                return;
-                                            case 5:
-                                                Intent bookmarks = new Intent(ContactListActivity.this, BookmarksActivity.class);
-                                                BookmarksActivity.PROFILE = contextJProfile;
-                                                startActivity(bookmarks);
-                                                return;
-                                            case 6:
-                                                //noinspection deprecation
-                                                removeDialog(42);
-                                                showDialogA(42);
-                                                return;
-                                            default:
+                                status.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        contextJProfile = jprofile;
+                                        UAdapter vlist = new UAdapter();
+                                        vlist.setTextSize(18);
+                                        vlist.setPadding(5);
+                                        if (jprofile.connected) {
+                                            vlist.put(resources.jabber_conference, resources.getString("s_create_or_join_conference"), 6);
                                         }
-                                    });
-                                    last_quick_action.show();
+                                        vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 2);
+                                        vlist.put_separator();
+                                        vlist.put(resources.yandex_online, resources.getString("s_status_online"), 0);
+                                        vlist.put(resources.yandex_offline, resources.getString("s_status_offline"), 1);
+                                        vlist.put_separator();
+                                        if (jprofile.connected) {
+                                            vlist.put(resources.bookmarks, resources.getString("s_bookmarks"), 5);
+                                            vlist.put(resources.jabber_disco, resources.getString("s_service_discovery"), 4);
+                                        }
+                                        vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 3);
+                                        String str = jprofile.ID;
+                                        //noinspection UnnecessaryLocalVariable
+                                        final JProfile jProfile = jprofile;
+                                        last_quick_action = PopupBuilder.buildList(vlist, view, str, 450, -2, new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                last_quick_action.dismiss();
+                                                switch ((int) adapterView.getAdapter().getItemId(i)) {
+                                                    case 0:
+                                                        jProfile.setStatus(1);
+                                                        jProfile.startConnecting();
+                                                        return;
+                                                    case 1:
+                                                        jProfile.disconnect();
+                                                        return;
+                                                    case 2:
+                                                        if (!jProfile.connected) {
+                                                            Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
+                                                            return;
+                                                        }
+                                                        removeDialog(33);
+                                                        showDialogA(33);
+                                                        return;
+                                                    case 3:
+                                                        XMLConsoleActivity.profile = contextJProfile;
+                                                        Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
+                                                        startActivity(i2);
+                                                        return;
+                                                    case 4:
+                                                        DiscoActivity.putSources(contextJProfile.host, contextJProfile);
+                                                        Intent disco = new Intent(ContactListActivity.this, DiscoActivity.class);
+                                                        startActivity(disco);
+                                                        return;
+                                                    case 5:
+                                                        Intent bookmarks = new Intent(ContactListActivity.this, BookmarksActivity.class);
+                                                        BookmarksActivity.PROFILE = contextJProfile;
+                                                        startActivity(bookmarks);
+                                                        return;
+                                                    case 6:
+                                                        removeDialog(42);
+                                                        showDialogA(42);
+                                                        return;
+                                                    default:
+                                                }
+                                            }
+                                        });
+                                        last_quick_action.show();
+                                    }
                                 });
                                 break;
                             case 3:
-                                status.setOnClickListener(view -> {
-                                    contextJProfile = jprofile;
-                                    final UAdapter vlist = new UAdapter();
-                                    vlist.setTextSize(18);
-                                    vlist.setPadding(5);
-                                    if (jprofile.connected) {
-                                        vlist.put(resources.jabber_conference, resources.getString("s_create_or_join_conference"), 4);
-                                    }
-                                    if (jprofile.connected) {
-                                        vlist.put(resources.google_mail, resources.getString("s_check_gmail"), 2);
-                                    }
-                                    vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 3);
-                                    vlist.put_separator();
-                                    vlist.put(resources.gtalk_online, resources.getString("s_status_online"), 0);
-                                    vlist.put(resources.gtalk_offline, resources.getString("s_status_offline"), 1);
-                                    vlist.put_separator();
-                                    if (jprofile.connected) {
-                                        vlist.put(resources.bookmarks, resources.getString("s_bookmarks"), 7);
-                                        vlist.put(resources.jabber_disco, resources.getString("s_service_discovery"), 6);
-                                    }
-                                    vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 5);
-                                    String str = jprofile.ID;
-                                    //noinspection UnnecessaryLocalVariable
-                                    final JProfile jProfile = jprofile;
-                                    last_quick_action = PopupBuilder.buildList(vlist, view, str, 450, -2, (arg0, arg1, arg2, arg3) -> {
-                                        last_quick_action.dismiss();
-                                        switch ((int) vlist.getItemId(arg2)) {
-                                            case 0:
-                                                jProfile.setStatus(1);
-                                                jProfile.startConnecting();
-                                                return;
-                                            case 1:
-                                                jProfile.disconnect();
-                                                return;
-                                            case 2:
-                                                GMailActivity.profile = jProfile;
-                                                Intent gmail = new Intent(ContactListActivity.this, GMailActivity.class);
-                                                startActivity(gmail);
-                                                return;
-                                            case 3:
-                                                if (!jProfile.connected) {
-                                                    Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
-                                                    return;
-                                                }
-                                                //noinspection deprecation
-                                                removeDialog(33);
-                                                showDialogA(33);
-                                                return;
-                                            case 4:
-                                                //noinspection deprecation
-                                                removeDialog(42);
-                                                showDialogA(42);
-                                                return;
-                                            case 5:
-                                                XMLConsoleActivity.profile = contextJProfile;
-                                                Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
-                                                startActivity(i2);
-                                                return;
-                                            case 6:
-                                                DiscoActivity.putSources(contextJProfile.host, contextJProfile);
-                                                Intent disco = new Intent(ContactListActivity.this, DiscoActivity.class);
-                                                startActivity(disco);
-                                                return;
-                                            case 7:
-                                                Intent bookmarks = new Intent(ContactListActivity.this, BookmarksActivity.class);
-                                                BookmarksActivity.PROFILE = contextJProfile;
-                                                startActivity(bookmarks);
-                                                return;
-                                            default:
+                                status.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        contextJProfile = jprofile;
+                                        final UAdapter vlist = new UAdapter();
+                                        vlist.setTextSize(18);
+                                        vlist.setPadding(5);
+                                        if (jprofile.connected) {
+                                            vlist.put(resources.jabber_conference, resources.getString("s_create_or_join_conference"), 4);
                                         }
-                                    });
-                                    last_quick_action.show();
+                                        if (jprofile.connected) {
+                                            vlist.put(resources.google_mail, resources.getString("s_check_gmail"), 2);
+                                        }
+                                        vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 3);
+                                        vlist.put_separator();
+                                        vlist.put(resources.gtalk_online, resources.getString("s_status_online"), 0);
+                                        vlist.put(resources.gtalk_offline, resources.getString("s_status_offline"), 1);
+                                        vlist.put_separator();
+                                        if (jprofile.connected) {
+                                            vlist.put(resources.bookmarks, resources.getString("s_bookmarks"), 7);
+                                            vlist.put(resources.jabber_disco, resources.getString("s_service_discovery"), 6);
+                                        }
+                                        vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 5);
+                                        String str = jprofile.ID;
+                                        //noinspection UnnecessaryLocalVariable
+                                        final JProfile jProfile = jprofile;
+                                        last_quick_action = PopupBuilder.buildList(vlist, view, str, 450, -2, new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                last_quick_action.dismiss();
+                                                switch ((int) vlist.getItemId(i)) {
+                                                    case 0:
+                                                        jProfile.setStatus(1);
+                                                        jProfile.startConnecting();
+                                                        return;
+                                                    case 1:
+                                                        jProfile.disconnect();
+                                                        return;
+                                                    case 2:
+                                                        GMailActivity.profile = jProfile;
+                                                        Intent gmail = new Intent(ContactListActivity.this, GMailActivity.class);
+                                                        startActivity(gmail);
+                                                        return;
+                                                    case 3:
+                                                        if (!jProfile.connected) {
+                                                            Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
+                                                            return;
+                                                        }
+                                                        removeDialog(33);
+                                                        showDialogA(33);
+                                                        return;
+                                                    case 4:
+                                                        removeDialog(42);
+                                                        showDialogA(42);
+                                                        return;
+                                                    case 5:
+                                                        XMLConsoleActivity.profile = contextJProfile;
+                                                        Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
+                                                        startActivity(i2);
+                                                        return;
+                                                    case 6:
+                                                        DiscoActivity.putSources(contextJProfile.host, contextJProfile);
+                                                        Intent disco = new Intent(ContactListActivity.this, DiscoActivity.class);
+                                                        startActivity(disco);
+                                                        return;
+                                                    case 7:
+                                                        Intent bookmarks = new Intent(ContactListActivity.this, BookmarksActivity.class);
+                                                        BookmarksActivity.PROFILE = contextJProfile;
+                                                        startActivity(bookmarks);
+                                                        return;
+                                                    default:
+                                                }
+                                            }
+                                        });
+                                        last_quick_action.show();
+                                    }
                                 });
                                 break;
                             case 4:
-                                status.setOnClickListener(view -> {
-                                    contextJProfile = jprofile;
-                                    final UAdapter vlist = new UAdapter();
-                                    vlist.setTextSize(18);
-                                    vlist.setPadding(5);
-                                    if (jprofile.connected) {
-                                        vlist.put(resources.jabber_conference, resources.getString("s_create_or_join_conference"), 3);
-                                    }
-                                    vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 2);
-                                    vlist.put_separator();
-                                    vlist.put(resources.qip_online, resources.getString("s_status_online"), 0);
-                                    vlist.put(resources.qip_offline, resources.getString("s_status_offline"), 1);
-                                    vlist.put_separator();
-                                    if (jprofile.connected) {
-                                        vlist.put(resources.bookmarks, resources.getString("s_bookmarks"), 6);
-                                        vlist.put(resources.jabber_disco, resources.getString("s_service_discovery"), 5);
-                                    }
-                                    vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 4);
-                                    String str = jprofile.ID;
-                                    //noinspection UnnecessaryLocalVariable
-                                    final JProfile jProfile = jprofile;
-                                    last_quick_action = PopupBuilder.buildList(vlist, view, str, 450, -2, (arg0, arg1, arg2, arg3) -> {
-                                        last_quick_action.dismiss();
-                                        switch ((int) vlist.getItemId(arg2)) {
-                                            case 0:
-                                                jProfile.setStatus(1);
-                                                jProfile.startConnecting();
-                                                return;
-                                            case 1:
-                                                jProfile.disconnect();
-                                                return;
-                                            case 2:
-                                                if (!jProfile.connected) {
-                                                    Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
-                                                    return;
-                                                }
-                                                //noinspection deprecation
-                                                removeDialog(33);
-                                                showDialogA(33);
-                                                return;
-                                            case 3:
-                                                //noinspection deprecation
-                                                removeDialog(42);
-                                                showDialogA(42);
-                                                return;
-                                            case 4:
-                                                XMLConsoleActivity.profile = contextJProfile;
-                                                Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
-                                                startActivity(i2);
-                                                return;
-                                            case 5:
-                                                DiscoActivity.putSources(contextJProfile.host, contextJProfile);
-                                                Intent disco = new Intent(ContactListActivity.this, DiscoActivity.class);
-                                                startActivity(disco);
-                                                return;
-                                            case 6:
-                                                Intent bookmarks = new Intent(ContactListActivity.this, BookmarksActivity.class);
-                                                BookmarksActivity.PROFILE = contextJProfile;
-                                                startActivity(bookmarks);
-                                                return;
-                                            default:
+                                status.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View view) {
+                                        contextJProfile = jprofile;
+                                        final UAdapter vlist = new UAdapter();
+                                        vlist.setTextSize(18);
+                                        vlist.setPadding(5);
+                                        if (jprofile.connected) {
+                                            vlist.put(resources.jabber_conference, resources.getString("s_create_or_join_conference"), 3);
                                         }
-                                    });
-                                    last_quick_action.show();
+                                        vlist.put(resources.profile_tools, resources.getString("s_more_tools"), 2);
+                                        vlist.put_separator();
+                                        vlist.put(resources.qip_online, resources.getString("s_status_online"), 0);
+                                        vlist.put(resources.qip_offline, resources.getString("s_status_offline"), 1);
+                                        vlist.put_separator();
+                                        if (jprofile.connected) {
+                                            vlist.put(resources.bookmarks, resources.getString("s_bookmarks"), 6);
+                                            vlist.put(resources.jabber_disco, resources.getString("s_service_discovery"), 5);
+                                        }
+                                        vlist.put(resources.jabber_xml_console, resources.getString("s_xml_console"), 4);
+                                        String str = jprofile.ID;
+                                        //noinspection UnnecessaryLocalVariable
+                                        final JProfile jProfile = jprofile;
+                                        last_quick_action = PopupBuilder.buildList(vlist, view, str, 450, -2, new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                last_quick_action.dismiss();
+                                                switch ((int) vlist.getItemId(i)) {
+                                                    case 0:
+                                                        jProfile.setStatus(1);
+                                                        jProfile.startConnecting();
+                                                        return;
+                                                    case 1:
+                                                        jProfile.disconnect();
+                                                        return;
+                                                    case 2:
+                                                        if (!jProfile.connected) {
+                                                            Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
+                                                            return;
+                                                        }
+                                                        removeDialog(33);
+                                                        showDialogA(33);
+                                                        return;
+                                                    case 3:
+                                                        removeDialog(42);
+                                                        showDialogA(42);
+                                                        return;
+                                                    case 4:
+                                                        XMLConsoleActivity.profile = contextJProfile;
+                                                        Intent i2 = new Intent(ContactListActivity.this, XMLConsoleActivity.class);
+                                                        startActivity(i2);
+                                                        return;
+                                                    case 5:
+                                                        DiscoActivity.putSources(contextJProfile.host, contextJProfile);
+                                                        Intent disco = new Intent(ContactListActivity.this, DiscoActivity.class);
+                                                        startActivity(disco);
+                                                        return;
+                                                    case 6:
+                                                        Intent bookmarks = new Intent(ContactListActivity.this, BookmarksActivity.class);
+                                                        BookmarksActivity.PROFILE = contextJProfile;
+                                                        startActivity(bookmarks);
+                                                        return;
+                                                    default:
+                                                }
+                                            }
+                                        });
+                                        last_quick_action.show();
+                                    }
                                 });
                                 break;
                         }
@@ -2991,7 +3359,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         final ImageView status1 = new ImageView(this);
                         status1.setClickable(true);
                         status1.setPadding(8, 7, 8, 7);
-                        //noinspection deprecation
                         status1.setBackgroundDrawable(resources.getListSelector());
                         m_profile.setNotifier(new IMProfile.BottomPanelNotifier() {
                             @Override
@@ -3003,9 +3370,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                             return;
                                         case 3:
                                         case 4:
-                                        default:
-                                            status1.setImageDrawable(resources.mrim_online);
-                                            return;
                                         case 5:
                                             status1.setImageDrawable(resources.mrim_dnd);
                                             return;
@@ -3032,6 +3396,8 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                             return;
                                         case 13:
                                             status1.setImageDrawable(resources.mrim_chat);
+                                        default:
+                                            status1.setImageDrawable(resources.mrim_online);
                                     }
                                 } else if (m_profile.connecting) {
                                     status1.setImageDrawable(resources.mrim_connecting);
@@ -3053,134 +3419,138 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                 checkConnectionPanelVisibility();
                             }
                         });
-                        status1.setOnClickListener(view -> {
-                            contextMrimProfile = m_profile;
-                            UAdapter list2 = new UAdapter();
-                            list2.setTextSize(18);
-                            list2.setPadding(5);
-                            list2.put(resources.profile_tools, resources.getString("s_more_tools"), 3);
-                            if (m_profile.connected) {
-                                list2.put(resources.sms, resources.getString("s_send_sms"), 2);
-                            }
-                            list2.put_separator();
-                            list2.put(resources.mrim_online, resources.getString("s_status_online"), 0);
-                            list2.put(resources.mrim_offline, resources.getString("s_status_offline"), 1);
-                            list2.put_separator();
-                            list2.put(resources.mrim_away, resources.getString("s_status_away"), 4);
-                            list2.put(resources.mrim_oc, resources.getString("s_status_oc"), 5);
-                            list2.put(resources.mrim_dnd, resources.getString("s_status_dnd"), 6);
-                            list2.put(resources.mrim_na, resources.getString("s_status_na"), 7);
-                            list2.put_separator();
-                            list2.put(resources.mrim_chat, resources.getString("s_status_chat"), 8);
-                            list2.put(resources.mrim_lunch, resources.getString("s_status_eat"), 9);
-                            list2.put(resources.mrim_angry, resources.getString("s_status_angry"), 10);
-                            list2.put(resources.mrim_depress, resources.getString("s_status_depress"), 11);
-                            list2.put(resources.mrim_home, resources.getString("s_status_at_home"), 12);
-                            list2.put(resources.mrim_work, resources.getString("s_status_at_work"), 13);
-                            String str = m_profile.ID;
-                            //noinspection UnnecessaryLocalVariable
-                            final MMPProfile mMPProfile = m_profile;
-                            last_quick_action = PopupBuilder.buildList(list2, view, str, 320, -2, (arg0, arg1, arg2, arg3) -> {
-                                last_quick_action.dismiss();
-                                switch ((int) arg0.getAdapter().getItemId(arg2)) {
-                                    case 0:
-                                        mMPProfile.setStatus(1);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 1:
-                                        mMPProfile.disconnect();
-                                        return;
-                                    case 2:
-                                        //noinspection deprecation
-                                        removeDialog(38);
-                                        showDialogA(38);
-                                        return;
-                                    case 3:
-                                        if (!mMPProfile.connected) {
-                                            Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
-                                            return;
-                                        }
-                                        //noinspection deprecation
-                                        removeDialog(45);
-                                        showDialogA(45);
-                                        return;
-                                    case 4:
-                                        mMPProfile.setStatus(2);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 5:
-                                        mMPProfile.setStatus(6);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 6:
-                                        mMPProfile.setStatus(5);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 7:
-                                        mMPProfile.setStatus(7);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 8:
-                                        mMPProfile.setStatus(13);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 9:
-                                        mMPProfile.setStatus(8);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 10:
-                                        mMPProfile.setStatus(12);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 11:
-                                        mMPProfile.setStatus(11);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 12:
-                                        mMPProfile.setStatus(10);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    case 13:
-                                        mMPProfile.setStatus(9);
-                                        if (!mMPProfile.connected && !mMPProfile.connecting) {
-                                            mMPProfile.startConnectingChosed();
-                                            return;
-                                        }
-                                        return;
-                                    default:
+                        status1.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                contextMrimProfile = m_profile;
+                                UAdapter list2 = new UAdapter();
+                                list2.setTextSize(18);
+                                list2.setPadding(5);
+                                list2.put(resources.profile_tools, resources.getString("s_more_tools"), 3);
+                                if (m_profile.connected) {
+                                    list2.put(resources.sms, resources.getString("s_send_sms"), 2);
                                 }
-                            });
-                            last_quick_action.show();
+                                list2.put_separator();
+                                list2.put(resources.mrim_online, resources.getString("s_status_online"), 0);
+                                list2.put(resources.mrim_offline, resources.getString("s_status_offline"), 1);
+                                list2.put_separator();
+                                list2.put(resources.mrim_away, resources.getString("s_status_away"), 4);
+                                list2.put(resources.mrim_oc, resources.getString("s_status_oc"), 5);
+                                list2.put(resources.mrim_dnd, resources.getString("s_status_dnd"), 6);
+                                list2.put(resources.mrim_na, resources.getString("s_status_na"), 7);
+                                list2.put_separator();
+                                list2.put(resources.mrim_chat, resources.getString("s_status_chat"), 8);
+                                list2.put(resources.mrim_lunch, resources.getString("s_status_eat"), 9);
+                                list2.put(resources.mrim_angry, resources.getString("s_status_angry"), 10);
+                                list2.put(resources.mrim_depress, resources.getString("s_status_depress"), 11);
+                                list2.put(resources.mrim_home, resources.getString("s_status_at_home"), 12);
+                                list2.put(resources.mrim_work, resources.getString("s_status_at_work"), 13);
+                                String str = m_profile.ID;
+                                //noinspection UnnecessaryLocalVariable
+                                final MMPProfile mMPProfile = m_profile;
+                                last_quick_action = PopupBuilder.buildList(list2, view, str, 320, -2, new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        last_quick_action.dismiss();
+                                        switch ((int) adapterView.getAdapter().getItemId(i)) {
+                                            case 0:
+                                                mMPProfile.setStatus(1);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 1:
+                                                mMPProfile.disconnect();
+                                                return;
+                                            case 2:
+                                                removeDialog(38);
+                                                showDialogA(38);
+                                                return;
+                                            case 3:
+                                                if (!mMPProfile.connected) {
+                                                    Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
+                                                    return;
+                                                }
+                                                removeDialog(45);
+                                                showDialogA(45);
+                                                return;
+                                            case 4:
+                                                mMPProfile.setStatus(2);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 5:
+                                                mMPProfile.setStatus(6);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 6:
+                                                mMPProfile.setStatus(5);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 7:
+                                                mMPProfile.setStatus(7);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 8:
+                                                mMPProfile.setStatus(13);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 9:
+                                                mMPProfile.setStatus(8);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 10:
+                                                mMPProfile.setStatus(12);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 11:
+                                                mMPProfile.setStatus(11);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 12:
+                                                mMPProfile.setStatus(10);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            case 13:
+                                                mMPProfile.setStatus(9);
+                                                if (!mMPProfile.connected && !mMPProfile.connecting) {
+                                                    mMPProfile.startConnectingChosed();
+                                                    return;
+                                                }
+                                                return;
+                                            default:
+                                        }
+                                    }
+                                });
+                                last_quick_action.show();
+                            }
                         });
                         profilesPanel.addView(status1);
                         break;
@@ -3211,6 +3581,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             if (arg0 != toggle_offline) {
                 if (arg0 != toggle_vibro) {
                     if (arg0 == toggle_sound) {
+                        //noinspection deprecation
                         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(ContactListActivity.this);
                         boolean enableSound = sp.getBoolean("ms_sounds", true);
                         if (enableSound) {
@@ -3225,6 +3596,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     }
                     return;
                 }
+                //noinspection deprecation
                 SharedPreferences sp2 = PreferenceManager.getDefaultSharedPreferences(ContactListActivity.this);
                 boolean enableVibro = sp2.getBoolean("ms_vibro", true);
                 if (enableVibro) {
@@ -3237,6 +3609,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 service.doVibrate(20L);
                 return;
             }
+            //noinspection deprecation
             SharedPreferences sp3 = PreferenceManager.getDefaultSharedPreferences(ContactListActivity.this);
             boolean hideOffline = sp3.getBoolean("ms_offline", true);
             if (hideOffline) {
@@ -3300,7 +3673,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
 
         @Override
         public void onItemClick(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
-            //noinspection deprecation
             removeDialog(7);
             int idA = (int) this.adp.getItemId(arg2);
             switch (idA) {
@@ -3311,19 +3683,16 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             return;
                         } else //noinspection ConstantConditions
                             if (contextContact == null && contextJContact == null && contextMMPContact != null) {
-                            contextMMPContact.profile.closeChat(contextMMPContact);
-                            return;
-                        } else {
-                            return;
-                        }
+                                contextMMPContact.profile.closeChat(contextMMPContact);
+                                return;
+                            } else {
+                                return;
+                            }
                     }
                     contextJContact.profile.closeChat(contextJContact);
                     return;
                 case 1:
-                default:
-                    return;
                 case 2:
-                    //noinspection deprecation
                     removeDialog(14);
                     showDialogA(14);
                     return;
@@ -3367,7 +3736,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             caps.append(IcqCapsBase.translateGuid(raw)).append("\n");
                         }
                         client_info = client_info + caps;
-                        //noinspection deprecation
                         removeDialog(5);
                         showDialogA(5);
                         return;
@@ -3375,7 +3743,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     return;
                 case 5:
                     if (contextContact != null) {
-                        //noinspection deprecation
                         removeDialog(15);
                         showDialogA(15);
                         return;
@@ -3383,7 +3750,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     return;
                 case 6:
                     if (contextContact != null) {
-                        //noinspection deprecation
                         ClipboardManager cb = (ClipboardManager) service.getSystemService(Context.CLIPBOARD_SERVICE);
                         //noinspection deprecation
                         cb.setText(contextContact.ID);
@@ -3393,7 +3759,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     return;
                 case 7:
                     if (contextContact != null) {
-                        //noinspection deprecation
                         ClipboardManager cbA = (ClipboardManager) service.getSystemService(Context.CLIPBOARD_SERVICE);
                         //noinspection deprecation
                         cbA.setText(contextContact.name);
@@ -3404,7 +3769,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 case 8:
                     if (contextContact != null) {
                         tempContactForAddingDialog = contextContact;
-                        //noinspection deprecation
                         removeDialog(6);
                         showDialogA(6);
                         return;
@@ -3418,7 +3782,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     return;
                 case 10:
                     if (contextContact != null) {
-                        //noinspection deprecation
                         removeDialog(11);
                         showDialogA(11);
                         return;
@@ -3426,7 +3789,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     return;
                 case 11:
                     if (contextContact != null) {
-                        //noinspection deprecation
                         removeDialog(12);
                         showDialogA(12);
                         return;
@@ -3467,7 +3829,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     contextContact.getAvatar(contextContact, service);
                     return;
                 case 16:
-                    //noinspection deprecation
                     removeDialog(34);
                     showDialogA(34);
                     return;
@@ -3490,14 +3851,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     }
                     return;
                 case 20:
-                    //noinspection deprecation
                     ClipboardManager cb2 = (ClipboardManager) service.getSystemService(Context.CLIPBOARD_SERVICE);
                     //noinspection deprecation
                     cb2.setText(contextJContact.ID);
                     Toast.makeText(service, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
                     return;
                 case 21:
-                    //noinspection deprecation
                     ClipboardManager cb3 = (ClipboardManager) service.getSystemService(Context.CLIPBOARD_SERVICE);
                     //noinspection deprecation
                     cb3.setText(contextJContact.name);
@@ -3510,14 +3869,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     }
                     return;
                 case 23:
-                    //noinspection deprecation
                     ClipboardManager cb4 = (ClipboardManager) service.getSystemService(Context.CLIPBOARD_SERVICE);
                     //noinspection deprecation
                     cb4.setText(contextMMPContact.ID);
                     Toast.makeText(service, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
                     return;
                 case 24:
-                    //noinspection deprecation
                     ClipboardManager cb5 = (ClipboardManager) service.getSystemService(Context.CLIPBOARD_SERVICE);
                     //noinspection deprecation
                     cb5.setText(contextMMPContact.name);
@@ -3551,7 +3908,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     return;
                 case 27:
                     if (contextJContact != null) {
-                        //noinspection deprecation
                         removeDialog(46);
                         showDialogA(46);
                         return;
@@ -3559,7 +3915,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     return;
                 case 28:
                     if (contextJContact != null) {
-                        //noinspection deprecation
                         removeDialog(48);
                         showDialogA(48);
                         return;
@@ -3572,29 +3927,35 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             true
                     );
                     load_progress.show();
-                    ru.ivansuper.jasmin.jabber.commands.Callback callback = list -> {
-                        load_progress.dismiss();
-                        if (list.size() == 0) {
-                            service.showMessageInContactList(Locale.getString("s_information"), Locale.getString("s_no_commands"));
-                            return;
+                    ru.ivansuper.jasmin.jabber.commands.Callback callback = new ru.ivansuper.jasmin.jabber.commands.Callback() {
+                        @Override
+                        public void onListLoaded(final Vector<CommandItem> list) {
+                            load_progress.dismiss();
+                            if (list.isEmpty()) {
+                                service.showMessageInContactList(Locale.getString("s_information"), Locale.getString("s_no_commands"));
+                                return;
+                            }
+                            UAdapter adp = new UAdapter();
+                            adp.setMode(2);
+                            adp.setPadding(14);
+                            for (int i = 0; i < list.size(); i++) {
+                                CommandItem item = list.get(i);
+                                adp.put(item.name, i);
+                            }
+                            Dialog commands = DialogBuilder.createWithNoHeader(
+                                    ContactListActivity.this,
+                                    adp,
+                                    0,
+                                    new AdapterView.OnItemClickListener() {
+                                        @Override
+                                        public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                            CommandItem item2 = list.get(i);
+                                            contextJContact.profile.executeCommand(item2.jid, item2.node);
+                                        }
+                                    }
+                            );
+                            commands.show();
                         }
-                        UAdapter adp = new UAdapter();
-                        adp.setMode(2);
-                        adp.setPadding(14);
-                        for (int i = 0; i < list.size(); i++) {
-                            CommandItem item = list.get(i);
-                            adp.put(item.name, i);
-                        }
-                        Dialog commands = DialogBuilder.createWithNoHeader(
-                                ContactListActivity.this,
-                                adp,
-                                0,
-                                (arg02, arg12, arg22, arg32) -> {
-                                    CommandItem item2 = list.get(arg22);
-                                    contextJContact.profile.executeCommand(item2.jid, item2.node);
-                                }
-                        );
-                        commands.show();
                     };
                     contextJContact.profile.getCommandList(contextJContact.ID, callback);
                     return;
@@ -3606,6 +3967,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     return;
                 case 32:
                     contextJContact.profile.sendPresence(contextJContact.ID, false);
+                default:
             }
         }
     }
@@ -3716,50 +4078,82 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void startFragmentChat(Conference conference) {
-        //noinspection Convert2MethodRef
-        JConference chat = JConference.getInstance(conference, () -> updateUI());
+        JConference chat = JConference.getInstance(conference, new ChatInitCallback() {
+            @Override
+            public void chatInitialized() {
+                updateUI();
+            }
+        });
         startChatFragment(chat);
     }
 
     private void startFragmentChatJConference(String action) {
-        //noinspection Convert2MethodRef
-        JConference chat = JConference.getInstance(action, () -> updateUI());
+        JConference chat = JConference.getInstance(action, new ChatInitCallback() {
+            @Override
+            public void chatInitialized() {
+                updateUI();
+            }
+        });
         startChatFragment(chat);
     }
 
     public void startFragmentChatJabber(String action) {
-        //noinspection Convert2MethodRef
-        JChatActivity chat = JChatActivity.getInstance(action, () -> updateUI());
+        JChatActivity chat = JChatActivity.getInstance(action, new ChatInitCallback() {
+            @Override
+            public void chatInitialized() {
+                updateUI();
+            }
+        });
         startChatFragment(chat);
     }
 
     private void startFragmentChatICQ(String action) {
-        //noinspection Convert2MethodRef
-        ICQChatActivity chat = ICQChatActivity.getInstance(action, () -> updateUI());
+        ICQChatActivity chat = ICQChatActivity.getInstance(action, new ChatInitCallback() {
+            @Override
+            public void chatInitialized() {
+                updateUI();
+            }
+        });
         startChatFragment(chat);
     }
 
     private void startFragmentChatMMP(String action) {
-        //noinspection Convert2MethodRef
-        MMPChatActivity chat = MMPChatActivity.getInstance(action, () -> updateUI());
+        MMPChatActivity chat = MMPChatActivity.getInstance(action, new ChatInitCallback() {
+            @Override
+            public void chatInitialized() {
+                updateUI();
+            }
+        });
         startChatFragment(chat);
     }
 
     private void startFragmentChat(ICQContact contact) {
-        //noinspection Convert2MethodRef
-        ICQChatActivity chat = ICQChatActivity.getInstance(contact, () -> updateUI());
+        ICQChatActivity chat = ICQChatActivity.getInstance(contact, new ChatInitCallback() {
+            @Override
+            public void chatInitialized() {
+                updateUI();
+            }
+        });
         startChatFragment(chat);
     }
 
     public void startFragmentChat(JContact contact) {
-        //noinspection Convert2MethodRef
-        JChatActivity chat = JChatActivity.getInstance(contact, () -> updateUI());
+        JChatActivity chat = JChatActivity.getInstance(contact, new ChatInitCallback() {
+            @Override
+            public void chatInitialized() {
+                updateUI();
+            }
+        });
         startChatFragment(chat);
     }
 
     private void startFragmentChat(MMPContact contact) {
-        //noinspection Convert2MethodRef
-        MMPChatActivity chat = MMPChatActivity.getInstance(contact, () -> updateUI());
+        MMPChatActivity chat = MMPChatActivity.getInstance(contact, new ChatInitCallback() {
+            @Override
+            public void chatInitialized() {
+                updateUI();
+            }
+        });
         startChatFragment(chat);
     }
 
@@ -3799,7 +4193,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 tempContactForDisplayInfo = (InfoContainer) msg.obj;
                 if (tempContactForDisplayInfo != null) {
                     ADB.checkUserInfos();
-                    //noinspection deprecation
                     removeDialog(10);
                     showDialogA(10);
                     break;
@@ -3812,12 +4205,10 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     dialog_for_display = dialog;
                     if (!HIDDEN) {
                         if (last_shown_notify_dialog == null) {
-                            //noinspection deprecation
                             removeDialog(23);
                             showDialogA(23);
                             break;
                         } else if (!last_shown_notify_dialog.isShowing()) {
-                            //noinspection deprecation
                             removeDialog(23);
                             showDialogA(23);
                             break;
@@ -3849,7 +4240,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             case SHOW_VCARD:
                 vcard_to_display = (VCard) msg.obj;
                 ADB.checkUserInfos();
-                //noinspection deprecation
                 removeDialog(44);
                 showDialogA(44);
                 break;
@@ -3864,17 +4254,24 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         Locale.getString("s_user_vcard"),
                         Locale.getString("s_ok"),
                         Locale.getString("s_cancel"),
-                        arg0 -> {
-                            Dialog progress = DialogBuilder.createProgress(
-                                    this,
-                                    Locale.getString("s_please_wait"),
-                                    true
-                            );
-                            progress.show();
-                            contextJProfile.my_vcard.readFieldsTemporary(editor_lay);
-                            contextJProfile.updateVCard(progress);
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                Dialog progress = DialogBuilder.createProgress(
+                                        ContactListActivity.this,
+                                        Locale.getString("s_please_wait"),
+                                        true
+                                );
+                                progress.show();
+                                contextJProfile.my_vcard.readFieldsTemporary(editor_lay);
+                                contextJProfile.updateVCard(progress);
+                            }
                         },
-                        v -> {
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+
+                            }
                         },
                         true
                 );
@@ -3892,7 +4289,17 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         form.TITLE == null ? "Jabber form" : form.TITLE,
                         Locale.getString("s_ok"),
                         Locale.getString("s_cancel"),
-                        v -> form.send(), v -> form.cancel(), true
+                        new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                form.send();
+                            }
+                        }, new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                form.cancel();
+                            }
+                        }, true
                 );
                 xform.show();
                 break;
@@ -3905,7 +4312,11 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             cmd.op.form.TITLE == null ? "Jabber form" : cmd.op.form.TITLE,
                             Locale.getString("s_ok"),
                             0,
-                            v -> {
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+
+                                }
                             },
                             true
                     );
@@ -3917,13 +4328,26 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             Command.getButtonName(cmd.buttons[0]),
                             Command.getButtonName(cmd.buttons[1]),
                             Locale.getString("s_cancel"),
-                            v -> {
-                                cmd.selected_button = 0;
-                                cmd.proceed();
-                            }, v -> {
-                                cmd.selected_button = 1;
-                                cmd.proceed();
-                            }, v -> cmd.cancel());
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cmd.selected_button = 0;
+                                    cmd.proceed();
+                                }
+                            },
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cmd.selected_button = 1;
+                                    cmd.proceed();
+                                }
+                            },
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cmd.cancel();
+                                }
+                            });
                 } else {
                     cmd_form = DialogBuilder.createYesNo(
                             this,
@@ -3931,7 +4355,18 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             0,
                             cmd.op.form.TITLE == null ? "Jabber form" : cmd.op.form.TITLE,
                             Command.getButtonName(1),
-                            Locale.getString("s_cancel"), v -> cmd.proceed(), v -> cmd.cancel(), true);
+                            Locale.getString("s_cancel"), new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cmd.proceed();
+                                }
+                            },
+                            new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    cmd.cancel();
+                                }
+                            }, true);
                 }
                 cmd_form.show();
                 break;
@@ -3955,14 +4390,13 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     public class contactLongClickListener implements MultiColumnList.OnItemLongClickListener {
 
         @Override
-        public void onItemLongClick(MultiColumnList arg0, View arg1, int arg2, long arg3) {
+        public void onItemLongClick(MultiColumnList multiColumnList, View view, int i, long arg3) {
             if (CURRENT_IS_CONTACTS) {
-                ContactsAdapter adp = (ContactsAdapter) arg0.getAdapter();
-                ContactlistItem item = adp.getItem(arg2);
+                ContactsAdapter adp = (ContactsAdapter) multiColumnList.getAdapter();
+                ContactlistItem item = adp.getItem(i);
                 if (item.itemType == 1) {
                     contextContact = (ICQContact) item;
                     contextProfile = contextContact.profile;
-                    //noinspection deprecation
                     removeDialog(7);
                     showDialogA(7);
                 } else if (item.itemType == 2) {
@@ -3975,26 +4409,22 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         ).show();
                         return;
                     }
-                    //noinspection deprecation
                     removeDialog(28);
                     showDialogA(28);
                 } else if (item.itemType == 4) {
                     contextContact = null;
                     contextJContact = (JContact) item;
                     contextMMPContact = null;
-                    //noinspection deprecation
                     removeDialog(7);
                     showDialogA(7);
                 } else if (item.itemType == 7) {
                     contextContact = null;
                     contextJContact = null;
                     contextMMPContact = (MMPContact) item;
-                    //noinspection deprecation
                     removeDialog(7);
                     showDialogA(7);
                 } else if (item.itemType == 10) {
                     contextConference = (ConferenceItem) item;
-                    //noinspection deprecation
                     removeDialog(43);
                     showDialogA(43);
                 }
@@ -4095,7 +4525,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     contextProfile.disconnect();
                     return;
                 case 12:
-                    //noinspection deprecation
                     removeDialog(32);
                     showDialogA(32);
                     return;
@@ -4104,7 +4533,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         Toast.makeText(ContactListActivity.this, resources.getString("s_profile_must_be_connected"), Toast.LENGTH_LONG).show();
                         return;
                     }
-                    //noinspection deprecation
                     removeDialog(0);
                     showDialogA(0);
                     return;

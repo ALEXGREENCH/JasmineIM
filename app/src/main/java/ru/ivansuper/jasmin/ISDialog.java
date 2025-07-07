@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -19,6 +20,7 @@ public class ISDialog {
             public void run() {
                 final Dialog dialog = new Dialog(resources.service, R.style.DialogTheme);
                 Window wnd = dialog.getWindow();
+                //noinspection DataFlowIssue
                 wnd.setGravity(85);
                 WindowManager.LayoutParams lp = wnd.getAttributes();
                 lp.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
@@ -27,12 +29,15 @@ public class ISDialog {
                 lp.height = -2;
                 LinearLayout lay = (LinearLayout) View.inflate(resources.ctx, R.layout.ach, null);
 
-                lay.setOnTouchListener((v, event) -> {
-                    if (event.getAction() != 0) {
-                        return false;
+                lay.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        if (event.getAction() != 0) {
+                            return false;
+                        }
+                        dialog.dismiss();
+                        return true;
                     }
-                    dialog.dismiss();
-                    return true;
                 });
                 ((ImageView) lay.findViewById(R.id.ach_icon)).setImageDrawable(icon);
                 ((TextView) lay.findViewById(R.id.ach_title)).setText("Открыто достижение!");

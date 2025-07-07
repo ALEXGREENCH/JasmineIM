@@ -2,7 +2,6 @@ package ru.ivansuper.jasmin.MultiColumnList;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.database.DataSetObserver;
 import android.graphics.Canvas;
 import android.graphics.LightingColorFilter;
@@ -22,7 +21,6 @@ import java.util.Arrays;
 import java.util.Queue;
 import java.util.concurrent.ArrayBlockingQueue;
 import ru.ivansuper.jasmin.BitmapDrawable;
-import ru.ivansuper.jasmin.MMP.MMPProtocol;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.resources;
@@ -562,7 +560,12 @@ public class MultiColumnList extends ViewGroup {
             }
             if (!this.mScroller.isFinished()) {
                 awakenScrollBars();
-                post(MultiColumnList.this::requestLayout);
+                post(new Runnable() {
+                    @Override
+                    public void run() {
+                        requestLayout();
+                    }
+                });
             }
         }
     }
@@ -877,9 +880,12 @@ public class MultiColumnList extends ViewGroup {
                     this.mTouchTime = System.currentTimeMillis();
                     final int j = i;
                     if (this.mOnItemLongClicked != null) {
-                        postDelayed(() -> {
-                            if (MultiColumnList.this.mOnItemLongClicked != null && MultiColumnList.this.mTouchTime != 0 && Math.abs(System.currentTimeMillis() - MultiColumnList.this.mTouchTime) > 450) {
-                                MultiColumnList.this.mOnItemLongClicked.onItemLongClick(MultiColumnList.this, child, MultiColumnList.this.mTopViewIndex + 1 + j, MultiColumnList.this.mAdapter.getItemId(MultiColumnList.this.mTopViewIndex + 1 + j));
+                        postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (MultiColumnList.this.mOnItemLongClicked != null && MultiColumnList.this.mTouchTime != 0 && Math.abs(System.currentTimeMillis() - MultiColumnList.this.mTouchTime) > 450) {
+                                    MultiColumnList.this.mOnItemLongClicked.onItemLongClick(MultiColumnList.this, child, MultiColumnList.this.mTopViewIndex + 1 + j, MultiColumnList.this.mAdapter.getItemId(MultiColumnList.this.mTopViewIndex + 1 + j));
+                                }
                             }
                         }, 500L);
                     }

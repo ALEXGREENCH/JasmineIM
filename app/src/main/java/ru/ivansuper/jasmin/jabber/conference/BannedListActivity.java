@@ -8,10 +8,9 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -33,8 +32,10 @@ public class BannedListActivity extends Activity {
 
     @Override
     public void onCreate(Bundle bundle) {
+        //noinspection deprecation
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
+        //noinspection DataFlowIssue
         switch (wallpaper_type) {
             case "0":
                 setTheme(R.style.WallpaperNoTitleTheme);
@@ -75,18 +76,22 @@ public class BannedListActivity extends Activity {
 
     private void init() {
         if (!sp.getBoolean("ms_use_shadow", true)) {
-            ((LinearLayout) findViewById(R.id.banned_list_back)).setBackgroundColor(0);
+            findViewById(R.id.banned_list_back).setBackgroundColor(0);
         }
         ((TextView) findViewById(R.id.l1)).setText(Locale.getString("s_banned_list"));
         mAdapter = JConference.conference.mBannedList;
-        mList = (ListView) findViewById(R.id.banned_list_list);
+        mList = findViewById(R.id.banned_list_list);
         mList.setSelector(new ColorDrawable(0));
         mList.setDivider(new ColorDrawable(ColorScheme.getColor(44)));
         mList.setDividerHeight(1);
-        mList.setAdapter((ListAdapter) mAdapter);
-        mList.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
+        mList.setAdapter(mAdapter);
+        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+            }
         });
-        Button add = (Button) findViewById(R.id.banned_list_add);
+        Button add = findViewById(R.id.banned_list_add);
         resources.attachButtonStyle(add);
         add.setText(Locale.getString("s_do_add"));
         //noinspection FieldCanBeLocal
@@ -99,14 +104,22 @@ public class BannedListActivity extends Activity {
                 input.setSingleLine(false);
                 input.setMinimumHeight(64);
                 resources.attachEditText(input);
-                d = DialogBuilder.createYesNo(BannedListActivity.this, input, 0, Locale.getString("s_do_add"), Locale.getString("s_do_add"), Locale.getString("s_cancel"), arg0 -> {
-                    String raw = input.getText().toString();
-                    if (raw.trim().length() != 0) {
-                        String[] items = raw.split("\n");
-                        JConference.conference.banUsers(items);
+                d = DialogBuilder.createYesNo(BannedListActivity.this, input, 0, Locale.getString("s_do_add"), Locale.getString("s_do_add"), Locale.getString("s_cancel"), new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String raw = input.getText().toString();
+                        if (!raw.trim().isEmpty()) {
+                            String[] items = raw.split("\n");
+                            JConference.conference.banUsers(items);
+                            d.dismiss();
+                        }
+                    }
+                }, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
                         d.dismiss();
                     }
-                }, v2 -> d.dismiss());
+                });
                 d.show();
             }
         });

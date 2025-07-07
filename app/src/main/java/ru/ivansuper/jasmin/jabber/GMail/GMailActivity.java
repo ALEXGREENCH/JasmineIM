@@ -5,7 +5,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.widget.ListAdapter;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,7 +25,7 @@ public class GMailActivity extends Activity {
     @SuppressWarnings("FieldCanBeLocal")
     private ListView list;
 
-    @SuppressLint({"WrongConstant", "SetTextI18n"})
+    @SuppressLint("SetTextI18n")
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,17 +37,23 @@ public class GMailActivity extends Activity {
         TextView title = findViewById(R.id.gmail_title);
         title.setText(profile.ID + "@" + profile.host + " (" + adapter.getCount() + ")");
         list.setAdapter(adapter);
-        list.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
-            Intent i = new Intent("android.intent.action.VIEW");
-            i.setData(Uri.parse(adapter.getItem(arg2).url));
-            i.setFlags(268435456);
-            startActivity(i);
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                Intent i = new Intent("android.intent.action.VIEW");
+                i.setData(Uri.parse(adapter.getItem(index).url));
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(i);
+            }
         });
-        listener = () -> {
-            doRefresh();
-            Toast toast = Toast.makeText(GMailActivity.this, resources.getString("s_mail_list_refreshed"), 0);
-            toast.setGravity(48, 0, 0);
-            toast.show();
+        listener = new GMailListener() {
+            @Override
+            public void onListChanged() {
+                doRefresh();
+                Toast toast = Toast.makeText(GMailActivity.this, resources.getString("s_mail_list_refreshed"), Toast.LENGTH_SHORT);
+                toast.setGravity(48, 0, 0);
+                toast.show();
+            }
         };
         profile.gmail_listener = listener;
         profile.svc.cancelMessageNotification(profile.mail_notify_id);

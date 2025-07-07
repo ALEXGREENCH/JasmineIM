@@ -82,35 +82,41 @@ public class DiscoActivity extends Activity {
         mList = findViewById(R.id.disco_list);
         mList.setSelector(new ColorDrawable(0));
         mList.setDividerHeight(0);
-        mList.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
-            Item item = mAdapter.getItem(arg2);
-            if (item.childs_loaded || item.status != 0) {
-                item.opened = !item.opened;
-                mAdapter.build();
-                return;
+        mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Item item = mAdapter.getItem(i);
+                if (item.childs_loaded || item.status != 0) {
+                    item.opened = !item.opened;
+                    mAdapter.build();
+                    return;
+                }
+                doDisco(item);
             }
-            doDisco(item);
         });
         mList.setOnItemLongClickListener(new AnonymousClass2());
         Button do_disco = findViewById(R.id.do_disco_btn);
         resources.attachButtonStyle(do_disco);
         do_disco.setText(Locale.getString("s_disco"));
-        do_disco.setOnClickListener(v -> {
-            boolean z = false;
-            if (mServer.getText().toString().trim().length() == 0) {
-                return;
-            }
-            initRoot();
-            Item item = mAdapter.getItem(0);
-            if (item.childs_loaded || item.status != 0) {
-                if (!item.opened) {
-                    z = true;
+        do_disco.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                boolean z = false;
+                if (mServer.getText().toString().trim().isEmpty()) {
+                    return;
                 }
-                item.opened = z;
-                mAdapter.build();
-                return;
+                initRoot();
+                Item item = mAdapter.getItem(0);
+                if (item.childs_loaded || item.status != 0) {
+                    if (!item.opened) {
+                        z = true;
+                    }
+                    item.opened = z;
+                    mAdapter.build();
+                    return;
+                }
+                doDisco(item);
             }
-            doDisco(item);
         });
         mServer.setText(SERVER_TO_DISCO);
     }
@@ -161,89 +167,121 @@ public class DiscoActivity extends Activity {
                 iq.putChild(query);
                 DiscoActivity.PROFILE.stream.write(iq, DiscoActivity.PROFILE);
             }
-            d = DialogBuilder.createWithNoHeader(DiscoActivity.this, adp, 0, (arg02, arg12, arg22, arg32) -> {
-                d.dismiss();
-                switch ((int) adp.getItemId(arg22)) {
-                    case 0:
-                        StringBuilder buf = new StringBuilder();
-                        buf.append("JID: ").append(item.JID).append("\n");
-                        buf.append("\nIdentities:\n");
-                        if (item.identities.size() > 0) {
-                            for (Item.Identity i : item.identities) {
-                                buf.append("*");
-                                if (i.name != null) {
-                                    buf.append("\"").append(i.name).append("\"/");
+            d = DialogBuilder.createWithNoHeader(DiscoActivity.this, adp, 0, new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int index, long l) {
+                    d.dismiss();
+                    switch ((int) adp.getItemId(index)) {
+                        case 0:
+                            StringBuilder buf = new StringBuilder();
+                            buf.append("JID: ").append(item.JID).append("\n");
+                            buf.append("\nIdentities:\n");
+                            if (!item.identities.isEmpty()) {
+                                for (Item.Identity i : item.identities) {
+                                    buf.append("*");
+                                    if (i.name != null) {
+                                        buf.append("\"").append(i.name).append("\"/");
+                                    }
+                                    if (i.category != null) {
+                                        buf.append("Category: ").append(i.category).append(", ");
+                                    }
+                                    if (i.type != null) {
+                                        buf.append("Type: ").append(i.type);
+                                    }
+                                    buf.append("\n");
                                 }
-                                if (i.category != null) {
-                                    buf.append("Category: ").append(i.category).append(", ");
-                                }
-                                if (i.type != null) {
-                                    buf.append("Type: ").append(i.type);
-                                }
-                                buf.append("\n");
+                            } else {
+                                buf.append("No identities\n");
                             }
-                        } else {
-                            buf.append("No identities\n");
-                        }
-                        buf.append("\nFeatures:\n");
-                        if (item.features.size() > 0) {
-                            for (String f : item.features) {
-                                buf.append("*").append(f).append("\n");
+                            buf.append("\nFeatures:\n");
+                            if (!item.features.isEmpty()) {
+                                for (String f : item.features) {
+                                    buf.append("*").append(f).append("\n");
+                                }
+                            } else {
+                                buf.append("No features");
                             }
-                        } else {
-                            buf.append("No features");
-                        }
-                        d = DialogBuilder.createOk(DiscoActivity.this, Locale.getString("s_node_info"), buf.toString(), Locale.getString("s_ok"), 0, v -> d.dismiss());
-                        d.show();
-                        return;
-                    case 1:
-                        AnonymousClass2 anonymousClass2 = AnonymousClass2.this;
-                        DiscoActivity discoActivity = DiscoActivity.this;
-                        String string = Locale.getString("s_execute_command");
-                        String string2 = Locale.getString("s_window_will_be_closed");
-                        String string3 = Locale.getString("s_yes");
-                        String string4 = Locale.getString("s_no");
-                        //noinspection UnnecessaryLocalVariable
-                        final Item item2 = item;
-                        anonymousClass2.d = DialogBuilder.createYesNo(discoActivity, 0, string, string2, string3, string4, v -> {
-                            DiscoActivity.PROFILE.executeCommand(item2.JID, item2.XML_NODE);
-                            d.dismiss();
-                            finish();
-                        }, v -> d.dismiss());
-                        d.show();
-                        return;
-                    case 2:
-                        AnonymousClass2 anonymousClass22 = AnonymousClass2.this;
-                        DiscoActivity discoActivity2 = DiscoActivity.this;
-                        String string5 = Locale.getString("s_do_register");
-                        String string6 = Locale.getString("s_window_will_be_closed");
-                        String string7 = Locale.getString("s_yes");
-                        String string8 = Locale.getString("s_no");
-                        //noinspection UnnecessaryLocalVariable
-                        final Item item3 = item;
-                        anonymousClass22.d = DialogBuilder.createYesNo(discoActivity2, 0, string5, string6, string7, string8, v -> {
-                            DiscoActivity.PROFILE.launchRegistration(item3.JID);
-                            d.dismiss();
-                            finish();
-                        }, v -> d.dismiss());
-                        d.show();
-                        return;
-                    case 3:
-                        AnonymousClass2 anonymousClass23 = AnonymousClass2.this;
-                        DiscoActivity discoActivity3 = DiscoActivity.this;
-                        String string9 = Locale.getString("s_do_unregister");
-                        String string10 = Locale.getString("s_are_you_sure");
-                        String string11 = Locale.getString("s_yes");
-                        String string12 = Locale.getString("s_no");
-                        //noinspection UnnecessaryLocalVariable
-                        final Item item4 = item;
-                        anonymousClass23.d = DialogBuilder.createYesNo(discoActivity3, 0, string9, string10, string11, string12, v -> {
-                            DiscoActivity.PROFILE.cancelRegistration(item4.JID);
-                            d.dismiss();
-                        }, v -> d.dismiss());
-                        d.show();
-                        return;
-                    default:
+                            d = DialogBuilder.createOk(DiscoActivity.this, Locale.getString("s_node_info"), buf.toString(), Locale.getString("s_ok"), 0, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    d.dismiss();
+                                }
+                            });
+                            d.show();
+                            return;
+                        case 1:
+                            AnonymousClass2 anonymousClass2 = AnonymousClass2.this;
+                            DiscoActivity discoActivity = DiscoActivity.this;
+                            String string = Locale.getString("s_execute_command");
+                            String string2 = Locale.getString("s_window_will_be_closed");
+                            String string3 = Locale.getString("s_yes");
+                            String string4 = Locale.getString("s_no");
+                            //noinspection UnnecessaryLocalVariable
+                            final Item item2 = item;
+                            anonymousClass2.d = DialogBuilder.createYesNo(discoActivity, 0, string, string2, string3, string4, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    DiscoActivity.PROFILE.executeCommand(item2.JID, item2.XML_NODE);
+                                    d.dismiss();
+                                    finish();
+                                }
+                            }, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    d.dismiss();
+                                }
+                            });
+                            d.show();
+                            return;
+                        case 2:
+                            AnonymousClass2 anonymousClass22 = AnonymousClass2.this;
+                            DiscoActivity discoActivity2 = DiscoActivity.this;
+                            String string5 = Locale.getString("s_do_register");
+                            String string6 = Locale.getString("s_window_will_be_closed");
+                            String string7 = Locale.getString("s_yes");
+                            String string8 = Locale.getString("s_no");
+                            //noinspection UnnecessaryLocalVariable
+                            final Item item3 = item;
+                            anonymousClass22.d = DialogBuilder.createYesNo(discoActivity2, 0, string5, string6, string7, string8, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    DiscoActivity.PROFILE.launchRegistration(item3.JID);
+                                    d.dismiss();
+                                    finish();
+                                }
+                            }, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    d.dismiss();
+                                }
+                            });
+                            d.show();
+                            return;
+                        case 3:
+                            AnonymousClass2 anonymousClass23 = AnonymousClass2.this;
+                            DiscoActivity discoActivity3 = DiscoActivity.this;
+                            String string9 = Locale.getString("s_do_unregister");
+                            String string10 = Locale.getString("s_are_you_sure");
+                            String string11 = Locale.getString("s_yes");
+                            String string12 = Locale.getString("s_no");
+                            //noinspection UnnecessaryLocalVariable
+                            final Item item4 = item;
+                            anonymousClass23.d = DialogBuilder.createYesNo(discoActivity3, 0, string9, string10, string11, string12, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    DiscoActivity.PROFILE.cancelRegistration(item4.JID);
+                                    d.dismiss();
+                                }
+                            }, new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    d.dismiss();
+                                }
+                            });
+                            d.show();
+                            return;
+                        default:
+                    }
                 }
             });
             d.show();
@@ -263,7 +301,12 @@ public class DiscoActivity extends Activity {
 
     public final void buildList() {
         if (mList != null) {
-            mList.post(() -> mAdapter.build());
+            mList.post(new Runnable() {
+                @Override
+                public void run() {
+                    mAdapter.build();
+                }
+            });
         }
     }
 

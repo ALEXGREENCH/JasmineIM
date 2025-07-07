@@ -27,13 +27,16 @@ public class InfoContainer {
     public void initAvatar() {
         this.redirect = null;
         this.avatar = resources.ctx.getResources().getDrawable(R.drawable.no_avatar);
-        this.callback = (object, args) -> {
-            if (InfoContainer.this.redirect != null) {
-                InfoContainer.this.redirect.notify(object, args);
-                return;
+        this.callback = new Callback() {
+            @Override
+            public void notify(Object object, int args) {
+                if (InfoContainer.this.redirect != null) {
+                    InfoContainer.this.redirect.notify(object, args);
+                    return;
+                }
+                InfoContainer.this.avatar = (Drawable) object;
+                Log.e("Callback", "Handled in info");
             }
-            InfoContainer.this.avatar = (Drawable) object;
-            Log.e("Callback", "Handled in info");
         };
     }
 

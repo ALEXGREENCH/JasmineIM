@@ -8,7 +8,9 @@ import android.graphics.Color;
 import android.media.AudioManager;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.view.View;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.GridView;
 
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
@@ -30,9 +32,11 @@ public class SmileysSelector extends Activity {
     }
 
     private void initializeTheme() {
+        //noinspection deprecation
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
 
+        //noinspection DataFlowIssue
         switch (wallpaper_type) {
             case "0":
                 setTheme(R.style.WallpaperNoTitleTheme);
@@ -43,7 +47,8 @@ public class SmileysSelector extends Activity {
                 Window wnd = getWindow();
                 if (wallpaper_type.equals("1")) {
                     wnd.setBackgroundDrawable(resources.custom_wallpaper);
-                } else if (wallpaper_type.equals("2")) {
+                } else //noinspection ConstantValue
+                    if (wallpaper_type.equals("2")) {
                     wnd.setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
                 }
                 resources.attachChatMessagesBack(wnd);
@@ -58,6 +63,7 @@ public class SmileysSelector extends Activity {
         smileys = findViewById(R.id.smileys_selector_field);
         smileys.setSelector(resources.getListSelector());
 
+        //noinspection deprecation
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (!sp.getBoolean("ms_use_shadow", true)) {
             smileys.setBackgroundColor(Color.TRANSPARENT);
@@ -66,12 +72,15 @@ public class SmileysSelector extends Activity {
         smileys.setNumColumns(PreferenceTable.smileysSelectorColumns);
         final smileys_adapter adapter = new smileys_adapter();
         smileys.setAdapter(adapter);
-        smileys.setOnItemClickListener((parent, view, position, id) -> {
-            String tag = adapter.getTag(position);
-            Intent i = new Intent(" " + tag + " ");
-            Chat.received_smile_tag = i.getAction();
-            setResult(Activity.RESULT_OK, i);
-            finish();
+        smileys.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String tag = adapter.getTag(position);
+                Intent i = new Intent(" " + tag + " ");
+                Chat.received_smile_tag = i.getAction();
+                setResult(Activity.RESULT_OK, i);
+                finish();
+            }
         });
     }
 

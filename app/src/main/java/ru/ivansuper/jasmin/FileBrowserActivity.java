@@ -3,6 +3,8 @@ package ru.ivansuper.jasmin;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import java.io.File;
@@ -26,25 +28,28 @@ public class FileBrowserActivity extends Activity {
         File sd = new File(resources.SD_PATH);
         adp.setData(sd.listFiles(), sd.getParentFile());
         list.setAdapter(adp);
-        list.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
-            files_adapter adp = (files_adapter) arg0.getAdapter();
-            if (arg2 == 0) {
-                File path = adp.parent;
-                if (path != null) {
-                    adp.setData(path.listFiles(), path.getParentFile());
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                files_adapter adp = (files_adapter) adapterView.getAdapter();
+                if (i == 0) {
+                    File path = adp.parent;
+                    if (path != null) {
+                        adp.setData(path.listFiles(), path.getParentFile());
+                        return;
+                    }
                     return;
                 }
-                return;
+                File item = adp.getItem(i);
+                if (item.isDirectory()) {
+                    adp.setData(item.listFiles(), item.getParentFile());
+                    return;
+                }
+                Intent result = new Intent();
+                result.setAction(item.getAbsolutePath());
+                setResult(-1, result);
+                finish();
             }
-            File item = adp.getItem(arg2);
-            if (item.isDirectory()) {
-                adp.setData(item.listFiles(), item.getParentFile());
-                return;
-            }
-            Intent result = new Intent();
-            result.setAction(item.getAbsolutePath());
-            setResult(-1, result);
-            finish();
         });
     }
 

@@ -50,22 +50,28 @@ public class SettingsActivity extends PreferenceActivity {
     private void proceedSetup(PreferenceScreen prefs) {
         final Locker locker = new Locker();
 
-        Preference p = prefs.findPreference("ms_chats_at_top");
+        final Preference p = prefs.findPreference("ms_chats_at_top");
         Preference p1 = prefs.findPreference("ms_two_screens_mode");
         Preference p2 = prefs.findPreference("ms_use_pass_security");
 
-        boolean twoScreensModeEnabled = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("ms_two_screens_mode", true);
+        final boolean twoScreensModeEnabled = PreferenceManager.getDefaultSharedPreferences(getApplicationContext()).getBoolean("ms_two_screens_mode", true);
         p.setEnabled(!twoScreensModeEnabled);
 
-        p1.setOnPreferenceClickListener(preference -> {
-            Log.e("SettingsActivity", "ms_two_screens_mode clicked");
-            p.setEnabled(!twoScreensModeEnabled);
-            return true;
+        p1.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                Log.e("SettingsActivity", "ms_two_screens_mode clicked");
+                p.setEnabled(!twoScreensModeEnabled);
+                return true;
+            }
         });
 
-        p2.setOnPreferenceChangeListener((preference, newValue) -> {
-            Log.e("SettingsActivity", "ms_use_pass_security changed");
-            return !locker.locked;
+        p2.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object o) {
+                Log.e("SettingsActivity", "ms_use_pass_security changed");
+                return !locker.locked;
+            }
         });
 
         p2.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -96,38 +102,49 @@ public class SettingsActivity extends PreferenceActivity {
                 String okText = Locale.getString("s_ok");
                 String cancelText = Locale.getString("s_cancel");
 
-                View.OnClickListener okClickListener = v -> {
-                    String password = pass.getText().toString();
-                    int length = password.length();
+                View.OnClickListener okClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String password = pass.getText().toString();
+                        int length = password.length();
 
-                    if ((length == 0 && enabled.isChecked()) || length > 255) {
-                        resources.service.showToast(Locale.getString("s_ms_use_pass_security_error"), 0);
-                        return;
-                    }
-
-                    locker.locked = false;
-
-                    try {
-                        PasswordManager.savePassword(password);
-                        SharedPreferences.Editor editor = preference.getEditor();
-                        editor.putBoolean("ms_use_pass_security", enabled.isChecked()).commit();
-
-                        if (enabled.isChecked()) {
-                            resources.service.showToast(Locale.getString("s_ms_use_pass_security_saved"), 0);
+                        if ((length == 0 && enabled.isChecked()) || length > 255) {
+                            resources.service.showToast(Locale.getString("s_ms_use_pass_security_error"), 0);
+                            return;
                         }
-                    } catch (Exception e) {
-                        SharedPreferences.Editor editor = preference.getEditor();
-                        editor.putBoolean("s_ms_use_pass_security_save_error", enabled.isChecked()).commit();
-                    }
 
-                    locker.locked = true;
-                    d.dismiss();
-                    resources.service.runOnUi(SettingsActivity.this::onContentChanged, 500L);
+                        locker.locked = false;
+
+                        try {
+                            PasswordManager.savePassword(password);
+                            SharedPreferences.Editor editor = preference.getEditor();
+                            editor.putBoolean("ms_use_pass_security", enabled.isChecked()).commit();
+
+                            if (enabled.isChecked()) {
+                                resources.service.showToast(Locale.getString("s_ms_use_pass_security_saved"), 0);
+                            }
+                        } catch (Exception e) {
+                            SharedPreferences.Editor editor = preference.getEditor();
+                            editor.putBoolean("s_ms_use_pass_security_save_error", enabled.isChecked()).commit();
+                        }
+
+                        locker.locked = true;
+                        d.dismiss();
+                        resources.service.runOnUi(new Runnable() {
+                            @Override
+                            public void run() {
+                                SettingsActivity.this.onContentChanged();
+                            }
+                        }, 500L);
+                    }
                 };
 
-                d = DialogBuilder.createYesNo(SettingsActivity.this, lay, 0, hint, okText, cancelText, okClickListener, v -> {
-                    locker.locked = true;
-                    d.dismiss();
+                d = DialogBuilder.createYesNo(SettingsActivity.this, lay, 0, hint, okText, cancelText, okClickListener, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        locker.locked = true;
+                        d.dismiss();
+                    }
                 }, false);
 
                 d.show();

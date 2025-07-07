@@ -137,8 +137,7 @@ public class JProfile extends IMProfile {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void putPresence(Node node) {
+    private final void putPresence(Node node) {
         if (this.roster_received) {
             handleStreamPresence(node);
             return;
@@ -183,10 +182,11 @@ public class JProfile extends IMProfile {
         }
         if (handler != null) {
             if (handler.runOnUi) {
+                final PacketHandler finalHandler = handler;
                 this.svc.runOnUi(new Runnable() {
                     @Override
                     public void run() {
-                        handler.execute();
+                        finalHandler.execute();
                     }
                 });
             } else {
@@ -2080,18 +2080,18 @@ public class JProfile extends IMProfile {
     }
 
     public final void getCommandList(String server, final Callback callback) {
-        PacketHandler handler = new PacketHandler(true) { // from class: ru.ivansuper.jasmin.jabber.JProfile.21
-            @Override // ru.ivansuper.jasmin.jabber.PacketHandler
+        PacketHandler handler = new PacketHandler(true) {
+            @Override
             public void execute() {
                 Node stanzas = this.slot;
                 Node query = stanzas.findFirstLocalNodeByNameAndNamespace("query", "http://jabber.org/protocol/disco#items");
                 if (query == null) {
-                    callback.onListLoaded(new Vector<>());
+                    callback.onListLoaded(new Vector<CommandItem>());
                     return;
                 }
                 Vector<Node> items = query.findLocalNodesByName("item");
                 if (items.isEmpty()) {
-                    callback.onListLoaded(new Vector<>());
+                    callback.onListLoaded(new Vector<CommandItem>());
                     return;
                 }
                 Vector<CommandItem> list = new Vector<>();
@@ -2141,9 +2141,12 @@ public class JProfile extends IMProfile {
                         return;
                     }
                     final ClassicForm cform = new ClassicForm();
-                    JProfile.this.svc.runOnUi(() -> {
-                        cform.build(reg_query, FROM, PID, Locale.getString("s_do_register"), JProfile.this);
-                        JProfile.this.svc.showXFormInContactList(cform);
+                    JProfile.this.svc.runOnUi(new Runnable() {
+                        @Override
+                        public void run() {
+                            cform.build(reg_query, FROM, PID, Locale.getString("s_do_register"), JProfile.this);
+                            JProfile.this.svc.showXFormInContactList(cform);
+                        }
                     });
                     PacketHandler res_h = new PacketHandler(PID, false) {
                         @Override
@@ -2625,8 +2628,12 @@ public class JProfile extends IMProfile {
     }
 
     private void handleProfileConnected() {
-        //noinspection Convert2MethodRef
-        this.svc.runOnUi(() -> JProfile.this.setAllContactsPresenceInitialized(), 5000L);
+        this.svc.runOnUi(new Runnable() {
+            @Override
+            public void run() {
+                JProfile.this.setAllContactsPresenceInitialized();
+            }
+        }, 5000L);
         this.connecting = false;
         this.connected = true;
         dumpServerList();
@@ -3223,7 +3230,12 @@ public class JProfile extends IMProfile {
                                 jasminSvc.pla.put(JProfile.this.nickname, resources.getString("s_reconnection_limit_exceed"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
                                 JProfile.this.svc.put_log(JProfile.this.nickname + ": " + resources.getString("s_reconnection_limit_exceed"));
                                 reconnector.this.stop();
-                                JProfile.this.svc.runOnUi(() -> JProfile.this.disconnectInternal(false, false), 150L);
+                                JProfile.this.svc.runOnUi(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        JProfile.this.disconnectInternal(false, false);
+                                    }
+                                }, 150L);
                                 return;
                             }
                             JProfile.this.stream.disconnect();

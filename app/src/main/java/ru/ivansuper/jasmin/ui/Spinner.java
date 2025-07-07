@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import ru.ivansuper.jasmin.R;
@@ -49,10 +50,14 @@ public class Spinner extends View {
         this.text_.setColor(-16777216);
         this.text_.setAntiAlias(true);
         this.text_.setTextSize(14.0f * resources.dm.density);
-        //noinspection deprecation
         setBackgroundDrawable(getContext().getResources().getDrawable(R.drawable.btn_default_small));
         resources.attachButtonStyle(this);
-        super.setOnClickListener(v -> Spinner.this.showPicker());
+        super.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Spinner.this.showPicker();
+            }
+        });
     }
 
     private void showPicker() {
@@ -75,15 +80,18 @@ public class Spinner extends View {
         list.setDividerHeight(1);
         list.setSelector(resources.getListSelector());
         list.setAdapter(this.mAdapter);
-        list.setOnItemClickListener((arg0, arg1, arg2, arg3) -> {
-            Spinner.this.mAdapter.toggleSelection(arg2);
-            if (!Spinner.this.mAdapter.isMulti()) {
-                Spinner.this.mPicker.dismiss();
+        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                Spinner.this.mAdapter.toggleSelection(i);
+                if (!Spinner.this.mAdapter.isMulti()) {
+                    Spinner.this.mPicker.dismiss();
+                }
+                if (Spinner.this.listener != null) {
+                    Spinner.this.listener.OnSelect(Spinner.this.mAdapter.getSelectedLabels(), Spinner.this.mAdapter.getSelected());
+                }
+                Spinner.this.invalidate();
             }
-            if (Spinner.this.listener != null) {
-                Spinner.this.listener.OnSelect(Spinner.this.mAdapter.getSelectedLabels(), Spinner.this.mAdapter.getSelected());
-            }
-            Spinner.this.invalidate();
         });
         lay.addView(list);
         window.setContentView(lay);

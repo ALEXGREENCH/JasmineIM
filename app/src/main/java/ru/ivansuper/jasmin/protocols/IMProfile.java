@@ -97,13 +97,23 @@ public abstract class IMProfile implements Openable {
 
     public final void notifyConnectionStatus() {
         if (notifier != null && svc != null) {
-            svc.runOnUi(() -> notifier.onConnectionStatusChanged());
+            svc.runOnUi(new Runnable() {
+                @Override
+                public void run() {
+                    notifier.onConnectionStatusChanged();
+                }
+            });
         }
     }
 
     public final void notifyStatusIcon() {
         if (notifier != null && svc != null) {
-            svc.runOnUi(() -> notifier.onStatusChanged());
+            svc.runOnUi(new Runnable() {
+                @Override
+                public void run() {
+                    notifier.onStatusChanged();
+                }
+            });
         }
     }
 

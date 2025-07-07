@@ -103,7 +103,11 @@ public class ICQContact extends ContactlistItem {
         if (conversion_needed) {
             if (!ExportImportActivity.CONVERTING_STARTED) {
                 ExportImportActivity.CONVERTING_STARTED = true;
-                resources.service.runOnUi(() -> {
+                resources.service.runOnUi(new Runnable() {
+                    @Override
+                    public void run() {
+
+                    }
                 });
             }
             try {
@@ -169,72 +173,98 @@ public class ICQContact extends ContactlistItem {
     }
 
     /** @noinspection unused*/
-    public static void getAvatar(final Callback callback, final String UIN, String PID, jasminSvc service) {
-        Runnable r = () -> {
-            try {
-                URL url = new URL("http://45.144.154.209/avatar/" + UIN + "?hq=1");
-                HttpURLConnection c = (HttpURLConnection) url.openConnection();
-                if (c.getResponseCode() == 200) {
-                    InputStream in = new BufferedInputStream(c.getInputStream());
-                    Drawable icon = Drawable.createFromStream(in, "Avatar");
-                    in.close();
-                    if (callback != null) {
-                        callback.notify(icon, 0);
+    public static void getAvatar(final Callback callback, final String UIN, String PID, final jasminSvc service) {
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://45.144.154.209/avatar/" + UIN + "?hq=1");
+                    HttpURLConnection c = (HttpURLConnection) url.openConnection();
+                    if (c.getResponseCode() == 200) {
+                        InputStream in = new BufferedInputStream(c.getInputStream());
+                        Drawable icon = Drawable.createFromStream(in, "Avatar");
+                        in.close();
+                        if (callback != null) {
+                            callback.notify(icon, 0);
+                        }
                     }
+                } catch (Exception e) {
+                    //noinspection CallToPrintStackTrace
+                    e.printStackTrace();
                 }
-            } catch (Exception e) {
-                //noinspection CallToPrintStackTrace
-                e.printStackTrace();
             }
         };
+
         Thread t = new Thread(r);
         t.start();
     }
 
     public final void getAvatar(final ICQContact contact, final jasminSvc service) {
-        Runnable r = () -> {
-            try {
-                File avatar_file = new File(resources.dataPath + ICQContact.this.profile.ID + "/avatars/" + ICQContact.this.ID);
-                URL url = new URL("http://45.144.154.209/avatar/" + contact.ID);
-                HttpURLConnection c = (HttpURLConnection) url.openConnection();
-                if (c.getResponseCode() == 200) {
-                    InputStream in = c.getInputStream();
-                    byte[] buffer = ByteCache.getByteArray(GifDecoder.MaxStackSize);
-                    try {
-                        if (!avatar_file.exists()) {
-                            //noinspection ResultOfMethodCallIgnored
-                            avatar_file.createNewFile();
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    File avatar_file = new File(resources.dataPath + ICQContact.this.profile.ID + "/avatars/" + ICQContact.this.ID);
+                    URL url = new URL("http://45.144.154.209/avatar/" + contact.ID);
+                    HttpURLConnection c = (HttpURLConnection) url.openConnection();
+
+                    if (c.getResponseCode() == 200) {
+                        InputStream in = c.getInputStream();
+                        byte[] buffer = ByteCache.getByteArray(GifDecoder.MaxStackSize);
+
+                        try {
+                            if (!avatar_file.exists()) {
+                                //noinspection ResultOfMethodCallIgnored
+                                avatar_file.createNewFile();
+                            }
+                        } catch (Exception ignored) {
                         }
-                    } catch (Exception ignored) {
-                    }
-                    FileOutputStream fos = new FileOutputStream(resources.dataPath + contact.profile.ID + "/avatars/" + contact.ID);
-                    while (true) {
-                        int readed = in.read(buffer, 0, buffer.length);
-                        if (readed >= 0) {
-                            fos.write(buffer, 0, readed);
-                        } else {
-                            in.close();
-                            fos.close();
-                            ByteCache.recycle(buffer);
-                            service.runOnUi(contact::readLocalAvatar);
-                            return;
+
+                        FileOutputStream fos = new FileOutputStream(resources.dataPath + contact.profile.ID + "/avatars/" + contact.ID);
+
+                        while (true) {
+                            int readed = in.read(buffer, 0, buffer.length);
+                            if (readed >= 0) {
+                                fos.write(buffer, 0, readed);
+                            } else {
+                                try {
+                                    in.close();
+                                } catch (Exception ignored) {}
+
+                                try {
+                                    fos.close();
+                                } catch (Exception ignored) {}
+
+                                ByteCache.recycle(buffer);
+
+                                service.runOnUi(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        contact.readLocalAvatar();
+                                    }
+                                });
+
+                                return;
+                            }
+                        }
+                    } else {
+                        //noinspection CatchMayIgnoreException
+                        try {
+                            if (!avatar_file.exists()) {
+                                //noinspection ResultOfMethodCallIgnored
+                                avatar_file.createNewFile();
+                            }
+                        } catch (Exception e2) {
+                            // ignore
                         }
                     }
-                } else {
-                    //noinspection CatchMayIgnoreException
-                    try {
-                        if (!avatar_file.exists()) {
-                            //noinspection ResultOfMethodCallIgnored
-                            avatar_file.createNewFile();
-                        }
-                    } catch (Exception e2) {
-                    }
+                } catch (Exception e3) {
+                    //noinspection CallToPrintStackTrace
+                    e3.printStackTrace();
                 }
-            } catch (Exception e3) {
-                //noinspection CallToPrintStackTrace
-                e3.printStackTrace();
             }
         };
+
         Thread t = new Thread(r);
         t.start();
     }
