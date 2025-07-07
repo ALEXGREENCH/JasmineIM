@@ -18,17 +18,24 @@ public class AreYouSureHelper {
                 Locale.getString("s_are_you_sure"),
                 Locale.getString("s_yes"),
                 Locale.getString("s_no"),
-                view -> {
-            AreYouSureHelper.this.dialog.dismiss();
-            if (yes != null) {
-                yes.onClick(view);
-            }
-        }, arg0 -> {
-            AreYouSureHelper.this.dialog.dismiss();
-            if (no != null) {
-                no.onClick(arg0);
-            }
-        });
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        AreYouSureHelper.this.dialog.dismiss();
+                        if (yes != null) {
+                            yes.onClick(view);
+                        }
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View arg0) {
+                        AreYouSureHelper.this.dialog.dismiss();
+                        if (no != null) {
+                            no.onClick(arg0);
+                        }
+                    }
+                });
         this.dialog.show();
     }
 }
