@@ -25,6 +25,7 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.SystemClock;
 import android.os.Vibrator;
+import android.os.VibrationEffect;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -1319,13 +1320,21 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     public void doVibrate(long how_long) {
         if (Media.phone_mode == 0 && this.vibrator != null && PreferenceTable.vibroEnabled) {
-            this.vibrator.vibrate(how_long);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                this.vibrator.vibrate(VibrationEffect.createOneShot(how_long, VibrationEffect.DEFAULT_AMPLITUDE));
+            } else {
+                this.vibrator.vibrate(how_long);
+            }
         }
     }
 
     public void doVibrate(long[] how_long) {
         if (Media.phone_mode == 0 && this.vibrator != null && PreferenceTable.vibroEnabled) {
-            this.vibrator.vibrate(how_long, -1);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                this.vibrator.vibrate(VibrationEffect.createWaveform(how_long, -1));
+            } else {
+                this.vibrator.vibrate(how_long, -1);
+            }
         }
     }
 
