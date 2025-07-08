@@ -39,3 +39,12 @@ go build
 This is **not** a full implementation of the ICQ OSCAR protocol. It only
 serves as a simple local testing tool and a foundation for future features
 (like expanding to a mesh network).
+
+## MD5 authentication notes
+
+The Android client now supports both the regular MD5 login sequence and an
+older variant referenced from the 2003 OSCAR specification. The old scheme
+(`md5_old`) sends the same TLV set as the XOR login but uses an MD5 hash of the
+password instead of the "roasted" representation. The current Go server only
+implements the plain XOR variant. Support for the MD5 methods may be added in
+the future.
