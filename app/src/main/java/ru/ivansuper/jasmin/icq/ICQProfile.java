@@ -2848,7 +2848,7 @@ public class ICQProfile extends IMProfile {
                     this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}));
                     this.socket.connect(srv + ":" + prt);
                     break;
-                case 1: // MD5 authentication
+                case 1: // MD5 old authentication
                     this.http_auth_used = false;
                     String srv2 = sp.getString("ms_server", "195.66.114.37");
                     String prt2 = sp.getString("ms_port", "5190");
@@ -2859,7 +2859,7 @@ public class ICQProfile extends IMProfile {
                     this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}));
                     this.socket.connect(srv2 + ":" + prt2);
                     break;
-                case 3: // MD5 old authentication
+                case 3: // MD5 authentication
                     this.http_auth_used = false;
                     String srvOld = sp.getString("ms_server", "195.66.114.37");
                     String prtOld = sp.getString("ms_port", "5190");

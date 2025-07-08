@@ -48,7 +48,7 @@
             android:negativeButtonText="Отмена"
             android:positiveButtonText="Ok" />
         <ListPreference
-            android:defaultValue="0"
+            android:defaultValue="1"
             android:entries="@array/auth_methods"
             android:entryValues="@array/auth_methods_values"
             android:key="ms_auth_method" />
