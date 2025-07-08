@@ -863,6 +863,9 @@ public class JConference extends Chat implements Handler.Callback {
         TOP_PANEL = (LinearLayout) findViewById(R.id.chat_header);
         LinearLayout bottomPanel = (LinearLayout) findViewById(R.id.chat_bottom_panel);
         Button menuButton = (Button) findViewById(R.id.chat_menu_btn);
+        if (utilities.hasHardwareMenuKey(this)) {
+            menuButton.setVisibility(View.GONE);
+        }
 
         // User toggle button
         mUsersToggleButton.setBackgroundColor(ColorScheme.divideAlpha(ColorScheme.getColor(48), 2));

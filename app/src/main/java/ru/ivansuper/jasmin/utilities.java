@@ -5,6 +5,9 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewConfiguration;
+import android.os.Build;
+import android.content.Context;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 
@@ -667,6 +670,18 @@ public class utilities {
         int minutes = seconds / 60;
         int secs = seconds % 60;
         return normalizeStringLength(String.valueOf(minutes), "0", 2) + ":" + normalizeStringLength(String.valueOf(secs), "0", 2);
+    }
+
+    /**
+     * Check if device has a hardware menu key.
+     * For pre-ICS devices we assume menu key is present.
+     */
+    public static boolean hasHardwareMenuKey(Context context) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            ViewConfiguration config = ViewConfiguration.get(context);
+            return config.hasPermanentMenuKey();
+        }
+        return true;
     }
 
     public static String normalizeStringLength(String src, String char_, int length) {

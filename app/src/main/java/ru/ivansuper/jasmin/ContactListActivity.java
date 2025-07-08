@@ -271,7 +271,11 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             checkPwd();
         }
 
-        findViewById(R.id.toggle_menu).setOnClickListener(new View.OnClickListener() {
+        View menuToggle = findViewById(R.id.toggle_menu);
+        if (utilities.hasHardwareMenuKey(this)) {
+            menuToggle.setVisibility(View.GONE);
+        }
+        menuToggle.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 handleMenuKey();
