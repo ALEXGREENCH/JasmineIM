@@ -5,21 +5,16 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import java.util.Vector;
+
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
-/* loaded from: classes.dex */
 public class RoomsPreviewAdapter extends BaseAdapter {
     public boolean init;
-    private Vector<Item> list = new Vector<>();
-    private Vector<Item> display = new Vector<>();
-
-    /* loaded from: classes.dex */
-    public static class Item {
-        public String desc;
-        public String label;
-    }
+    private final Vector<Item> list = new Vector<>();
+    private final Vector<Item> display = new Vector<>();
 
     public RoomsPreviewAdapter() {
         Item item = new Item();
@@ -78,22 +73,22 @@ public class RoomsPreviewAdapter extends BaseAdapter {
         }
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public int getCount() {
         return this.display.size();
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public Item getItem(int arg0) {
         return this.display.get(arg0);
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public long getItemId(int arg0) {
         return arg0;
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public View getView(int arg0, View arg1, ViewGroup arg2) {
         LinearLayout item;
         if (arg1 == null) {
@@ -101,11 +96,16 @@ public class RoomsPreviewAdapter extends BaseAdapter {
         } else {
             item = (LinearLayout) arg1;
         }
-        TextView label = (TextView) item.findViewById(R.id.room_preview_item_label);
-        TextView desc = (TextView) item.findViewById(R.id.room_preview_item_desc);
+        TextView label = item.findViewById(R.id.room_preview_item_label);
+        TextView desc = item.findViewById(R.id.room_preview_item_desc);
         Item i = getItem(arg0);
         label.setText(i.label);
         desc.setText(i.desc);
         return item;
+    }
+
+    public static class Item {
+        public String desc;
+        public String label;
     }
 }

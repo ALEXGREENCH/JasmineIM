@@ -23,7 +23,7 @@ import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 public class BannedListActivity extends Activity {
-    
+
     public static boolean ACTIVE = false;
     private BannedAdapter mAdapter;
     @SuppressWarnings("FieldCanBeLocal")
@@ -95,7 +95,7 @@ public class BannedListActivity extends Activity {
         resources.attachButtonStyle(add);
         add.setText(Locale.getString("s_do_add"));
         //noinspection FieldCanBeLocal
-        add.setOnClickListener(new View.OnClickListener() { 
+        add.setOnClickListener(new View.OnClickListener() {
             private Dialog d = null;
 
             @Override
