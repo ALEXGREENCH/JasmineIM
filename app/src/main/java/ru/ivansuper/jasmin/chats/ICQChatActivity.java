@@ -466,6 +466,9 @@ public class ICQChatActivity extends Chat {
         this.input = (EditText) findViewById(R.id.input);
         this.input.setTextSize(PreferenceTable.chatTextSize);
         Button button = (Button) findViewById(R.id.chat_menu_btn);
+        if (utilities.hasHardwareMenuKey(this)) {
+            button.setVisibility(View.GONE);
+        }
         resources.attachButtonStyle(button);
         button.setCompoundDrawables(resources.chat_menu_icon, null, null, null);
         button.setOnClickListener(new View.OnClickListener() {
