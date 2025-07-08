@@ -3,11 +3,13 @@
     <string-array name="auth_methods">
         <item>Plain XOR</item>
         <item>MD5</item>
+        <item>MD5 Old</item>
         <item>HTTP</item>
     </string-array>
     <string-array name="auth_methods_values">
         <item>0</item>
         <item>1</item>
+        <item>3</item>
         <item>2</item>
     </string-array>
     <string-array name="smileys_scale_labels">

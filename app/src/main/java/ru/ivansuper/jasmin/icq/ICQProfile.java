@@ -109,6 +109,7 @@ public class ICQProfile extends IMProfile {
 
     //private boolean useMD5Login = true; // todo;...
     private boolean useMD5Login = false;
+    private boolean useMD5OldLogin = false;
     private final screen_controller screen_ctrlr = new screen_controller(this, null);
     private final ArrayList<String> offlineMessages = new ArrayList<>();
     private final ArrayList<FileTransfer> transfers = new ArrayList<>();
@@ -830,7 +831,11 @@ public class ICQProfile extends IMProfile {
     private void handleServerAuthKeyResponse(ByteBuffer buffer) {
         int len = buffer.readWord();
         byte[] key = buffer.readBytes(len);
-        proceedMD5Login(key);
+        if (this.useMD5OldLogin) {
+            proceedMD5OldLogin(key);
+        } else {
+            proceedMD5Login(key);
+        }
     }
 
     private void proceedMD5Login(byte[] key) {
@@ -839,6 +844,16 @@ public class ICQProfile extends IMProfile {
             send();
         } catch (Exception e) {
             //noinspection CallToPrintStackTrace
+            e.printStackTrace();
+            disconnect();
+        }
+    }
+
+    private void proceedMD5OldLogin(byte[] key) {
+        try {
+            this.BUFFER = ICQProtocol.createMD5OldLogin(key, this.sequence, this.ID, ICQProtocol.preparePassword(this.password));
+            send();
+        } catch (Exception e) {
             e.printStackTrace();
             disconnect();
         }
@@ -2814,6 +2829,8 @@ public class ICQProfile extends IMProfile {
             this.connectedToBOS = false;
             this.authFirstStageCompleted = false;
             this.jumpingToBOS = false;
+            this.useMD5Login = false;
+            this.useMD5OldLogin = false;
             handleProfileStatusChanged();
             //noinspection deprecation
             SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.svc);
@@ -2841,6 +2858,18 @@ public class ICQProfile extends IMProfile {
                     jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
                     this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}));
                     this.socket.connect(srv2 + ":" + prt2);
+                    break;
+                case 3: // MD5 old authentication
+                    this.http_auth_used = false;
+                    String srvOld = sp.getString("ms_server", "195.66.114.37");
+                    String prtOld = sp.getString("ms_port", "5190");
+                    this.useMD5Login = true;
+                    this.useMD5OldLogin = true;
+                    Log.v("ICQProfile", "Connecting via MD5 old to " + srvOld + ":" + prtOld);
+                    setConnectionStatus(10);
+                    jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_md5_old"), new String[]{srvOld, prtOld}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5_old"), new String[]{srvOld, prtOld}));
+                    this.socket.connect(srvOld + ":" + prtOld);
                     break;
                 case 2: // HTTP authentication
                     this.http_auth_used = true;

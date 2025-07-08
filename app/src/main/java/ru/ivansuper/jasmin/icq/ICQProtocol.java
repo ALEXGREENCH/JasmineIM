@@ -100,6 +100,59 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * Build login packet following the old OSCAR MD5 scheme described in the 2003 specification.
+     * This packet mirrors the XOR login TLV layout but replaces the password field with MD5 hash.
+     */
+    public static ByteBuffer createMD5OldLogin(byte[] key, int seq, String uin, String password) throws Exception {
+        String pass = password.length() > 8 ? password.substring(0, 8) : password;
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE + CLIENT_STRING.length());
+        buffer.writeDWord(1);
+        buffer.writeWord(1);
+        buffer.writePreLengthStringAscii(uin);
+        buffer.writeWord(0x25);
+        byte[] md5 = utilities.getHashArray(key, pass);
+        buffer.writeWord(md5.length);
+        buffer.write(md5);
+
+        buffer.writeWord(0x03);
+        buffer.writePreLengthStringAscii(CLIENT_STRING);
+
+        buffer.writeWord(0x16);
+        buffer.writeWord(TLV_0X16_DATA.length);
+        buffer.write(TLV_0X16_DATA);
+
+        buffer.writeWord(0x17);
+        buffer.writeWord(TLV_0X17_MAJOR.length);
+        buffer.write(TLV_0X17_MAJOR);
+
+        buffer.writeWord(0x18);
+        buffer.writeWord(TLV_0X18_MINOR.length);
+        buffer.write(TLV_0X18_MINOR);
+
+        buffer.writeWord(0x19);
+        buffer.writeWord(TLV_0X19_LESSER.length);
+        buffer.write(TLV_0X19_LESSER);
+
+        buffer.writeWord(0x1A);
+        buffer.writeWord(TLV_0X1A_BUILD.length);
+        buffer.write(TLV_0X1A_BUILD);
+
+        buffer.writeWord(0x14);
+        buffer.writeWord(4);
+        buffer.writeDWord(TLV_0X14_DISTRIBUTION);
+
+        buffer.writeWord(0x0f);
+        buffer.writeWord(TLV_LANGUAGE.length());
+        buffer.writeStringAscii(TLV_LANGUAGE);
+
+        buffer.writeWord(0x0e);
+        buffer.writeWord(TLV_COUNTRY.length());
+        buffer.writeStringAscii(TLV_COUNTRY);
+
+        return FLAP.createFlap((byte) 1, seq, buffer);
+    }
+
     public static ByteBuffer createXORLogin(int seq, String uin, String password) throws Exception {
         String pass = password.length() > 8 ? password.substring(0, 8) : password;
         // Allocate extra space for the long legacy client string and TLVs
