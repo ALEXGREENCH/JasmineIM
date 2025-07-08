@@ -160,6 +160,35 @@ public class RosterItemView extends View {
         var1.bottom = var1.top + var8;
     }
 
+    private static void ensureBounds(Drawable drawable) {
+        if (drawable == null) {
+            return;
+        }
+
+        if (drawable.getBounds().isEmpty()) {
+            int w = drawable.getIntrinsicWidth();
+            int h = drawable.getIntrinsicHeight();
+
+            if (w <= 0) {
+                w = drawable.getMinimumWidth();
+            }
+
+            if (h <= 0) {
+                h = drawable.getMinimumHeight();
+            }
+
+            if (w <= 0) {
+                w = 1;
+            }
+
+            if (h <= 0) {
+                h = 1;
+            }
+
+            drawable.setBounds(0, 0, w, h);
+        }
+    }
+
     private void drawIcon(Drawable var1, Canvas var2, float var3) {
         int var4 = var2.save();
         var2.translate(3.0F + var3, this.icons_center - (float)(var1.getIntrinsicHeight() / 2));
@@ -566,13 +595,12 @@ public class RosterItemView extends View {
                 }
                 if (PreferenceTable.s_ms_show_clients && contact.client.info_index != -1) {
                     this.client = contact.client.icon;
-                    if (this.client != null && this.client.getBounds().isEmpty()) {
-                        this.client.setBounds(0, 0, this.client.getIntrinsicWidth(), this.client.getIntrinsicHeight());
-                    }
+                    ensureBounds(this.client);
                     this.draw_client = true;
                 }
                 if (!contact.authorized) {
                     this.client = resources.unauthorized_icon;
+                    ensureBounds(this.client);
                     this.draw_client = true;
                 }
                 if (contact.isVisible()) {
@@ -698,14 +726,13 @@ public class RosterItemView extends View {
                     Drawable ic_client = jcontact.getClient();
                     if (ic_client != null) {
                         this.client = ic_client;
-                        if (this.client.getBounds().isEmpty()) {
-                            this.client.setBounds(0, 0, this.client.getIntrinsicWidth(), this.client.getIntrinsicHeight());
-                        }
+                        ensureBounds(this.client);
                         this.draw_client = true;
                     }
                 }
                 if (jcontact.subscription != 2 && jcontact.subscription != 3 && !jcontact.conf_pm) {
                     this.client = resources.unauthorized_icon;
+                    ensureBounds(this.client);
                     this.draw_client = true;
                 }
                 if (PreferenceTable.ms_show_avatars) {
