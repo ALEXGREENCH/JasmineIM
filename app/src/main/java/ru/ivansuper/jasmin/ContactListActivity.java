@@ -495,6 +495,9 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             initToolsPanel();
             service.cancelMultiloginNotify();
             service.handleContactlistNeedRemake();
+            // ensure conference tab state is up to date when returning from
+            // ProfilesActivity or other screens
+            checkConferences();
         }
         HIDDEN = false;
         checkForBufferedDialogs();
