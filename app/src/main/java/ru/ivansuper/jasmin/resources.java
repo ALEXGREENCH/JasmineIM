@@ -2195,8 +2195,13 @@ public class resources {
                 return 24;
             case DisplayMetrics.DENSITY_HIGH:
                 return 32;
+            case DisplayMetrics.DENSITY_XHIGH:
+                return 48;
+            case DisplayMetrics.DENSITY_XXHIGH:
+            case DisplayMetrics.DENSITY_XXXHIGH:
+                return 64;
             default:
-                return -1; // Use the original size for other densities
+                return 32; // Fallback for other densities
         }
     }
 
