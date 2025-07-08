@@ -119,6 +119,19 @@ public class utilities {
      */
     public static byte[] getHashArray(byte[] key, String password) throws Exception {
         //noinspection InjectedReferences
+        byte[] passDigest = MD5.calculateMD5(password.getBytes("windows1251"));
+        byte[] md5buf = new byte[key.length + passDigest.length + MD5.AIM_MD5_STRING.length];
+        System.arraycopy(key, 0, md5buf, 0, key.length);
+        int md5marker = key.length;
+        System.arraycopy(passDigest, 0, md5buf, md5marker, passDigest.length);
+        System.arraycopy(MD5.AIM_MD5_STRING, 0, md5buf, md5marker + passDigest.length, MD5.AIM_MD5_STRING.length);
+        return MD5.calculateMD5(md5buf);
+    }
+
+    /**
+     * Calculate legacy MD5 hash used by older OSCAR implementations.
+     */
+    public static byte[] getOldHashArray(byte[] key, String password) throws Exception {
         byte[] passwordRaw = password.getBytes("windows1251");
         byte[] md5buf = new byte[key.length + passwordRaw.length + MD5.AIM_MD5_STRING.length];
         System.arraycopy(key, 0, md5buf, 0, key.length);

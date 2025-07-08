@@ -88,14 +88,65 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * Build login packet for the SNAC based MD5 authorization sequence.
+     * This follows the layout described in the OSCAR 2003 specification and is
+     * similar to the XOR login TLV set but uses the MD5 hash (TLV 0x25).
+     */
     public static ByteBuffer createMD5Login(byte[] key, int seq, String uin, String password) throws Exception {
-        ByteBuffer buffer = new ByteBuffer(512);
-        buffer.writeWord(1);
+        ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE + CLIENT_STRING.length());
+
+        buffer.writeWord(0x01);
         buffer.writePreLengthStringAscii(uin);
-        buffer.writeWord(37);
+
+        buffer.writeWord(0x25);
         byte[] md5 = utilities.getHashArray(key, password);
         buffer.writeWord(md5.length);
         buffer.write(md5);
+
+        // Indicate use of the newer MD5 method
+        buffer.writeWord(0x4C);
+        buffer.writeWord(0);
+
+        buffer.writeWord(0x03);
+        buffer.writePreLengthStringAscii(CLIENT_STRING);
+
+        buffer.writeWord(0x16);
+        buffer.writeWord(TLV_0X16_DATA.length);
+        buffer.write(TLV_0X16_DATA);
+
+        buffer.writeWord(0x17);
+        buffer.writeWord(TLV_0X17_MAJOR.length);
+        buffer.write(TLV_0X17_MAJOR);
+
+        buffer.writeWord(0x18);
+        buffer.writeWord(TLV_0X18_MINOR.length);
+        buffer.write(TLV_0X18_MINOR);
+
+        buffer.writeWord(0x19);
+        buffer.writeWord(TLV_0X19_LESSER.length);
+        buffer.write(TLV_0X19_LESSER);
+
+        buffer.writeWord(0x1A);
+        buffer.writeWord(TLV_0X1A_BUILD.length);
+        buffer.write(TLV_0X1A_BUILD);
+
+        buffer.writeWord(0x14);
+        buffer.writeWord(4);
+        buffer.writeDWord(TLV_0X14_DISTRIBUTION);
+
+        buffer.writeWord(0x0F);
+        buffer.writeWord(TLV_LANGUAGE.length());
+        buffer.writeStringAscii(TLV_LANGUAGE);
+
+        buffer.writeWord(0x0E);
+        buffer.writeWord(TLV_COUNTRY.length());
+        buffer.writeStringAscii(TLV_COUNTRY);
+
+        buffer.writeWord(0x4A);
+        buffer.writeWord(1);
+        buffer.writeByte((byte) 0x01);
+
         ByteBuffer snc = SNAC.createSnac(23, 2, 0, 0, buffer);
         return FLAP.createFlap((byte) 2, seq, snc);
     }
@@ -111,7 +162,7 @@ public class ICQProtocol {
         buffer.writeWord(1);
         buffer.writePreLengthStringAscii(uin);
         buffer.writeWord(0x25);
-        byte[] md5 = utilities.getHashArray(key, pass);
+        byte[] md5 = utilities.getOldHashArray(key, pass);
         buffer.writeWord(md5.length);
         buffer.write(md5);
 
