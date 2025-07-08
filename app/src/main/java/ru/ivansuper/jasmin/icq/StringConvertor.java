@@ -3,7 +3,6 @@ package ru.ivansuper.jasmin.icq;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.Objects;
 
 import ru.ivansuper.jasmin.jabber.jzlib.JZlib;
 
@@ -290,7 +289,13 @@ public class StringConvertor {
 
     /** @noinspection unused*/
     public static int stringCompare(String s1, String s2) {
-        if (Objects.equals(s1, s2)) {
+        if (s1 == null) {
+            return (s2 == null) ? 0 : -1;
+        }
+        if (s2 == null) {
+            return 1;
+        }
+        if (s1.equals(s2)) {
             return 0;
         }
         int size = Math.min(s1.length(), s2.length());
