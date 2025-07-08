@@ -431,9 +431,9 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         this.receiver = new BReceiver(this);
         registerReceiver(this.receiver, INTENT_FILTER);
         if (this.sharedPreferences.getBoolean("ms_wake_lock", false)) {
-            PowerManager pMan = (PowerManager) getSystemService("power");
-            this.wakeLock = pMan.newWakeLock(1, "ru.ivansuper.jasmin_wake");
-            this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
+            PowerManager pMan = (PowerManager) getSystemService(Context.POWER_SERVICE);
+            this.wakeLock = pMan.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "ru.ivansuper.jasmin_wake");
+            this.wakeLock.acquire(); // Hold indefinitely until released
             Log.v("POWER", "WAKE_LOCK ENABLED");
         }
         if (this.sharedPreferences.getBoolean("ms_wifi_lock", true)) {
@@ -464,8 +464,8 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         if (this.wifiLock != null && this.wifiLock.isHeld()) {
             this.wifiLock.release();
         }
-        if (this.wifiLock != null && this.wifiLock.isHeld()) {
-            this.wifiLock.release();
+        if (this.wakeLock != null && this.wakeLock.isHeld()) {
+            this.wakeLock.release();
         }
         if (this.tempWakeLock != null && this.tempWakeLock.isHeld()) {
             this.tempWakeLock.release();
