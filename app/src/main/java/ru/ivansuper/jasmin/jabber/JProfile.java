@@ -119,10 +119,11 @@ public class JProfile extends IMProfile {
     private boolean roster_received = false;
 
     private static boolean isValidJid(String jid) {
-        if (jid == null || jid.isEmpty()) {
+        if (jid == null) {
             return false;
         }
-        return jid.matches("[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+");
+        int atPos = jid.indexOf('@');
+        return atPos > 0 && atPos < jid.length() - 1;
     }
 
     private void putMessage(Node node) {
