@@ -98,6 +98,8 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.popup.PopupBuilder;
 import ru.ivansuper.jasmin.popup.QuickAction;
 import ru.ivansuper.jasmin.protocols.IMProfile;
+import ru.ivansuper.jasmin.ProfilesManager;
+import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.security.PasswordManager;
 import ru.ivansuper.jasmin.slide_tools.SlideSwitcher;
 import ru.ivansuper.jasmin.ui.ExFragmentManager;
@@ -230,6 +232,10 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         setContentView(R.layout.contactlist);
         SystemBarUtils.setupTransparentBars(this);
         service = resources.service;
+        if (service != null && service.profiles == null) {
+            service.profiles = new ProfilesManager(service);
+            EventTranslator.sendProfilesList();
+        }
         dialogs = new Vector<>();
         if (getResources().getConfiguration().orientation != 1) {
             IT_IS_PORTRAIT = false;
@@ -2629,6 +2635,10 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     private void updateBottomPanel() {
+
+        if (service == null || service.profiles == null) {
+            return;
+        }
 
         // todo; 32 dp - hardcode
         final float scale = getResources().getDisplayMetrics().density;
