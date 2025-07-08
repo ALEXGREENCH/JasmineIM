@@ -445,6 +445,20 @@ public class ProfilesManager {
         return list;
     }
 
+    /**
+     * Check if there is at least one enabled Jabber profile.
+     */
+    public final boolean hasEnabledJabberProfile() {
+        int len = this.profiles.size();
+        for (int i = 0; i < len; i++) {
+            IMProfile profile = this.profiles.get(i);
+            if (profile.profile_type == 1 && profile.enabled) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public final boolean scanForConferences() {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
