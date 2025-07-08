@@ -88,12 +88,7 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 
-    /**
-     * Build login packet for the SNAC based MD5 authorization sequence.
-     * This follows the layout described in the OSCAR 2003 specification and is
-     * similar to the XOR login TLV set but uses the MD5 hash (TLV 0x25).
-     */
-    public static ByteBuffer createMD5Login(byte[] key, int seq, String uin, String password) throws Exception {
+    public static ByteBuffer createMD5OldLogin(byte[] key, int seq, String uin, String password) throws Exception {
         ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE + CLIENT_STRING.length());
 
         buffer.writeWord(0x01);
@@ -151,11 +146,7 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 
-    /**
-     * Build login packet following the old OSCAR MD5 scheme described in the 2003 specification.
-     * This packet mirrors the XOR login TLV layout but replaces the password field with MD5 hash.
-     */
-    public static ByteBuffer createMD5OldLogin(byte[] key, int seq, String uin, String password) throws Exception {
+    public static ByteBuffer createMD5NewLogin(byte[] key, int seq, String uin, String password) throws Exception {
         String pass = password.length() > 8 ? password.substring(0, 8) : password;
         ByteBuffer buffer = new ByteBuffer(ContactListActivity.UPDATE_BLINK_STATE + CLIENT_STRING.length());
         buffer.writeDWord(1);
@@ -274,9 +265,6 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 1, seq, buffer);
     }
 
-    /**
-     * @noinspection unused
-     */
     public static ByteBuffer createSendCookies(byte[] cookies, String uin, int seq) {
         ByteBuffer buffer = new ByteBuffer(cookies.length + ContactListActivity.UPDATE_BLINK_STATE);
         buffer.writeDWord(1);
