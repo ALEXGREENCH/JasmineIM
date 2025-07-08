@@ -42,7 +42,7 @@ public class Conference {
     public String pass;
     public JProfile profile;
     /** @noinspection unused*/
-    private final String SCROLL_STATE_HASH = Integer.toHexString(utilities.getHash(this));
+    private final String SCROLL_STATE_HASH;
     public String theme = "";
     public ArrayList<HistoryItem> history = new ArrayList<>();
     public String typedText = "";
@@ -56,6 +56,7 @@ public class Conference {
         this.nick = nick;
         this.pass = pass;
         this.profile = profile;
+        this.SCROLL_STATE_HASH = Integer.toHexString(utilities.getHash(this));
     }
 
     public final void registerPMContact(JContact contact) {
