@@ -118,6 +118,13 @@ public class JProfile extends IMProfile {
     public final ServerList server_list = new ServerList();
     private boolean roster_received = false;
 
+    private static boolean isValidJid(String jid) {
+        if (jid == null || jid.isEmpty()) {
+            return false;
+        }
+        return jid.matches("[A-Za-z0-9._%-]+@[A-Za-z0-9.-]+");
+    }
+
     private void putMessage(Node node) {
         if (this.roster_received) {
             handleStreamMessage(node);
@@ -1371,6 +1378,11 @@ public class JProfile extends IMProfile {
 
     public final void joinConference(final String JID, final String nick, final String pass) {
         boolean z = false;
+        if (!isValidJid(JID)) {
+            Log.e(getClass().getSimpleName(), "Invalid conference JID " + JID);
+            this.svc.showMessageInContactList(resources.getString("s_information"), resources.getString("s_incorrect_jid"));
+            return;
+        }
         Log.e(getClass().getSimpleName(), "Joining conference " + JID);
         Conference conference = getConference(JID);
         if (conference != null) {
