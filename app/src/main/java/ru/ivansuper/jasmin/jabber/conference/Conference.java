@@ -27,7 +27,6 @@ import ru.ivansuper.jasmin.popup_log_adapter;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
-/* loaded from: classes.dex */
 public class Conference {
     public static final String BANNED_LIST_OPERATION = "banned_list_changed";
     public static final String BANNED_LIST_REQUEST = "banned_list_request";
@@ -41,7 +40,7 @@ public class Conference {
     public String nick;
     public String pass;
     public JProfile profile;
-    /** @noinspection unused*/
+    /** @noinspection unused, FieldCanBeLocal */
     private final String SCROLL_STATE_HASH;
     public String theme = "";
     public ArrayList<HistoryItem> history = new ArrayList<>();
