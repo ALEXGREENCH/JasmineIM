@@ -481,6 +481,7 @@ public class JProfile extends IMProfile {
             Log.e("JABBER", "SSL/TLS enabled!");
             this.tls_enabled = true;
             this.stream.jumpToSSL(this.server, 5222);
+            System.clearProperty("javax.net.ssl.trustStore");
         }
     }
 
