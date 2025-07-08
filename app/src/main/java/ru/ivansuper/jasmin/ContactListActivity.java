@@ -495,6 +495,9 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             initToolsPanel();
             service.cancelMultiloginNotify();
             service.handleContactlistNeedRemake();
+            // ensure conference tab state is up to date when returning from
+            // ProfilesActivity or other screens
+            checkConferences();
         }
         HIDDEN = false;
         checkForBufferedDialogs();
@@ -2478,6 +2481,9 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         if (service != null && service.profiles != null) {
             try {
                 boolean confs_present = service.profiles.scanForConferences();
+                if (!confs_present) {
+                    confs_present = service.profiles.hasEnabledJabberProfile();
+                }
                 if (confs_present && this.confs_contactlist == null) {
                     this.confs_contactlist = new MultiColumnList(this);
                     resources.attachListSelector(this.confs_contactlist);
