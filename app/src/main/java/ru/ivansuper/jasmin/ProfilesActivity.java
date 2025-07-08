@@ -49,13 +49,18 @@ public class ProfilesActivity extends Activity {
         this.service = resources.service;
         handleServiceConnected();
 
-        findViewById(R.id.ic_menu).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                removeDialog(4);
-                showDialog(4);
-            }
-        });
+        Button menuButton = findViewById(R.id.menu_btn);
+        if (utilities.hasHardwareMenuKey(this)) {
+            menuButton.setVisibility(View.GONE);
+        } else {
+            menuButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    removeDialog(4);
+                    showDialog(4);
+                }
+            });
+        }
     }
 
     @Override

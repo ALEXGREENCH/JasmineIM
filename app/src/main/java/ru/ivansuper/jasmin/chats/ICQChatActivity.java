@@ -49,7 +49,6 @@ import ru.ivansuper.jasmin.slide_tools.AnimationCalculator;
 import ru.ivansuper.jasmin.slide_tools.ListViewA;
 import ru.ivansuper.jasmin.utilities;
 
-/* loaded from: classes.dex */
 public class ICQChatActivity extends Chat {
     public static boolean INITIALIZED;
     /** @noinspection FieldCanBeLocal*/
@@ -105,7 +104,7 @@ public class ICQChatActivity extends Chat {
         return new ICQChatActivity(init_callback, contact_);
     }
 
-    @Override // ru.ivansuper.jasmin.ui.ExFragment, ru.ivansuper.jasmin.ui.JFragment
+    @Override
     public void onCreate() {
         super.onCreate();
         received_smile_tag = "";
@@ -392,8 +391,6 @@ public class ICQChatActivity extends Chat {
 
     @Override
     public void initViews() {
-        byte b = 0;
-        byte b2 = 0;
         super.initViews();
         this.quot_view = (QuotingView) findViewById(R.id.chat_quoting_view);
         chat_back = (LinearLayout) findViewById(R.id.chat_back);
@@ -466,7 +463,7 @@ public class ICQChatActivity extends Chat {
         this.input = (EditText) findViewById(R.id.input);
         this.input.setTextSize(PreferenceTable.chatTextSize);
         Button button = (Button) findViewById(R.id.chat_menu_btn);
-        if (utilities.hasHardwareMenuKey(this)) {
+        if (utilities.hasHardwareMenuKey(getView().getContext())) {
             button.setVisibility(View.GONE);
         }
         resources.attachButtonStyle(button);
@@ -904,7 +901,6 @@ public class ICQChatActivity extends Chat {
                     break;
                 case 13:
                     HistoryItem item = ICQChatActivity.this.chatAdp.getItem(ICQChatActivity.this.last_context_message);
-                    //noinspection deprecation
                     ClipboardManager cm = (ClipboardManager) ICQChatActivity.this.getSystemService("clipboard");
                     if (item.direction == 1) {
                         nick2 = item.contact.name;
@@ -1116,7 +1112,7 @@ public class ICQChatActivity extends Chat {
                 try {
                     //noinspection BusyWait
                     sleep(100L);
-                } catch (Exception e) {
+                } catch (Exception ignored) {
                 }
                 if (ICQChatActivity.INITIALIZED) {
                     if (this.counter != 0) {

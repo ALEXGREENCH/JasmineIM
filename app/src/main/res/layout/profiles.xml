@@ -36,16 +36,19 @@
             android:layout_height="wrap_content"
             android:layout_margin="10sp"
             android:layout_weight="1"
-            android:text="Для добавления нового профиля нажмите кнопку Меню"/>
+            android:text="Для добавления нового профиля нажмите кнопку Меню"
+            android:paddingTop="8dp"
+            android:paddingBottom="8dp"/>
 
-        <ImageView
-            android:id="@+id/ic_menu"
-            android:layout_width="36dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:padding="4dp"
-            android:layout_weight="0.5"
-            android:src="@drawable/contactlist_chat_divider"/>
+        <Button
+            android:id="@+id/menu_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/btn_default_small"
+            android:drawableLeft="@drawable/ic_menu"
+            android:drawableStart="@drawable/ic_menu"
+            android:paddingLeft="8sp"
+            android:paddingRight="8sp" />
     </LinearLayout>
 
 </LinearLayout>

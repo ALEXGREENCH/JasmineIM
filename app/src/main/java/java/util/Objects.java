@@ -2,6 +2,7 @@ package java.util;
 
 /**
  * Minimal backport of java.util.Objects for API levels lacking this class.
+ * @noinspection unused
  */
 public final class Objects {
     private Objects() {}
@@ -17,6 +18,7 @@ public final class Objects {
     }
 
     public static boolean equals(Object a, Object b) {
+        //noinspection ObjectEquality,EqualsReplaceableByObjectsCall
         return (a == b) || (a != null && a.equals(b));
     }
 
