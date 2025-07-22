@@ -47,10 +47,10 @@ public class BReceiver extends BroadcastReceiver {
             if (intent.getAction().contains("RINGER_MODE_CHANGED")) {
                 AudioManager am = (AudioManager) this.service.getSystemService(Context.AUDIO_SERVICE);
                 switch (am.getRingerMode()) {
-                    case 1:
+                    case AudioManager.RINGER_MODE_VIBRATE:
                         Media.ring_mode = 1;
                         return;
-                    case 2:
+                    case AudioManager.RINGER_MODE_NORMAL:
                         Media.ring_mode = 0;
                         return;
                     default:
