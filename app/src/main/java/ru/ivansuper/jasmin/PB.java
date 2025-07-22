@@ -10,7 +10,7 @@ import android.view.View;
 
 public class PB extends View {
     private long max;
-    private BitmapDrawable progress;
+    private android.graphics.drawable.BitmapDrawable progress;
     private final int shadow_border;
     private long value;
     private long value_;
@@ -51,7 +51,7 @@ public class PB extends View {
     }
 
     private void init(Context context) {
-        this.progress = (BitmapDrawable) context.getResources().getDrawable(R.drawable.progress_line);
+        this.progress = (android.graphics.drawable.BitmapDrawable) context.getResources().getDrawable(R.drawable.progress_line);
         this.progress.setTileModeX(Shader.TileMode.REPEAT);
         this.progress.setTileModeY(Shader.TileMode.REPEAT);
         this.view_height = (int) (this.view_height * resources.dm.density);
