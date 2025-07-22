@@ -12,6 +12,7 @@ import ru.ivansuper.jasmin.MMP.MMPProfile;
 import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.icq.ICQProfile;
+import ru.ivansuper.jasmin.irc.IRCProfile;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
@@ -141,17 +142,17 @@ public class ProfilesManager {
                             byte[] srv = new byte[srvLen];
                             dis.read(srv, 0, srvLen);
                             String sSrv = proceedISEM_B(srv);
-                            int port = dis.readShort();
-                            int nickLen = dis.read();
+                            int portIRC = dis.readShort();
+                            int nickLenIRC = dis.read();
                             String sNick = "";
-                            if (nickLen > 0) {
-                                byte[] nb = new byte[nickLen];
-                                dis.read(nb,0,nickLen);
+                            if (nickLenIRC > 0) {
+                                byte[] nb = new byte[nickLenIRC];
+                                dis.read(nb,0,nickLenIRC);
                                 sNick = proceedISEM_B(nb);
                             }
                             boolean autoconnectIrc = dis.readBoolean();
                             boolean enabledIrc = dis.readBoolean();
-                            ru.ivansuper.jasmin.irc.IRCProfile ircProfile = new ru.ivansuper.jasmin.irc.IRCProfile(sSrv, port, sNick);
+                            IRCProfile ircProfile = new IRCProfile(sSrv, portIRC, sNick);
                             ircProfile.autoconnect = autoconnectIrc;
                             ircProfile.enabled = enabledIrc;
                             int rem = 127;

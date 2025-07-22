@@ -44,9 +44,15 @@ public class IRCProfile extends IMProfile {
         if (connecting || connected) return;
         Log.d("IRCProfile", "startConnecting to " + server + ":" + port);
         connecting = true;
-        listenThread = new Thread(this::runConnection, "irc-connect-" + ID);
+        listenThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                runConnection();
+            }
+        }, "irc-connect-" + ID);
         listenThread.start();
     }
+
 
     private void runConnection() {
         try {
