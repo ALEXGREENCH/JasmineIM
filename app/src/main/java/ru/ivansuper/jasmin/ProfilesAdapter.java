@@ -80,6 +80,9 @@ public class ProfilesAdapter extends BaseAdapter {
             case 2:
                 icon.setImageDrawable(resources.ctx.getResources().getDrawable(R.drawable.mrim_contact_status_online));
                 break;
+            case 3:
+                icon.setImageDrawable(resources.ctx.getResources().getDrawable(R.drawable.xmpp_online));
+                break;
         }
         item.addView(icon);
         item.addView(label);
