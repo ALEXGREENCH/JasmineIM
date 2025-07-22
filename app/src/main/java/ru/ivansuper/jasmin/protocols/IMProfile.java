@@ -24,8 +24,6 @@ public abstract class IMProfile implements Openable {
     public static final int OSCAR = 0;
     public static final int JABBER = 1;
     public static final int MMP = 2;
-    /** IRC protocol */
-    public static final int IRC = 3;
 
     // Абстрактные статусы
     public static final int STATUS_OFFLINE = -1;
@@ -194,9 +192,6 @@ public abstract class IMProfile implements Openable {
             case 7:
                 MMPContact mmp = (MMPContact) contact;
                 return "MMPITEM" + mmp.profile.ID + "***$$$SEPARATOR$$$***" + mmp.ID;
-            case 12:
-                ru.ivansuper.jasmin.irc.IRCContact irc = (ru.ivansuper.jasmin.irc.IRCContact) contact;
-                return "IRCITEM" + irc.profile.ID + "***$$$SEPARATOR$$$***" + irc.ID;
             case 10:
                 ConferenceItem conf = (ConferenceItem) contact;
                 return "JCFITEM" + conf.conference.profile.getFullJID() + "***$$$SEPARATOR$$$***" + conf.conference.JID;
@@ -209,7 +204,6 @@ public abstract class IMProfile implements Openable {
         if (profile instanceof ICQProfile) return profile.ID;
         if (profile instanceof JProfile) return profile.ID;
         if (profile instanceof MMPProfile) return profile.ID;
-        if (profile instanceof ru.ivansuper.jasmin.irc.IRCProfile) return profile.ID;
         return "";
     }
 
@@ -217,7 +211,6 @@ public abstract class IMProfile implements Openable {
         if (profile instanceof ICQProfile) return profile.ID;
         if (profile instanceof JProfile) return ((JProfile) profile).getFullJID();
         if (profile instanceof MMPProfile) return profile.ID;
-        if (profile instanceof ru.ivansuper.jasmin.irc.IRCProfile) return profile.ID;
         return "";
     }
 
@@ -232,8 +225,6 @@ public abstract class IMProfile implements Openable {
             }
         } else if (profile instanceof MMPProfile) {
             return resources.mrim_online;
-        } else if (profile instanceof ru.ivansuper.jasmin.irc.IRCProfile) {
-            return resources.online;
         }
         return resources.online;
     }
@@ -242,7 +233,6 @@ public abstract class IMProfile implements Openable {
         if (profile instanceof ICQProfile) return profile.nickname;
         if (profile instanceof JProfile) return ((JProfile) profile).getFullJID();
         if (profile instanceof MMPProfile) return profile.ID;
-        if (profile instanceof ru.ivansuper.jasmin.irc.IRCProfile) return profile.ID;
         return "";
     }
 
@@ -283,9 +273,6 @@ public abstract class IMProfile implements Openable {
                     case 13: return STATUS_FFC;
                     default: return STATUS_ONLINE;
                 }
-            }
-            case IRC: {
-                return STATUS_ONLINE;
             }
             default:
                 return STATUS_ONLINE;
