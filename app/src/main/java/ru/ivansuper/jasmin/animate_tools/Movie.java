@@ -29,19 +29,25 @@ public class Movie {
     private int frame_count;
 
     private volatile Bitmap frame;
+    /** @noinspection FieldCanBeLocal*/
     private GifDecoder decoder;
     private GifDecoder.GifFrame[] frames;
     private int[] timeline;
 
     private long draw_start = -1;
+    /** @noinspection FieldCanBeLocal*/
     private long timeline_now = -1;
 
     private final Rect dest = new Rect();
     private final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
 
+    /** @noinspection unused*/
     public static final int SCALE_VERY_SMALL = 0;
+    /** @noinspection unused*/
     public static final int SCALE_SMALL = 1;
+    /** @noinspection unused*/
     public static final int SCALE_MEDIUM = 2;
+    /** @noinspection unused*/
     public static final int SCALE_HIGH = 3;
 
     public Movie(BufferedInputStream is, Context context) {
@@ -87,6 +93,7 @@ public class Movie {
                     loadAsSingle(is);
                 }
             } catch (IOException e) {
+                //noinspection CallToPrintStackTrace
                 e.printStackTrace();
                 this.gif = false;
                 loadAsSingle(is);
@@ -129,6 +136,7 @@ public class Movie {
         this.height = (int) newHeight;
     }
 
+    /** @noinspection unused*/
     public void changeScale(Context context, int value) {
         if (value < 10 || value > 500) value = 100;
 

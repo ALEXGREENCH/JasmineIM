@@ -30,17 +30,14 @@ public class SmileView extends View implements Handler.Callback {
         this.hdl = new Handler(this);
     }
 
-    /** Устанавливает объект Movie (анимированный или статичный смайл) */
     public void setMovie(Movie movie) {
         this.movie = movie;
     }
 
-    /** Устанавливает временный режим (не использовать max_height из SmileysManager) */
     public void setIsTemporary() {
         this.temporary = true;
     }
 
-    /** Изменяет масштаб смайла */
     public void setCustomScale(int value) {
         if (movie != null) {
             movie.changeScale(getContext(), value);
@@ -50,8 +47,7 @@ public class SmileView extends View implements Handler.Callback {
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        int measuredWidth = MeasureSpec.getSize(widthMeasureSpec);
-        this.width = measuredWidth;
+        this.width = MeasureSpec.getSize(widthMeasureSpec);
 
         if (movie == null) {
             this.height = MeasureSpec.getSize(heightMeasureSpec);
@@ -77,6 +73,7 @@ public class SmileView extends View implements Handler.Callback {
         }
     }
 
+    /** @noinspection NullableProblems*/
     @Override
     public boolean handleMessage(Message msg) {
         postInvalidate();

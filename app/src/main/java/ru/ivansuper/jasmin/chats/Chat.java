@@ -23,11 +23,9 @@ import ru.ivansuper.jasmin.smileys_adapter;
 import ru.ivansuper.jasmin.ui.ExFragment;
 
 public abstract class Chat extends ExFragment implements Handler.Callback {
-    /** @noinspection unused*/
+
     public static final int CHAT_SHOW_MENU = 97;
-    /** @noinspection unused*/
     public static final int CHAT_UPDATE_CONTACT = 96;
-    /** @noinspection unused*/
     public static final int CLOSE = 62;
     /** @noinspection unused*/
     public static final int DRAW_RECEIVER_DATA = 2;
@@ -35,14 +33,11 @@ public abstract class Chat extends ExFragment implements Handler.Callback {
     public static final int REBUILD_CHAT = 4;
     /** @noinspection unused*/
     public static final int REBUILD_MARKERS = 6;
-    /** @noinspection unused*/
     public static final int REBUILD_TRANSFER_FIELD = 60;
     /** @noinspection unused*/
     public static final int REFRESH_CHAT = 5;
-    /** @noinspection unused*/
     public static final int REQUEST_CODE_FILE = 161;
     public static final int REQUEST_CODE_SMILE = 162;
-    /** @noinspection unused*/
     public static final int UPDATE_TRANSFER_PROGRESS = 61;
     protected static InputMethodManager input_manager;
     public static String received_smile_tag = "";

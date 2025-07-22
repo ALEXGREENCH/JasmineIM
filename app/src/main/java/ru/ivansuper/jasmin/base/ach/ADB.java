@@ -263,7 +263,7 @@ public class ADB {
 
     private static class OnlineCounter extends Thread {
         private volatile boolean active;
-        private long stamp;
+        private final long stamp;
 
         private OnlineCounter() {
             this.active = true;

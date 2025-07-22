@@ -81,6 +81,7 @@ public class GifDecoder {
             if (path.trim().toLowerCase().contains("file:") || path.contains(":/")) {
                 in = new URL(path).openStream();
             } else {
+                //noinspection IOStreamConstructor
                 in = new FileInputStream(path);
             }
             status = read(in);
@@ -98,10 +99,12 @@ public class GifDecoder {
         return frameCount;
     }
 
+    /** @noinspection unused*/
     public Bitmap getFrame(int n) {
         return (n >= 0 && n < frameCount) ? frames.get(n).image : null;
     }
 
+    /** @noinspection unused*/
     public int[] getFrame(int n, boolean copyPixels) {
         if (n < 0 || n >= frameCount) return null;
         Bitmap bmp = frames.get(n).image;
@@ -135,6 +138,7 @@ public class GifDecoder {
         lct = null;
     }
 
+    /** @noinspection BooleanMethodIsAlwaysInverted*/
     protected boolean err() {
         return status != STATUS_OK;
     }

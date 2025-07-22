@@ -36,6 +36,7 @@ public class MySpan extends ReplacementSpan {
         }
     }
 
+    /** @noinspection NullableProblems*/
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
         if (movie != null) {
@@ -49,6 +50,7 @@ public class MySpan extends ReplacementSpan {
         }
     }
 
+    /** @noinspection NullableProblems*/
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         if (fm != null) {
