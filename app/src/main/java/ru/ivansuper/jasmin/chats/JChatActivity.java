@@ -817,7 +817,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
                     next_idx = chats_count - 1;
                 }
                 ContactlistItem item = service.opened_chats.get(next_idx);
-                if (item.itemType == 4) {
+                if (item.itemType == ContactlistItem.JABBER_CONTACT) {
                     contact = (JContact) item;
                     MessageSaveHelper.putMessage(this.SAVE_HASH, this.input.getText().toString());
                     setScrollStateHash(Integer.toHexString(utilities.getHash(contact)));
@@ -854,7 +854,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
                     next_idx2 = 0;
                 }
                 ContactlistItem item2 = service.opened_chats.get(next_idx2);
-                if (item2.itemType == 4) {
+                if (item2.itemType == ContactlistItem.JABBER_CONTACT) {
                     contact = (JContact) item2;
                     MessageSaveHelper.putMessage(this.SAVE_HASH, this.input.getText().toString());
                     setScrollStateHash(Integer.toHexString(utilities.getHash(contact)));
@@ -919,7 +919,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
             if (service.opened_chats.size() >= 2) {
                 for (int i = 0; i < service.opened_chats.size(); i++) {
                     ContactlistItem item = service.opened_chats.get(i);
-                    if (item.itemType == 4) {
+                    if (item.itemType == ContactlistItem.JABBER_CONTACT) {
                         ImageView marker = new ImageView(resources.ctx);
                         marker.setPadding(3, 0, 3, 0);
                         marker.setImageDrawable(contact.equals(item) ? resources.marker_active_chat : resources.marker_chat);

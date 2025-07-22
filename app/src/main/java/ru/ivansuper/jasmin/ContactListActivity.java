@@ -98,6 +98,7 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.popup.PopupBuilder;
 import ru.ivansuper.jasmin.popup.QuickAction;
 import ru.ivansuper.jasmin.protocols.IMProfile;
+import ru.ivansuper.jasmin.ContactlistItem;
 import ru.ivansuper.jasmin.ProfilesManager;
 import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.security.PasswordManager;
@@ -3986,52 +3987,52 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             if (CURRENT_IS_CONTACTS) {
                 ContactsAdapter adp = (ContactsAdapter) arg0.getAdapter();
                 ContactlistItem item = adp.getItem(arg2);
-                if (item.itemType == 2) {
+                if (item.itemType == ContactlistItem.GROUP) {
                     ICQGroup grp = (ICQGroup) item;
                     grp.opened = !grp.opened;
                     sp.edit().putBoolean("g" + grp.id, grp.opened).commit();
                     createContactlistFromProfiles();
-                } else if (item.itemType == 1) {
+                } else if (item.itemType == ContactlistItem.CONTACT) {
                     ICQContact contact = (ICQContact) item;
                     service.currentChatContact = contact;
                     service.currentChatProfile = contact.profile;
                     startICQChatActivity(contact);
-                } else if (item.itemType == 4) {
+                } else if (item.itemType == ContactlistItem.JABBER_CONTACT) {
                     JContact jcontact = (JContact) item;
                     service.currentChatContact = jcontact;
                     service.currentChatProfile = jcontact.profile;
                     startJChatActivity(jcontact);
-                } else if (item.itemType == 10) {
+                } else if (item.itemType == ContactlistItem.JABBER_CONFERENCE) {
                     ConferenceItem conference = (ConferenceItem) item;
                     service.currentChatContact = conference;
                     service.currentChatProfile = conference.conference.profile;
                     startJConferenceActivity(conference);
-                } else if (item.itemType == 7) {
+                } else if (item.itemType == ContactlistItem.MMP_CONTACT) {
                     MMPContact mmpcontact = (MMPContact) item;
                     service.currentChatContact = mmpcontact;
                     service.currentChatProfile = mmpcontact.profile;
                     startMMPChatActivity(mmpcontact);
-                } else if (item.itemType == 9) {
+                } else if (item.itemType == ContactlistItem.MMP_GROUP) {
                     MMPGroup mmpgroup = (MMPGroup) item;
                     mmpgroup.opened = !mmpgroup.opened;
                     sp.edit().putBoolean("mmpg" + mmpgroup.id, mmpgroup.opened).commit();
                     createContactlistFromProfiles();
-                } else if (item.itemType == 8) {
+                } else if (item.itemType == ContactlistItem.MMP_PROFILE_GROUP) {
                     MMPGroup mmpgroup2 = (MMPGroup) item;
                     mmpgroup2.profile.openedInContactList = !mmpgroup2.profile.openedInContactList;
                     sp.edit().putBoolean("mmpg" + mmpgroup2.profile.ID, mmpgroup2.profile.openedInContactList).commit();
                     createContactlistFromProfiles();
-                } else if (item.itemType == 6) {
+                } else if (item.itemType == ContactlistItem.JABBER_GROUP) {
                     JGroup jgroup = (JGroup) item;
                     jgroup.opened = !jgroup.opened;
                     sp.edit().putBoolean("jg" + jgroup.name, jgroup.opened).commit();
                     createContactlistFromProfiles();
-                } else if (item.itemType == 3) {
+                } else if (item.itemType == ContactlistItem.PROFILE_GROUP) {
                     ICQGroup grp2 = (ICQGroup) item;
                     grp2.profile.openedInContactList = !grp2.profile.openedInContactList;
                     sp.edit().putBoolean("pg" + grp2.profile.ID, grp2.profile.openedInContactList).commit();
                     createContactlistFromProfiles();
-                } else if (item.itemType == 5) {
+                } else if (item.itemType == ContactlistItem.JABBER_PROFILE_GROUP) {
                     ICQGroup grp3 = (ICQGroup) item;
                     grp3.jprofile.openedInContactList = !grp3.jprofile.openedInContactList;
                     sp.edit().putBoolean("pg" + grp3.jprofile.ID, grp3.jprofile.openedInContactList).commit();
@@ -4400,12 +4401,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             if (CURRENT_IS_CONTACTS) {
                 ContactsAdapter adp = (ContactsAdapter) multiColumnList.getAdapter();
                 ContactlistItem item = adp.getItem(i);
-                if (item.itemType == 1) {
+                if (item.itemType == ContactlistItem.CONTACT) {
                     contextContact = (ICQContact) item;
                     contextProfile = contextContact.profile;
                     removeDialog(7);
                     showDialogA(7);
-                } else if (item.itemType == 2) {
+                } else if (item.itemType == ContactlistItem.GROUP) {
                     contextGroup = (ICQGroup) item;
                     if (!contextGroup.profile.connected) {
                         Toast.makeText(
@@ -4417,19 +4418,19 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     }
                     removeDialog(28);
                     showDialogA(28);
-                } else if (item.itemType == 4) {
+                } else if (item.itemType == ContactlistItem.JABBER_CONTACT) {
                     contextContact = null;
                     contextJContact = (JContact) item;
                     contextMMPContact = null;
                     removeDialog(7);
                     showDialogA(7);
-                } else if (item.itemType == 7) {
+                } else if (item.itemType == ContactlistItem.MMP_CONTACT) {
                     contextContact = null;
                     contextJContact = null;
                     contextMMPContact = (MMPContact) item;
                     removeDialog(7);
                     showDialogA(7);
-                } else if (item.itemType == 10) {
+                } else if (item.itemType == ContactlistItem.JABBER_CONFERENCE) {
                     contextConference = (ConferenceItem) item;
                     removeDialog(43);
                     showDialogA(43);

@@ -748,7 +748,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
 
             for (ContactlistItem item : list) {
                 if (shouldAddItem(item)) {
-                    if (item.itemType == 10) {
+                    if (item.itemType == ContactlistItem.JABBER_CONFERENCE) {
                         displayList.insertElementAt(item, online_idx);
                     } else {
                         displayList.addElement(item);
@@ -985,17 +985,17 @@ public class ContactsAdapter extends MultiColumnAdapter {
     public int getItemType(int idx) {
         if (idx < getCount() && idx >= 0) {
             switch (getItem(idx).itemType) {
-                case 2:
-                case 3:
-                case 5:
-                case 6:
-                case 8:
-                case 9:
-                case 11:
+                case ContactlistItem.GROUP:
+                case ContactlistItem.PROFILE_GROUP:
+                case ContactlistItem.JABBER_PROFILE_GROUP:
+                case ContactlistItem.JABBER_GROUP:
+                case ContactlistItem.MMP_PROFILE_GROUP:
+                case ContactlistItem.MMP_GROUP:
+                case ContactlistItem.SPLITTER:
                     return 0;
-                case 4:
-                case 7:
-                case 10:
+                case ContactlistItem.JABBER_CONTACT:
+                case ContactlistItem.MMP_CONTACT:
+                case ContactlistItem.JABBER_CONFERENCE:
                 default:
                     return 1;
             }
