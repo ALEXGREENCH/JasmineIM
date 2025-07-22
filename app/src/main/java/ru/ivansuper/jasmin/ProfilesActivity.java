@@ -324,7 +324,6 @@ public class ProfilesActivity extends Activity {
                 adp.put(this.service.getResources().getDrawable(R.drawable.ya_online), resources.getString("s_profile_type_yandex"), 3);
                 adp.put(this.service.getResources().getDrawable(R.drawable.qip_online), resources.getString("s_profile_type_qip"), 5);
                 adp.put(this.service.getResources().getDrawable(R.drawable.gtalk_online), resources.getString("s_profile_type_gtalk"), 6);
-                adp.put(this.service.getResources().getDrawable(R.drawable.xmpp_online), resources.getString("s_profile_type_irc"), 7);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad5 = DialogBuilder.create(this, resources.getString("s_add_profile"), adp, new AdapterView.OnItemClickListener() {
                     @Override
@@ -358,10 +357,6 @@ public class ProfilesActivity extends Activity {
                             case 6:
                                 removeDialog(15);
                                 showDialog(15);
-                                return;
-                            case 7:
-                                removeDialog(17);
-                                showDialog(17);
                                 return;
                             default:
                         }
@@ -1187,94 +1182,6 @@ public class ProfilesActivity extends Activity {
                     }
                 });
                 return ad17;
-            case 17:
-                @SuppressLint("InflateParams")
-                LinearLayout layIrcAdd = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.irc_profile_add, null);
-                ((TextView) layIrcAdd.findViewById(R.id.l1)).setText(resources.getString("s_irc_dialog_server"));
-                ((TextView) layIrcAdd.findViewById(R.id.l2)).setText(resources.getString("s_irc_dialog_port"));
-                ((TextView) layIrcAdd.findViewById(R.id.l3)).setText(resources.getString("s_irc_dialog_nick"));
-                final EditText ircServer = layIrcAdd.findViewById(R.id.irc_profile_add_server);
-                resources.attachEditText(ircServer);
-                final EditText ircPort = layIrcAdd.findViewById(R.id.irc_profile_add_port);
-                resources.attachEditText(ircPort);
-                final EditText ircNick = layIrcAdd.findViewById(R.id.irc_profile_add_nick);
-                resources.attachEditText(ircNick);
-                final CheckBox ircEnabled = layIrcAdd.findViewById(R.id.irc_profile_add_enabled);
-                ircEnabled.setText(Locale.getString("s_profile_enabled"));
-                final CheckBox ircAutoconnect = layIrcAdd.findViewById(R.id.irc_profile_add_autoconnect);
-                ircAutoconnect.setText(resources.getString("s_dialog_autologin"));
-                Dialog adIrcAdd = DialogBuilder.createYesNo(this, layIrcAdd, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ProfilesAdapterItem pdata = new ProfilesAdapterItem();
-                        pdata.profile_type = 3;
-                        pdata.server = ircServer.getText().toString().trim();
-                        try { pdata.port = Integer.parseInt(ircPort.getText().toString().trim()); } catch (Exception e) { pdata.port = 6667; }
-                        pdata.id = ircNick.getText().toString().trim();
-                        pdata.enabled = ircEnabled.isChecked();
-                        pdata.autoconnect = ircAutoconnect.isChecked();
-                        pa.add(pdata);
-                        ru.ivansuper.jasmin.irc.IRCProfile profile = new ru.ivansuper.jasmin.irc.IRCProfile(pdata.server, pdata.port, pdata.id);
-                        profile.autoconnect = pdata.autoconnect;
-                        profile.enabled = pdata.enabled;
-                        service.profiles.addProfile(profile);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistNeedRemake();
-                        removeDialog(17);
-                    }
-                }, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        removeDialog(17);
-                    }
-                });
-                return adIrcAdd;
-            case 18:
-                @SuppressLint("InflateParams")
-                LinearLayout layIrcEdit = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.irc_profile_add, null);
-                ((TextView) layIrcEdit.findViewById(R.id.l1)).setText(resources.getString("s_irc_dialog_server"));
-                ((TextView) layIrcEdit.findViewById(R.id.l2)).setText(resources.getString("s_irc_dialog_port"));
-                ((TextView) layIrcEdit.findViewById(R.id.l3)).setText(resources.getString("s_irc_dialog_nick"));
-                final EditText ircServerE = layIrcEdit.findViewById(R.id.irc_profile_add_server);
-                resources.attachEditText(ircServerE);
-                final EditText ircPortE = layIrcEdit.findViewById(R.id.irc_profile_add_port);
-                resources.attachEditText(ircPortE);
-                final EditText ircNickE = layIrcEdit.findViewById(R.id.irc_profile_add_nick);
-                resources.attachEditText(ircNickE);
-                final CheckBox ircEnabledE = layIrcEdit.findViewById(R.id.irc_profile_add_enabled);
-                ircEnabledE.setText(Locale.getString("s_profile_enabled"));
-                final CheckBox ircAutoconnectE = layIrcEdit.findViewById(R.id.irc_profile_add_autoconnect);
-                ircAutoconnectE.setText(resources.getString("s_dialog_autologin"));
-                ircServerE.setText(pa.getItem(selectedIdx).server);
-                ircPortE.setText(String.valueOf(pa.getItem(selectedIdx).port));
-                ircNickE.setText(pa.getItem(selectedIdx).id);
-                ircEnabledE.setChecked(pa.getItem(selectedIdx).enabled);
-                ircAutoconnectE.setChecked(pa.getItem(selectedIdx).autoconnect);
-                Dialog adIrcEdit = DialogBuilder.createYesNo(this, layIrcEdit, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
-                        pdata.profile_type = 3;
-                        pdata.server = ircServerE.getText().toString().trim();
-                        try { pdata.port = Integer.parseInt(ircPortE.getText().toString().trim()); } catch (Exception e) { pdata.port = 6667; }
-                        pdata.id = ircNickE.getText().toString().trim();
-                        pdata.enabled = ircEnabledE.isChecked();
-                        pdata.autoconnect = ircAutoconnectE.isChecked();
-                        pa.notifyDataSetChanged();
-                        ((ru.ivansuper.jasmin.irc.IRCProfile) service.profiles.getProfiles().get(selectedIdx)).reinitParams(pdata);
-                        service.profiles.writeProfilesToFile();
-                        service.handleProfileChanged();
-                        service.handleContactlistNeedRemake();
-                        removeDialog(18);
-                    }
-                }, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        removeDialog(18);
-                    }
-                });
-                return adIrcEdit;
             default:
                 return null;
         }
@@ -1333,15 +1240,6 @@ public class ProfilesActivity extends Activity {
                     pdata.id = mmp_profile.ID;
                     pdata.pass = mmp_profile.PASS;
                     pdata.autoconnect = mmp_profile.autoconnect;
-                    pdatas.add(pdata);
-                    break;
-                case 3:
-                    ru.ivansuper.jasmin.irc.IRCProfile irc = (ru.ivansuper.jasmin.irc.IRCProfile) improfile;
-                    pdata.profile_type = 3;
-                    pdata.server = irc.server;
-                    pdata.port = irc.port;
-                    pdata.id = irc.nickname;
-                    pdata.autoconnect = irc.autoconnect;
                     pdatas.add(pdata);
                     break;
             }

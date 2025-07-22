@@ -24,12 +24,6 @@ public abstract class ContactlistItem implements Comparable<ContactlistItem> {
     public static final int JABBER_CONFERENCE = 10;
     /** @noinspection unused*/
     public static final int SPLITTER = 11;
-    /** @noinspection unused*/
-    public static final int IRC_CONTACT = 12;
-    /** @noinspection unused*/
-    public static final int IRC_PROFILE_GROUP = 13;
-    /** @noinspection unused*/
-    public static final int IRC_GROUP = 14;
 
     // Публичные поля
     public int itemType;

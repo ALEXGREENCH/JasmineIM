@@ -12,7 +12,6 @@ import ru.ivansuper.jasmin.MMP.MMPProfile;
 import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.icq.ICQProfile;
-import ru.ivansuper.jasmin.irc.IRCProfile;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
@@ -137,61 +136,6 @@ public class ProfilesManager {
                             this.profiles.add(mmp_profile);
                             dis.skip(127L);
                             continue;
-                        case 3:
-                            int srvLen = dis.read();
-                            byte[] srv = new byte[srvLen];
-                            dis.read(srv, 0, srvLen);
-                            String sSrv = proceedISEM_B(srv);
-                            int portIRC = dis.readShort();
-                            int nickLenIRC = dis.read();
-                            String sNick = "";
-                            if (nickLenIRC > 0) {
-                                byte[] nb = new byte[nickLenIRC];
-                                dis.read(nb,0,nickLenIRC);
-                                sNick = proceedISEM_B(nb);
-                            }
-                            boolean autoconnectIrc = dis.readBoolean();
-                            boolean enabledIrc = dis.readBoolean();
-                            IRCProfile ircProfile = new IRCProfile(sSrv, portIRC, sNick);
-                            ircProfile.autoconnect = autoconnectIrc;
-                            ircProfile.enabled = enabledIrc;
-                            int rem = 127;
-                            int charsetLen = dis.read();
-                            rem--;
-                            if (charsetLen > 0) {
-                                byte[] cb = new byte[charsetLen];
-                                dis.read(cb, 0, charsetLen);
-                                rem -= charsetLen;
-                                try {
-                                    ircProfile.charset = proceedISEM_B(cb);
-                                } catch (Exception ignored) {
-                                }
-                            }
-                            int userLen = dis.read();
-                            rem--;
-                            if (userLen > 0) {
-                                byte[] ub = new byte[userLen];
-                                dis.read(ub, 0, userLen);
-                                rem -= userLen;
-                                try {
-                                    ircProfile.username = proceedISEM_B(ub);
-                                } catch (Exception ignored) {
-                                }
-                            }
-                            int realLen = dis.read();
-                            rem--;
-                            if (realLen > 0) {
-                                byte[] rb = new byte[realLen];
-                                dis.read(rb, 0, realLen);
-                                rem -= realLen;
-                                try {
-                                    ircProfile.realName = proceedISEM_B(rb);
-                                } catch (Exception ignored) {
-                                }
-                            }
-                            if (rem > 0) dis.skipBytes(rem);
-                            this.profiles.add(ircProfile);
-                            continue;
                     }
                 }
             } catch (Exception e2) {
@@ -287,32 +231,6 @@ public class ProfilesManager {
                         dos.writeBoolean(profile.enabled);
                         byte[] reserved3 = new byte[127];
                         dos.write(reserved3);
-                        break;
-                    case 3:
-                        dos.write(3);
-                        ru.ivansuper.jasmin.irc.IRCProfile ircProfile = (ru.ivansuper.jasmin.irc.IRCProfile) profile;
-                        byte[] s = proceedISEM_A(ircProfile.server);
-                        dos.write(s.length);
-                        dos.write(s);
-                        dos.writeShort(ircProfile.port);
-                        byte[] nick = proceedISEM_A(ircProfile.nickname != null ? ircProfile.nickname : "");
-                        dos.write(nick.length);
-                        dos.write(nick);
-                        dos.writeBoolean(ircProfile.autoconnect);
-                        dos.writeBoolean(profile.enabled);
-                        byte[] enc = proceedISEM_A(ircProfile.charset != null ? ircProfile.charset : "");
-                        byte[] user = proceedISEM_A(ircProfile.username != null ? ircProfile.username : "");
-                        byte[] real = proceedISEM_A(ircProfile.realName != null ? ircProfile.realName : "");
-                        int rem = 127 - (1 + enc.length + 1 + user.length + 1 + real.length);
-                        if (rem < 0) rem = 0;
-                        dos.write(enc.length);
-                        dos.write(enc);
-                        dos.write(user.length);
-                        dos.write(user);
-                        dos.write(real.length);
-                        dos.write(real);
-                        byte[] r4 = new byte[rem];
-                        dos.write(r4);
                         break;
                 }
             }
