@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="10sp">
+
+    <TextView
+        android:id="@+id/l1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Server:"
+        android:textColor="#ffffffff"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/irc_profile_add_server"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <requestFocus />
+    </EditText>
+
+    <TextView
+        android:id="@+id/l2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Port:"
+        android:textColor="#ffffffff"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/irc_profile_add_port"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:maxLength="5"
+        android:text="6667" />
+
+    <TextView
+        android:id="@+id/l3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Nickname:"
+        android:textColor="#ffffffff"
+        android:textSize="20sp" />
+
+    <EditText
+        android:id="@+id/irc_profile_add_nick"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <ru.ivansuper.jasmin.ui.MCheckBox
+        android:id="@+id/irc_profile_add_enabled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:checked="true"
+        android:text="Enabled" />
+
+    <ru.ivansuper.jasmin.ui.MCheckBox
+        android:id="@+id/irc_profile_add_autoconnect"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Autoconnect" />
+</LinearLayout>

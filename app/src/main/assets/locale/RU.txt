@@ -409,6 +409,10 @@ s_vk_dialog_login := id***... или Nickname
 s_ya_dialog_login := Ваш E-Mail
 s_qip_dialog_login := Логин
 s_gtalk_dialog_login := Ваш E-Mail
+s_irc_dialog_server := Сервер IRC
+s_irc_dialog_port := Порт
+s_irc_dialog_nick := Ник
+s_profile_type_irc := IRC
 //=============================
 //Contactlist
 //=============================

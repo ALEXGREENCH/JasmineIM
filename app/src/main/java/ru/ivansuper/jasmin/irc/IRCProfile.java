@@ -168,4 +168,18 @@ public class IRCProfile extends IMProfile {
     public void setStatusText(String str) {
         // IRC has no status text
     }
+
+    /**
+     * Update profile parameters from adapter data
+     */
+    public void reinitParams(ru.ivansuper.jasmin.ProfilesAdapterItem pdata) {
+        this.server = pdata.server;
+        this.port = pdata.port;
+        this.nickname = pdata.id;
+        this.autoconnect = pdata.autoconnect;
+        this.enabled = pdata.enabled;
+        if (!this.enabled && this.connected) {
+            disconnect();
+        }
+    }
 }
