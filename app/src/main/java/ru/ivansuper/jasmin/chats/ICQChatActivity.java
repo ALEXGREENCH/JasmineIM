@@ -577,7 +577,7 @@ public class ICQChatActivity extends Chat {
             if (service.opened_chats.size() >= 2) {
                 for (int i = 0; i < service.opened_chats.size(); i++) {
                     ContactlistItem item = service.opened_chats.get(i);
-                    if (item.itemType == 1) {
+                    if (item.itemType == ContactlistItem.CONTACT) {
                         ImageView marker = new ImageView(resources.ctx);
                         marker.setPadding(3, 0, 3, 0);
                         marker.setImageDrawable(contact.equals(item) ? resources.marker_active_chat : resources.marker_chat);
@@ -613,7 +613,7 @@ public class ICQChatActivity extends Chat {
                     next_idx = chats_count - 1;
                 }
                 ContactlistItem item = service.opened_chats.get(next_idx);
-                if (item.itemType == 1) {
+                if (item.itemType == ContactlistItem.CONTACT) {
                     contact = (ICQContact) item;
                     MessageSaveHelper.putMessage(this.SAVE_HASH, this.input.getText().toString());
                     setScrollStateHash(Integer.toHexString(utilities.getHash(contact)));
@@ -650,7 +650,7 @@ public class ICQChatActivity extends Chat {
                     next_idx2 = 0;
                 }
                 ContactlistItem item2 = service.opened_chats.get(next_idx2);
-                if (item2.itemType == 1) {
+                if (item2.itemType == ContactlistItem.CONTACT) {
                     saveScrollState();
                     contact = (ICQContact) item2;
                     MessageSaveHelper.putMessage(this.SAVE_HASH, this.input.getText().toString());
