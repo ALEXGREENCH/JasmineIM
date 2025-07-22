@@ -1,0 +1,5 @@
+<resources>
+    <item name="irc_online" type="drawable">@drawable/xmpp_online</item>
+    <item name="irc_offline" type="drawable">@drawable/xmpp_offline</item>
+    <item name="irc_connecting" type="drawable">@drawable/xmpp_connecting</item>
+</resources>

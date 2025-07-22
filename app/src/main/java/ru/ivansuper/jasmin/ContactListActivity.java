@@ -3574,6 +3574,67 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         });
                         profilesPanel.addView(status1);
                         break;
+                    case 3:
+                        final ru.ivansuper.jasmin.irc.IRCProfile ircProfile = (ru.ivansuper.jasmin.irc.IRCProfile) improfile;
+                        final ImageView statusIrc = new ImageView(this);
+                        statusIrc.setClickable(true);
+                        statusIrc.setPadding(8, 7, 8, 7);
+                        statusIrc.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
+                        statusIrc.setBackgroundDrawable(resources.getListSelector());
+                        statusIrc.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View view) {
+                                contextProfile = ircProfile;
+                                UAdapter list2 = new UAdapter();
+                                list2.setTextSize(18);
+                                list2.setPadding(5);
+                                if (ircProfile.connected || ircProfile.connecting) {
+                                    list2.put(resources.offline, resources.getString("s_status_offline"), 1);
+                                } else {
+                                    list2.put(resources.online, resources.getString("s_status_online"), 0);
+                                }
+                                last_quick_action = PopupBuilder.buildList(list2, view, ircProfile.nickname, RETURN_TO_CONTACTS, -2, new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                        last_quick_action.dismiss();
+                                        if (i == 0) {
+                                            if (!ircProfile.connected && !ircProfile.connecting) {
+                                                ircProfile.startConnecting();
+                                            }
+                                        } else if (i == 1) {
+                                            ircProfile.disconnect();
+                                        }
+                                    }
+                                });
+                                last_quick_action.show();
+                            }
+                        });
+                        profilesPanel.addView(statusIrc);
+                        ircProfile.setNotifier(new IMProfile.BottomPanelNotifier() {
+                            @Override
+                            public void onStatusChanged() {
+                                if (ircProfile.connected) {
+                                    statusIrc.setImageDrawable(resources.irc_online);
+                                } else if (ircProfile.connecting) {
+                                    statusIrc.setImageDrawable(resources.irc_connecting);
+                                } else {
+                                    statusIrc.setImageDrawable(resources.irc_offline);
+                                }
+                            }
+
+                            @Override
+                            public void onConnectionStatusChanged() {
+                                if (improfile.connection_status > 0 && improfile.connection_status < 100) {
+                                    cbLine.setVisibility(View.VISIBLE);
+                                    cbLabel.setText(improfile.ID);
+                                    cbProgress.setProgress(improfile.connection_status);
+                                } else {
+                                    cbLine.setVisibility(View.GONE);
+                                }
+                                checkConnectionPanelVisibility();
+                            }
+                        });
+                        break;
                 }
                 //boolean a = SNAC.sts.startsWith(utilities.randomized);
                 //int zzs = Math.abs(245);
