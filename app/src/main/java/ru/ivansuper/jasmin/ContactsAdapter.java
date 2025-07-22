@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Vector;
 
 import ru.ivansuper.jasmin.MMP.MMPContact;
@@ -28,21 +27,23 @@ import ru.ivansuper.jasmin.jabber.conference.Conference;
 import ru.ivansuper.jasmin.jabber.conference.ConferenceItem;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
-/* loaded from: classes.dex */
 public class ContactsAdapter extends MultiColumnAdapter {
     public static final Object locker = new Object();
-    private Context ctx;
+    /** @noinspection FieldCanBeLocal, unused */
+    private final Context ctx;
     private boolean only_chats;
     private boolean only_conferences;
     private String pattern;
-    private jasminSvc svc;
-    private Vector<ContactlistItem> list = new Vector<>();
-    private Vector<ContactlistItem> displayList = new Vector<>();
+    private final jasminSvc svc;
+    private final Vector<ContactlistItem> list = new Vector<>();
+    private final Vector<ContactlistItem> displayList = new Vector<>();
     private boolean separated_chats = false;
     private boolean filtered = false;
 
     public ContactsAdapter(Context ctxParam, jasminSvc svc, boolean only_chats, boolean only_conferences) {
+        //noinspection UnusedAssignment
         this.only_chats = false;
+        //noinspection UnusedAssignment
         this.only_conferences = false;
         this.ctx = ctxParam;
         this.svc = svc;
@@ -85,7 +86,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
         if (pattern == null) {
             this.filtered = false;
             this.svc.handleContactlistNeedRemake();
-        } else if (pattern.length() == 0) {
+        } else if (pattern.isEmpty()) {
             this.filtered = false;
             this.svc.handleContactlistNeedRemake();
         } else {
@@ -169,9 +170,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
                                             skip = false;
                                         }
                                         GroupPresenceInfo gpi = profile.contactlist.getGroupPresenceInfo(group.id);
-                                        if (gpi.empty_for_display) {
-                                            break;
-                                        } else {
+                                        if (!gpi.empty_for_display) {
                                             group.online = gpi.online;
                                             group.total = gpi.total;
                                             if (!group.opened) {
@@ -179,11 +178,9 @@ public class ContactsAdapter extends MultiColumnAdapter {
                                             }
                                             this.displayList.addElement(group);
                                             online_idx = this.displayList.size();
-                                            break;
                                         }
-                                    } else {
-                                        break;
                                     }
+                                    break;
                             }
                         }
                         continue;
@@ -205,13 +202,11 @@ public class ContactsAdapter extends MultiColumnAdapter {
                         boolean skip2 = false;
                         String current_group = "";
                         int current_group_id = 0;
-                        Iterator<ContactlistItem> it = jcontacts.iterator();
-                        while (it.hasNext()) {
-                            ContactlistItem item2 = it.next();
+                        for (ContactlistItem item2 : jcontacts) {
                             switch (item2.itemType) {
                                 case 4:
                                     JContact jcontact = (JContact) item2;
-                                    if (skip2 && !jcontact.group.equals(current_group) && (!jcontact.group.equals("") || current_group_id != -1)) {
+                                    if (skip2 && !jcontact.group.equals(current_group) && (!jcontact.group.isEmpty() || current_group_id != -1)) {
                                         skip2 = false;
                                     }
                                     if (!current_group.equals(jcontact.group)) {
@@ -266,9 +261,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
                                             skip2 = false;
                                         }
                                         GroupPresenceInfo gpi2 = jprofile.getGroupPresenceInfo(jgroup);
-                                        if (gpi2.empty_for_display) {
-                                            break;
-                                        } else {
+                                        if (!gpi2.empty_for_display) {
                                             jgroup.online = gpi2.online;
                                             jgroup.total = gpi2.total;
                                             if (!jgroup.opened) {
@@ -276,11 +269,9 @@ public class ContactsAdapter extends MultiColumnAdapter {
                                             }
                                             this.displayList.addElement(jgroup);
                                             online_idx2 = this.displayList.size();
-                                            break;
                                         }
-                                    } else {
-                                        break;
                                     }
+                                    break;
                                 case 10:
                                     Conference conference = ((ConferenceItem) item2).conference;
                                     if (conference.isOnline()) {
@@ -290,12 +281,10 @@ public class ContactsAdapter extends MultiColumnAdapter {
                                     if (vis2 && !this.separated_chats) {
                                         this.displayList.insertElementAt(item2, profile_idx);
                                         online_idx2++;
-                                        if (PreferenceTable.ms_chats_at_top) {
-                                            break;
-                                        } else {
+                                        if (!PreferenceTable.ms_chats_at_top) {
                                             chat_idx++;
-                                            break;
                                         }
+                                        break;
                                     }
                                     break;
                             }
@@ -364,9 +353,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
                                             skip3 = false;
                                         }
                                         GroupPresenceInfo gpi3 = mmp_profile.getGroupPresenceInfo(mmp_group.id);
-                                        if (gpi3.empty_for_display) {
-                                            break;
-                                        } else {
+                                        if (!gpi3.empty_for_display) {
                                             mmp_group.online = gpi3.online;
                                             mmp_group.total = gpi3.total;
                                             if (!mmp_group.opened) {
@@ -374,14 +361,11 @@ public class ContactsAdapter extends MultiColumnAdapter {
                                             }
                                             this.displayList.addElement(mmp_group);
                                             online_idx3 = this.displayList.size();
-                                            break;
                                         }
-                                    } else {
-                                        break;
                                     }
+                                    break;
                             }
                         }
-                        continue;
                 }
             }
         }
@@ -515,14 +499,12 @@ public class ContactsAdapter extends MultiColumnAdapter {
                                             this.displayList.insertElementAt(item, chat_idx);
                                             profile_idx++;
                                             chat_idx++;
-                                            online_idx2++;
-                                            break;
                                         } else {
                                             this.displayList.insertElementAt(item, profile_idx);
                                             profile_idx++;
-                                            online_idx2++;
-                                            break;
                                         }
+                                        online_idx2++;
+                                        break;
                                     }
                                     break;
                             }
@@ -570,7 +552,6 @@ public class ContactsAdapter extends MultiColumnAdapter {
                                 }
                             }
                         }
-                        continue;
                 }
             }
         }
@@ -601,7 +582,6 @@ public class ContactsAdapter extends MultiColumnAdapter {
                         MMPProfile mmp_profile = (MMPProfile) improfile;
                         Vector<ContactlistItem> mmp_contacts = mmp_profile.getContactsA();
                         list.addAll(mmp_contacts);
-                        continue;
                 }
             }
         }
@@ -610,9 +590,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
         list.addAll(confs);
         int chat_idx = 0;
         int online_idx = this.displayList.size();
-        Iterator<ContactlistItem> it = list.iterator();
-        while (it.hasNext()) {
-            ContactlistItem item = it.next();
+        for (ContactlistItem item : list) {
             switch (item.itemType) {
                 case 1:
                     ICQContact icontact = (ICQContact) item;
@@ -706,19 +684,18 @@ public class ContactsAdapter extends MultiColumnAdapter {
                     }
                 case 10:
                     ConferenceItem conf = (ConferenceItem) item;
-                    if (this.separated_chats) {
-                        break;
-                    } else {
+                    if (!this.separated_chats) {
                         this.displayList.insertElementAt(conf, online_idx);
                         chat_idx++;
                         online_idx++;
-                        break;
                     }
+                    break;
             }
         }
     }
 
     public void fill_filtered(ProfilesManager manager) {
+        //noinspection deprecation
         new FillFilteredTask(manager).execute();
     }
 
@@ -727,10 +704,12 @@ public class ContactsAdapter extends MultiColumnAdapter {
 
         private final ProfilesManager manager;
 
+        /** @noinspection deprecation*/
         public FillFilteredTask(ProfilesManager manager) {
             this.manager = manager;
         }
 
+        /** @noinspection deprecation*/
         @Override
         protected Void doInBackground(Void... params) {
             displayList.clear();
@@ -766,10 +745,8 @@ public class ContactsAdapter extends MultiColumnAdapter {
             list.addAll(confs);
 
             int online_idx = displayList.size();
-            Iterator<ContactlistItem> it = list.iterator();
 
-            while (it.hasNext()) {
-                ContactlistItem item = it.next();
+            for (ContactlistItem item : list) {
                 if (shouldAddItem(item)) {
                     if (item.itemType == 10) {
                         displayList.insertElementAt(item, online_idx);
@@ -791,6 +768,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
             return item.name.toLowerCase().contains(pattern) || item.ID.toLowerCase().contains(pattern);
         }
 
+        /** @noinspection deprecation*/
         @Override
         protected void onPostExecute(Void result) {
             // notify adapter about changed data after background fill
@@ -799,9 +777,12 @@ public class ContactsAdapter extends MultiColumnAdapter {
     }
 
     public void fillChats(ProfilesManager manager) {
+        //noinspection deprecation
         new FillChatsTask().execute(manager);
     }
 
+    /** @noinspection deprecation*/
+    @SuppressLint("StaticFieldLeak")
     private class FillChatsTask extends AsyncTask<ProfilesManager, Void, Void> {
 
         @Override
@@ -825,10 +806,8 @@ public class ContactsAdapter extends MultiColumnAdapter {
                             list.add(splitter);
                             Collections.sort(contacts);
                             list.addAll(contacts);
-                            break;
-                        } else {
-                            break;
                         }
+                        break;
                     case 1:
                         JProfile jprofile = (JProfile) improfile;
                         Vector<ContactlistItem> jcontacts = jprofile.getContacts();
@@ -838,10 +817,8 @@ public class ContactsAdapter extends MultiColumnAdapter {
                             list.add(splitter2);
                             Collections.sort(jcontacts);
                             list.addAll(jcontacts);
-                            break;
-                        } else {
-                            break;
                         }
+                        break;
                     case 2:
                         MMPProfile mmp_profile = (MMPProfile) improfile;
                         Vector<ContactlistItem> mmp_contacts = mmp_profile.getContactsA();
@@ -851,20 +828,17 @@ public class ContactsAdapter extends MultiColumnAdapter {
                             list.add(splitter3);
                             Collections.sort(mmp_contacts);
                             list.addAll(mmp_contacts);
-                            break;
-                        } else {
-                            break;
                         }
+                        break;
                 }
             }
             if (active_profiles_count < 2 || PreferenceTable.simple_cl) {
                 Collections.sort(list);
             }
             int chat_idx = 0;
+            //noinspection unused
             int online_idx = displayList.size();
-            Iterator<ContactlistItem> it = list.iterator();
-            while (it.hasNext()) {
-                ContactlistItem item = it.next();
+            for (ContactlistItem item : list) {
                 switch (item.itemType) {
                     case 1:
                         ICQContact icontact = (ICQContact) item;
@@ -914,9 +888,12 @@ public class ContactsAdapter extends MultiColumnAdapter {
     }
 
     public void fillConferences(ProfilesManager manager) {
+        //noinspection deprecation
         new FillConferencesTask().execute(manager);
     }
 
+    /** @noinspection deprecation*/
+    @SuppressLint("StaticFieldLeak")
     private class FillConferencesTask extends AsyncTask<ProfilesManager, Void, Void> {
 
         @Override
@@ -931,19 +908,18 @@ public class ContactsAdapter extends MultiColumnAdapter {
             for (int i = 0; i < sz; i++) {
                 IMProfile improfile = profiles.get(i);
                 if (improfile.connected || !PreferenceTable.ms_hide_not_connected_profiles) {
-                    switch (improfile.profile_type) {
-                        case 1:
-                            JProfile jprofile = (JProfile) improfile;
-                            if (jprofile.conference_items.size() != 0) {
-                                Collections.sort(jprofile.conference_items);
-                                ContactsSplitter splitter = new ContactsSplitter();
-                                splitter.name = improfile.ID;
-                                confs.add(splitter);
-                                confs.addAll(jprofile.conference_items);
-                                break;
-                            } else {
-                                continue;
-                            }
+                    if (improfile.profile_type == 1) {
+                        JProfile jprofile = (JProfile) improfile;
+                        if (!jprofile.conference_items.isEmpty()) {
+                            Collections.sort(jprofile.conference_items);
+                            ContactsSplitter splitter = new ContactsSplitter();
+                            splitter.name = improfile.ID;
+                            confs.add(splitter);
+                            confs.addAll(jprofile.conference_items);
+                        } else {
+                            //noinspection UnnecessaryContinue
+                            continue;
+                        }
                     }
                 }
             }
@@ -952,9 +928,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
             }
             list.addAll(confs);
             int online_idx = displayList.size();
-            Iterator<ContactlistItem> it = list.iterator();
-            while (it.hasNext()) {
-                ContactlistItem item = it.next();
+            for (ContactlistItem item : list) {
                 switch (item.itemType) {
                     case 10:
                         if (separated_chats) {
@@ -963,14 +937,11 @@ public class ContactsAdapter extends MultiColumnAdapter {
                             if (conf_.isOnline()) {
                                 displayList.insertElementAt(conf, online_idx);
                                 online_idx++;
-                                break;
                             } else {
                                 displayList.add(conf);
-                                break;
                             }
-                        } else {
-                            break;
                         }
+                        break;
                     case 11:
                         if (active_profiles_count >= 2 && !PreferenceTable.simple_cl) {
                             displayList.add(item);
@@ -990,25 +961,27 @@ public class ContactsAdapter extends MultiColumnAdapter {
         }
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public int getCount() {
         return this.displayList.size();
     }
 
+    /** @noinspection unused*/
     public int getCountA() {
         return this.list.size();
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public ContactlistItem getItem(int arg0) {
         return this.displayList.get(arg0);
     }
 
+    /** @noinspection unused*/
     public ContactlistItem getItemA(int arg0) {
         return this.list.get(arg0);
     }
 
-    @Override // ru.ivansuper.jasmin.MultiColumnList.MultiColumnAdapter
+    @Override
     public int getItemType(int idx) {
         if (idx < getCount() && idx >= 0) {
             switch (getItem(idx).itemType) {
@@ -1033,10 +1006,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
     @Override // android.widget.BaseAdapter, android.widget.ListAdapter
     public boolean isEnabled(int pos) {
         if (pos < getCount() && pos >= 0) {
-            if (getItem(pos).itemType == 11) {
-                return false;
-            }
-            return true;
+            return getItem(pos).itemType != 11;
         }
         return false;
     }

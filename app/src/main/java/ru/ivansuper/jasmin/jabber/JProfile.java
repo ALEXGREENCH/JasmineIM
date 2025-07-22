@@ -59,7 +59,6 @@ import ru.ivansuper.jasmin.protocols.IMProfile;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
-/* loaded from: classes.dex */
 public class JProfile extends IMProfile {
     /** @noinspection unused*/
     public static final int TYPE_GTALK = 3;
@@ -145,7 +144,7 @@ public class JProfile extends IMProfile {
         }
     }
 
-    private final void putPresence(Node node) {
+    private void putPresence(Node node) {
         if (this.roster_received) {
             handleStreamPresence(node);
             return;

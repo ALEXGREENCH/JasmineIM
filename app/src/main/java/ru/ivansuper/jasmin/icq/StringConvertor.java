@@ -6,7 +6,6 @@ import java.io.IOException;
 
 import ru.ivansuper.jasmin.jabber.jzlib.JZlib;
 
-/* loaded from: classes.dex */
 public class StringConvertor {
     /** @noinspection unused*/
     public static final byte ENCODING_AUTO = 4;

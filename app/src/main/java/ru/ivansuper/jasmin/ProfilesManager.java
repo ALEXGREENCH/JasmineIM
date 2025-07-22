@@ -15,9 +15,8 @@ import ru.ivansuper.jasmin.icq.ICQProfile;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
-/* loaded from: classes.dex */
 public class ProfilesManager {
-    private boolean EnableFeatureFirstTime;
+    private final boolean EnableFeatureFirstTime;
     private final Vector<IMProfile> profiles = new Vector<>();
     private final jasminSvc svc;
 
@@ -26,8 +25,9 @@ public class ProfilesManager {
         File enable_feature_checker = new File(utilities.normalizePath(resources.dataPath) + "ProfileEnableFeature");
         if (!enable_feature_checker.exists()) {
             try {
+                //noinspection ResultOfMethodCallIgnored
                 enable_feature_checker.createNewFile();
-            } catch (Exception e) {
+            } catch (Exception ignored) {
             }
             this.EnableFeatureFirstTime = true;
         } else {
@@ -40,16 +40,19 @@ public class ProfilesManager {
     }
 
     public final synchronized void fillProfilesFromFile() {
-        File profs = new File(String.valueOf(resources.dataPath) + "profiles.cfg");
+        File profs = new File(resources.dataPath + "profiles.cfg");
         if (!profs.exists()) {
             try {
+                //noinspection ResultOfMethodCallIgnored
                 profs.createNewFile();
             } catch (IOException e) {
+                //noinspection CallToPrintStackTrace
                 e.printStackTrace();
             }
         }
         if (profs.length() > 0) {
             try {
+                //noinspection IOStreamConstructor
                 DataInputStream dis = new DataInputStream(new FileInputStream(profs));
                 int profilesCount = dis.read();
                 for (int i = 0; i < profilesCount; i++) {
@@ -58,43 +61,51 @@ public class ProfilesManager {
                         case 0:
                             int nameLen = dis.read();
                             byte[] uin = new byte[nameLen];
+                            //noinspection ResultOfMethodCallIgnored
                             dis.read(uin, 0, nameLen);
                             String sUIN = proceedISEM_B(uin);
                             int passLen = dis.read();
                             byte[] pass = new byte[passLen];
+                            //noinspection ResultOfMethodCallIgnored
                             dis.read(pass, 0, passLen);
                             String sPASS = proceedISEM_B(pass);
                             String sNICK = null;
                             int nickLen = dis.read();
                             if (nickLen > 0) {
                                 byte[] nick = new byte[nickLen];
+                                //noinspection ResultOfMethodCallIgnored
                                 dis.read(nick, 0, nickLen);
                                 sNICK = proceedISEM_B(nick);
                             }
                             boolean autoconnect = dis.readBoolean();
                             boolean enabled = dis.readBoolean();
-                            ICQProfile profile = new ICQProfile(sUIN, sPASS, this.svc, autoconnect, this.EnableFeatureFirstTime ? true : enabled);
+                            ICQProfile profile = new ICQProfile(sUIN, sPASS, this.svc, autoconnect, this.EnableFeatureFirstTime || enabled);
                             if (sNICK != null) {
                                 profile.nickname = sNICK;
                             }
                             this.profiles.add(profile);
+                            //noinspection ResultOfMethodCallIgnored
                             dis.skip(127L);
                             continue;
                         case 1:
                             int idLen = dis.read();
                             byte[] id = new byte[idLen];
+                            //noinspection ResultOfMethodCallIgnored
                             dis.read(id, 0, idLen);
                             String ID = proceedISEM_B(id);
                             int serverLen = dis.read();
                             byte[] server = new byte[serverLen];
+                            //noinspection ResultOfMethodCallIgnored
                             dis.read(server, 0, serverLen);
                             String Server = proceedISEM_B(server);
                             int hostLen = dis.read();
                             byte[] host = new byte[hostLen];
+                            //noinspection ResultOfMethodCallIgnored
                             dis.read(host, 0, hostLen);
                             String Host = proceedISEM_B(host);
                             int passLen2 = dis.read();
                             byte[] pass2 = new byte[passLen2];
+                            //noinspection ResultOfMethodCallIgnored
                             dis.read(pass2, 0, passLen2);
                             String sPASS2 = proceedISEM_B(pass2);
                             int type = dis.read();
@@ -108,37 +119,43 @@ public class ProfilesManager {
                             int nickLen2 = dis.readInt();
                             if (nickLen2 > 0) {
                                 byte[] nick2 = new byte[nickLen2];
+                                //noinspection ResultOfMethodCallIgnored
                                 dis.read(nick2, 0, nickLen2);
                                 sNICK2 = proceedISEM_B(nick2);
                             }
-                            JProfile jprofile = new JProfile(this.svc, ID, Host, Server, port, sPASS2, sNICK2, use_compression, use_tls, use_sasl, autoconnect2, this.EnableFeatureFirstTime ? true : enabled2, type);
+                            JProfile jprofile = new JProfile(this.svc, ID, Host, Server, port, sPASS2, sNICK2, use_compression, use_tls, use_sasl, autoconnect2, this.EnableFeatureFirstTime || enabled2, type);
                             this.profiles.add(jprofile);
+                            //noinspection ResultOfMethodCallIgnored
                             dis.skip(121L);
                             continue;
                         case 2:
                             int nameLen2 = dis.read();
                             byte[] Id = new byte[nameLen2];
+                            //noinspection ResultOfMethodCallIgnored
                             dis.read(Id, 0, nameLen2);
                             String sID = proceedISEM_B(Id);
                             int passLen3 = dis.read();
                             byte[] pass3 = new byte[passLen3];
+                            //noinspection ResultOfMethodCallIgnored
                             dis.read(pass3, 0, passLen3);
                             String sPASS3 = proceedISEM_B(pass3);
                             int nickLen3 = dis.read();
                             if (nickLen3 > 0) {
                                 byte[] nick3 = new byte[nickLen3];
+                                //noinspection ResultOfMethodCallIgnored
                                 dis.read(nick3, 0, nickLen3);
                                 proceedISEM_B(nick3);
                             }
                             boolean autoconnect3 = dis.readBoolean();
                             boolean enabled3 = dis.readBoolean();
-                            MMPProfile mmp_profile = new MMPProfile(this.svc, sID, sPASS3, autoconnect3, this.EnableFeatureFirstTime ? true : enabled3);
+                            MMPProfile mmp_profile = new MMPProfile(this.svc, sID, sPASS3, autoconnect3, this.EnableFeatureFirstTime || enabled3);
                             this.profiles.add(mmp_profile);
+                            //noinspection ResultOfMethodCallIgnored
                             dis.skip(127L);
-                            continue;
                     }
                 }
             } catch (Exception e2) {
+                //noinspection CallToPrintStackTrace
                 e2.printStackTrace();
             }
         }
@@ -146,9 +163,12 @@ public class ProfilesManager {
 
     public final synchronized void writeProfilesToFile() {
         try {
-            File profs = new File(String.valueOf(resources.dataPath) + "profiles.cfg");
+            File profs = new File(resources.dataPath + "profiles.cfg");
+            //noinspection ResultOfMethodCallIgnored
             profs.delete();
+            //noinspection ResultOfMethodCallIgnored
             profs.createNewFile();
+            //noinspection IOStreamConstructor
             DataOutputStream dos = new DataOutputStream(new FileOutputStream(profs));
             int profilesCount = this.profiles.size();
             dos.write(profilesCount);
@@ -169,7 +189,7 @@ public class ProfilesManager {
                         String item3 = i_profile.nickname;
                         byte[] buf2 = proceedISEM_A(item3);
                         dos.write(buf2.length);
-                        if (item3.length() > 0) {
+                        if (!item3.isEmpty()) {
                             dos.write(buf2);
                         }
                         dos.writeBoolean(i_profile.autoconnect);
@@ -224,7 +244,7 @@ public class ProfilesManager {
                         String item11 = mmp_profile.ID;
                         byte[] buf4 = proceedISEM_A(item11);
                         dos.write(buf4.length);
-                        if (item11.length() > 0) {
+                        if (!item11.isEmpty()) {
                             dos.write(buf4);
                         }
                         dos.writeBoolean(mmp_profile.autoconnect);
@@ -236,12 +256,13 @@ public class ProfilesManager {
             }
             dos.close();
         } catch (Exception e) {
+            //noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
         EventTranslator.sendProfilesList();
     }
 
-    public static final byte[] proceedISEM_A(String source) throws Exception {
+    public static byte[] proceedISEM_A(String source) throws Exception {
         //noinspection InjectedReferences
         byte[] stepA = source.getBytes("windows1251");
         String stepB = utilities.convertToHex(stepA);
@@ -255,7 +276,7 @@ public class ProfilesManager {
         return stepC;
     }
 
-    public static final String proceedISEM_B(byte[] source) throws Exception {
+    public static String proceedISEM_B(byte[] source) throws Exception {
         byte j = 1;
         for (int i = 0; i < source.length; i++) {
             source[i] = (byte) (source[i] + j);
@@ -265,8 +286,7 @@ public class ProfilesManager {
         String stepA = new String(source, "windows1251");
         byte[] stepB = utilities.hexStringToBytesArray(stepA);
         //noinspection InjectedReferences
-        String stepC = new String(stepB, "windows1251");
-        return stepC;
+        return new String(stepB, "windows1251");
     }
 
     public final boolean isProfileAlreadyExist(String ID) {
@@ -313,7 +333,7 @@ public class ProfilesManager {
                 IMProfile profile = this.profiles.get(i);
                 if (profile.profile_type == 1) {
                     JProfile j_profile = (JProfile) profile;
-                    if ((String.valueOf(j_profile.ID) + "@" + j_profile.host).equals(JID)) {
+                    if ((j_profile.ID + "@" + j_profile.host).equals(JID)) {
                         return j_profile;
                     }
                 }
@@ -338,6 +358,7 @@ public class ProfilesManager {
         return null;
     }
 
+    /** @noinspection unused*/
     public final IMProfile getProfile(String full_id) {
         int len = this.profiles.size();
         if (len > 0) {
@@ -355,6 +376,7 @@ public class ProfilesManager {
         this.profiles.add(profile);
     }
 
+    /** @noinspection unused*/
     public final void removeProfile(String ID) {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
@@ -364,6 +386,7 @@ public class ProfilesManager {
                 try {
                     Thread.sleep(100L);
                 } catch (InterruptedException e) {
+                    //noinspection CallToPrintStackTrace
                     e.printStackTrace();
                 }
                 this.profiles.remove(i);
@@ -393,9 +416,11 @@ public class ProfilesManager {
                 ((JProfile) profile).getUnreadMessagesDump(dump);
             }
             if (profile.profile_type == 0) {
+                //noinspection DataFlowIssue
                 ((ICQProfile) profile).getUnreadMessagesDump(dump);
             }
             if (profile.profile_type == 2) {
+                //noinspection DataFlowIssue
                 ((MMPProfile) profile).getUnreadMessagesDump(dump);
             }
         }
@@ -421,6 +446,7 @@ public class ProfilesManager {
         return this.profiles;
     }
 
+    /** @noinspection unused*/
     public final Vector<ICQProfile> getIcqProfiles() {
         Vector<ICQProfile> list = new Vector<>();
         int len = this.profiles.size();
@@ -463,7 +489,7 @@ public class ProfilesManager {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
-            if (profile.profile_type == 1 && ((JProfile) profile).conference_items.size() > 0) {
+            if (profile.profile_type == 1 && !((JProfile) profile).conference_items.isEmpty()) {
                 return true;
             }
         }
@@ -479,9 +505,11 @@ public class ProfilesManager {
                 count += ((JProfile) profile).isAnyChatOpened() ? 1 : 0;
             }
             if (profile.profile_type == 0) {
+                //noinspection DataFlowIssue
                 count += ((ICQProfile) profile).contactlist.isAnyChatOpened() ? 1 : 0;
             }
             if (profile.profile_type == 2) {
+                //noinspection DataFlowIssue
                 count += ((MMPProfile) profile).isAnyChatOpened() ? 1 : 0;
             }
         }
@@ -494,7 +522,7 @@ public class ProfilesManager {
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
             if (profile.profile_type == 1) {
-                count += ((JProfile) profile).conference_items.size() > 0 ? 1 : 0;
+                count += !((JProfile) profile).conference_items.isEmpty() ? 1 : 0;
             }
         }
         return count;

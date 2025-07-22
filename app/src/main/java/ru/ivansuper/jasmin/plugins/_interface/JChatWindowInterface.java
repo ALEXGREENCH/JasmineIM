@@ -10,7 +10,7 @@ import java.util.Iterator;
 import java.util.Vector;
 import ru.ivansuper.jasmin.chats.JChatActivity;
 
-/** @noinspection unused*/ /* loaded from: classes.dex */
+/** @noinspection unused*/
 public class JChatWindowInterface {
     public static final Vector<OnWindowListener> wnd_listeners = new Vector<>();
     public static final Vector<OnBindMenuAction> menu_items_bind_listeners = new Vector<>();

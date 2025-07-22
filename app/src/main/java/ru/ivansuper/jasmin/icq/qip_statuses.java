@@ -3,7 +3,6 @@ package ru.ivansuper.jasmin.icq;
 import android.graphics.drawable.Drawable;
 import ru.ivansuper.jasmin.resources;
 
-/* loaded from: classes.dex */
 public class qip_statuses {
     public static String[] guids = {"B7074378F50C777797775778502D0570", "B7074378F50C777797775778502D0575", "B7074378F50C777797775778502D0576", "B7074378F50C777797775778502D0577", "B7074378F50C777797775778502D0578", "B7074378F50C777797775778502D0579"};
     /** @noinspection unused*/
