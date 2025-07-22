@@ -1962,15 +1962,15 @@ public class ICQProfile extends IMProfile {
                 String account = msg.sender;
                 int res = AntispamBot.checkQuestion(account, msg.message, this);
                 switch (res) {
-                    case 0:
+                    case AntispamBot.BANNED:
                         return;
-                    case 1:
+                    case AntispamBot.NEED_QUEST:
                         ICQMessageChannel1 message = new ICQMessageChannel1(this.sequence, msg.sender, this.svc.getAntispamQuestion(), false, msg.cookie);
                         userSend(message.data);
                         jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_message_locked"), new String[]{this.ID, msg.sender, preview}), resources.msg_in, null, popup_log_adapter.MESSAGE_DISPLAY_TIME, null);
                         this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_message_locked"), new String[]{this.ID, msg.sender, preview}));
                         return;
-                    case 2:
+                    case AntispamBot.ACCEPTED:
                         ICQMessageChannel1 message2 = new ICQMessageChannel1(this.sequence, msg.sender, this.svc.getAntispamAllowed(), false, msg.cookie);
                         userSend(message2.data);
                         msg.message = resources.getString("s_contact_allowed");
@@ -1989,15 +1989,15 @@ public class ICQProfile extends IMProfile {
                 String account2 = msg.sender;
                 int res2 = AntispamBot.checkQuestion(account2, msg.message, this);
                 switch (res2) {
-                    case 0:
+                    case AntispamBot.BANNED:
                         return;
-                    case 1:
+                    case AntispamBot.NEED_QUEST:
                         ICQMessageChannel1 message3 = new ICQMessageChannel1(this.sequence, msg.sender, this.svc.getAntispamQuestion(), false, msg.cookie);
                         userSend(message3.data);
                         jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_message_locked"), new String[]{this.ID, msg.sender, preview}), resources.msg_in, null, popup_log_adapter.MESSAGE_DISPLAY_TIME, null);
                         this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_message_locked"), new String[]{this.ID, msg.sender, preview}));
                         return;
-                    case 2:
+                    case AntispamBot.ACCEPTED:
                         ICQMessageChannel1 message4 = new ICQMessageChannel1(this.sequence, msg.sender, this.svc.getAntispamAllowed(), false, msg.cookie);
                         userSend(message4.data);
                         contact.as_accepted = true;

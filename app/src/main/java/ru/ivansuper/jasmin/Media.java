@@ -39,7 +39,7 @@ public class Media {
         if (ring_mode == 0 && phone_mode == 0) {
             try {
                 switch (event) {
-                    case 0:
+                    case INC_MSG:
                         if (MediaTable.inc_msg_e) {
                             this.mp.reset();
                             if (MediaTable.inc_msg.equals("$*INTERNAL*$")) {
@@ -56,7 +56,7 @@ public class Media {
                             break;
                         }
                         break;
-                    case 1:
+                    case AUTH_ACCEPTED:
                         if (MediaTable.auth_accepted_e) {
                             this.mp.reset();
                             if (MediaTable.auth_accepted.equals("$*INTERNAL*$")) {
@@ -73,7 +73,7 @@ public class Media {
                             break;
                         }
                         break;
-                    case 2:
+                    case AUTH_DENIED:
                         if (MediaTable.auth_denied_e) {
                             this.mp.reset();
                             if (MediaTable.auth_denied.equals("$*INTERNAL*$")) {
@@ -90,7 +90,7 @@ public class Media {
                             break;
                         }
                         break;
-                    case 3:
+                    case AUTH_REQUEST:
                         if (MediaTable.auth_req_e) {
                             this.mp.reset();
                             if (MediaTable.auth_req.equals("$*INTERNAL*$")) {
@@ -107,7 +107,7 @@ public class Media {
                             break;
                         }
                         break;
-                    case 4:
+                    case CONTACT_IN:
                         if (MediaTable.contact_in_e) {
                             this.mp.reset();
                             if (MediaTable.contact_in.equals("$*INTERNAL*$")) {
@@ -124,7 +124,7 @@ public class Media {
                             break;
                         }
                         break;
-                    case 5:
+                    case CONTACT_OUT:
                         if (MediaTable.contact_out_e) {
                             this.mp.reset();
                             if (MediaTable.contact_out.equals("$*INTERNAL*$")) {
@@ -141,7 +141,7 @@ public class Media {
                             break;
                         }
                         break;
-                    case 6:
+                    case INC_FILE:
                         if (MediaTable.inc_file_e) {
                             this.mp.reset();
                             if (MediaTable.inc_file.equals("$*INTERNAL*$")) {
@@ -158,7 +158,7 @@ public class Media {
                             break;
                         }
                         break;
-                    case 7:
+                    case OUT_MSG:
                         if (MediaTable.out_msg_e) {
                             this.mp.reset();
                             if (MediaTable.out_msg.equals("$*INTERNAL*$")) {
@@ -175,7 +175,7 @@ public class Media {
                             break;
                         }
                         break;
-                    case 8:
+                    case TRANSFER_REJECTED:
                         if (MediaTable.transfer_rejected_e) {
                             if (MediaTable.transfer_rejected.equals("$*INTERNAL*$")) {
                                 this.mp.reset();

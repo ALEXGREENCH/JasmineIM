@@ -235,7 +235,7 @@ public class MyTextView extends View implements Handler.Callback {
     @Override // android.view.View
     public boolean dispatchTouchEvent(MotionEvent event) {
         try {
-            if (event.getAction() == 0) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 this.mClickHandled = false;
                 this.mLongClickHandled = false;
                 int idx = getCharIndexFromCoordinate(event.getX(), event.getY());
@@ -259,7 +259,7 @@ public class MyTextView extends View implements Handler.Callback {
                 }
             }
             switch (event.getAction()) {
-                case 1:
+                case MotionEvent.ACTION_UP:
                     removeHighlight();
                     if (!this.mLongClickHandled) {
                         this.mClickHandled = true;
@@ -271,8 +271,8 @@ public class MyTextView extends View implements Handler.Callback {
                         }
                     }
                     break;
-                case 3:
-                case 4:
+                case MotionEvent.ACTION_CANCEL:
+                case MotionEvent.ACTION_OUTSIDE:
                     this.mClickHandled = true;
                     removeHighlight();
                     break;

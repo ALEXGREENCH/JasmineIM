@@ -8,6 +8,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Vector;
 
+import ru.ivansuper.jasmin.Service.EventTranslator;
+import ru.ivansuper.jasmin.jabber.JProfile;
+
 /* loaded from: classes.dex */
 public class ProfilesAdapter extends BaseAdapter {
     public Vector<ProfilesAdapterItem> profiles = new Vector<>();
@@ -56,28 +59,28 @@ public class ProfilesAdapter extends BaseAdapter {
         label.setPadding(10, 0, 0, 0);
         ImageView icon = new ImageView(resources.ctx);
         switch (this.profiles.get(arg0).profile_type) {
-            case 0:
+            case EventTranslator.PROFILE_TYPE_ICQ:
                 icon.setImageDrawable(resources.ctx.getResources().getDrawable(R.drawable.icq_status_online));
                 break;
-            case 1:
+            case EventTranslator.PROFILE_TYPE_JABBER:
                 switch (this.profiles.get(arg0).proto_type) {
-                    case 0:
+                    case JProfile.TYPE_XMPP:
                         icon.setImageDrawable(resources.ctx.getResources().getDrawable(R.drawable.xmpp));
                         break;
-                    case 1:
+                    case JProfile.TYPE_VK:
                         icon.setImageDrawable(resources.ctx.getResources().getDrawable(R.drawable.vk_online));
                         break;
-                    case 2:
+                    case JProfile.TYPE_YANDEX:
                         icon.setImageDrawable(resources.ctx.getResources().getDrawable(R.drawable.ya_online));
                         break;
-                    case 3:
+                    case JProfile.TYPE_GTALK:
                         icon.setImageDrawable(resources.ctx.getResources().getDrawable(R.drawable.gtalk_online));
                         break;
-                    case 4:
+                    case JProfile.TYPE_QIP:
                         icon.setImageDrawable(resources.ctx.getResources().getDrawable(R.drawable.qip_online));
                         break;
                 }
-            case 2:
+            case EventTranslator.PROFILE_TYPE_MRIM:
                 icon.setImageDrawable(resources.ctx.getResources().getDrawable(R.drawable.mrim_contact_status_online));
                 break;
             case 3:
