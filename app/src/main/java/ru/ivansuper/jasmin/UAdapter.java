@@ -10,59 +10,63 @@ import android.widget.TextView;
 import java.util.Vector;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 
-/* loaded from: classes.dex */
 public class UAdapter extends BaseAdapter {
+    /** @noinspection unused*/
     public static final int FORCE_HIDE_ICON = 2;
+    /** @noinspection unused*/
     public static final int FORCE_HIDE_LABEL = 1;
+    /** @noinspection unused*/
     public static final int FORCE_HIDE_LABEL_AND_ICON = 3;
+    /** @noinspection unused*/
     public static final int SHOW_ALL = 0;
-    private Vector<Drawable> icons = new Vector<>();
-    private Vector<String> labels = new Vector<>();
-    private Vector<Integer> ids = new Vector<>();
-    private Vector<Integer> gravs = new Vector<>();
-    private Vector<Integer> select = new Vector<>();
-    private Vector<Object> separators = new Vector<>();
-    private Vector<filtered_item> filtered = new Vector<>();
+    private final Vector<Drawable> icons = new Vector<>();
+    private final Vector<String> labels = new Vector<>();
+    private final Vector<Integer> ids = new Vector<>();
+    private final Vector<Integer> gravs = new Vector<>();
+    private final Vector<Integer> select = new Vector<>();
+    private final Vector<Object> separators = new Vector<>();
+    private final Vector<filtered_item> filtered = new Vector<>();
     private int mode = 0;
     private int padding = 0;
     private int text_color = -1;
     private int text_size = 16;
     private String filter = "";
+    /** @noinspection FieldCanBeLocal, unused */
     private boolean use_shadow = false;
 
-    @Override // android.widget.Adapter
+    @Override
     public int getCount() {
-        return this.filter.length() == 0 ? this.labels.size() : this.filtered.size();
+        return this.filter.isEmpty() ? this.labels.size() : this.filtered.size();
     }
 
     public int getLastIndex() {
-        return this.filter.length() == 0 ? this.labels.size() - 1 : this.filtered.size() - 1;
+        return this.filter.isEmpty() ? this.labels.size() - 1 : this.filtered.size() - 1;
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public String getItem(int arg0) {
         return this.labels.get(arg0);
     }
 
-    @Override // android.widget.BaseAdapter, android.widget.ListAdapter
+    @Override
     public boolean areAllItemsEnabled() {
         return false;
     }
 
-    @Override // android.widget.BaseAdapter, android.widget.ListAdapter
+    @Override
     public boolean isEnabled(int idx) {
         return this.separators.get(idx) == null;
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public long getItemId(int arg0) {
-        return this.filter.length() == 0 ? this.ids.get(arg0).intValue() : this.filtered.get(arg0).id;
+        return this.filter.isEmpty() ? this.ids.get(arg0) : this.filtered.get(arg0).id;
     }
 
     public void put(String label, int id) {
         this.icons.addElement(null);
         this.labels.addElement(label);
-        this.ids.addElement(new Integer(id));
+        this.ids.addElement(id);
         this.gravs.addElement(null);
         this.select.addElement(null);
         this.separators.addElement(null);
@@ -71,7 +75,7 @@ public class UAdapter extends BaseAdapter {
     public void put(Drawable icon, String label, int id) {
         this.icons.addElement(icon);
         this.labels.addElement(label);
-        this.ids.addElement(new Integer(id));
+        this.ids.addElement(id);
         this.gravs.addElement(null);
         this.select.addElement(null);
         this.separators.addElement(null);
@@ -80,8 +84,8 @@ public class UAdapter extends BaseAdapter {
     public void put(String label, int id, int gravity) {
         this.icons.addElement(null);
         this.labels.addElement(label);
-        this.ids.addElement(new Integer(id));
-        this.gravs.addElement(new Integer(gravity));
+        this.ids.addElement(id);
+        this.gravs.addElement(gravity);
         this.select.addElement(null);
         this.separators.addElement(null);
     }
@@ -89,28 +93,30 @@ public class UAdapter extends BaseAdapter {
     public void put(Drawable icon, String label, int id, int gravity) {
         this.icons.addElement(icon);
         this.labels.addElement(label);
-        this.ids.addElement(new Integer(id));
-        this.gravs.addElement(new Integer(gravity));
+        this.ids.addElement(id);
+        this.gravs.addElement(gravity);
         this.select.addElement(null);
         this.separators.addElement(null);
     }
 
+    /** @noinspection unused*/
     public void put_labels(String[] array) {
         for (int i = 0; i < array.length; i++) {
             this.icons.addElement(null);
             this.labels.addElement(array[i]);
-            this.ids.addElement(new Integer(i));
+            this.ids.addElement(i);
             this.gravs.addElement(null);
             this.select.addElement(null);
             this.separators.addElement(null);
         }
     }
 
+    /** @noinspection unused*/
     public void put_icons(Drawable[] array) {
         for (int i = 0; i < array.length; i++) {
             this.icons.addElement(array[i]);
             this.labels.addElement("");
-            this.ids.addElement(new Integer(i));
+            this.ids.addElement(i);
             this.gravs.addElement(null);
             this.select.addElement(null);
             this.separators.addElement(null);
@@ -143,17 +149,18 @@ public class UAdapter extends BaseAdapter {
         if (this.select.get(pos) != null) {
             this.select.set(pos, null);
         } else {
-            this.select.set(pos, new Integer(1));
+            this.select.set(pos, 1);
         }
         notifyDataSetChanged();
     }
 
     public void setSelected(int pos) {
         unselectAll();
-        this.select.set(pos, new Integer(1));
+        this.select.set(pos, 1);
         notifyDataSetChanged();
     }
 
+    /** @noinspection unused*/
     public void setUnselected(int pos) {
         unselectAll();
         this.select.set(pos, null);
@@ -166,6 +173,7 @@ public class UAdapter extends BaseAdapter {
         }
     }
 
+    /** @noinspection unused*/
     public int getSelectedIdx() {
         for (int i = 0; i < this.select.size(); i++) {
             if (this.select.get(i) != null) {
@@ -200,6 +208,7 @@ public class UAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
+    /** @noinspection unused*/
     public void setFilter(String expression) {
         this.filter = expression;
         doFilter();
@@ -218,13 +227,13 @@ public class UAdapter extends BaseAdapter {
             if (label.toLowerCase().startsWith(this.filter.toLowerCase())) {
                 filtered_item item = new filtered_item();
                 item.label = label;
-                item.id = this.ids.get(i).intValue();
+                item.id = this.ids.get(i);
                 this.filtered.add(item);
             }
         }
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public View getView(int arg0, View arg1, ViewGroup arg2) {
         LinearLayout layout;
         if (arg1 == null) {
@@ -232,13 +241,13 @@ public class UAdapter extends BaseAdapter {
         } else {
             layout = (LinearLayout) arg1;
         }
-        LinearLayout separator = (LinearLayout) layout.findViewById(R.id.list_item_separator);
+        LinearLayout separator = layout.findViewById(R.id.list_item_separator);
         separator.setVisibility(View.GONE);
-        LinearLayout lay = (LinearLayout) layout.findViewById(R.id.list_item_back);
-        ImageView icon = (ImageView) layout.findViewById(R.id.list_item_icon);
+        LinearLayout lay = layout.findViewById(R.id.list_item_back);
+        ImageView icon = layout.findViewById(R.id.list_item_icon);
         icon.setVisibility(View.VISIBLE);
         icon.setBackgroundDrawable(resources.ctx.getResources().getDrawable(R.drawable.smiley_and_send_btn));
-        TextView label = (TextView) layout.findViewById(R.id.list_item_label);
+        TextView label = layout.findViewById(R.id.list_item_label);
         lay.setPadding(this.padding, this.padding, this.padding, this.padding);
         if (!isEnabled(arg0)) {
             lay.setPadding(2, this.padding, 2, this.padding);
@@ -270,11 +279,11 @@ public class UAdapter extends BaseAdapter {
             } else {
                 lay.setBackgroundColor(0);
             }
-            if (this.filter.length() == 0) {
+            if (this.filter.isEmpty()) {
                 if (this.gravs.get(arg0) == null) {
                     lay.setGravity(19);
                 } else {
-                    lay.setGravity(this.gravs.get(arg0).intValue());
+                    lay.setGravity(this.gravs.get(arg0));
                 }
                 Drawable icn = this.icons.get(arg0);
                 if (icn != null) {
@@ -306,12 +315,8 @@ public class UAdapter extends BaseAdapter {
         return layout;
     }
 
-    /* loaded from: classes.dex */
-    public class filtered_item {
+    public static class filtered_item {
         public String label = "";
         public int id = 0;
-
-        public filtered_item() {
-        }
     }
 }

@@ -11,9 +11,9 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.jabber.JProfile;
 
-/* loaded from: classes.dex */
 public class ProfilesAdapter extends BaseAdapter {
     public Vector<ProfilesAdapterItem> profiles = new Vector<>();
+    /** @noinspection unused*/
     public int profilesCount;
 
     public void setProfilesAdapter(Vector<ProfilesAdapterItem> profiles) {
@@ -21,17 +21,17 @@ public class ProfilesAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public int getCount() {
         return this.profiles.size();
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public ProfilesAdapterItem getItem(int arg0) {
         return this.profiles.get(arg0);
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public long getItemId(int arg0) {
         return arg0;
     }
@@ -46,7 +46,7 @@ public class ProfilesAdapter extends BaseAdapter {
         notifyDataSetChanged();
     }
 
-    @Override // android.widget.Adapter
+    @Override
     public View getView(int arg0, View arg1, ViewGroup arg2) {
         LinearLayout item = new LinearLayout(resources.ctx);
         item.setOrientation(LinearLayout.HORIZONTAL);

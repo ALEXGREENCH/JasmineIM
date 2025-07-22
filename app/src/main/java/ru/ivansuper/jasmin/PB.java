@@ -8,11 +8,10 @@ import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 
-/* loaded from: classes.dex */
 public class PB extends View {
     private long max;
-    private android.graphics.drawable.BitmapDrawable progress;
-    private int shadow_border;
+    private BitmapDrawable progress;
+    private final int shadow_border;
     private long value;
     private long value_;
     private int view_height;
@@ -51,21 +50,21 @@ public class PB extends View {
         init(context);
     }
 
-    private final void init(Context context) {
-        this.progress = (android.graphics.drawable.BitmapDrawable) context.getResources().getDrawable(R.drawable.progress_line);
+    private void init(Context context) {
+        this.progress = (BitmapDrawable) context.getResources().getDrawable(R.drawable.progress_line);
         this.progress.setTileModeX(Shader.TileMode.REPEAT);
         this.progress.setTileModeY(Shader.TileMode.REPEAT);
         this.view_height = (int) (this.view_height * resources.dm.density);
     }
 
-    @Override // android.view.View
+    @Override
     protected void onMeasure(int a, int b) {
         this.view_width = (View.MeasureSpec.getSize(a) - (this.shadow_border * 2)) - 1;
         setMeasuredDimension(this.view_width + 1, this.view_height);
     }
 
     @SuppressLint("MissingSuperCall")
-    @Override // android.view.View
+    @Override
     public void draw(Canvas canvas) {
         this.value_ += (this.value - this.value_) / 5;
         Paint p = new Paint();

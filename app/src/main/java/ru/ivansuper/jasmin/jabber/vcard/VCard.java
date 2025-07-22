@@ -1,5 +1,6 @@
 package ru.ivansuper.jasmin.jabber.vcard;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.view.View;
@@ -15,7 +16,6 @@ import ru.ivansuper.jasmin.jabber.XML_ENGINE.Node;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
 
-/* loaded from: classes.dex */
 public class VCard {
     public Bitmap avatar;
     private final HashMap<Entry.Type, String> fields = new HashMap<>();
@@ -58,7 +58,7 @@ public class VCard {
             DESC,
             TZ;
 
-            /* renamed from: values, reason: to resolve conflict with enum method */
+            /** @noinspection unused*/ /* renamed from: values, reason: to resolve conflict with enum method */
             public static Type[] valuesCustom() {
                 Type[] valuesCustom = values();
                 int length = valuesCustom.length;
@@ -203,7 +203,8 @@ public class VCard {
         return vcard;
     }
 
-    public static final LinearLayout prepareEditor(Context context) {
+    @SuppressLint("CutPasteId")
+    public static LinearLayout prepareEditor(Context context) {
         LinearLayout lay = (LinearLayout) View.inflate(context, R.layout.jabber_vcard_form, null);
         TextView l = lay.findViewById(R.id.l1);
         l.setText(Locale.getString("s_jabber_vcard_editor_fullname"));

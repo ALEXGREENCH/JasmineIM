@@ -15,7 +15,6 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -25,21 +24,19 @@ import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.ui.LoadingView;
 
-/* loaded from: classes.dex */
 public class DialogBuilder {
     private static LinearLayout prepareContainer(Context context, String caption) {
         LinearLayout header = (LinearLayout) View.inflate(context, R.layout.dialog_header, null);
-        LinearLayout divider = (LinearLayout) header.findViewById(R.id.dialog_hdr_divider);
+        LinearLayout divider = header.findViewById(R.id.dialog_hdr_divider);
         divider.setBackgroundColor(ColorScheme.getColor(44));
-        TextView header_label = (TextView) header.findViewById(R.id.dialog_header);
+        TextView header_label = header.findViewById(R.id.dialog_header);
         header_label.setTextColor(ColorScheme.getColor(43));
         header_label.setText(caption);
-        LinearLayout container = (LinearLayout) header.findViewById(R.id.dialog_view);
-        return container;
+        return header.findViewById(R.id.dialog_view);
     }
 
     public static Dialog create(Context context, String hdr, CharSequence text, int gravity) {
-        return create(context, hdr, text, gravity, (int) R.style.TopDialogAnimation);
+        return create(context, hdr, text, gravity, R.style.TopDialogAnimation);
     }
 
     public static Dialog create(Context context, String header, BaseAdapter adapter, AdapterView.OnItemClickListener listener) {
@@ -52,7 +49,7 @@ public class DialogBuilder {
         list.setDividerHeight(0);
         list.setCacheColorHint(0);
         list.setSelector(resources.getListSelector());
-        list.setAdapter((ListAdapter) adapter);
+        list.setAdapter(adapter);
         LinearLayout.LayoutParams lay_p = new LinearLayout.LayoutParams(-1, -1, 5.0f);
         list.setLayoutParams(lay_p);
         container.addView(list);
@@ -68,6 +65,7 @@ public class DialogBuilder {
         });
         d.setCanceledOnTouchOutside(true);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -81,6 +79,7 @@ public class DialogBuilder {
         return d;
     }
 
+    /** @noinspection unused*/
     public static Dialog create(Context context, String hdr, CharSequence text, int gravity, int win_animation) {
         LinearLayout container = prepareContainer(context, hdr);
         LinearLayout lay = new LinearLayout(resources.ctx);
@@ -101,6 +100,7 @@ public class DialogBuilder {
         Dialog d = new Dialog(context, R.style.DialogTheme);
         d.setCanceledOnTouchOutside(true);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -114,6 +114,7 @@ public class DialogBuilder {
         return d;
     }
 
+    /** @noinspection unused*/
     public static Dialog create(Context context, String hdr, View content, int gravity) {
         LinearLayout container = prepareContainer(context, hdr);
         LinearLayout lay = new LinearLayout(resources.ctx);
@@ -125,6 +126,7 @@ public class DialogBuilder {
         Dialog d = new Dialog(context, R.style.DialogTheme);
         d.setCanceledOnTouchOutside(true);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -142,6 +144,7 @@ public class DialogBuilder {
         return create(context, hdr, adapter, gravity, listener, R.style.TopDialogAnimation);
     }
 
+    /** @noinspection unused*/
     public static Dialog create(Context context, String hdr, UAdapter adapter, int gravity, AdapterView.OnItemClickListener listener, int animation) {
         LinearLayout container = prepareContainer(context, hdr);
         LinearLayout lay = new LinearLayout(resources.ctx);
@@ -150,7 +153,7 @@ public class DialogBuilder {
         list.setDividerHeight(0);
         list.setCacheColorHint(0);
         list.setSelector(resources.getListSelector());
-        list.setAdapter((ListAdapter) adapter);
+        list.setAdapter(adapter);
         list.setOnItemClickListener(listener);
         LinearLayout.LayoutParams lay_p = new LinearLayout.LayoutParams(-1, -1, 5.0f);
         list.setLayoutParams(lay_p);
@@ -159,6 +162,7 @@ public class DialogBuilder {
         Dialog d = new Dialog(context, R.style.DialogTheme);
         d.setCanceledOnTouchOutside(true);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -172,6 +176,7 @@ public class DialogBuilder {
         return d;
     }
 
+    /** @noinspection unused*/
     public static Dialog createWithNoHeader(Context context, View content, int gravity) {
         LinearLayout lay = new LinearLayout(resources.ctx);
         lay.setOrientation(LinearLayout.VERTICAL);
@@ -181,6 +186,7 @@ public class DialogBuilder {
         Dialog d = new Dialog(context, R.style.DialogTheme);
         d.setCanceledOnTouchOutside(true);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -194,6 +200,7 @@ public class DialogBuilder {
         return d;
     }
 
+    /** @noinspection unused*/
     public static Dialog createWithNoHeader(Context context, BaseAdapter adapter, int gravity, final AdapterView.OnItemClickListener listener) {
         LinearLayout lay = new LinearLayout(resources.ctx);
         lay.setOrientation(LinearLayout.VERTICAL);
@@ -201,7 +208,7 @@ public class DialogBuilder {
         list.setDividerHeight(0);
         list.setCacheColorHint(0);
         list.setSelector(resources.getListSelector());
-        list.setAdapter((ListAdapter) adapter);
+        list.setAdapter(adapter);
         LinearLayout.LayoutParams lay_p = new LinearLayout.LayoutParams(-1, -1, 5.0f);
         list.setLayoutParams(lay_p);
         lay.addView(list);
@@ -215,6 +222,7 @@ public class DialogBuilder {
             }
         });
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -235,7 +243,7 @@ public class DialogBuilder {
         list.setDividerHeight(0);
         list.setCacheColorHint(0);
         list.setSelector(resources.getListSelector());
-        list.setAdapter((ListAdapter) adapter);
+        list.setAdapter(adapter);
         list.setOnItemLongClickListener(listener);
         LinearLayout.LayoutParams lay_p = new LinearLayout.LayoutParams(-1, -1, 5.0f);
         list.setLayoutParams(lay_p);
@@ -243,6 +251,7 @@ public class DialogBuilder {
         Dialog d = new Dialog(context, R.style.DialogTheme);
         d.setCanceledOnTouchOutside(true);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -256,6 +265,7 @@ public class DialogBuilder {
         return d;
     }
 
+    /** @noinspection unused*/
     public static Dialog createOk(Context context, String hdr, String text, String ok, int gravity, View.OnClickListener listener) {
         LinearLayout container = prepareContainer(context, hdr);
         LinearLayout lay = new LinearLayout(resources.ctx);
@@ -289,6 +299,7 @@ public class DialogBuilder {
         Dialog d = new Dialog(context, R.style.DialogTheme);
         d.setCanceledOnTouchOutside(true);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -307,6 +318,7 @@ public class DialogBuilder {
         return createOk(context, cnt, hdr, ok, gravity, listener, false);
     }
 
+    /** @noinspection unused*/
     public static Dialog createOk(Context context, View cnt, String hdr, String ok, int gravity, final View.OnClickListener listener, final boolean autoclose) {
         LinearLayout container = prepareContainer(context, hdr);
         LinearLayout lay = new LinearLayout(resources.ctx);
@@ -333,6 +345,7 @@ public class DialogBuilder {
             }
         });
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -355,7 +368,7 @@ public class DialogBuilder {
         list.setDividerHeight(0);
         list.setCacheColorHint(0);
         list.setSelector(resources.getListSelector());
-        list.setAdapter((ListAdapter) adapter);
+        list.setAdapter(adapter);
         list.setOnItemLongClickListener(listener);
         LinearLayout.LayoutParams lay_p = new LinearLayout.LayoutParams(-1, -1, 5.0f);
         list.setLayoutParams(lay_p);
@@ -370,6 +383,7 @@ public class DialogBuilder {
         Dialog d = new Dialog(context, R.style.DialogTheme);
         d.setCanceledOnTouchOutside(true);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -383,6 +397,7 @@ public class DialogBuilder {
         return d;
     }
 
+    /** @noinspection unused*/
     public static Dialog createYesNo(Context context, int gravity, String hdr, String text, String yes, String no, View.OnClickListener yes_listener, final View.OnClickListener no_listener) {
         LinearLayout lay_ = new LinearLayout(resources.ctx);
         lay_.setPadding(5, 5, 5, 5);
@@ -429,6 +444,7 @@ public class DialogBuilder {
             }
         });
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -446,6 +462,7 @@ public class DialogBuilder {
         return createYesNo(context, content, gravity, hdr, yes, no, yes_listener, no_listener, false);
     }
 
+    /** @noinspection unused*/
     public static Dialog createYesNo(Context context, View content, int gravity, String hdr, String yes, String no, final View.OnClickListener yes_listener, final View.OnClickListener no_listener, final boolean autoclose) {
         LinearLayout lay_ = new LinearLayout(resources.ctx);
         lay_.setPadding(5, 5, 5, 5);
@@ -499,6 +516,7 @@ public class DialogBuilder {
         lay.addView(lay_);
         container.addView(lay);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -574,6 +592,7 @@ public class DialogBuilder {
         lay.addView(lay_);
         container.addView(lay);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
@@ -603,6 +622,7 @@ public class DialogBuilder {
         Dialog d = new Dialog(context, R.style.DialogTheme);
         d.setCancelable(cancelable);
         Window wnd = d.getWindow();
+        //noinspection DataFlowIssue
         wnd.setSoftInputMode(3);
         wnd.setBackgroundDrawableResource(R.drawable.grey_back);
         resources.attachDialogStyle(wnd);
