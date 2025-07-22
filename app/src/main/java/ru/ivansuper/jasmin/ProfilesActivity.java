@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Gravity;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -107,7 +108,7 @@ public class ProfilesActivity extends Activity {
         switch (id) {
             case 0:
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad = DialogBuilder.createYesNo(this, 48, resources.getString("s_delete_profile"), this.pa.getItem(this.selectedIdx).id + ":\n" + resources.getString("s_are_you_sure"), resources.getString("s_yes"), resources.getString("s_no"), new View.OnClickListener() {
+                Dialog ad = DialogBuilder.createYesNo(this, Gravity.TOP, resources.getString("s_delete_profile"), this.pa.getItem(this.selectedIdx).id + ":\n" + resources.getString("s_are_you_sure"), resources.getString("s_yes"), resources.getString("s_no"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         removeDialog(0);
@@ -144,7 +145,7 @@ public class ProfilesActivity extends Activity {
                 enabled.setChecked(this.pa.getItem(this.selectedIdx).enabled);
                 autoconnect.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad2 = DialogBuilder.createYesNo(this, lay, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad2 = DialogBuilder.createYesNo(this, lay, Gravity.TOP, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
@@ -188,7 +189,7 @@ public class ProfilesActivity extends Activity {
                 adp_.put(resources.getString("s_change_profile"), 0);
                 adp_.put(resources.getString("s_delete_profile"), 1);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad3 = DialogBuilder.createWithNoHeader(this, adp_, 48, new AdapterView.OnItemClickListener() {
+                Dialog ad3 = DialogBuilder.createWithNoHeader(this, adp_, Gravity.TOP, new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                         removeDialog(2);
@@ -276,7 +277,7 @@ public class ProfilesActivity extends Activity {
                 final CheckBox autoconnect1 = lay2.findViewById(R.id.icq_profile_add_autoconnect);
                 autoconnect1.setText(resources.getString("s_dialog_autologin"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad4 = DialogBuilder.createYesNo(this, lay2, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad4 = DialogBuilder.createYesNo(this, lay2, Gravity.TOP, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = new ProfilesAdapterItem();
@@ -416,7 +417,7 @@ public class ProfilesActivity extends Activity {
                     }
                 });
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad6 = DialogBuilder.createYesNo(this, lay3, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad6 = DialogBuilder.createYesNo(this, lay3, Gravity.TOP, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = new ProfilesAdapterItem();
@@ -532,7 +533,7 @@ public class ProfilesActivity extends Activity {
                     }
                 });
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad7 = DialogBuilder.createYesNo(this, lay4, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad7 = DialogBuilder.createYesNo(this, lay4, Gravity.TOP, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
@@ -599,7 +600,7 @@ public class ProfilesActivity extends Activity {
                 final CheckBox tls4 = lay5.findViewById(R.id.xmpp_profile_add_tls);
                 autoconnect4.setText(resources.getString("s_dialog_autologin"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad8 = DialogBuilder.createYesNo(this, lay5, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad8 = DialogBuilder.createYesNo(this, lay5, Gravity.TOP, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = new ProfilesAdapterItem();
@@ -661,7 +662,7 @@ public class ProfilesActivity extends Activity {
                 password5.setText(this.pa.getItem(this.selectedIdx).pass);
                 autoconnect5.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad9 = DialogBuilder.createYesNo(this, lay6, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad9 = DialogBuilder.createYesNo(this, lay6, Gravity.TOP, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
@@ -715,7 +716,7 @@ public class ProfilesActivity extends Activity {
                 zlib7.setText(resources.getString("s_dialog_compression"));
                 tls7.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad10 = DialogBuilder.createYesNo(this, lay7, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad10 = DialogBuilder.createYesNo(this, lay7, Gravity.TOP, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = new ProfilesAdapterItem();
@@ -786,7 +787,7 @@ public class ProfilesActivity extends Activity {
                 tls6.setText(resources.getString("s_dialog_tls"));
                 autoconnect6.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad11 = DialogBuilder.createYesNo(this, lay8, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad11 = DialogBuilder.createYesNo(this, lay8, Gravity.TOP, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
@@ -840,7 +841,7 @@ public class ProfilesActivity extends Activity {
                 final CheckBox mmp_autoconnect = lay9.findViewById(R.id.mrim_profile_add_autoconnect);
                 mmp_autoconnect.setText(resources.getString("s_dialog_autologin"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad12 = DialogBuilder.createYesNo(this, lay9, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad12 = DialogBuilder.createYesNo(this, lay9, Gravity.TOP, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = new ProfilesAdapterItem();
@@ -899,7 +900,7 @@ public class ProfilesActivity extends Activity {
                 mmp_enabled2.setChecked(this.pa.getItem(this.selectedIdx).enabled);
                 mmp_autoconnect2.setChecked(item.autoconnect);
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad13 = DialogBuilder.createYesNo(this, lay10, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad13 = DialogBuilder.createYesNo(this, lay10, Gravity.TOP, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
@@ -953,7 +954,7 @@ public class ProfilesActivity extends Activity {
                 zlib8.setText(resources.getString("s_dialog_compression"));
                 tls8.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad14 = DialogBuilder.createYesNo(this, lay11, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad14 = DialogBuilder.createYesNo(this, lay11, Gravity.TOP, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = new ProfilesAdapterItem();
@@ -1020,7 +1021,7 @@ public class ProfilesActivity extends Activity {
                 zlib9.setText(resources.getString("s_dialog_compression"));
                 tls9.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad15 = DialogBuilder.createYesNo(this, lay12, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad15 = DialogBuilder.createYesNo(this, lay12, Gravity.TOP, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
@@ -1077,7 +1078,7 @@ public class ProfilesActivity extends Activity {
                 zlib10.setText(resources.getString("s_dialog_compression"));
                 tls10.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad16 = DialogBuilder.createYesNo(this, lay13, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad16 = DialogBuilder.createYesNo(this, lay13, Gravity.TOP, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = new ProfilesAdapterItem();
@@ -1146,7 +1147,7 @@ public class ProfilesActivity extends Activity {
                 zlib11.setText(resources.getString("s_dialog_compression"));
                 tls11.setText(resources.getString("s_dialog_tls"));
                 //noinspection UnnecessaryLocalVariable
-                Dialog ad17 = DialogBuilder.createYesNo(this, lay14, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog ad17 = DialogBuilder.createYesNo(this, lay14, Gravity.TOP, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
@@ -1203,7 +1204,7 @@ public class ProfilesActivity extends Activity {
                 ircEnabled.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox ircAutoconnect = layIrcAdd.findViewById(R.id.irc_profile_add_autoconnect);
                 ircAutoconnect.setText(resources.getString("s_dialog_autologin"));
-                Dialog adIrcAdd = DialogBuilder.createYesNo(this, layIrcAdd, 48, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog adIrcAdd = DialogBuilder.createYesNo(this, layIrcAdd, Gravity.TOP, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = new ProfilesAdapterItem();
@@ -1251,7 +1252,7 @@ public class ProfilesActivity extends Activity {
                 ircNickE.setText(pa.getItem(selectedIdx).id);
                 ircEnabledE.setChecked(pa.getItem(selectedIdx).enabled);
                 ircAutoconnectE.setChecked(pa.getItem(selectedIdx).autoconnect);
-                Dialog adIrcEdit = DialogBuilder.createYesNo(this, layIrcEdit, 48, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
+                Dialog adIrcEdit = DialogBuilder.createYesNo(this, layIrcEdit, Gravity.TOP, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         ProfilesAdapterItem pdata = pa.getItem(selectedIdx);
