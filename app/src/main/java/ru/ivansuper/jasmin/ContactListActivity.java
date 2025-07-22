@@ -148,6 +148,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     private static JProfile contextJProfile;
     public static MMPContact contextMMPContact;
     private static MMPProfile contextMrimProfile;
+    private static ru.ivansuper.jasmin.irc.IRCProfile contextIrcProfile;
     private static ICQProfile contextProfile;
     private static BufferedDialog dialog_for_display;
     public static Vector<BufferedDialog> dialogs;
@@ -3584,7 +3585,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         statusIrc.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                contextProfile = ircProfile;
+                                contextIrcProfile = ircProfile;
                                 UAdapter list2 = new UAdapter();
                                 list2.setTextSize(18);
                                 list2.setPadding(5);
