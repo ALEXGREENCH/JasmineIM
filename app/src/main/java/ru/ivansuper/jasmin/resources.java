@@ -298,6 +298,9 @@ public class resources {
     public static Drawable yandex_connecting;
     public static Drawable yandex_offline;
     public static Drawable yandex_online;
+    public static Drawable irc_connecting;
+    public static Drawable irc_offline;
+    public static Drawable irc_online;
 
     public resources() {
     }
@@ -1310,6 +1313,18 @@ public class resources {
             yandex_connecting = normalize(res.getDrawable(R.drawable.ya_connecting));
         }
 
+        if (irc_online == null) {
+            irc_online = normalize(res.getDrawable(R.drawable.irc_online));
+        }
+
+        if (irc_offline == null) {
+            irc_offline = normalize(res.getDrawable(R.drawable.irc_offline));
+        }
+
+        if (irc_connecting == null) {
+            irc_connecting = normalize(res.getDrawable(R.drawable.irc_connecting));
+        }
+
         if (online == null) {
             online = normalize(res.getDrawable(R.drawable.icq_status_online));
         }
@@ -1758,6 +1773,9 @@ public class resources {
             yandex_online = normalize(Drawable.createFromPath(JASMINE_SD_PATH + "Skin/sts_yandex_online.png"));
             yandex_offline = normalize(Drawable.createFromPath(JASMINE_SD_PATH + "Skin/sts_yandex_offline.png"));
             yandex_connecting = normalize(Drawable.createFromPath(JASMINE_SD_PATH + "Skin/sts_yandex_connecting.png"));
+            irc_online = normalize(Drawable.createFromPath(JASMINE_SD_PATH + "Skin/sts_irc_online.png"));
+            irc_offline = normalize(Drawable.createFromPath(JASMINE_SD_PATH + "Skin/sts_irc_offline.png"));
+            irc_connecting = normalize(Drawable.createFromPath(JASMINE_SD_PATH + "Skin/sts_irc_connecting.png"));
             online = normalize(Drawable.createFromPath(JASMINE_SD_PATH + "Skin/sts_online.png"));
             offline = normalize(Drawable.createFromPath(JASMINE_SD_PATH + "Skin/sts_offline.png"));
             connecting = normalize(Drawable.createFromPath(JASMINE_SD_PATH + "Skin/sts_connecting.png"));

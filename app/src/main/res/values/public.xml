@@ -233,6 +233,9 @@
     <public name="ya_connecting" id="0x7f0200e6" type="drawable" />
     <public name="ya_offline" id="0x7f0200e7" type="drawable" />
     <public name="ya_online" id="0x7f0200e8" type="drawable" />
+    <public name="irc_connecting" id="0x7f0200e9" type="drawable" />
+    <public name="irc_offline" id="0x7f0200ea" type="drawable" />
+    <public name="irc_online" id="0x7f0200eb" type="drawable" />
     <public name="about" id="0x7f030000" type="layout" />
     <public name="ach" id="0x7f030001" type="layout" />
     <public name="add_contact_dialog" id="0x7f030002" type="layout" />
