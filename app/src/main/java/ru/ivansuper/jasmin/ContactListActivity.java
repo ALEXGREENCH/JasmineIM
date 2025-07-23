@@ -236,7 +236,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             EventTranslator.sendProfilesList();
         }
         dialogs = new Vector<>();
-        if (getResources().getConfiguration().orientation != 1) {
+        if (getResources().getConfiguration().orientation != Configuration.ORIENTATION_PORTRAIT) {
             IT_IS_PORTRAIT = false;
         }
         initViews();
@@ -669,7 +669,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     }
 
     public void onConfigurationChangedLocal(final Configuration configuration, final int diff) {
-        this.IT_IS_PORTRAIT = getResources().getConfiguration().orientation == 1;
+        this.IT_IS_PORTRAIT = getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT;
         service.runOnUi(new Runnable() {
             @Override
             public void run() {

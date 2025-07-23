@@ -73,7 +73,7 @@ public class ProfilesManager {
                 for (int i = 0; i < profilesCount; i++) {
                     int profile_type = dis.read();
                     switch (profile_type) {
-                        case 0:
+                        case IMProfile.OSCAR:
                             int nameLen = dis.read();
                             byte[] uin = new byte[nameLen];
                             //noinspection ResultOfMethodCallIgnored
@@ -102,7 +102,7 @@ public class ProfilesManager {
                             //noinspection ResultOfMethodCallIgnored
                             dis.skip(127L);
                             continue;
-                        case 1:
+                        case IMProfile.JABBER:
                             int idLen = dis.read();
                             byte[] id = new byte[idLen];
                             //noinspection ResultOfMethodCallIgnored
@@ -143,7 +143,7 @@ public class ProfilesManager {
                             //noinspection ResultOfMethodCallIgnored
                             dis.skip(121L);
                             continue;
-                        case 2:
+                        case IMProfile.MMP:
                             int nameLen2 = dis.read();
                             byte[] Id = new byte[nameLen2];
                             //noinspection ResultOfMethodCallIgnored
@@ -190,8 +190,8 @@ public class ProfilesManager {
             for (int i = 0; i < profilesCount; i++) {
                 IMProfile profile = this.profiles.get(i);
                 switch (profile.profile_type) {
-                    case 0:
-                        dos.write(0);
+                    case IMProfile.OSCAR:
+                        dos.write(IMProfile.OSCAR);
                         ICQProfile i_profile = (ICQProfile) profile;
                         String item = i_profile.ID;
                         byte[] buffer = proceedISEM_A(item);
@@ -212,8 +212,8 @@ public class ProfilesManager {
                         byte[] reserved = new byte[127];
                         dos.write(reserved);
                         break;
-                    case 1:
-                        dos.write(1);
+                    case IMProfile.JABBER:
+                        dos.write(IMProfile.JABBER);
                         JProfile j_profile = (JProfile) profile;
                         String item4 = j_profile.ID;
                         byte[] buffer2 = proceedISEM_A(item4);
@@ -245,8 +245,8 @@ public class ProfilesManager {
                         byte[] reserved2 = new byte[121];
                         dos.write(reserved2);
                         break;
-                    case 2:
-                        dos.write(2);
+                    case IMProfile.MMP:
+                        dos.write(IMProfile.MMP);
                         MMPProfile mmp_profile = (MMPProfile) profile;
                         String item9 = mmp_profile.ID;
                         byte[] buffer7 = proceedISEM_A(item9);
@@ -311,7 +311,7 @@ public class ProfilesManager {
         }
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
-            if (profile.profile_type != 1) {
+            if (profile.profile_type != IMProfile.JABBER) {
                 if (profile.ID.equals(ID)) {
                     return true;
                 }
@@ -330,7 +330,7 @@ public class ProfilesManager {
         if (len > 0) {
             for (int i = 0; i < len; i++) {
                 IMProfile profile = this.profiles.get(i);
-                if (profile.profile_type == 0) {
+                if (profile.profile_type == IMProfile.OSCAR) {
                     ICQProfile i_profile = (ICQProfile) profile;
                     if (i_profile.ID.equals(UIN)) {
                         return i_profile;
@@ -346,7 +346,7 @@ public class ProfilesManager {
         if (len > 0) {
             for (int i = 0; i < len; i++) {
                 IMProfile profile = this.profiles.get(i);
-                if (profile.profile_type == 1) {
+                if (profile.profile_type == IMProfile.JABBER) {
                     JProfile j_profile = (JProfile) profile;
                     if ((j_profile.ID + "@" + j_profile.host).equals(JID)) {
                         return j_profile;
@@ -362,7 +362,7 @@ public class ProfilesManager {
         if (len > 0) {
             for (int i = 0; i < len; i++) {
                 IMProfile profile = this.profiles.get(i);
-                if (profile.profile_type == 2) {
+                if (profile.profile_type == IMProfile.MMP) {
                     MMPProfile m_profile = (MMPProfile) profile;
                     if (m_profile.ID.equals(email)) {
                         return m_profile;
@@ -427,14 +427,14 @@ public class ProfilesManager {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
-            if (profile.profile_type == 1) {
+            if (profile.profile_type == IMProfile.JABBER) {
                 ((JProfile) profile).getUnreadMessagesDump(dump);
             }
-            if (profile.profile_type == 0) {
+            if (profile.profile_type == IMProfile.OSCAR) {
                 //noinspection DataFlowIssue
                 ((ICQProfile) profile).getUnreadMessagesDump(dump);
             }
-            if (profile.profile_type == 2) {
+            if (profile.profile_type == IMProfile.MMP) {
                 //noinspection DataFlowIssue
                 ((MMPProfile) profile).getUnreadMessagesDump(dump);
             }
@@ -467,7 +467,7 @@ public class ProfilesManager {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
-            if (profile.profile_type == 0) {
+            if (profile.profile_type == IMProfile.OSCAR) {
                 list.add((ICQProfile) profile);
             }
         }
@@ -479,7 +479,7 @@ public class ProfilesManager {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
-            if (profile.profile_type == 1) {
+            if (profile.profile_type == IMProfile.JABBER) {
                 list.add((JProfile) profile);
             }
         }
@@ -493,7 +493,7 @@ public class ProfilesManager {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
-            if (profile.profile_type == 1 && profile.enabled) {
+            if (profile.profile_type == IMProfile.JABBER && profile.enabled) {
                 return true;
             }
         }
@@ -504,7 +504,7 @@ public class ProfilesManager {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
-            if (profile.profile_type == 1 && !((JProfile) profile).conference_items.isEmpty()) {
+            if (profile.profile_type == IMProfile.JABBER && !((JProfile) profile).conference_items.isEmpty()) {
                 return true;
             }
         }
@@ -516,14 +516,14 @@ public class ProfilesManager {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
-            if (profile.profile_type == 1) {
+            if (profile.profile_type == IMProfile.JABBER) {
                 count += ((JProfile) profile).isAnyChatOpened() ? 1 : 0;
             }
-            if (profile.profile_type == 0) {
+            if (profile.profile_type == IMProfile.OSCAR) {
                 //noinspection DataFlowIssue
                 count += ((ICQProfile) profile).contactlist.isAnyChatOpened() ? 1 : 0;
             }
-            if (profile.profile_type == 2) {
+            if (profile.profile_type == IMProfile.MMP) {
                 //noinspection DataFlowIssue
                 count += ((MMPProfile) profile).isAnyChatOpened() ? 1 : 0;
             }
@@ -536,7 +536,7 @@ public class ProfilesManager {
         int len = this.profiles.size();
         for (int i = 0; i < len; i++) {
             IMProfile profile = this.profiles.get(i);
-            if (profile.profile_type == 1) {
+            if (profile.profile_type == IMProfile.JABBER) {
                 count += !((JProfile) profile).conference_items.isEmpty() ? 1 : 0;
             }
         }

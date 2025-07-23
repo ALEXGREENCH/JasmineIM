@@ -107,13 +107,13 @@ public class ContactHistoryActivity extends Activity {
 
     @Override
     public boolean onKeyDown(int code, KeyEvent event) {
-        if (event.getAction() == 0) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (code) {
-                case 82:
+                case KeyEvent.KEYCODE_MENU:
                     removeDialog(1);
                     showDialog(1);
                     return true;
-                case 4:
+                case KeyEvent.KEYCODE_BACK:
                     finish();
                     break;
             }
