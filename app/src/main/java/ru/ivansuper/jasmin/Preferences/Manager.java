@@ -47,17 +47,17 @@ public class Manager {
             int fontSize;
             int smileScale;
             if (density >= DisplayMetrics.DENSITY_XXHIGH) {
-                fontSize = 20;
-                smileScale = 200;
+                fontSize = 24;
+                smileScale = 320;
             } else if (density >= DisplayMetrics.DENSITY_XHIGH) {
-                fontSize = 18;
-                smileScale = 150;
+                fontSize = 20;
+                smileScale = 240;
             } else if (density >= DisplayMetrics.DENSITY_HIGH) {
-                fontSize = 16;
-                smileScale = 120;
+                fontSize = 18;
+                smileScale = 180;
             } else {
                 fontSize = 15;
-                smileScale = 100;
+                smileScale = 160;
             }
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
