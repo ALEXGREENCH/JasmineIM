@@ -24,8 +24,6 @@ import ru.ivansuper.jasmin.MMP.MMPProfile;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.icq.ICQContact;
 import ru.ivansuper.jasmin.icq.ICQProfile;
@@ -95,7 +93,7 @@ public class ContactHistoryActivity extends Activity {
                 break;
             case "2":
                 setTheme(R.style.BlackNoTitleTheme);
-                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorUtils.getColor(ColorKey.CHAT_HEADER_TYPING)));
+                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
                 break;
         }
         super.onCreate(savedInstanceState);

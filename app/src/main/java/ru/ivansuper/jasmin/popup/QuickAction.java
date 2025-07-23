@@ -12,8 +12,6 @@ import android.widget.TextView;
 
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.resources;
 
 /**
@@ -63,8 +61,8 @@ public class QuickAction extends CustomPopupWindow {
         LinearLayout var3 = (LinearLayout) this.root.findViewById(R.id.popup_header_divider);
         this.mTrack = (ViewGroup) this.root.findViewById(R.id.tracks);
         if (var2 != null) {
-            var3.setBackgroundColor(ColorUtils.getColor(ColorKey.MENU_DIVIDERS));
-            this.mHeaderLabel.setTextColor(ColorUtils.getColor(ColorKey.MENU_HEADERS));
+            var3.setBackgroundColor(ColorScheme.getColor(44));
+            this.mHeaderLabel.setTextColor(ColorScheme.getColor(43));
             this.mHeaderLabel.setText(var2);
         } else {
             this.mTrack.removeView(var3);

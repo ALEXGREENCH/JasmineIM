@@ -5,8 +5,6 @@ import android.graphics.Paint;
 import android.text.style.ReplacementSpan;
 
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 
 /**
  * A custom {@link ReplacementSpan} that draws a {@link Movie} (animated GIF)
@@ -27,7 +25,7 @@ public class MySpan extends ReplacementSpan {
         this.movie = movie;
         if (back_color) {
             this.paint_ = new Paint();
-            this.paint_.setColor(ColorUtils.getColor(ColorKey.CONFERENCE_MESSAGE_HIGHLIGHT));
+            this.paint_.setColor(ColorScheme.getColor(41));
             this.paint_.setStyle(Paint.Style.FILL_AND_STROKE);
         } else {
             this.paint_ = null;
@@ -39,7 +37,7 @@ public class MySpan extends ReplacementSpan {
         this.movie.recomputeSize(height);
         if (back_color) {
             this.paint_ = new Paint();
-            this.paint_.setColor(ColorUtils.getColor(ColorKey.CONFERENCE_MESSAGE_HIGHLIGHT));
+            this.paint_.setColor(ColorScheme.getColor(41));
             this.paint_.setStyle(Paint.Style.FILL_AND_STROKE);
         } else {
             this.paint_ = null;

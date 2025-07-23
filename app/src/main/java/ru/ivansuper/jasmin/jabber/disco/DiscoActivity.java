@@ -19,8 +19,6 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.UAdapter;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.jabber.PacketHandler;
@@ -69,7 +67,7 @@ public class DiscoActivity extends Activity {
                 break;
             case "2":
                 setTheme(R.style.BlackNoTitleTheme);
-                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorUtils.getColor(ColorKey.CHAT_HEADER_TYPING)));
+                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
                 break;
         }
         setVolumeControlStream(3);

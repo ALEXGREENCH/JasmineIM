@@ -18,8 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.jabber.forms.FormListMap;
 import ru.ivansuper.jasmin.resources;
 
@@ -103,7 +101,7 @@ public class Spinner extends View {
         lay.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
         ListView list = new ListView(getContext());
         list.setLayoutParams(new ViewGroup.LayoutParams(-1, -1));
-        list.setDivider(new ColorDrawable(ColorUtils.getColor(ColorKey.MENU_DIVIDERS)));
+        list.setDivider(new ColorDrawable(ColorScheme.getColor(44)));
         list.setDividerHeight(1);
         list.setSelector(resources.getListSelector());
         list.setAdapter(this.mAdapter);
