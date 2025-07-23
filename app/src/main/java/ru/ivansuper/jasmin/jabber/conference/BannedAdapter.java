@@ -14,6 +14,10 @@ import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * An adapter for displaying a list of banned users in a conference.
+ * It extends {@link BaseAdapter} and uses a custom layout for each item.
+ */
 public class BannedAdapter extends BaseAdapter {
     private ArrayList<BannedItem> mList;
 

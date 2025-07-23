@@ -49,6 +49,37 @@ import ru.ivansuper.jasmin.slide_tools.AnimationCalculator;
 import ru.ivansuper.jasmin.slide_tools.ListViewA;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents the chat activity for ICQ.
+ * This class handles the user interface and logic for an individual chat session with an ICQ contact.
+ * It extends the base {@link Chat} class and implements ICQ-specific features
+ * such as status display, typing notifications, file transfer, and encoding handling.
+ *
+ * <p>Key functionalities include:</p>
+ * <ul>
+ *     <li>Displaying messages in a list view.</li>
+ *     <li>Sending and receiving text messages.</li>
+ *     <li>Showing contact information (avatar, nickname, status, xStatus).</li>
+ *     <li>Handling typing notifications (sending and displaying "typing" status).</li>
+ *     <li>Managing file transfers (sending and receiving files).</li>
+ *     <li>Providing options for message encoding.</li>
+ *     <li>Supporting message quoting (single and multi-quote).</li>
+ *     <li>Displaying markers for other open chats.</li>
+ *     <li>Integrating with the contact list and user profiles.</li>
+ * </ul>
+ *
+ * <p>The activity's lifecycle methods (onCreate, onStart, onResume, onPause, onDestroy)
+ * are overridden to manage resources, initialize UI components, and handle chat state.</p>
+ *
+ * <p>Static fields like {@code INITIALIZED} and {@code VISIBLE} track the state of the chat activity.
+ * UI elements such as {@code TOP_PANEL}, {@code nick_}, {@code nickname}, {@code mainStatus},
+ * {@code xStatus}, {@code encoding}, {@code typing_field}, and {@code opened_chats_markers}
+ * are managed as static fields, though it's noted that some could be local.</p>
+ *
+ * <p>Instances of this class are typically obtained via the static factory methods
+ * {@link #getInstance(ICQContact, ChatInitCallback)} or
+ * {@link #getInstance(String, ChatInitCallback)}.</p>
+ */
 public class ICQChatActivity extends Chat {
     public static boolean INITIALIZED;
     /** @noinspection FieldCanBeLocal*/

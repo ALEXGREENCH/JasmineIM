@@ -11,6 +11,10 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Adapter for displaying search results in a ListView.
+ * This adapter manages a list of {@link SearchResultItem} objects and provides views for each item.
+ */
 public class SearchResultsAdapter extends BaseAdapter {
     private final Vector<SearchResultItem> list = new Vector<>();
 

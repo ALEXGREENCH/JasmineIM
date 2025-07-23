@@ -14,6 +14,11 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.jabber.Clients;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Adapter for displaying a list of users in a conference.
+ * This adapter is responsible for creating and binding views for each user in the conference.
+ * It displays the user's nickname, status, affiliation, and client icon.
+ */
 public class ConfUsersAdapter extends BaseAdapter {
     private final Context ctx;
     private Vector<Conference.User> users;

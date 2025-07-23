@@ -11,6 +11,20 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Adapter for displaying a preview of conference rooms.
+ * This adapter manages a list of {@link Item} objects, each representing a room with a label and description.
+ * It supports filtering the displayed rooms based on a search expression.
+ *
+ * <p>Initially, the adapter displays a loading message. The actual room data can be populated using the
+ * {@link #fill(Vector)} method. If an error occurs while fetching data, the {@link #error()} method can be
+ * called to display an error message.
+ *
+ * <p>The {@link #applyFilter(String)} method allows filtering the displayed rooms based on whether the
+ * provided expression matches the room's label or description (case-insensitive).
+ *
+ * <p>This adapter is designed to be used with a ListView or similar AdapterView.
+ */
 public class RoomsPreviewAdapter extends BaseAdapter {
     public boolean init;
     private final Vector<Item> list = new Vector<>();

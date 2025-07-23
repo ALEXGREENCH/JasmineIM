@@ -22,6 +22,16 @@ import ru.ivansuper.jasmin.slide_tools.ListViewA;
 import ru.ivansuper.jasmin.smileys_adapter;
 import ru.ivansuper.jasmin.ui.ExFragment;
 
+/**
+ * Abstract base class for chat fragments.
+ *
+ * <p>This class provides common functionality for chat interfaces, including handling user input,
+ * displaying messages, managing smileys, and saving/restoring scroll state. It also defines
+ * constants for various chat-related actions and request codes.
+ *
+ * <p>Subclasses should implement specific chat logic, such as handling different types of messages
+ * or integrating with specific chat services.
+ */
 public abstract class Chat extends ExFragment implements Handler.Callback {
 
     public static final int CHAT_SHOW_MENU = 97;

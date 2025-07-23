@@ -10,6 +10,12 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Adapter for displaying service discovery items in a list.
+ * This adapter handles the hierarchical structure of disco items
+ * and their visual representation, including indentation for levels,
+ * icons based on status and type, and open/closed indicators for nodes.
+ */
 public class DiscoAdapter extends BaseAdapter {
     private static final int LEVEL_SHIFT = (int) (14.0f * resources.dm.density);
     private Vector<Item> mDisplay;

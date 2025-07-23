@@ -1,8 +1,21 @@
 package ru.ivansuper.jasmin.icq;
 
 import java.io.IOException;
-import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Parses incoming roster (contact list) data from the ICQ server.
+ * This class is responsible for interpreting the binary data stream
+ * representing the user's contact list and updating the local
+ * {@link ICQProfile} with the parsed information.
+ *
+ * <p>The roster data includes information about contacts (UINs, nicknames, groups),
+ * groups themselves, and visibility settings (visible, invisible, ignore lists).
+ *
+ * <p>The parsing logic iterates through SSI (Server-Side Information) items,
+ * each representing a contact, group, or visibility setting. It handles
+ * different item types (contacts, groups, visibility lists, etc.) and
+ * extracts relevant information using TLV (Type-Length-Value) structures.
+ */
 public class IncomingRosterParser {
     public void parse(ByteBuffer buffer, ICQProfile profile) {
         String nickname;

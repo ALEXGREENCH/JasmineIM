@@ -2,6 +2,24 @@ package ru.ivansuper.jasmin.jabber.disco;
 
 import java.util.Vector;
 
+/**
+ * Represents an item in a Service Discovery (disco) result.
+ * This class is used to model entities discovered through XMPP's Service Discovery protocol.
+ * Each item can represent a server, a command, or a normal entity, and can have child items.
+ *
+ * <p>The class provides constants for various statuses and types, and includes methods
+ * for managing child items, determining the type of an item, and converting the item
+ * and its children into a flat list.
+ *
+ * <p>Example usage:
+ * <pre>{@code
+ * Item serverItem = new Item("conference.example.com", null, "conference.example.com", "conference.example.com");
+ * Item roomItem = new Item("room1", serverItem, "room1", "room1@conference.example.com");
+ * serverItem.append(roomItem);
+ * serverItem.detectType(); // Assuming serverItem has identities that mark it as a server
+ * Vector<Item> itemList = serverItem.toList(Item.START_ROOT_LEVEL);
+ * }</pre>
+ */
 public class Item {
     /** @noinspection unused*/
     public static final int START_ROOT_LEVEL = -1;

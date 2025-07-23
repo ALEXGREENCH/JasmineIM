@@ -10,6 +10,12 @@ import ru.ivansuper.jasmin.icq.ByteCache;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents a file sender that extends the FileTransfer class.
+ * This class is responsible for sending files over a network connection.
+ * It manages the state of the file transfer, including initialization,
+ * sending progress, and handling of connection events and errors.
+ */
 public class FileSender extends FileTransfer {
     public File file;
     private FileInputStream in;

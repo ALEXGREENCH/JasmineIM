@@ -1,5 +1,9 @@
 package ru.ivansuper.jasmin.icq;
 
+/**
+ * Represents the criteria used for searching users.
+ * This class holds various fields that can be populated to refine a user search.
+ */
 public class SearchCriteries {
     public String nick = "";
     public String name = "";

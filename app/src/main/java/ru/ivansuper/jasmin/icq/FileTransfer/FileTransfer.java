@@ -8,6 +8,13 @@ import ru.ivansuper.jasmin.icq.ByteBuffer;
 import ru.ivansuper.jasmin.icq.ICQContact;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Abstract class representing a file transfer operation.
+ * This class provides common functionalities and properties for file transfers,
+ * such as contact information, cookie, direction, file name, file size, and port.
+ * It also defines abstract methods for canceling and shutting down the transfer,
+ * and concrete methods for creating proxy initialization packets and OFT2 packets.
+ */
 public abstract class FileTransfer {
     public ICQContact contact;
     public byte[] cookie;

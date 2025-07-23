@@ -12,6 +12,11 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import ru.ivansuper.jasmin.R;
 
+/**
+ * Adapter for displaying a list of colors in the color editor.
+ * This adapter is used to populate a ListView or GridView with color items,
+ * where each item consists of a color preview and its name.
+ */
 public class ColorsAdapter extends BaseAdapter {
     private ArrayList<Integer> colors;
     private final Context ctx;

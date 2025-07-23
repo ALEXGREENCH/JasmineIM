@@ -7,6 +7,10 @@ import android.view.View;
 import java.io.File;
 import java.net.URLConnection;
 
+/**
+ * A ClickableSpan that launches an Intent when clicked.
+ * This is typically used to open a file associated with the provided URL.
+ */
 public class IntentSpan extends ClickableSpan {
     private final String url;
 

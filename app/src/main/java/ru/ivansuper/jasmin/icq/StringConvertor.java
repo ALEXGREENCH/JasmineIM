@@ -6,6 +6,19 @@ import java.io.IOException;
 
 import ru.ivansuper.jasmin.jabber.jzlib.JZlib;
 
+/**
+ * Utility class for converting strings between different encodings and formats.
+ * Provides methods for:
+ * <ul>
+ *   <li>Converting byte arrays to hex strings and vice-versa.</li>
+ *   <li>Detecting CP1251, UCS-2, and UTF-8 encodings in byte arrays.</li>
+ *   <li>Converting strings to and from CP1251 byte arrays.</li>
+ *   <li>Removing and restoring carriage return characters.</li>
+ *   <li>Comparing strings case-insensitively.</li>
+ *   <li>Converting strings to lowercase and uppercase.</li>
+ *   <li>Converting byte arrays to strings, automatically detecting the encoding.</li>
+ * </ul>
+ */
 public class StringConvertor {
     /** @noinspection unused*/
     public static final byte ENCODING_AUTO = 4;

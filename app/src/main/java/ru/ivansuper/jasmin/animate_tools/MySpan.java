@@ -6,6 +6,14 @@ import android.text.style.ReplacementSpan;
 
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 
+/**
+ * A custom {@link ReplacementSpan} that draws a {@link Movie} (animated GIF)
+ * within a text view. It can optionally draw a background color behind the movie.
+ *
+ * <p>This class handles the drawing and sizing of the movie within the text layout.
+ * It also provides methods to query properties of the movie, such as its dimensions,
+ * animation status, and minimal refresh rate.
+ */
 public class MySpan extends ReplacementSpan {
 
     private int left;

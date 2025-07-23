@@ -23,6 +23,20 @@ import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for exporting and importing chat history.
+ *
+ * <p>This activity allows users to:
+ * <ul>
+ *     <li>Select a profile for which to manage history.</li>
+ *     <li>Export the chat history of a selected profile to a file.</li>
+ *     <li>Import chat history from a file into a selected profile.</li>
+ * </ul>
+ * It handles interactions with the file system for selecting directories and files,
+ * and displays appropriate dialogs for user confirmation and progress indication.
+ * The activity also warns the user if any profiles are connected or chats are open,
+ * as these operations might require disconnecting profiles and closing chats.
+ */
 public class ExportImportActivity extends Activity {
     
     public static Dialog CONVERTING_DIALOG;

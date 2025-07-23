@@ -15,6 +15,31 @@ import ru.ivansuper.jasmin.LogW;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.popup_log_adapter;
 
+/**
+ * Abstract class representing a socket connection.
+ * This class handles the low-level details of establishing and maintaining a socket connection,
+ * including connecting, disconnecting, reading, and writing data.
+ * <p>
+ * Subclasses must implement the abstract callback methods to handle connection events and received data.
+ * <p>
+ * The connection process involves:
+ * 1. Calling {@link #connect(String, int)} or {@link #connect(String)} to initiate a connection.
+ * 2. A separate {@link connectThread} is started to handle the connection attempt in the background.
+ * 3. During connection, {@link #onConnecting()} is called.
+ * 4. If the connection is successful:
+ *    - {@link #socketIn} and {@link #socketOut} are initialized.
+ *    - A {@link connectedThread} (reader) and a {@link writeThread} (writer) are started.
+ *    - {@link #onConnect()} is called (from the {@link writeThread}).
+ * 5. If an error occurs during connection or while connected:
+ *    - {@link #onError(int)} is called with an error code.
+ *    - {@link #onLostConnection()} or {@link #onDisconnect()} is called depending on the error context.
+ * <p>
+ * Data is sent using the {@link #write(ByteBuffer)} method, which queues the data to be sent by the {@link writeThread}.
+ * Incoming data is read by the {@link connectedThread} and passed to {@link #onRawData(ByteBuffer)} for processing.
+ * <p>
+ * The class manages the connection state ({@link #connected}, {@link #connecting}) and stores information
+ * about the last connection attempt ({@link #lastServer}, {@link #lastPort}, {@link #lastErrorCode}).
+ */
 public abstract class SocketConnection {
 
     /**

@@ -1,5 +1,24 @@
 package ru.ivansuper.jasmin.icq;
 
+/**
+ * Represents a FLAP (Framed Layer Application Protocol) packet.
+ * This class provides methods to create, parse, and access data within a FLAP packet.
+ * FLAP is used in the OSCAR protocol, which is the underlying protocol for AIM and ICQ.
+ * <p>
+ * A FLAP packet has the following structure:
+ * <pre>
+ * +-------------------+-------------------+-------------------+-------------------+
+ * | Magic (1 byte)    | Channel (1 byte)  | Sequence (2 bytes)| Data Length (2 bytes)|
+ * +-------------------+-------------------+-------------------+-------------------+
+ * | Data (variable length)                                                       |
+ * +------------------------------------------------------------------------------+
+ * </pre>
+ * - Magic: Always 0x2A (*)
+ * - Channel: Identifies the type of data in the packet (e.g., login, chat, etc.)
+ * - Sequence: A sequence number for the packet
+ * - Data Length: The length of the data portion of the packet
+ * - Data: The actual payload of the packet
+ */
 public class FLAP {
     private final byte channel;
     private final int dataSize;

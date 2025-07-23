@@ -14,6 +14,18 @@ import ru.ivansuper.jasmin.popup_log_adapter;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * This class provides methods for creating ICQ protocol packets.
+ * It handles the construction of various packet types, including login,
+ * roster management, status updates, messaging, and file transfer.
+ * <p>
+ * The class uses a {@link ByteBuffer} to construct the packets and relies on
+ * the {@link FLAP} and {@link SNAC} classes for framing and service-specific
+ * data, respectively.
+ * <p>
+ * Note: This class is part of a legacy ICQ client implementation and may not
+ * be compatible with current ICQ servers or clients.
+ */
 public class ICQProtocol {
 
     // Constants describing the legacy ICQ 2000b client string and version data

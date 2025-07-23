@@ -22,6 +22,36 @@ import ru.ivansuper.jasmin.icq.ByteCache;
 import ru.ivansuper.jasmin.popup_log_adapter;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents an abstract base class for managing a socket connection,
+ * potentially through a proxy, for file transfer purposes.
+ *
+ * This class handles the low-level details of establishing, maintaining,
+ * and closing a socket connection. It supports different modes of operation,
+ * including proxy authentication, OFT (presumably a specific file transfer protocol)
+ * header handling, and raw data transfer.
+ *
+ * Subclasses must implement the abstract callback methods to handle
+ * connection events (connect, connecting, disconnect, error, lost connection)
+ * and data reception events (OFT header, proxy packet, raw file data).
+ *
+ * The class uses separate threads for connecting and for handling
+ * incoming data once the connection is established. It also includes
+ * basic error handling and logging.
+ *
+ * Key functionalities include:
+ * - Connecting to a specified server and port.
+ * - Disconnecting from the server.
+ * - Writing data (as {@link ByteBuffer} or byte arrays) to the socket.
+ * - Potentially upgrading the connection to SSL/TLS using a {@link NaiveTrustManager}.
+ * - Managing connection state (connected, connecting).
+ * - Storing information about the last connection attempt (server, port, error code).
+ *
+ * The class defines constants for different operational modes:
+ * - {@link #PROXY_AUTH_MODE}: For handling proxy authentication.
+ * - {@link #OFT_AUTH_MODE}: For handling OFT protocol headers.
+ * - {@link #TRANSFERING_MODE}: For transferring raw file data.
+ */
 public abstract class ProxySocketConnection {
     /** @noinspection unused*/
     public static final int OFT_AUTH_MODE = 2;

@@ -17,6 +17,27 @@ import ru.ivansuper.jasmin.debug;
 import ru.ivansuper.jasmin.jabber.Clients;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * The main application class for Jasmin.
+ * This class extends {@link Application} and is responsible for initializing
+ * various components and resources when the application starts.
+ *
+ * <p>Key responsibilities include:
+ * <ul>
+ *     <li>Setting up a global application instance ({@link #INSTANCE}).</li>
+ *     <li>Initializing resources such as the application context and data path.</li>
+ *     <li>Checking for the first application start and performing necessary setup.</li>
+ *     <li>Initializing core components like ADB, MD5, debugging utilities, ICQ capabilities,
+ *     Jabber clients, media table, smiley manager, and color schemes.</li>
+ *     <li>Logging the maximum available heap size for the application.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>The initialization logic in {@link #onCreate()} is designed to run only once,
+ * even if the method is called multiple times (e.g., due to process recreation),
+ * by checking if {@link resources#service} and {@link resources#ctx} are null.
+ * </p>
+ */
 public class APP extends Application {
 
     public static Application INSTANCE;

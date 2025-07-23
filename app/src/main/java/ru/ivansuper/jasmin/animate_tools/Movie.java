@@ -13,6 +13,10 @@ import java.io.InputStream;
 
 import ru.ivansuper.jasmin.popup_log_adapter;
 
+/**
+ * Represents a movie, which can be an animated GIF or a static image.
+ * This class handles loading, scaling, and drawing of the movie frames.
+ */
 public class Movie {
 
     public static long stamp;

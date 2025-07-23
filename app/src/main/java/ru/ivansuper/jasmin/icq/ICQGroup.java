@@ -3,6 +3,10 @@ package ru.ivansuper.jasmin.icq;
 import ru.ivansuper.jasmin.ContactlistItem;
 import ru.ivansuper.jasmin.jabber.JProfile;
 
+/**
+ * Represents a group of contacts in ICQ.
+ * Extends {@link ContactlistItem} to be displayed in a contact list.
+ */
 public class ICQGroup extends ContactlistItem {
     public int id;
     public JProfile jprofile;

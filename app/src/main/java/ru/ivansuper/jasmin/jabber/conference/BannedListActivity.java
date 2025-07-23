@@ -22,6 +22,24 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for displaying and managing the list of banned users in a conference.
+ *
+ * <p>This activity allows users to view the current list of banned users and add new users to the
+ * ban list. It uses a {@link BannedAdapter} to display the banned users in a {@link ListView}.
+ *
+ * <p>The activity's appearance is customized based on user preferences, including wallpaper type
+ * and whether to use shadows. It also handles system bar transparency.
+ *
+ * <p>The activity provides a button to add new users to the ban list. When clicked, a dialog
+ * appears allowing the user to enter one or more user IDs to ban.
+ *
+ * <p>The activity's state is managed by the {@code ACTIVE} flag, which indicates whether the
+ * activity is currently active. This flag is updated in the {@code onResume} and {@code onPause}
+ * methods.
+ *
+ * <p>The activity uses {@link SharedPreferences} to store and retrieve user preferences.
+ */
 public class BannedListActivity extends Activity {
 
     public static boolean ACTIVE = false;

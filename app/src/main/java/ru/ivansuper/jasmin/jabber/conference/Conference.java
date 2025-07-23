@@ -27,6 +27,12 @@ import ru.ivansuper.jasmin.popup_log_adapter;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents a conference (Multi-User Chat room) in the Jabber/XMPP network.
+ * This class manages the state, users, messages, and interactions within a specific conference.
+ * It handles joining, leaving, sending messages, managing user roles and affiliations,
+ * and processing incoming packets related to the conference.
+ */
 public class Conference {
     public static final String BANNED_LIST_OPERATION = "banned_list_changed";
     public static final String BANNED_LIST_REQUEST = "banned_list_request";

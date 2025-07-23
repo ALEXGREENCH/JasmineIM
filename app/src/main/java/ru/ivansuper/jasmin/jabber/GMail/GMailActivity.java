@@ -16,6 +16,11 @@ import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for displaying GMail messages.
+ * This activity shows a list of GMail messages for the current profile.
+ * It allows users to view the messages and refreshes the list when new messages arrive.
+ */
 public class GMailActivity extends Activity {
     
     public static GMailListener listener;

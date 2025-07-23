@@ -1,5 +1,10 @@
 package ru.ivansuper.jasmin.icq;
 
+/**
+ * Represents an ICQ message channel, version 1.
+ * This class is responsible for constructing the binary data payload for sending an ICQ message.
+ * It encapsulates the message content, recipient information, and protocol-specific formatting.
+ */
 public class ICQMessageChannel1 {
     public ByteBuffer data;
     public String receiver;

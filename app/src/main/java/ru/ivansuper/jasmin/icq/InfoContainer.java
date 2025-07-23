@@ -5,6 +5,10 @@ import android.util.Log;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Represents a container for user information, including personal details and avatar.
+ * This class is used to store and manage data related to an ICQ user.
+ */
 public class InfoContainer {
     public int age;
     public Drawable avatar;

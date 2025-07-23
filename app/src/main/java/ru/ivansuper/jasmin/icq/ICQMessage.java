@@ -5,6 +5,26 @@ import java.io.IOException;
 import ru.ivansuper.jasmin.jabber.xml_utils;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents an ICQ message, which can be either a text message or a file transfer.
+ * This class handles parsing of ICQ message data from a ByteBuffer.
+ *
+ * <p>ICQ messages are structured using channels and TLV (Type-Length-Value) lists.
+ * Channel 1 is typically used for offline messages, while Channel 2 is used for online messages and file transfers.
+ *
+ * <p>Key properties of an ICQMessage include:
+ * <ul>
+ *     <li>{@code channel}: The ICQ channel (1 or 2).
+ *     <li>{@code sender}: The UIN of the message sender.
+ *     <li>{@code message}: The text content of the message (if applicable).
+ *     <li>{@code is_file}: True if the message represents a file transfer.
+ *     <li>{@code file_name}: The name of the file being transferred.
+ *     <li>{@code file_size}: The size of the file in bytes.
+ *     <li>{@code timestamp}: The time the message was sent or received.
+ * </ul>
+ *
+ * <p>File transfer details, such as IP addresses, port numbers, and proxy usage, are also stored.
+ */
 public class ICQMessage {
     public int channel;
     public String client_ip;

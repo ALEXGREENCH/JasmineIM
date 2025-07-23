@@ -13,6 +13,33 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.locale.Locale;
 
+/**
+ * The ADB class manages achievements in the application.
+ * It tracks various user actions and awards achievements when certain criteria are met.
+ * Achievements are stored in a file and loaded on initialization.
+ * <p>
+ * The class uses several counters to track user actions:
+ * - {@code bad_words_count}: Counts the number of bad words used by the user.
+ * - {@code devils_count}: Counts the number of "devil" emoticons used by the user.
+ * - {@code last_symbol_timestamp}: Stores the timestamp of the last typed symbol.
+ * - {@code scrolled_pixels}: Counts the number of pixels scrolled by the user.
+ * - {@code typed_symbols}: Counts the number of symbols typed by the user within a certain time interval.
+ * - {@code viewed_infos}: Counts the number of user profiles viewed by the user.
+ * <p>
+ * The class also uses an {@link OnlineCounter} to track the user's online time.
+ * <p>
+ * Achievements are represented by {@link Item} objects, which store the achievement's ID, icon, description, and rule.
+ * The list of achievements is stored in the {@code list} vector.
+ * <p>
+ * The class provides methods to:
+ * - Initialize the achievements system ({@link #init()}).
+ * - Load and save achievements from/to a file ({@link #load(File)} and {@link #save(File)}).
+ * - Check for achievement completion based on user actions ({@link #checkScroll()}, {@link #checkUserInfos()}, {@link #proceedMessage(String)}, {@link #symbolTyped()}).
+ * - Activate an achievement ({@link #setActivated(int)}).
+ * - Get the list of all achievements ({@link #getAll()}).
+ * - Get the number of activated achievements ({@link #getActivatedCount()}).
+ * - Start and stop the online time counter ({@link #startOnlineCounter()} and {@link #stopOnlineCounter()}).
+ */
 public class ADB {
     private static int bad_words_count = 0;
     /** @noinspection FieldCanBeLocal*/

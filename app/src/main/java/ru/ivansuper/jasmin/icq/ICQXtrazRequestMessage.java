@@ -2,6 +2,11 @@ package ru.ivansuper.jasmin.icq;
 
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents an ICQ XTRAZ request message.
+ * This class is used to construct a specific type of ICQ message
+ * that involves XTRAZ data, typically for notifications or status updates.
+ */
 public class ICQXtrazRequestMessage {
     public ByteBuffer data;
     public String receiver;

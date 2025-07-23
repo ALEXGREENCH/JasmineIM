@@ -3,6 +3,18 @@ package ru.ivansuper.jasmin.icq;
 import android.util.Log;
 import java.util.Vector;
 
+/**
+ * Represents a list of Type-Length-Value (TLV) objects.
+ * This class provides functionality to parse TLV data from a ByteBuffer
+ * and manage a collection of TLV objects.
+ * <p>
+ * TLV is a common data encoding scheme where a piece of data is represented by:
+ * <ul>
+ *   <li><b>Type:</b> An identifier for the data.</li>
+ *   <li><b>Length:</b> The size of the value.</li>
+ *   <li><b>Value:</b> The actual data.</li>
+ * </ul>
+ */
 public class TLVList {
     public int TLVCount;
     private final Vector<TLV> list = new Vector<>();

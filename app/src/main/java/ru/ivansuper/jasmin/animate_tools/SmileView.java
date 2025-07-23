@@ -11,6 +11,15 @@ import android.view.View;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.SmileysManager;
 
+/**
+ * Custom view for displaying animated smileys (emoticons).
+ * <p>
+ * This view handles the drawing and animation of a {@link Movie} object, which represents
+ * an animated smiley. It supports custom scaling and can be configured to be either
+ * temporary (adjusting its height to the smiley) or fixed (using a predefined maximum height).
+ * <p>
+ * Animation is achieved by using a {@link Handler} to schedule redraws at appropriate intervals.
+ */
 public class SmileView extends View implements Handler.Callback {
 
     private final Handler hdl;

@@ -1,6 +1,12 @@
 package ru.ivansuper.jasmin.icq;
 
-/** @noinspection unused*/
+/**
+ * Utility class for tracking network traffic.
+ * This class provides static methods to count incoming (IN) and outgoing (OUT) data in bytes.
+ * It also includes a method to reset the counters.
+ *
+ * @noinspection unused
+ */
 public class TrafficCounter {
     public static long IN = 0;
     public static long OUT = 0;

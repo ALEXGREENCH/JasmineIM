@@ -23,6 +23,29 @@ import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for editing the application's color scheme.
+ * <p>
+ * This activity allows users to customize various colors used throughout the application.
+ * It provides a list of color items, and upon selecting an item, a color picker
+ * with sliders for Alpha, Red, Green, and Blue (ARGB) components is shown.
+ * Users can also input a HEX color code directly.
+ * <p>
+ * Key functionalities include:
+ * <ul>
+ *     <li>Displaying a list of configurable colors.</li>
+ *     <li>Providing a color picker with ARGB sliders and HEX input.</li>
+ *     <li>Previewing the selected color.</li>
+ *     <li>Applying and saving color changes.</li>
+ *     <li>Canceling color changes.</li>
+ *     <li>Resetting colors to default values.</li>
+ *     <li>Importing and exporting color schemes from/to an external file (colors.cfg).</li>
+ * </ul>
+ * <p>
+ * The activity interacts with {@link ColorScheme} to manage color data and persistence.
+ * It uses custom adapters ({@link ColorsAdapter}, {@link UAdapter}) for displaying lists
+ * and dialogs.
+ */
 public class ColorEditorActivity extends Activity {
     
     private SeekBar alpha;

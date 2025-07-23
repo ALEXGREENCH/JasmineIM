@@ -16,6 +16,28 @@ import ru.ivansuper.jasmin.jabber.XML_ENGINE.Node;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Represents a vCard, which is a file format standard for electronic business cards.
+ * This class provides methods to create, manage, and compile vCard data,
+ * including personal information, contact details, and an avatar image.
+ * It also includes functionality to interact with an Android UI for editing vCard fields.
+ *
+ * <p>The class uses an inner {@link Entry.Type} enum to define the different types of
+ * information that can be stored in a vCard, such as name, address, phone numbers, email, etc.
+ *
+ * <p>It maintains two sets of fields: {@code fields} for the current vCard data and
+ * {@code temp_fields} for temporary storage during editing operations.
+ *
+ * <p>Key functionalities include:
+ * <ul>
+ *     <li>Getting and setting vCard entries.
+ *     <li>Compiling the vCard data into an XML {@link Node} structure.
+ *     <li>Preparing an Android {@link LinearLayout} editor for vCard fields.
+ *     <li>Populating the editor with existing vCard data.
+ *     <li>Reading data from the editor into the temporary fields.
+ *     <li>Applying temporary changes to the main vCard data.
+ * </ul>
+ */
 public class VCard {
     public Bitmap avatar;
     private final HashMap<Entry.Type, String> fields = new HashMap<>();

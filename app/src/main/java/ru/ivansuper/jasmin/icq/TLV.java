@@ -1,5 +1,11 @@
 package ru.ivansuper.jasmin.icq;
 
+/**
+ * Represents a Type-Length-Value (TLV) structure.
+ * TLV is a common encoding scheme used in communication protocols
+ * where data is organized into a sequence of records. Each record
+ * consists of a type identifier, a length field, and a value field.
+ */
 public class TLV {
     public byte[] data;
     public int length;

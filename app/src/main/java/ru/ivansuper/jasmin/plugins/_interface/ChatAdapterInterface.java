@@ -21,6 +21,7 @@ import ru.ivansuper.jasmin.ChatAdapter;
  * <p>
  * Note: The {@code @noinspection unused} annotation indicates that some elements might appear unused
  * in the current context but are intended for use by external plugins.
+ * @noinspection ALL
  */
 public class ChatAdapterInterface {
     public static final Vector<OnGetViewListener> get_view_listeners = new Vector<>();

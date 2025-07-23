@@ -9,6 +9,48 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
+/**
+ * Class GifDecoder - Decodes a GIF file into one or more frames.
+ * <br><a href="http://www.w3.org/Graphics/GIF/spec-gif89a.txt">GIF 89a Specification</a>
+ *
+ * <p>The {@code GifDecoder} class provides methods to read and decode GIF image files.
+ * It can handle animated GIFs, extracting individual frames and their properties like delay and transparency.
+ *
+ * <p><b>Usage:</b>
+ * <pre>{@code
+ * GifDecoder decoder = new GifDecoder();
+ * int status = decoder.read("path/to/your/image.gif");
+ * if (status == GifDecoder.STATUS_OK) {
+ *     int frameCount = decoder.getFrameCount();
+ *     for (int i = 0; i < frameCount; i++) {
+ *         Bitmap frame = decoder.getFrame(i);
+ *         int delay = decoder.getDelay(i);
+ *         // Process the frame and its delay
+ *     }
+ *     int loopCount = decoder.getLoopCount(); // 0 means loop indefinitely
+ * } else if (status == GifDecoder.STATUS_FORMAT_ERROR) {
+ *     // Handle format error
+ * } else if (status == GifDecoder.STATUS_OPEN_ERROR) {
+ *     // Handle file open error
+ * }
+ * }</pre>
+ *
+ * <p><b>Status Codes:</b>
+ * <ul>
+ *   <li>{@link #STATUS_OK}: File decoded successfully.</li>
+ *   <li>{@link #STATUS_FORMAT_ERROR}: File is not in GIF format or contains errors.</li>
+ *   <li>{@link #STATUS_OPEN_ERROR}: Unable to open the file.</li>
+ * </ul>
+ *
+ * <p>The decoder supports reading from an {@link InputStream} or directly from a file path (including URLs).
+ * Each frame is represented by a {@link GifFrame} object, which contains the {@link Bitmap}
+ * for the frame and its display delay in milliseconds.
+ *
+ * <p><b>Key Features:</b>
+ * <ul>
+ *   <li>Decodes GIF87a and GIF89a formats.</li>
+ *   <li>Handles global and local color tables.</li>
+ */
 public class GifDecoder {
     public static final int MaxStackSize = 4096;
     public static final int STATUS_OK = 0;

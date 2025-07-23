@@ -24,6 +24,44 @@ import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.ui.LoadingView;
 
+/**
+ * Utility class for creating various types of dialogs with consistent styling and behavior.
+ * This class provides static methods to build dialogs for different purposes,
+ * such as simple text dialogs, list dialogs, dialogs with OK/Yes/No buttons, and progress dialogs.
+ *
+ * <p>Key features:
+ * <ul>
+ *     <li>Standardized dialog header with a caption and divider.</li>
+ *     <li>Customizable content (text, list, or custom view).</li>
+ *     <li>Support for OK, Yes/No, and Yes/No/Cancel button configurations.</li>
+ *     <li>Option to automatically close the dialog on item click or button press.</li>
+ *     <li>Consistent styling applied to dialogs, including background, animations, and gravity.</li>
+ *     <li>Methods for creating dialogs with or without headers.</li>
+ *     <li>Helper for creating progress dialogs with a loading indicator and text.</li>
+ * </ul>
+ *
+ * <p>Dialogs created by this builder generally have the following characteristics:
+ * <ul>
+ *     <li>Themed according to {@code R.style.DialogTheme}.</li>
+ *     <li>Canceled on touch outside by default.</li>
+ *     <li>Soft input mode adjusted as needed (e.g., hidden or unchanged).</li>
+ *     <li>Window animations set to {@code R.style.TopDialogAnimation}.</li>
+ *     <li>Gravity set to {@code Gravity.BOTTOM}.</li>
+ *     <li>Full width and height.</li>
+ * </ul>
+ *
+ * <p>Dependencies:
+ * <ul>
+ *     <li>{@link ru.ivansuper.jasmin.R} for resources (layouts, styles, drawables).</li>
+ *     <li>{@link UAdapter} for list adapters.</li>
+ *     <li>{@link ColorScheme} for dynamic color theming.</li>
+ *     <li>{@link resources} for accessing application-wide resources and styles.</li>
+ *     <li>{@link LoadingView} for progress dialogs.</li>
+ * </ul>
+ *
+ * <p>Example usage for a simple text dialog:
+ * <pre>{@code
+ */
 public class DialogBuilder {
     private static LinearLayout prepareContainer(Context context, String caption) {
         LinearLayout header = (LinearLayout) View.inflate(context, R.layout.dialog_header, null);

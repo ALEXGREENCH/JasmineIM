@@ -19,6 +19,20 @@ import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for displaying and managing the XML console.
+ *
+ * <p>The XML console displays XML stanzas exchanged between the client and server.
+ * Users can enable/disable the console, clear its contents, and copy individual stanzas
+ * to the clipboard.
+ *
+ * <p>This activity uses a {@link ConsoleAdapter} to display the stanzas in a ListView.
+ * It also uses a {@link Handler} to update the console when new stanzas are received.
+ *
+ * @see ConsoleAdapter
+ * @see Stanzas
+ * @see JProfile
+ */
 public class XMLConsoleActivity extends Activity implements Handler.Callback {
     
     private static ConsoleAdapter adapter;

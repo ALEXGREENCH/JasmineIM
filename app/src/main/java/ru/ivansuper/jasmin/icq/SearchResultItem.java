@@ -1,5 +1,13 @@
 package ru.ivansuper.jasmin.icq;
 
+/**
+ * Represents a single item in an ICQ search result.
+ * This class holds information about a user found during a search,
+ * such as their UIN, nickname, name, age, gender, status, and
+ * whether authorization is required to add them as a contact.
+ * It also indicates if this is the last item in the search results
+ * and how many pages of results are available.
+ */
 public class SearchResultItem {
     public boolean isLast;
     public boolean need_auth;

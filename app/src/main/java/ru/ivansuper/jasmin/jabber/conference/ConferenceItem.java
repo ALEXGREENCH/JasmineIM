@@ -2,6 +2,10 @@ package ru.ivansuper.jasmin.jabber.conference;
 
 import ru.ivansuper.jasmin.ContactlistItem;
 
+/**
+ * Represents a conference item in the contact list.
+ * Extends {@link ContactlistItem} and adds conference-specific properties and methods.
+ */
 public class ConferenceItem extends ContactlistItem {
     public Conference conference;
     public boolean hasUnreadMessages = false;

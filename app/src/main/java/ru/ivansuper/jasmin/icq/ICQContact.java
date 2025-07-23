@@ -34,6 +34,20 @@ import ru.ivansuper.jasmin.protocols.IMProfile;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents an ICQ contact, extending the base ContactlistItem.
+ * This class stores various details about an ICQ contact, including their
+ * avatar, status, profile information, capabilities, message history,
+ * and other ICQ-specific attributes.
+ *
+ * It provides methods for managing contact information, handling avatars
+ * (fetching, reading local), managing message history (loading, writing,
+ * preloading, clearing), and checking contact states (visible, invisible,
+ * ignore).
+ *
+ * The class also includes functionality for history format conversion
+ * (e.g., to UNI16) and real-time history export.
+ */
 public class ICQContact extends ContactlistItem {
     public Drawable avatar;
     public String away_status;

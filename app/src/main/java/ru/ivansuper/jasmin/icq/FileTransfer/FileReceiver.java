@@ -12,6 +12,12 @@ import ru.ivansuper.jasmin.icq.ByteBuffer;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents a file receiver that handles incoming file transfers.
+ * It manages the connection, data reception, and file saving processes.
+ * This class extends {@link FileTransfer} and implements specific logic for receiving files,
+ * including proxy support, error handling, and UI updates.
+ */
 public class FileReceiver extends FileTransfer {
     private File file;
     public String ip;

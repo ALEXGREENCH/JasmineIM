@@ -2,6 +2,12 @@ package ru.ivansuper.jasmin.icq;
 
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents an ICQ message channel, version 2. This class is responsible for
+ * constructing the binary data packet for sending an ICQ message.
+ * It handles different text encodings and incorporates necessary protocol-specific
+ * TLV (Type-Length-Value) structures.
+ */
 public class ICQMessageChannel2 {
     public ByteBuffer data;
     public String receiver;

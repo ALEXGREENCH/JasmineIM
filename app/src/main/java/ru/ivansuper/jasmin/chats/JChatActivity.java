@@ -52,6 +52,10 @@ import ru.ivansuper.jasmin.slide_tools.AnimationCalculator;
 import ru.ivansuper.jasmin.slide_tools.ListViewA;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents the chat activity for a JContact.
+ * Handles displaying messages, sending messages, and user interactions within the chat.
+ */
 public class JChatActivity extends Chat implements Handler.Callback {
     public static boolean INITIALIZED;
     private static boolean IT_IS_JUICK;

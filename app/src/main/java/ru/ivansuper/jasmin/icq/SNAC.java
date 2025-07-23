@@ -1,4 +1,10 @@
 package ru.ivansuper.jasmin.icq;
+
+/**
+ * Represents a SNAC (Simple Network Access Control) packet in the ICQ protocol.
+ * SNACs are used to exchange information between the client and the server.
+ * Each SNAC has a type, subtype, flags, and an ID, along with a data payload.
+ */
 public class SNAC {
     private final int flags;
     private final int id;

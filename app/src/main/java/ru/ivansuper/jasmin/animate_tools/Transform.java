@@ -3,6 +3,10 @@ package ru.ivansuper.jasmin.animate_tools;
 import android.graphics.Camera;
 import android.graphics.Matrix;
 
+/**
+ * The Transform class provides static methods for applying various transformations to a Matrix.
+ * These transformations are used for animations and visual effects.
+ */
 public class Transform {
 
     private static Camera mCamera;

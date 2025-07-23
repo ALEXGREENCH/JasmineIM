@@ -55,6 +55,36 @@ import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.slide_tools.ListViewA;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents the chat activity for a conference.
+ * It handles the user interface for conference chat, including displaying messages,
+ * user lists, and providing options for interaction within the conference.
+ * <p>
+ * This class extends {@link Chat} and implements {@link Handler.Callback}
+ * to manage asynchronous operations and UI updates.
+ * </p>
+ * <p>
+ * Key functionalities include:
+ * <ul>
+ *     <li>Displaying conference messages and user lists.</li>
+ *     <li>Handling user input and sending messages.</li>
+ *     <li>Providing context menus for messages and users.</li>
+ *     <li>Managing conference-specific actions like joining, leaving, changing nicknames, and moderation.</li>
+ *     <li>Displaying VCards and other informational dialogs.</li>
+ *     <li>Handling UI updates based on conference events (e.g., user joining/leaving, theme changes).</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Static fields like {@code INITIALIZED}, {@code conference}, {@code multiquoting},
+ * {@code is_any_chat_opened}, and {@code TOP_PANEL_VISIBLED} manage global state
+ * related to conference chats.
+ * </p>
+ * <p>
+ * The class uses various adapters ({@link ConferenceAdapter}, {@link ConfUsersAdapter})
+ * to display data in ListViews. It also interacts with {@link JConferenceWindowInterface}
+ * for plugin integration and custom window event handling.
+ * </p>
+ */
 public class JConference extends Chat implements Handler.Callback {
     public static final int BANNED_LIST_RECEIVED = 400;
     public static boolean INITIALIZED = false;

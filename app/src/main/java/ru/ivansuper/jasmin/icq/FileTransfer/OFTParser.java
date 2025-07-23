@@ -2,6 +2,12 @@ package ru.ivansuper.jasmin.icq.FileTransfer;
 
 import ru.ivansuper.jasmin.icq.ByteBuffer;
 
+/**
+ * Parses OFT (Oscar File Transfer) protocol messages.
+ * This class is responsible for extracting information from the raw byte data
+ * received during an OFT file transfer session. It populates its public fields
+ * with the parsed data.
+ */
 public class OFTParser {
     public int command;
     public String file_name;

@@ -27,6 +27,10 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for discovering services on a Jabber server.
+ * Allows users to browse and interact with available services.
+ */
 public class DiscoActivity extends Activity {
 
     public static JProfile PROFILE;
