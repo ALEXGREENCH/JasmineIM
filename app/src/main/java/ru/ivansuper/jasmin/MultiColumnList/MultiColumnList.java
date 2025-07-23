@@ -23,6 +23,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import ru.ivansuper.jasmin.BitmapDrawable;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.resources;
 
 /**
@@ -180,7 +182,7 @@ public class MultiColumnList extends ViewGroup {
         this.mNextY = 0;
         this.mMaxY = Integer.MAX_VALUE;
         this.mOverscroll = resources.convertToMyFormat(getResources().getDrawable(R.drawable.overscroll));
-        this.mOverscroll.getPaint().setColorFilter(new LightingColorFilter(0, ColorScheme.getColor(39)));
+        this.mOverscroll.getPaint().setColorFilter(new LightingColorFilter(0, ColorUtils.getColor(ColorKey.CONTACTLIST_OVERSCROLL)));
         this.mSelector = getResources().getDrawable(R.drawable.contactlist_selector);
         this.mSelectorRect = new Rect();
         LinearInterpolator i = new LinearInterpolator();

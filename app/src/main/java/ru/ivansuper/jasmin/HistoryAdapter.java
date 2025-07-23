@@ -13,6 +13,8 @@ import android.widget.TextView;
 import java.util.Vector;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.ui.MyTextView;
 
 /**
@@ -105,7 +107,7 @@ public class HistoryAdapter extends BaseAdapter {
         time.setText(hst.formattedDate);
         nick.setTextSize(PreferenceTable.chatTextSize - 2);
         time.setTextSize(PreferenceTable.chatTextSize);
-        time.setTextColor(ColorScheme.getColor(10));
+        time.setTextColor(ColorUtils.getColor(ColorKey.CHAT_DATE));
         if (ContactHistoryActivity.multiquoting) {
             selector.setVisibility(View.VISIBLE);
             selector.setChecked(hst.selected);
@@ -138,11 +140,11 @@ public class HistoryAdapter extends BaseAdapter {
             if (hst.mcontact != null) {
                 nick.setText(hst.mcontact.name);
             }
-            nick.setTextColor(ColorScheme.getColor(17));
-            status.setBackgroundColor(ColorScheme.getColor(15));
-            message.setTextColor(ColorScheme.getColor(16));
-            message.setLinkTextColor(ColorScheme.getColor(16));
-            msg.setBackgroundColor(ColorScheme.getColor(14));
+            nick.setTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_NICK));
+            status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_INC_BAR));
+            message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_TEXT));
+            message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_TEXT));
+            msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_INC_BACK));
             resources.attachIngMsg(msg);
         } else {
             if (hst.contact != null) {
@@ -154,17 +156,17 @@ public class HistoryAdapter extends BaseAdapter {
             if (hst.mcontact != null) {
                 nick.setText(hst.mcontact.profile.ID);
             }
-            nick.setTextColor(ColorScheme.getColor(22));
+            nick.setTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_NICK));
             if (hst.confirmed) {
-                status.setBackgroundColor(ColorScheme.getColor(19));
-                message.setTextColor(ColorScheme.getColor(21));
-                message.setLinkTextColor(ColorScheme.getColor(21));
+                status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_OUT_BAR_CONFIRMED));
+                message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_CONFIRMED));
+                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_CONFIRMED));
             } else {
-                status.setBackgroundColor(ColorScheme.getColor(20));
-                message.setTextColor(ColorScheme.getColor(23));
-                message.setLinkTextColor(ColorScheme.getColor(23));
+                status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_OUT_BAR_NOT_CONFIRMED));
+                message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_NOT_CONFIRMED));
+                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_NOT_CONFIRMED));
             }
-            msg.setBackgroundColor(ColorScheme.getColor(18));
+            msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_OUT_BACK));
             resources.attachOutMsg(msg);
         }
         message.relayout();

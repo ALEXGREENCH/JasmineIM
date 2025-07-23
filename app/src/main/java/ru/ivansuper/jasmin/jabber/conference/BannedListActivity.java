@@ -17,6 +17,8 @@ import android.widget.TextView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.chats.JConference;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
@@ -64,7 +66,7 @@ public class BannedListActivity extends Activity {
                 break;
             case "2":
                 setTheme(R.style.BlackNoTitleTheme);
-                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
+                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorUtils.getColor(ColorKey.CHAT_HEADER_TYPING)));
                 break;
         }
         super.onCreate(bundle);
@@ -100,7 +102,7 @@ public class BannedListActivity extends Activity {
         mAdapter = JConference.conference.mBannedList;
         mList = findViewById(R.id.banned_list_list);
         mList.setSelector(new ColorDrawable(0));
-        mList.setDivider(new ColorDrawable(ColorScheme.getColor(44)));
+        mList.setDivider(new ColorDrawable(ColorUtils.getColor(ColorKey.MENU_DIVIDERS)));
         mList.setDividerHeight(1);
         mList.setAdapter(mAdapter);
         mList.setOnItemClickListener(new AdapterView.OnItemClickListener() {

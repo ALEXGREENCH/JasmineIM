@@ -38,6 +38,8 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.UAdapter;
 import ru.ivansuper.jasmin.base.ach.ADB;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.icq.FileTransfer.FileReceiver;
 import ru.ivansuper.jasmin.icq.FileTransfer.FileSender;
@@ -428,7 +430,7 @@ public class ICQChatActivity extends Chat {
         mainStatus = (ImageView) findViewById(R.id.mainStatus);
         xStatus = (ImageView) findViewById(R.id.xStatus);
         nickname = (TextView) findViewById(R.id.nickname);
-        nickname.setTextColor(ColorScheme.getColor(12));
+        nickname.setTextColor(ColorUtils.getColor(ColorKey.CHAT_HEADER_NICK));
         this.messageList = (ListViewA) findViewById(R.id.messages);
         this.messageList.setSelector(resources.getListSelector());
         this.messageList.setDragDropEnabledA(PreferenceTable.ms_dragdrop_quoting);
@@ -541,14 +543,14 @@ public class ICQChatActivity extends Chat {
         if (!TOP_PANEL_VISIBLED) {
             TOP_PANEL.setVisibility(View.GONE);
         }
-        TOP_PANEL.setBackgroundColor(ColorScheme.getColor(11));
+        TOP_PANEL.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_HEADER));
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.chat_bottom_panel);
-        linearLayout.setBackgroundColor(ColorScheme.getColor(9));
+        linearLayout.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_BOTTOMPANEL));
         resources.attachChatTopPanel(TOP_PANEL);
         resources.attachChatBottomPanel(linearLayout);
         nick_.setTextSize(PreferenceTable.chatTextSize);
         this.input.setTextSize(PreferenceTable.chatTextSize);
-        nick_.setTextColor(ColorScheme.getColor(22));
+        nick_.setTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_NICK));
         opened_chats_markers = (LinearLayout) findViewById(R.id.chat_chats_markers);
         opened_chats_markers.setVisibility(PreferenceTable.ms_show_markers_in_chat ? View.VISIBLE : View.GONE);
         Button button2 = (Button) findViewById(R.id.chat_scroll_left);

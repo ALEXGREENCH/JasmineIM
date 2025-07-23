@@ -25,6 +25,8 @@ import ru.ivansuper.jasmin.MMP.MMPContact;
 import ru.ivansuper.jasmin.MMP.MMPGroup;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.icq.ICQContact;
 import ru.ivansuper.jasmin.icq.ICQGroup;
 import ru.ivansuper.jasmin.icq.qip_statuses;
@@ -579,15 +581,15 @@ public class RosterItemView extends View {
                 ICQContact contact = (ICQContact) item;
                 this.type = 0;
                 if (contact.typing) {
-                    this.name_.setColor(ColorScheme.getColor(31));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_TYPING));
                 } else if (contact.isChating) {
-                    this.name_.setColor(ColorScheme.getColor(27));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_CHAT));
                 } else if (!contact.added || !contact.authorized) {
-                    this.name_.setColor(ColorScheme.getColor(29));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_NOTADDED));
                 } else if (contact.status == IMProfile.STATUS_OFFLINE) {
-                    this.name_.setColor(ColorScheme.getColor(30));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_OFFLINE));
                 } else {
-                    this.name_.setColor(ColorScheme.getColor(28));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_NORM));
                 }
                 if (PreferenceTable.s_ms_show_xstatuses) {
                     this.ex_status = contact.xstatus;
@@ -670,9 +672,9 @@ public class RosterItemView extends View {
                 }
                 break;
             case ContactlistItem.GROUP:
-                setBackgroundColor(ColorScheme.getColor(33));
+                setBackgroundColor(ColorUtils.getColor(ColorKey.GROUP_ITEM_BACK));
                 resources.attachContactlistGroupItemBack(this);
-                this.name_.setColor(ColorScheme.getColor(34));
+                this.name_.setColor(ColorUtils.getColor(ColorKey.GROUP_ITEM_TEXT));
                 ICQGroup group = (ICQGroup) item;
                 this.opened = group.opened;
                 this.online = group.online;
@@ -682,8 +684,8 @@ public class RosterItemView extends View {
                 this.draw_avatar = false;
                 break;
             case ContactlistItem.PROFILE_GROUP:
-                this.name_.setColor(ColorScheme.getColor(36));
-                setBackgroundColor(ColorScheme.getColor(35));
+                this.name_.setColor(ColorUtils.getColor(ColorKey.PROFILE_GROUP_ITEM_TEXT));
+                setBackgroundColor(ColorUtils.getColor(ColorKey.PROFILE_GROUP_ITEM_BACK));
                 resources.attachContactlistGroupItemBack(this);
                 ICQGroup group2 = (ICQGroup) item;
                 if (group2.profile.connected) {
@@ -713,13 +715,13 @@ public class RosterItemView extends View {
                 JContact jcontact = (JContact) item;
                 this.type = 0;
                 if (jcontact.typing) {
-                    this.name_.setColor(ColorScheme.getColor(31));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_TYPING));
                 } else if (jcontact.isChating) {
-                    this.name_.setColor(ColorScheme.getColor(27));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_CHAT));
                 } else if (!jcontact.isOnline()) {
-                    this.name_.setColor(ColorScheme.getColor(30));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_OFFLINE));
                 } else {
-                    this.name_.setColor(ColorScheme.getColor(28));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_NORM));
                 }
                 this.ex_status = jcontact.ext_status;
                 if (PreferenceTable.s_ms_show_clients) {
@@ -833,8 +835,8 @@ public class RosterItemView extends View {
                 }
                 break;
             case 5:
-                this.name_.setColor(ColorScheme.getColor(36));
-                setBackgroundColor(ColorScheme.getColor(35));
+                this.name_.setColor(ColorUtils.getColor(ColorKey.PROFILE_GROUP_ITEM_TEXT));
+                setBackgroundColor(ColorUtils.getColor(ColorKey.PROFILE_GROUP_ITEM_BACK));
                 resources.attachContactlistGroupItemBack(this);
                 ICQGroup group3 = (ICQGroup) item;
                 switch (group3.jprofile.type) {
@@ -903,9 +905,9 @@ public class RosterItemView extends View {
                 this.draw_avatar = false;
                 break;
             case 6:
-                setBackgroundColor(ColorScheme.getColor(33));
+                setBackgroundColor(ColorUtils.getColor(ColorKey.GROUP_ITEM_BACK));
                 resources.attachContactlistGroupItemBack(this);
-                this.name_.setColor(ColorScheme.getColor(34));
+                this.name_.setColor(ColorUtils.getColor(ColorKey.GROUP_ITEM_TEXT));
                 JGroup jgroup = (JGroup) item;
                 this.opened = jgroup.opened;
                 this.online = jgroup.online;
@@ -920,13 +922,13 @@ public class RosterItemView extends View {
                 this.type = 0;
                 MMPContact mmp_contact = (MMPContact) item;
                 if (mmp_contact.typing) {
-                    this.name_.setColor(ColorScheme.getColor(31));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_TYPING));
                 } else if (mmp_contact.isChating) {
-                    this.name_.setColor(ColorScheme.getColor(27));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_CHAT));
                 } else if (mmp_contact.status > 0) {
-                    this.name_.setColor(ColorScheme.getColor(28));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_NORM));
                 } else {
-                    this.name_.setColor(ColorScheme.getColor(30));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_OFFLINE));
                 }
                 if (PreferenceTable.ms_show_avatars) {
                     if (mmp_contact.avatar != null) {
@@ -1002,8 +1004,8 @@ public class RosterItemView extends View {
                 }
                 break;
             case 8:
-                this.name_.setColor(ColorScheme.getColor(36));
-                setBackgroundColor(ColorScheme.getColor(35));
+                this.name_.setColor(ColorUtils.getColor(ColorKey.PROFILE_GROUP_ITEM_TEXT));
+                setBackgroundColor(ColorUtils.getColor(ColorKey.PROFILE_GROUP_ITEM_BACK));
                 resources.attachContactlistGroupItemBack(this);
                 MMPGroup mmpgroup = (MMPGroup) item;
                 if (mmpgroup.profile.connected) {
@@ -1059,9 +1061,9 @@ public class RosterItemView extends View {
                 this.draw_avatar = false;
                 break;
             case 9:
-                setBackgroundColor(ColorScheme.getColor(33));
+                setBackgroundColor(ColorUtils.getColor(ColorKey.GROUP_ITEM_BACK));
                 resources.attachContactlistGroupItemBack(this);
-                this.name_.setColor(ColorScheme.getColor(34));
+                this.name_.setColor(ColorUtils.getColor(ColorKey.GROUP_ITEM_TEXT));
                 MMPGroup mmpgroup2 = (MMPGroup) item;
                 this.opened = mmpgroup2.opened;
                 this.online = mmpgroup2.online;
@@ -1084,10 +1086,10 @@ public class RosterItemView extends View {
                 Conference conference = conference_item.conference;
                 this.name = JProtocol.getNameFromFullID(conference.JID);
                 if (conference.isOnline()) {
-                    this.name_.setColor(ColorScheme.getColor(28));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_NORM));
                     this.status = resources.jabber_conference;
                 } else {
-                    this.name_.setColor(ColorScheme.getColor(30));
+                    this.name_.setColor(ColorUtils.getColor(ColorKey.CONTACT_ITEM_TEXT_OFFLINE));
                     this.status = resources.jabber_conference_offline;
                 }
                 if (conference_item.hasUnreadMessages) {
@@ -1104,12 +1106,12 @@ public class RosterItemView extends View {
                 break;
             case 11:
                 this.name_.setTextSize(PreferenceTable.clTextSize * resources.dm.density * 0.7f);
-                this.name_.setColor(ColorScheme.getColor(36));
-                setBackgroundColor(ColorScheme.getColor(35));
+                this.name_.setColor(ColorUtils.getColor(ColorKey.PROFILE_GROUP_ITEM_TEXT));
+                setBackgroundColor(ColorUtils.getColor(ColorKey.PROFILE_GROUP_ITEM_BACK));
                 resources.attachContactlistGroupItemBack(this);
                 this.type = 4;
                 break;
         }
-        this.status_text_.setColor(ColorScheme.getColor(45));
+        this.status_text_.setColor(ColorUtils.getColor(ColorKey.CL_UNDERNICK_TEXT));
     }
 }
