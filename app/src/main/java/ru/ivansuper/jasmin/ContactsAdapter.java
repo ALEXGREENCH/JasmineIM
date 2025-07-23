@@ -920,7 +920,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
             for (int i = 0; i < sz; i++) {
                 IMProfile improfile = profiles.get(i);
                 if (improfile.connected || !PreferenceTable.ms_hide_not_connected_profiles) {
-                    if (improfile.profile_type == 1) {
+                    if (improfile.profile_type == IMProfile.JABBER) {
                         JProfile jprofile = (JProfile) improfile;
                         if (!jprofile.conference_items.isEmpty()) {
                             Collections.sort(jprofile.conference_items);

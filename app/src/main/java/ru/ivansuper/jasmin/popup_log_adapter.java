@@ -111,7 +111,7 @@ public class popup_log_adapter extends BaseAdapter {
                     public boolean onTouch(View var1, MotionEvent var2) {
                         boolean var3 = true;
                         boolean var4;
-                        if (var2.getAction() == 1) {
+                        if (var2.getAction() == MotionEvent.ACTION_UP) {
                             var4 = var3;
                             if (var7 != null) {
                                 var7.forceDestroy();
@@ -119,7 +119,7 @@ public class popup_log_adapter extends BaseAdapter {
                             }
                         } else {
                             var4 = var3;
-                            if (var2.getAction() != 0) {
+                            if (var2.getAction() != MotionEvent.ACTION_DOWN) {
                                 var4 = false;
                             }
                         }
@@ -168,7 +168,7 @@ public class popup_log_adapter extends BaseAdapter {
         var10.setOnTouchListener(new View.OnTouchListener() {
             public boolean onTouch(View var1, MotionEvent var2) {
                 boolean var3;
-                if (var2.getAction() == 0) {
+                if (var2.getAction() == MotionEvent.ACTION_DOWN) {
                     if (var7 != null) {
                         var7.forceDestroy();
                     }

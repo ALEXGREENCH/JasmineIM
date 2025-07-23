@@ -49,7 +49,7 @@ public class EventTranslator {
                         i.setAction(EventTranslator.ACTION);
                         i.putExtra("notify_type", 3);
                         i.putExtra("profile_type", profile.profile_type);
-                        if (profile.profile_type == 1) {
+                        if (profile.profile_type == IMProfile.JABBER) {
                             i.putExtra("profile_xmpp_subtype", ((JProfile) profile).type);
                         } else {
                             i.putExtra("profile_xmpp_subtype", -1);
@@ -127,7 +127,7 @@ public class EventTranslator {
                             IMProfile p = profiles.get(j);
                             if (p.enabled) {
                                 types[jj] = p.profile_type;
-                                if (p.profile_type == 1) {
+                                if (p.profile_type == IMProfile.JABBER) {
                                     xmpp_subtypes[jj] = ((JProfile) p).type;
                                 } else {
                                     xmpp_subtypes[jj] = -1;
