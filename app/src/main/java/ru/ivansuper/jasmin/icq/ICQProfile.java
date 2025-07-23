@@ -1035,7 +1035,7 @@ public class ICQProfile extends IMProfile {
             TLV tlv = list.getTLV(6);
             contact.away_status = null;
             boolean become_online = false;
-            if (contact.status == -1) {
+            if (contact.status == IMProfile.STATUS_OFFLINE) {
                 if (contact.presence_initialized) {
                     contact.requestBlink();
                     if (PreferenceTable.log_online) {

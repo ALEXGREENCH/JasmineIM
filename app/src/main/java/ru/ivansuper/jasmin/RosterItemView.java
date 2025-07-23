@@ -573,7 +573,7 @@ public class RosterItemView extends View {
         this.blink_zero_ts = item.presense_timestamp;
         checkNeedBlinking();
         switch (item.itemType) {
-            case 1:
+            case ContactlistItem.CONTACT:
                 setBackgroundColor(0);
                 resources.attachContactlistItemBack(this);
                 ICQContact contact = (ICQContact) item;
@@ -584,7 +584,7 @@ public class RosterItemView extends View {
                     this.name_.setColor(ColorScheme.getColor(27));
                 } else if (!contact.added || !contact.authorized) {
                     this.name_.setColor(ColorScheme.getColor(29));
-                } else if (contact.status == -1) {
+                } else if (contact.status == IMProfile.STATUS_OFFLINE) {
                     this.name_.setColor(ColorScheme.getColor(30));
                 } else {
                     this.name_.setColor(ColorScheme.getColor(28));
@@ -669,7 +669,7 @@ public class RosterItemView extends View {
                     }
                 }
                 break;
-            case 2:
+            case ContactlistItem.GROUP:
                 setBackgroundColor(ColorScheme.getColor(33));
                 resources.attachContactlistGroupItemBack(this);
                 this.name_.setColor(ColorScheme.getColor(34));
@@ -681,7 +681,7 @@ public class RosterItemView extends View {
                 this.type = 1;
                 this.draw_avatar = false;
                 break;
-            case 3:
+            case ContactlistItem.PROFILE_GROUP:
                 this.name_.setColor(ColorScheme.getColor(36));
                 setBackgroundColor(ColorScheme.getColor(35));
                 resources.attachContactlistGroupItemBack(this);
