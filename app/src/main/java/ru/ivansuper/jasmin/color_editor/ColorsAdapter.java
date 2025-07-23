@@ -37,28 +37,28 @@ public class ColorsAdapter extends BaseAdapter {
     }
 
     @Override
-    public Integer getItem(int arg0) {
-        return this.colors.get(arg0);
+    public Integer getItem(int position) {
+        return this.colors.get(position);
     }
 
     @Override
-    public long getItemId(int arg0) {
-        return arg0;
+    public long getItemId(int position) {
+        return position;
     }
 
     @SuppressLint("InflateParams")
     @Override
-    public View getView(int arg0, View arg1, ViewGroup arg2) {
+    public View getView(int position, View view, ViewGroup parent) {
         LinearLayout lay;
-        if (arg1 == null) {
+        if (view == null) {
             lay = (LinearLayout) LayoutInflater.from(this.ctx).inflate(R.layout.color_editor_list_item, null);
         } else {
-            lay = (LinearLayout) arg1;
+            lay = (LinearLayout) view;
         }
         ImageView preview = lay.findViewById(R.id.color_editor_item_preview);
         TextView name = lay.findViewById(R.id.color_editor_item_name);
-        preview.setBackgroundColor(this.colors.get(arg0));
-        name.setText(this.names.get(arg0));
+        preview.setBackgroundColor(this.colors.get(position));
+        name.setText(this.names.get(position));
         return lay;
     }
 }
