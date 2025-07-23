@@ -24,10 +24,30 @@ import ru.ivansuper.jasmin.utils.SystemBarUtils;
  */
 public class SmileysManagerActivity extends Activity {
 
+    /**
+     * LinearLayout that displays the list of available smiley packs.
+     */
     private LinearLayout list;
+    /**
+     * The name of the currently selected smiley pack.
+     * This value is loaded from shared preferences and updated when the user selects a different pack.
+     * The default value is "$*INTERNAL*$", representing the built-in smiley pack.
+     */
     private String selectedPack = "";
+    /**
+     * SharedPreferences instance for storing and retrieving smiley pack preferences.
+     */
     private SharedPreferences sp;
 
+    /**
+     * Called when the activity is first created.
+     * Initializes the activity, sets up the layout, and loads smiley packs.
+     *
+     * @param savedInstanceState If the activity is being re-initialized after
+     *                           previously being shut down then this Bundle contains the data it most
+     *                           recently supplied in {@link #onSaveInstanceState}.
+     *                           <b><i>Note: Otherwise it is null.</i></b>
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +61,11 @@ public class SmileysManagerActivity extends Activity {
         fillList();
     }
 
+    /**
+     * Initializes the views for the activity.
+     * Sets the text for title TextViews, initializes the smiley pack list,
+     * and sets up the "Apply" button with its click listener.
+     */
     private void initViews() {
         TextView l1TextView = findViewById(R.id.l1);
         l1TextView.setText(resources.getString("s_smileys_manager_title_1"));
@@ -62,6 +87,12 @@ public class SmileysManagerActivity extends Activity {
         });
     }
 
+    /**
+     * Populates the list of smiley packs.
+     * Clears the existing list and adds the internal pack.
+     * If an SD card is mounted, it scans the "Smileys" directory for additional packs
+     * and adds them to the list.
+     */
     private void fillList() {
         list.removeAllViews();
 
@@ -80,6 +111,12 @@ public class SmileysManagerActivity extends Activity {
         }
     }
 
+    /**
+     * Adds a smiley pack item to the list.
+     *
+     * @param packName    The internal name of the smiley pack.
+     * @param displayText The text to display for the smiley pack.
+     */
     private void addPackItem(String packName, String displayText) {
         TextView pack = createPackTextView(displayText, packName);
 
@@ -90,6 +127,13 @@ public class SmileysManagerActivity extends Activity {
         list.addView(pack);
     }
 
+    /**
+     * Creates a TextView for a smiley pack.
+     *
+     * @param text The text to display on the TextView.
+     * @param packName The name of the smiley pack.
+     * @return The created TextView.
+     */
     private TextView createPackTextView(String text, String packName) {
         TextView packTextView = new TextView(this);
         packTextView.setTextColor(Color.WHITE);
@@ -102,14 +146,34 @@ public class SmileysManagerActivity extends Activity {
         return packTextView;
     }
 
+    /**
+     * Handles click events on smiley pack items.
+     * When a pack is clicked, it updates the selected pack and refreshes the list.
+     */
     private class PackClickListener implements View.OnClickListener {
 
+        /**
+         * The name of the smiley pack associated with this listener.
+         * This field stores the identifier for the smiley pack that
+         * will be selected when the associated view is clicked.
+         */
         private final String packName;
 
+        /**
+         * Constructs a new PackClickListener.
+         *
+         * @param packName The name of the smiley pack associated with this listener.
+         */
         PackClickListener(String packName) {
             this.packName = packName;
         }
 
+        /**
+         * Handles the click event on a smiley pack.
+         * Sets the selected pack to the clicked pack and refreshes the list.
+         *
+         * @param v The view that was clicked (the smiley pack TextView).
+         */
         @Override
         public void onClick(View v) {
             selectedPack = packName;

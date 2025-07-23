@@ -28,10 +28,60 @@ import ru.ivansuper.jasmin.ui.MyTextView;
  * </p>
  */
 public class URLImageSpan extends ReplacementSpan {
+    /**
+     * The Bitmap to be displayed.
+     * Initially, this is a placeholder image ({@code resources.img_file}).
+     * It is updated asynchronously with the loaded image, a "too big" image
+     * ({@code resources.img_file_big}), or an error image
+     * ({@code resources.img_file_bad}).
+     */
     private Bitmap image = ((BitmapDrawable) resources.img_file).getBitmap();
+    /**
+     * The width of the image to be displayed.
+     * This value is initialized with the width of the placeholder image and updated
+     * after the actual image is loaded and potentially scaled.
+     */
     private int width = this.image.getWidth();
+    /**
+     * The height of the image to be displayed.
+     * <p>
+     * Initially, this is the height of the placeholder image.
+     * After successful loading and scaling, it's updated to the height of the loaded image.
+     * In case of errors or if the image is too large, it will be the height of the
+     * respective error or "too big" placeholder image.
+     * </p>
+     * <p>
+     * This value is used in {@link #getSize(Paint, CharSequence, int, int, Paint.FontMetricsInt)}
+     * to determine the vertical space the span will occupy.
+     * </p>
+     */
     private int height = this.image.getHeight();
 
+    /**
+     * Constructs a {@code URLImageSpan}.
+     * <p>
+     * This constructor initiates the asynchronous loading of the image from the specified URL.
+     * A placeholder image ({@code resources.img_file}) is displayed initially.
+     * The image loading happens on a background thread.
+     * </p>
+     * <p>
+     * If the image dimensions exceed 1024x1024, a "too big" image ({@code resources.img_file_big})
+     * is displayed. If any other error occurs during loading or decoding, an error image
+     * ({@code resources.img_file_bad}) is displayed.
+     * </p>
+     * <p>
+     * Successfully loaded images are scaled to fit the available width of the {@code container}
+     * {@link MyTextView}, maintaining their aspect ratio.
+     * </p>
+     * <p>
+     * After the image is loaded (or an error occurs), a layout request is posted to the
+     * {@code container} with a delay of 250 milliseconds to update the display.
+     * </p>
+     *
+     * @param url The URL of the image to load.
+     * @param container The {@link MyTextView} that will contain this span. This is used
+     *                  to determine available space for scaling and to request layout updates.
+     */
     public URLImageSpan(final String url, final MyTextView container) {
         Thread loader = new Thread() {
             @Override
@@ -98,7 +148,23 @@ public class URLImageSpan extends ReplacementSpan {
         loader.start();
     }
 
-    /** @noinspection NullableProblems*/
+    /**
+     * Draws the image onto the canvas.
+     * <p>
+     * If the image is available ({@code this.image != null}), it is drawn at the
+     * specified coordinates ({@code x}, {@code top}).
+     *
+     * @param canvas The canvas to draw on.
+     * @param text The text being spanned.
+     * @param start The starting index of the span in the text.
+     * @param end The ending index of the span in the text.
+     * @param x The x-coordinate of the leading edge of the span.
+     * @param top The top y-coordinate of the line.
+     * @param y The baseline y-coordinate.
+     * @param bottom The bottom y-coordinate of the line.
+     * @param paint The paint to use for drawing.
+     * @noinspection NullableProblems
+     */
     @Override
     public void draw(Canvas canvas, CharSequence text, int start, int end, float x, int top, int y, int bottom, Paint paint) {
         if (this.image != null) {
@@ -106,7 +172,21 @@ public class URLImageSpan extends ReplacementSpan {
         }
     }
 
-    /** @noinspection NullableProblems*/
+    /**
+     * Returns the width of the image.
+     * <p>
+     * If {@code fm} is not null, it also sets the font metrics to accommodate the image's height.
+     * The ascent is set to the negative of the image height, and descent, top, and bottom are set to 0.
+     * </p>
+     *
+     * @param paint The paint instance, not used.
+     * @param text  The text, not used.
+     * @param start The start index, not used.
+     * @param end   The end index, not used.
+     * @param fm    The font metrics to be updated. If null, font metrics are not modified.
+     * @return The width of the image.
+     * @noinspection NullableProblems
+     */
     @Override
     public int getSize(Paint paint, CharSequence text, int start, int end, Paint.FontMetricsInt fm) {
         if (fm != null) {
