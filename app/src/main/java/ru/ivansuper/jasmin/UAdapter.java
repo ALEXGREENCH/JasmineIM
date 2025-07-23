@@ -9,8 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Vector;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 
 /**
  * UAdapter is a custom adapter class that extends BaseAdapter.
@@ -581,7 +579,7 @@ public class UAdapter extends BaseAdapter {
         if (!isEnabled(position)) {
             lay.setPadding(2, this.padding, 2, this.padding);
             separator.setVisibility(View.VISIBLE);
-            separator.setBackgroundColor(ColorUtils.getColor(ColorKey.MENU_DIVIDERS));
+            separator.setBackgroundColor(ColorScheme.getColor(44));
             icon.setVisibility(View.GONE);
             String lbl = this.labels.get(position);
             if (!lbl.equals("---")) {
@@ -590,7 +588,7 @@ public class UAdapter extends BaseAdapter {
                 label.setTextSize((int) (this.text_size / 1.15d));
                 label.setTextColor(this.text_color);
                 label.setText(lbl);
-                label.setBackgroundColor(ColorUtils.getColor(ColorKey.MENU_DIVIDERS));
+                label.setBackgroundColor(ColorScheme.getColor(44));
                 label.setShadowLayer(1.0f, 0.0f, 0.0f, -16777216);
             } else {
                 label.setVisibility(View.GONE);
@@ -604,7 +602,7 @@ public class UAdapter extends BaseAdapter {
             label.setLayoutParams(new LinearLayout.LayoutParams(-2, -2));
             label.setPadding(this.padding, 0, 0, 0);
             if (this.select.get(position) != null) {
-                lay.setBackgroundColor(ColorScheme.divideAlpha(ColorUtils.getColor(ColorKey.LIST_SELECTOR_COLOR), 2));
+                lay.setBackgroundColor(ColorScheme.divideAlpha(ColorScheme.getColor(47), 2));
             } else {
                 lay.setBackgroundColor(0);
             }

@@ -35,8 +35,6 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.UAdapter;
 import ru.ivansuper.jasmin.base.ach.ADB;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.jabber.JContact;
 import ru.ivansuper.jasmin.jabber.JProfile;
@@ -900,7 +898,7 @@ public class JConference extends Chat implements Handler.Callback {
         }
 
         // User toggle button
-        mUsersToggleButton.setBackgroundColor(ColorScheme.divideAlpha(ColorUtils.getColor(ColorKey.CONTACTS_CHAT_SEPARATOR), 2));
+        mUsersToggleButton.setBackgroundColor(ColorScheme.divideAlpha(ColorScheme.getColor(48), 2));
         mUsersToggleButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -909,7 +907,7 @@ public class JConference extends Chat implements Handler.Callback {
         });
 
         // Nickname
-        nickname.setTextColor(ColorUtils.getColor(ColorKey.CHAT_HEADER_NICK));
+        nickname.setTextColor(ColorScheme.getColor(12));
 
         // User list
         userList.setSelector(resources.getListSelector());
@@ -949,7 +947,7 @@ public class JConference extends Chat implements Handler.Callback {
 
         // Input field
         input.setTextSize(PreferenceTable.chatTextSize);
-        input.setTextColor(ColorUtils.getColor(ColorKey.TEXT_INPUT_COLOR));
+        input.setTextColor(ColorScheme.getColor(46));
         input.addTextChangedListener(new el());
         input.setOnKeyListener(new inputKeyListener());
         input.setInputType(PreferenceTable.auto_cap ? 147457 : 131073);
@@ -1001,10 +999,10 @@ public class JConference extends Chat implements Handler.Callback {
         if (!TOP_PANEL_VISIBLED) {
             TOP_PANEL.setVisibility(View.GONE);
         }
-        TOP_PANEL.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_HEADER));
+        TOP_PANEL.setBackgroundColor(ColorScheme.getColor(11));
 
         // Bottom panel
-        bottomPanel.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_BOTTOMPANEL));
+        bottomPanel.setBackgroundColor(ColorScheme.getColor(9));
 
         // Backgrounds
         if (!getDefaultSharedPreferences().getBoolean("ms_use_solid_wallpaper", false)) {
@@ -1016,7 +1014,7 @@ public class JConference extends Chat implements Handler.Callback {
 
         // Text styles
         nick_.setTextSize(PreferenceTable.chatTextSize);
-        nick_.setTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_NICK));
+        nick_.setTextColor(ColorScheme.getColor(22));
         input.setTextSize(PreferenceTable.chatTextSize);
 
         // Arrows

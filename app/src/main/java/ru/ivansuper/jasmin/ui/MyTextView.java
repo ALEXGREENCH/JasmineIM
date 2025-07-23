@@ -49,8 +49,6 @@ import ru.ivansuper.jasmin.chats.JChatActivity;
 import ru.ivansuper.jasmin.chats.JConference;
 import ru.ivansuper.jasmin.chats.MMPChatActivity;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.jabber.HttpDisco;
 import ru.ivansuper.jasmin.jabber.JProfile;
@@ -248,7 +246,7 @@ public class MyTextView extends View implements Handler.Callback {
     private void attachHightlight(ClickableSpan span) {
         try {
             SpannableStringBuilder ssb = (SpannableStringBuilder) this.text;
-            this.highlight_span = new BackgroundColorSpan(ColorUtils.getColor(ColorKey.LIST_SELECTOR_COLOR));
+            this.highlight_span = new BackgroundColorSpan(ColorScheme.getColor(47));
             ssb.setSpan(this.highlight_span, ssb.getSpanStart(span), ssb.getSpanEnd(span), 33);
             setText(ssb, false);
         } catch (Exception ignored) {

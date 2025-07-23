@@ -34,8 +34,6 @@ import java.util.Vector;
 
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.icq.Callback;
 import ru.ivansuper.jasmin.icq.ICQContact;
@@ -103,7 +101,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
         } else {
             setTheme(R.style.BlackNoTitleTheme);
             if (!sp.getBoolean("ms_use_solid_wallpaper", false)) {
-                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorUtils.getColor(ColorKey.CHAT_HEADER_TYPING)));
+                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
             } else {
                 getWindow().setBackgroundDrawable(resources.custom_wallpaper);
             }

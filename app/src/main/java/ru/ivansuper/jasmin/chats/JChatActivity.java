@@ -35,8 +35,6 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.UAdapter;
 import ru.ivansuper.jasmin.base.ach.ADB;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.jabber.Clients;
 import ru.ivansuper.jasmin.jabber.FileTransfer.SIFileSender;
@@ -619,7 +617,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         this.mainStatus = (ImageView) findViewById(R.id.mainStatus);
         this.xStatus = (ImageView) findViewById(R.id.xStatus);
         this.nickname = (TextView) findViewById(R.id.nickname);
-        this.nickname.setTextColor(ColorUtils.getColor(ColorKey.CHAT_HEADER_NICK));
+        this.nickname.setTextColor(ColorScheme.getColor(12));
         this.messageList = (ListViewA) findViewById(R.id.messages);
         this.messageList.setSelector(resources.getListSelector());
         this.messageList.setOnItemLongClickListener(new cl());
@@ -681,7 +679,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         }
         this.input = (EditText) findViewById(R.id.input);
         this.input.setTextSize(PreferenceTable.chatTextSize);
-        this.input.setTextColor(ColorUtils.getColor(ColorKey.TEXT_INPUT_COLOR));
+        this.input.setTextColor(ColorScheme.getColor(46));
         Button button = (Button) findViewById(R.id.chat_menu_btn);
         resources.attachButtonStyle(button);
         button.setCompoundDrawables(resources.chat_menu_icon, null, null, null);
@@ -756,9 +754,9 @@ public class JChatActivity extends Chat implements Handler.Callback {
         if (!TOP_PANEL_VISIBLED) {
             TOP_PANEL.setVisibility(View.GONE);
         }
-        TOP_PANEL.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_HEADER));
+        TOP_PANEL.setBackgroundColor(ColorScheme.getColor(11));
         LinearLayout linearLayout = (LinearLayout) findViewById(R.id.chat_bottom_panel);
-        linearLayout.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_BOTTOMPANEL));
+        linearLayout.setBackgroundColor(ColorScheme.getColor(9));
         if (!getDefaultSharedPreferences().getBoolean("ms_use_solid_wallpaper", false)) {
             resources.attachChatMessagesBack(this.messageList);
         }
@@ -768,7 +766,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         opened_chats_markers.setVisibility(PreferenceTable.ms_show_markers_in_chat ? View.VISIBLE : View.GONE);
         this.nick_.setTextSize(PreferenceTable.chatTextSize);
         this.input.setTextSize(PreferenceTable.chatTextSize);
-        this.nick_.setTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_NICK));
+        this.nick_.setTextColor(ColorScheme.getColor(22));
         Button button2 = (Button) findViewById(R.id.chat_scroll_left);
         button2.setOnClickListener(new View.OnClickListener() { // from class: ru.ivansuper.jasmin.chats.JChatActivity.8
             @Override // android.view.View.OnClickListener

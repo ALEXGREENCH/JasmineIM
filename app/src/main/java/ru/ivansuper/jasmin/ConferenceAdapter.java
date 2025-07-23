@@ -17,8 +17,6 @@ import ru.ivansuper.jasmin.Preferences.Manager;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.chats.JConference;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.ui.MyTextView;
 
 /**
@@ -118,7 +116,7 @@ public class ConferenceAdapter extends BaseAdapter {
         CheckBox selector = msg.findViewById(R.id.chat_item_checkbox);
         HistoryItem hst = getItem(arg0);
         String TIME = "[" + hst.formattedDate + "]";
-        int TIME_COLOR = ColorUtils.getColor(ColorKey.CHAT_DATE);
+        int TIME_COLOR = ColorScheme.getColor(10);
         int TIME_SIZE = PreferenceTable.chatTimeSize;
         int NICK_SIZE = PreferenceTable.chatTextSize;
         int MESSAGE_SIZE = PreferenceTable.chatTextSize;
@@ -135,25 +133,25 @@ public class ConferenceAdapter extends BaseAdapter {
         message.setTextSize(PreferenceTable.chatTextSize);
         String NICK = hst.conf_nick + (hst.addTwoPoints ? ": " : " ");
         if (hst.direction == 1) {
-            NICK_COLOR = ColorUtils.getColor(ColorKey.CHAT_INC_NICK);
-            MESSAGE_COLOR = ColorUtils.getColor(ColorKey.CHAT_INC_TEXT);
-            message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_TEXT));
+            NICK_COLOR = ColorScheme.getColor(17);
+            MESSAGE_COLOR = ColorScheme.getColor(16);
+            message.setLinkTextColor(ColorScheme.getColor(16));
             if (hst.conf_warn != 0 && hst.conf_nick.equals(hst.me)) {
-                MESSAGE_COLOR = ColorUtils.getColor(ColorKey.CHAT_AUTH_DENIED_TEXT);
-                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_DENIED_TEXT));
+                MESSAGE_COLOR = ColorScheme.getColor(2);
+                message.setLinkTextColor(ColorScheme.getColor(2));
             }
-            msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_INC_BACK));
+            msg.setBackgroundColor(ColorScheme.getColor(14));
             resources.attachIngMsg(msg);
         } else {
-            NICK_COLOR = ColorUtils.getColor(ColorKey.CONFERENCE_ME_NICK);
+            NICK_COLOR = ColorScheme.getColor(40);
             if (hst.confirmed) {
-                MESSAGE_COLOR = ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_CONFIRMED);
-                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_CONFIRMED));
+                MESSAGE_COLOR = ColorScheme.getColor(21);
+                message.setLinkTextColor(ColorScheme.getColor(21));
             } else {
-                MESSAGE_COLOR = ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_NOT_CONFIRMED);
-                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_NOT_CONFIRMED));
+                MESSAGE_COLOR = ColorScheme.getColor(23);
+                message.setLinkTextColor(ColorScheme.getColor(23));
             }
-            msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_OUT_BACK));
+            msg.setBackgroundColor(ColorScheme.getColor(18));
             resources.attachOutMsg(msg);
         }
         boolean update_imgs = false;
@@ -177,14 +175,14 @@ public class ConferenceAdapter extends BaseAdapter {
                     MESSAGE_SIZE = (int) (MESSAGE_SIZE / 1.2d);
                 }
                 if (it_is_for_me) {
-                    MESSAGE_COLOR = ColorUtils.getColor(ColorKey.CONFERENCE_MESSAGE_HIGHLIGHT)_text;
+                    MESSAGE_COLOR = ColorScheme.getColor(42);
                 }
                 //noinspection DuplicateExpressions
                 res.setSpan(new StyleSpan(MESSAGE_SIZE, MESSAGE_COLOR, hst.isTheme || hst.isMe || hst.conf_warn != 0), TIME.length() + NICK.length(), TIME.length() + NICK.length() + MESSAGE.length(), 33);
                 if (it_is_for_me) {
                     highlight = true;
                     //noinspection DuplicateExpressions
-                    res.setSpan(new BackgroundColorSpan(ColorUtils.getColor(ColorKey.CONFERENCE_MESSAGE_HIGHLIGHT)), TIME.length() + NICK.length(), TIME.length() + NICK.length() + MESSAGE.length(), 33);
+                    res.setSpan(new BackgroundColorSpan(ColorScheme.getColor(41)), TIME.length() + NICK.length(), TIME.length() + NICK.length() + MESSAGE.length(), 33);
                 }
             } else {
                 res.setSpan(new StyleSpan((int) (NICK_SIZE / 1.2d), NICK_COLOR, true), 0, NICK.length(), 33);

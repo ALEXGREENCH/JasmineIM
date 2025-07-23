@@ -16,8 +16,6 @@ import android.widget.Toast;
 import java.io.File;
 
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 /**
@@ -123,7 +121,7 @@ public class SmileysManagerActivity extends Activity {
         TextView pack = createPackTextView(displayText, packName);
 
         if (selectedPack.equals(packName)) {
-            pack.setBackgroundColor(ColorUtils.getColor(ColorKey.LIST_SELECTOR_COLOR));
+            pack.setBackgroundColor(ColorScheme.getColor(47));
         }
 
         list.addView(pack);

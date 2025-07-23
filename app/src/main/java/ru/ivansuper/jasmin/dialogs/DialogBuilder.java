@@ -21,8 +21,6 @@ import android.widget.TextView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.UAdapter;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.ui.LoadingView;
 
@@ -68,9 +66,9 @@ public class DialogBuilder {
     private static LinearLayout prepareContainer(Context context, String caption) {
         LinearLayout header = (LinearLayout) View.inflate(context, R.layout.dialog_header, null);
         LinearLayout divider = header.findViewById(R.id.dialog_hdr_divider);
-        divider.setBackgroundColor(ColorUtils.getColor(ColorKey.MENU_DIVIDERS));
+        divider.setBackgroundColor(ColorScheme.getColor(44));
         TextView header_label = header.findViewById(R.id.dialog_header);
-        header_label.setTextColor(ColorUtils.getColor(ColorKey.MENU_HEADERS));
+        header_label.setTextColor(ColorScheme.getColor(43));
         header_label.setText(caption);
         return header.findViewById(R.id.dialog_view);
     }

@@ -21,8 +21,6 @@ import ru.ivansuper.jasmin.chats.ICQChatActivity;
 import ru.ivansuper.jasmin.chats.JChatActivity;
 import ru.ivansuper.jasmin.chats.MMPChatActivity;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
-import ru.ivansuper.jasmin.color_editor.ColorKey;
-import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.jabber.FileTransfer.TransferController;
 import ru.ivansuper.jasmin.jabber.juick.TextParser;
 import ru.ivansuper.jasmin.ui.MyTextView;
@@ -155,7 +153,7 @@ public class ChatAdapter extends BaseAdapter {
         time.setText(hst.formattedDate);
         nick.setTextSize(PreferenceTable.chatTextSize);
         time.setTextSize(PreferenceTable.chatTimeSize);
-        time.setTextColor(ColorUtils.getColor(ColorKey.CHAT_DATE));
+        time.setTextColor(ColorScheme.getColor(10));
         if (hst.message == null) {
             hst.message = "NULL";
         }
@@ -190,30 +188,30 @@ public class ChatAdapter extends BaseAdapter {
             if (hst.mcontact != null) {
                 nick.setText(hst.mcontact.name);
             }
-            nick.setTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_NICK));
+            nick.setTextColor(ColorScheme.chat_inc_nick);
             switch (hst.authType) {
                 case 0:
-                    status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_DENIED_BAR));
-                    msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_DENIED_BACK));
+                    status.setBackgroundColor(ColorScheme.getColor(1));
+                    msg.setBackgroundColor(ColorScheme.getColor(0));
                     resources.attachAuthDenMsg(msg);
-                    message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_DENIED_TEXT));
-                    message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_DENIED_TEXT));
+                    message.setTextColor(ColorScheme.getColor(2));
+                    message.setLinkTextColor(ColorScheme.getColor(2));
                     text_for_display = resources.getString("s_jabber_authorization_rejected");
                     break;
                 case 1:
-                    status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_GRAND_BAR));
-                    msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_GRAND_BACK));
+                    status.setBackgroundColor(ColorScheme.getColor(4));
+                    msg.setBackgroundColor(ColorScheme.getColor(3));
                     resources.attachAuthAccMsg(msg);
-                    message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_GRAND_TEXT));
-                    message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_GRAND_TEXT));
+                    message.setTextColor(ColorScheme.getColor(5));
+                    message.setLinkTextColor(ColorScheme.getColor(5));
                     text_for_display = resources.getString("s_jabber_authorization_accepted");
                     break;
                 case 2:
-                    status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_REQ_BAR));
-                    msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_REQ_BACK));
+                    status.setBackgroundColor(ColorScheme.getColor(7));
+                    msg.setBackgroundColor(ColorScheme.getColor(6));
                     resources.attachAuthAskMsg(msg);
-                    message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_REQ_TEXT));
-                    message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_AUTH_REQ_TEXT));
+                    message.setTextColor(ColorScheme.getColor(8));
+                    message.setLinkTextColor(ColorScheme.getColor(8));
                     if (!hst.message.isEmpty()) {
                         text_for_display = resources.getString("s_icq_authorization_req") + ":\n" + hst.message;
                     } else {
@@ -231,31 +229,31 @@ public class ChatAdapter extends BaseAdapter {
             if (hst.mcontact != null) {
                 nick.setText(hst.mcontact.name);
             }
-            nick.setTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_NICK));
+            nick.setTextColor(ColorScheme.getColor(17));
             if (hst.isXtrazMessage) {
                 nick.setVisibility(View.GONE);
                 sts.setImageDrawable(null);
                 status.setBackgroundColor(0);
-                message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_XTRAZ_TEXT));
-                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_XTRAZ_TEXT));
-                msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_XTRAZ_BACK));
+                message.setTextColor(ColorScheme.getColor(26));
+                message.setLinkTextColor(ColorScheme.getColor(26));
+                msg.setBackgroundColor(ColorScheme.getColor(24));
                 resources.attachStatusMsg(msg);
                 time.setPadding(5, 5, 5, 5);
                 time.setCompoundDrawables(hst.xTrazIcon, null, null, null);
             } else if (hst.isFileMessage) {
                 nick.setText("");
-                status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_INC_BAR));
-                message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_TEXT));
-                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_TEXT));
-                msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_INC_BACK));
+                status.setBackgroundColor(ColorScheme.getColor(15));
+                message.setTextColor(ColorScheme.getColor(16));
+                message.setLinkTextColor(ColorScheme.getColor(16));
+                msg.setBackgroundColor(ColorScheme.getColor(14));
                 resources.attachTransferMsg(msg);
                 time.setPadding(5, 5, 5, 5);
                 time.setCompoundDrawables(resources.file_for_chat, null, null, null);
             } else {
-                status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_INC_BAR));
-                message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_TEXT));
-                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_INC_TEXT));
-                msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_INC_BACK));
+                status.setBackgroundColor(ColorScheme.getColor(15));
+                message.setTextColor(ColorScheme.getColor(16));
+                message.setLinkTextColor(ColorScheme.getColor(16));
+                msg.setBackgroundColor(ColorScheme.getColor(14));
                 resources.attachIngMsg(msg);
                 time.setPadding(0, 0, 0, 0);
                 if (hst.wakeup_alarm) {
@@ -274,19 +272,19 @@ public class ChatAdapter extends BaseAdapter {
             if (hst.mcontact != null) {
                 nick.setText(hst.mcontact.profile.ID);
             }
-            nick.setTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_NICK));
+            nick.setTextColor(ColorScheme.getColor(22));
             time.setPadding(0, 0, 0, 0);
             time.setCompoundDrawables(null, null, null, null);
             if (hst.confirmed) {
-                status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_OUT_BAR_CONFIRMED));
-                message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_CONFIRMED));
-                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_CONFIRMED));
+                status.setBackgroundColor(ColorScheme.getColor(19));
+                message.setTextColor(ColorScheme.getColor(21));
+                message.setLinkTextColor(ColorScheme.getColor(21));
             } else {
-                status.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_OUT_BAR_NOT_CONFIRMED));
-                message.setTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_NOT_CONFIRMED));
-                message.setLinkTextColor(ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_NOT_CONFIRMED));
+                status.setBackgroundColor(ColorScheme.getColor(20));
+                message.setTextColor(ColorScheme.getColor(23));
+                message.setLinkTextColor(ColorScheme.getColor(23));
             }
-            msg.setBackgroundColor(ColorUtils.getColor(ColorKey.CHAT_OUT_BACK));
+            msg.setBackgroundColor(ColorScheme.getColor(18));
             resources.attachOutMsg(msg);
         }
         boolean update_imgs = false;
@@ -313,7 +311,7 @@ public class ChatAdapter extends BaseAdapter {
         if (hst.jtransfer != null) {
             TextView file_label = transfer_display.findViewById(R.id.transfer_file_name);
             file_label.setTextSize(PreferenceTable.chatTextSize);
-            file_label.setTextColor(hst.jtransfer.direction == 0 ? ColorUtils.getColor(ColorKey.CHAT_INC_TEXT) : ColorUtils.getColor(ColorKey.CHAT_OUT_TEXT_CONFIRMED));
+            file_label.setTextColor(hst.jtransfer.direction == 0 ? ColorScheme.getColor(16) : ColorScheme.getColor(21));
             hst.jtransfer.setDisplay(transfer_display);
             message.setVisibility(View.GONE);
         } else {
