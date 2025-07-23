@@ -2,6 +2,8 @@ package ru.ivansuper.jasmin.Preferences;
 
 import android.annotation.SuppressLint;
 import android.preference.PreferenceManager;
+import android.util.DisplayMetrics;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import java.io.File;
@@ -38,6 +40,33 @@ public class Manager {
                 f.delete();
             }
             resources.copyAssetToSD("defaults/prefs_map.xml", dest);
+
+            // Apply density-based defaults for fonts and smileys
+            DisplayMetrics metrics = resources.ctx.getResources().getDisplayMetrics();
+            int density = metrics.densityDpi;
+            int fontSize;
+            int smileScale;
+            if (density >= DisplayMetrics.DENSITY_XXHIGH) {
+                fontSize = 20;
+                smileScale = 200;
+            } else if (density >= DisplayMetrics.DENSITY_XHIGH) {
+                fontSize = 18;
+                smileScale = 150;
+            } else if (density >= DisplayMetrics.DENSITY_HIGH) {
+                fontSize = 16;
+                smileScale = 120;
+            } else {
+                fontSize = 15;
+                smileScale = 100;
+            }
+
+            SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
+            SharedPreferences.Editor editor = prefs.edit();
+            editor.putString("ms_cl_font_size", String.valueOf(fontSize));
+            editor.putString("ms_chat_text_size", String.valueOf(fontSize));
+            editor.putString("ms_chat_time_size", String.valueOf(fontSize));
+            editor.putString("ms_smileys_scale", String.valueOf(smileScale));
+            editor.apply();
         }
     }
 
