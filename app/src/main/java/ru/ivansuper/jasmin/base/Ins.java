@@ -11,6 +11,7 @@ import android.app.Instrumentation;
  * The {@code @noinspection unused} annotation is present because this class might be
  * instantiated by the Android framework via reflection during testing, even if it's
  * not directly referenced in the application code.
+ * @noinspection unused
  */
 public class Ins extends Instrumentation {
 

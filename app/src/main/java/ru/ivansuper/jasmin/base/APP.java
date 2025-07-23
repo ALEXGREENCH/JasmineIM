@@ -40,8 +40,40 @@ import ru.ivansuper.jasmin.resources;
  */
 public class APP extends Application {
 
+    /**
+     * A static reference to the application instance. This allows for global access
+     * to the application context and its resources.
+     */
     public static Application INSTANCE;
 
+    /**
+     * Called when the application is starting, before any other application objects have been created.
+     * This method initializes the application-wide resources and components.
+     *
+     * <p>The initialization process includes:
+     * <ul>
+     *     <li>Setting the global {@link #INSTANCE} to this application object.</li>
+     *     <li>Putting the application context into {@link resources} if not already set.</li>
+     *     <li>Checking if it's the first start of the application by looking for "profiles.cfg".
+     *         If it's the first start, {@link Manager#checkFirstStartAndReset()} is called.</li>
+     *     <li>Initializing {@link ADB}.</li>
+     *     <li>Initializing {@link MD5}.</li>
+     *     <li>Initializing {@link debug} if it hasn't been initialized yet.</li>
+     *     <li>Initializing {@link IcqCapsBase}.</li>
+     *     <li>Loading Jabber {@link Clients}.</li>
+     *     <li>Initializing {@link IcqClientDetector}.</li>
+     *     <li>Initializing {@link MediaTable}.</li>
+     *     <li>Initializing {@link SmileysManager} with the application context.</li>
+     *     <li>Initializing {@link ColorScheme}.</li>
+     *     <li>Logging the maximum available heap size for the application.</li>
+     * </ul>
+     * </p>
+     * <p>
+     * This initialization logic is guarded by a check ({@code resources.service == null && resources.ctx == null})
+     * to ensure that these components are initialized only once, even if {@code onCreate} is called multiple times
+     * (e.g., due to process recreation).
+     * </p>
+     */
     @Override
     public void onCreate() {
         super.onCreate();
