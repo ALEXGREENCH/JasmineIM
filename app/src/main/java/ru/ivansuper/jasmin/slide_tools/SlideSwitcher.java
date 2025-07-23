@@ -29,6 +29,8 @@ import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.animate_tools.Transform;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.resources;
 
 /**
@@ -150,7 +152,7 @@ public class SlideSwitcher extends ViewGroup {
 
         // Label paint
         labelPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        labelPaint.setColor(ColorScheme.getColor(49));
+        labelPaint.setColor(ColorUtils.getColor(ColorKey.CONTACTS_SCREEN_HEADER_HIGHLIGHT));
         labelPaint.setShadowLayer(1f, 0, 0, 0xFFCCCCCC);
 
         // Effect outline paint
@@ -161,7 +163,7 @@ public class SlideSwitcher extends ViewGroup {
 
         // Panel drawable
         panelDrawable = getContext().getResources().getDrawable(R.drawable.slide_switcher_panel);
-        textColor = ColorScheme.getColor(49);
+        textColor = ColorUtils.getColor(ColorKey.CONTACTS_SCREEN_HEADER_HIGHLIGHT);
 
         // Highlight tab
         highlightDrawable = resources.convertToMyFormat(resources.tab_highlight);
@@ -191,7 +193,7 @@ public class SlideSwitcher extends ViewGroup {
         float scaled = baseText * 1.1f * resources.dm.density;
         labelPaint.setTextSize(scaled);
         effectPaint.setTextSize(scaled);
-        effectPaint.setColor(ColorScheme.getColor(49));
+        effectPaint.setColor(ColorUtils.getColor(ColorKey.CONTACTS_SCREEN_HEADER_HIGHLIGHT));
 
         panelHeight = (int)((scaled * 1.7f));
         requestLayout();

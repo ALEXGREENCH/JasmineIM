@@ -16,6 +16,8 @@ import android.widget.GridView;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.chats.Chat;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 /**
@@ -107,7 +109,7 @@ public class SmileysSelector extends Activity {
                     wnd.setBackgroundDrawable(resources.custom_wallpaper);
                 } else //noinspection ConstantValue
                     if (wallpaper_type.equals("2")) {
-                    wnd.setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
+                    wnd.setBackgroundDrawable(ColorScheme.getSolid(ColorUtils.getColor(ColorKey.CHAT_HEADER_TYPING)));
                 }
                 resources.attachChatMessagesBack(wnd);
                 break;

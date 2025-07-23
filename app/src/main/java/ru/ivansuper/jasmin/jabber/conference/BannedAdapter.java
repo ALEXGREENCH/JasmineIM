@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
 
@@ -65,7 +67,7 @@ public class BannedAdapter extends BaseAdapter {
             LinearLayout lay1 = lay.findViewById(R.id.lay1);
             lay1.setBackgroundDrawable(resources.getListSelector());
             LinearLayout lay2 = lay.findViewById(R.id.lay2);
-            lay2.setBackgroundColor(ColorScheme.getColor(44));
+            lay2.setBackgroundColor(ColorUtils.getColor(ColorKey.MENU_DIVIDERS));
         } else {
             lay = (LinearLayout) convertView;
         }

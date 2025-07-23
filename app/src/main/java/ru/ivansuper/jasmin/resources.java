@@ -38,6 +38,8 @@ import ru.ivansuper.jasmin.MMP.MMPContact;
 import ru.ivansuper.jasmin.MultiColumnList.MultiColumnList;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.icq.ICQContact;
 import ru.ivansuper.jasmin.jabber.JContact;
 import ru.ivansuper.jasmin.locale.Locale;
@@ -359,7 +361,7 @@ public class resources {
     public static void attachButtonStyle(View view) {
         try {
             if (view instanceof Button) {
-                ((Button) view).setTextColor(ColorScheme.getColor(52));
+                ((Button) view).setTextColor(ColorUtils.getColor(ColorKey.BUTTONS_LABEL_COLOR));
             }
         } catch (Exception ignored) {
         }
@@ -530,7 +532,7 @@ public class resources {
     }
 
     private static boolean attachEditTextInternal(EditText editText) {
-        int var1 = ColorScheme.getColor(46);
+        int var1 = ColorUtils.getColor(ColorKey.TEXT_INPUT_COLOR);
         int var2 = Color.alpha(var1);
         int var3 = Color.red(var1);
         int var4 = Color.green(var1);
@@ -815,7 +817,7 @@ public class resources {
     public static Drawable getListSelector() {
         StateListDrawable listSelector = new StateListDrawable();
 
-        int colorPrimary = ColorScheme.getColor(47);
+        int colorPrimary = ColorUtils.getColor(ColorKey.LIST_SELECTOR_COLOR);
         int colorDefault = 0;
 
         listSelector.addState(new int[]{-android.R.attr.state_enabled}, new SolidDrawable(colorDefault));

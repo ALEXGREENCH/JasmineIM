@@ -66,6 +66,8 @@ import ru.ivansuper.jasmin.chats.JChatActivity;
 import ru.ivansuper.jasmin.chats.JConference;
 import ru.ivansuper.jasmin.chats.MMPChatActivity;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.color_editor.ColorKey;
+import ru.ivansuper.jasmin.color_editor.ColorUtils;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.icq.Callback;
 import ru.ivansuper.jasmin.icq.ICQContact;
@@ -221,7 +223,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 break;
             case "2":
                 setTheme(R.style.BlackNoTitleTheme);
-                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
+                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorUtils.getColor(ColorKey.CHAT_HEADER_TYPING)));
                 break;
         }
         if (resources.IT_IS_TABLET) {
@@ -2452,8 +2454,8 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         toggle_sound = findViewById(R.id.toggle_sound);
         toggle_sound.setOnClickListener(new ToolsPanelListener());
 
-        connectionStatusPanel.setBackgroundColor(ColorScheme.getColor(32));
-        findViewById(R.id.bottomPanel).setBackgroundColor(ColorScheme.getColor(32));
+        connectionStatusPanel.setBackgroundColor(ColorUtils.getColor(ColorKey.CONTACTLIST_BOTTOMPANEL_BACK));
+        findViewById(R.id.bottomPanel).setBackgroundColor(ColorUtils.getColor(ColorKey.CONTACTLIST_BOTTOMPANEL_BACK));
         BOTTOM_PANEL = findViewById(R.id.bottomPanel);
         if (!BOTTOM_PANEL_VISIBLED) {
             BOTTOM_PANEL.setVisibility(View.GONE);
