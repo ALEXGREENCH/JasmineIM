@@ -57,6 +57,39 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.popup_log_adapter;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A custom TextView that supports clickable spans, link detection, and animated smileys.
+ *
+ * <p>This class extends {@link View} and implements {@link Handler.Callback}
+ * to handle message updates for animations. It provides functionalities such as:
+ *
+ * <ul>
+ *   <li>Setting text with optional link detection.
+ *   <li>Customizing text size, color, and link color.
+ *   <li>Limiting the maximum number of lines.
+ *   <li>Handling touch events for clickable spans and showing a context menu for URLs.
+ *   <li>Highlighting search matches within the text.
+ *   <li>Replacing image links with {@link URLImageSpan} for displaying images.
+ *   <li>Supporting animated smileys using {@link MySpan} and managing their refresh rate.
+ * </ul>
+ *
+ * <p><b>Usage:</b>
+ *
+ * <p>MyTextView can be used in XML layouts or created programmatically.
+ *
+ * <p>Example:
+ *
+ * <pre>{@code
+ * MyTextView myTextView = new MyTextView(context);
+ * myTextView.setText("Hello, world! Check out https://www.example.com");
+ * myTextView.setTextSize(16);
+ * myTextView.setTextColor(Color.BLACK);
+ * }</pre>
+ *
+ * <p><b>Note:</b> This class has dependencies on other classes within the
+ * {@code ru.ivansuper.jasmin} package, such as {@code resources}, {@code Locale},
+ * {@code ColorScheme}, etc. Ensure these dependencies are available in your project.
+ */
 public class MyTextView extends View implements Handler.Callback {
     private boolean animated;
     private boolean forced_animation;

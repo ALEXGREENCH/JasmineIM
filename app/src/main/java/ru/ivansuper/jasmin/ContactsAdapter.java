@@ -27,6 +27,20 @@ import ru.ivansuper.jasmin.jabber.conference.Conference;
 import ru.ivansuper.jasmin.jabber.conference.ConferenceItem;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
+/**
+ * Adapter for displaying contacts in a list view.
+ * This adapter handles different display modes, including:
+ * - Displaying all contacts with or without groups.
+ * - Displaying only chats.
+ * - Displaying only conferences.
+ * - Filtering contacts based on a search pattern.
+ * <p>
+ * The adapter uses {@link AsyncTask} to perform data loading and filtering in the background
+ * to avoid blocking the UI thread.
+ * <p>
+ * It relies on {@link ProfilesManager} to retrieve contact information and {@link PreferenceTable}
+ * for user preferences that affect the display.
+ */
 public class ContactsAdapter extends MultiColumnAdapter {
     public static final Object locker = new Object();
     /** @noinspection FieldCanBeLocal, unused */
@@ -41,9 +55,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
     private boolean filtered = false;
 
     public ContactsAdapter(Context ctxParam, jasminSvc svc, boolean only_chats, boolean only_conferences) {
-        //noinspection UnusedAssignment
         this.only_chats = false;
-        //noinspection UnusedAssignment
         this.only_conferences = false;
         this.ctx = ctxParam;
         this.svc = svc;

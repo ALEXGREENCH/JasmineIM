@@ -21,6 +21,31 @@ import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.jabber.forms.FormListMap;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A custom view that mimics the behavior of a spinner (dropdown list).
+ *
+ * <p>This class extends {@link View} and provides functionality to display a list of items
+ * in a dialog when clicked. Users can select one or more items from the list.
+ *
+ * <p>Key features:
+ * <ul>
+ *     <li>Displays a textual representation of the selected item(s).
+ *     <li>Shows a dialog with a {@link ListView} when clicked to allow item selection.
+ *     <li>Supports single and multiple selection modes (determined by the adapter).
+ *     <li>Notifies a listener when an item is selected.
+ *     <li>Handles layout changes and redraws appropriately.
+ * </ul>
+ *
+ * <p>To use this Spinner, you need to:
+ * <ol>
+ *     <li>Create an instance of {@link FormListMap} to hold the data for the spinner.
+ *     <li>Set the adapter using {@link #setAdapter(FormListMap)}.
+ *     <li>Optionally, set an {@link OnSelectListener} to be notified of selection changes.
+ * </ol>
+ *
+ * @see FormListMap
+ * @see OnSelectListener
+ */
 public class Spinner extends View {
     public OnSelectListener listener;
     private FormListMap mAdapter;

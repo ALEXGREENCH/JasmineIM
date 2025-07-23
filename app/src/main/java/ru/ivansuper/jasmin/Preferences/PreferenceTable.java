@@ -1,5 +1,11 @@
 package ru.ivansuper.jasmin.Preferences;
 
+/**
+ * This class serves as a static container for all application preferences.
+ * Each public static field represents a specific preference setting.
+ * These fields are populated at application startup and can be accessed
+ * globally to retrieve the current preference values.
+ */
 public class PreferenceTable {
     public static boolean as_enable_notify;
     public static boolean as_only_roster;

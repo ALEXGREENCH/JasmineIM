@@ -1,52 +1,71 @@
 package ru.ivansuper.jasmin;
 
+/**
+ * Represents an abstract item in a contact list.
+ * This class provides a common base for different types of contact list entries,
+ * such as individual contacts, groups, or special items like splitters.
+ * It implements {@link Comparable} to allow sorting of contact list items,
+ * primarily based on their names.
+ *
+ * <p>The class defines several constants to represent different item types:
+ * <ul>
+ *   <li>{@link #CONTACT}
+ *   <li>{@link #GROUP}
+ *   <li>{@link #PROFILE_GROUP}
+ *   <li>{@link #JABBER_CONTACT}
+ *   <li>{@link #JABBER_PROFILE_GROUP}
+ *   <li>{@link #JABBER_GROUP}
+ *   <li>{@link #MMP_CONTACT}
+ *   <li>{@link #MMP_PROFILE_GROUP}
+ *   <li>{@link #MMP_GROUP}
+ *   <li>{@link #JABBER_CONFERENCE}
+ *   <li>{@link #SPLITTER}
+ * </ul>
+ *
+ * <p>Each item has an {@code itemType}, a flag {@code presence_initialized} to indicate
+ * if presence information has been loaded, a {@code presense_timestamp} often used for
+ * visual cues like blinking, a unique {@code ID}, and a display {@code name}.
+ *
+ * <p>The {@link #compareTo(ContactlistItem)} method provides a custom sorting logic
+ * that considers character order based on a predefined character set (presumably in
+ * {@code utilities.chars}) and then by string length.
+ *
+ * <p>The {@link #requestBlink()} and {@link #resetBlink()} methods manage the
+ * {@code presense_timestamp}, typically used to indicate activity or new events
+ * related to the contact item.
+ */
 public abstract class ContactlistItem implements Comparable<ContactlistItem> {
 
-    /** @noinspection unused*/ // Типы элементов в списке контактов
     public static final int CONTACT = 1;
-    /** @noinspection unused*/
     public static final int GROUP = 2;
-    /** @noinspection unused*/
     public static final int PROFILE_GROUP = 3;
-    /** @noinspection unused*/
     public static final int JABBER_CONTACT = 4;
-    /** @noinspection unused*/
     public static final int JABBER_PROFILE_GROUP = 5;
-    /** @noinspection unused*/
     public static final int JABBER_GROUP = 6;
-    /** @noinspection unused*/
     public static final int MMP_CONTACT = 7;
-    /** @noinspection unused*/
     public static final int MMP_PROFILE_GROUP = 8;
-    /** @noinspection unused*/
     public static final int MMP_GROUP = 9;
-    /** @noinspection unused*/
     public static final int JABBER_CONFERENCE = 10;
-    /** @noinspection unused*/
     public static final int SPLITTER = 11;
 
-    // Публичные поля
     public int itemType;
     public boolean presence_initialized;
     public long presense_timestamp;
     public String ID = "";
     public String name = "";
 
-    // Получение уникального хеша для сравнения/сопоставления
     public int getHash() {
         return this.ID.hashCode();
     }
 
-    // Переопределяемый метод для обновления содержимого (если нужно)
+    /** @noinspection unused*/
     public void update(ContactlistItem item) {
-        // Обычно реализуется в подклассах
+
     }
 
-    // Метод сравнения для сортировки списка
     @Override
     public final int compareTo(ContactlistItem contact) {
         try {
-            // Установка флага для старого алгоритма сортировки (устарело, но оставлено как было)
             System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
 
             String nameA = this.name;
@@ -69,7 +88,6 @@ public abstract class ContactlistItem implements Comparable<ContactlistItem> {
                 }
             }
 
-            // Если строки одинаковы по началу, но разной длины
             return Integer.compare(nameA.length(), nameB.length());
 
         } catch (Exception e) {
@@ -79,12 +97,10 @@ public abstract class ContactlistItem implements Comparable<ContactlistItem> {
         }
     }
 
-    // Отметка, что нужно "подсветить" элемент (например, пришло сообщение)
     public final void requestBlink() {
         this.presense_timestamp = System.currentTimeMillis();
     }
 
-    // Сброс подсветки (событие обработано)
     public final void resetBlink() {
         this.presense_timestamp = 0L;
     }

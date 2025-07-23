@@ -11,6 +11,11 @@ import java.util.Vector;
 
 import ru.ivansuper.jasmin.icq.xstatus;
 
+/**
+ * Adapter for displaying XStatus icons in a list or grid.
+ * XStatus icons represent various user moods or activities.
+ * This adapter populates a view (e.g., ListView, GridView) with these icons.
+ */
 public class XStatusAdapter extends BaseAdapter {
     private final Vector<Drawable> list = new Vector<>();
 

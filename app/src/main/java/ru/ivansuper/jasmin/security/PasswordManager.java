@@ -11,6 +11,14 @@ import java.io.OutputStream;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * The PasswordManager class provides methods for saving and verifying passwords.
+ * Passwords are stored in a file named "security0.bin" in the application's data directory.
+ * The class uses a custom encoding/decoding scheme for password storage.
+ * <p>
+ * Note: The encoding scheme used in this class is not cryptographically secure and should not be used for sensitive data.
+ * It is provided as an example only.
+ */
 public class PasswordManager {
     public static boolean TYPED = false;
 

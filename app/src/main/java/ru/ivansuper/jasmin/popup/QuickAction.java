@@ -14,6 +14,12 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Represents a quick action popup window.
+ * This class extends {@link CustomPopupWindow} and provides functionality
+ * for displaying a popup with a header and a track for custom views.
+ * It supports different animation styles for showing and dismissing the popup.
+ */
 public class QuickAction extends CustomPopupWindow {
 
     /**

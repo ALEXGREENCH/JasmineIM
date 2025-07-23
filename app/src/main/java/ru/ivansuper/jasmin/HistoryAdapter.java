@@ -15,6 +15,13 @@ import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.ui.MyTextView;
 
+/**
+ * Adapter for displaying chat history items in a ListView.
+ * This adapter handles filtering of history items based on a search pattern
+ * and dynamically updates the view to reflect changes in data or filter.
+ * It also supports different visual styles for incoming and outgoing messages,
+ * as well as message status indicators and multi-quoting functionality.
+ */
 public class HistoryAdapter extends BaseAdapter {
     private final Context ctx;
     private boolean filtered;

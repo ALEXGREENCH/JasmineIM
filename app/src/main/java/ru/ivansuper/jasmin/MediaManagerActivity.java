@@ -21,6 +21,14 @@ import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
 
+/**
+ * Activity for managing media settings such as notification sounds.
+ * Allows users to enable/disable sounds for various events,
+ * select custom sound files, revert to default sounds, and preview sounds.
+ * This activity interacts with the {@link jasminSvc} to play sounds and
+ * uses {@link SharedPreferences} to store sound preferences.
+ * It also updates the {@link MediaTable} when settings are changed.
+ */
 public class MediaManagerActivity extends Activity {
     
     private ServiceConnection jasminSvcCnt;

@@ -10,6 +10,11 @@ import android.widget.ListView;
 
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Utility class for building QuickAction popups.
+ * This class provides static methods to create different types of QuickAction popups,
+ * such as simple popups, grid popups, and list popups.
+ */
 public class PopupBuilder {
     public PopupBuilder() {
     }

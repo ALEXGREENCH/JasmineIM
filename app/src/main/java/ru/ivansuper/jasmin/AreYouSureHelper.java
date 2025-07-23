@@ -7,6 +7,13 @@ import android.view.View;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.locale.Locale;
 
+/**
+ * Helper class to display a "Are you sure?" dialog.
+ * <p>
+ * This class simplifies the creation and display of a standard confirmation dialog
+ * with "Yes" and "No" options. It uses {@link DialogBuilder#createYesNo} to construct
+ * the dialog and handles the click events for the buttons.
+ */
 public class AreYouSureHelper {
     Dialog dialog;
 

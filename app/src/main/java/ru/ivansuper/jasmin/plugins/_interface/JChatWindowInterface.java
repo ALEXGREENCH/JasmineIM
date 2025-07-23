@@ -10,7 +10,28 @@ import java.util.Iterator;
 import java.util.Vector;
 import ru.ivansuper.jasmin.chats.JChatActivity;
 
-/** @noinspection unused*/
+/**
+ * Provides an interface for plugins to interact with the JChatActivity window and its components.
+ * This class allows plugins to:
+ * <ul>
+ *   <li>Listen to window lifecycle events (started, paused, resumed, stopped).</li>
+ *   <li>Handle key events within the chat window.</li>
+ *   <li>Create custom dialogs.</li>
+ *   <li>Process results from activities started for a result.</li>
+ *   <li>Modify the options menu.</li>
+ *   <li>Add custom menu items to the main and message context menus.</li>
+ *   <li>Listen to click events on messages in the message list.</li>
+ * </ul>
+ * <p>
+ * Plugins can register listeners for various events. When an event occurs, the corresponding
+ * listener methods will be invoked.
+ * </p>
+ * <p>
+ * All methods that add, remove, or dispatch events are synchronized to ensure thread safety.
+ * </p>
+ *
+ * @noinspection unused
+ */
 public class JChatWindowInterface {
     public static final Vector<OnWindowListener> wnd_listeners = new Vector<>();
     public static final Vector<OnBindMenuAction> menu_items_bind_listeners = new Vector<>();

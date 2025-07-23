@@ -14,7 +14,12 @@ import android.widget.TextView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
-/** @noinspection unused*/
+/**
+ * A dialog preference that allows the user to select the size of smileys.
+ * The selected size is stored in SharedPreferences.
+ *
+ * @noinspection unused
+ */
 public class SmileysSizePicker extends DialogPreference {
     private final SharedPreferences manager;
     /** @noinspection FieldCanBeLocal*/

@@ -16,13 +16,33 @@ import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.ui.MyTextView;
 
+/**
+ * Adapter for displaying log messages in a popup window.
+ * This adapter manages a list of {@link Item} objects, each representing a log entry.
+ * It provides methods to add new log entries with various display options,
+ * including custom display times, avatars, headers, and click actions.
+ * <p>
+ * Log entries are automatically removed after a specified display time using a
+ * {@link destroyer} thread.
+ * <p>
+ * The appearance of each log item in the popup is determined by the
+ * {@link #getView(int, View, ViewGroup)} method, which inflates a layout
+ * (either for tablet or phone) and populates it with the log data.
+ * <p>
+ * This adapter is intended to be used with a {@link android.widget.ListView} or
+ * a similar view that can display a list of items.
+ *
+ * @see BaseAdapter
+ * @see Item
+ * @see destroyer
+ * @see jasminSvc
+ */
 public class popup_log_adapter extends BaseAdapter {
-    /** @noinspection unused*/
     public static final int DEFAULT_DISPLAY_TIME = 5000;
     public static final int INFO_DISPLAY_TIME = 3000;
     public static final int MESSAGE_DISPLAY_TIME = 6000;
     public static final int PRESENSE_DISPLAY_TIME = 4000;
-    private final Vector<Item> mList = new Vector();
+    private final Vector<Item> mList = new Vector<>();
     private final jasminSvc svc;
 
     public popup_log_adapter(jasminSvc var1) {

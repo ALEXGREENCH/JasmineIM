@@ -16,6 +16,34 @@ import android.widget.TextView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A DialogPreference that allows the user to select a transition effect.
+ * The selected effect is saved in SharedPreferences.
+ *
+ * <p>The dialog displays a list of available transition effects as RadioButtons.
+ * When an effect is selected, the corresponding integer value is stored in SharedPreferences
+ * under the key provided by {@link #getKey()}.</p>
+ *
+ * <p>The available transition effects are:
+ * <ul>
+ *   <li>Cube (0)</li>
+ *   <li>Flip 1 (1)</li>
+ *   <li>Flip 2 (2)</li>
+ *   <li>Shift (3)</li>
+ *   <li>Rotation 1 (4)</li>
+ *   <li>Rotation 2 (5)</li>
+ *   <li>Rotation 3 (6)</li>
+ *   <li>ICS (7)</li>
+ *   <li>ICS 2 (10)</li>
+ *   <li>Snake (8)</li>
+ *   <li>Rotation 4 (9)</li>
+ *   <li>Random (-1)</li>
+ * </ul>
+ * </p>
+ *
+ * @see DialogPreference
+ * @see SharedPreferences
+ */
 public class TransitionPicker extends DialogPreference {
     private final SharedPreferences manager;
     /** @noinspection FieldCanBeLocal, unused */

@@ -32,8 +32,33 @@ import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.resources;
 
 /**
- * SlideSwitcher is a ViewGroup that allows horizontal sliding between its child views.
- * Supports various 3D and fade animations, optional wrapping, and a floating label panel.
+ * SlideSwitcher is a {@link ViewGroup} that facilitates horizontal sliding navigation
+ * between its child {@link View}s.
+ *
+ * <p>Key features include:
+ * <ul>
+ *     <li>A variety of 3D and fade animations for transitions (e.g., cube, flip, rotate, fade).
+ *         See {@code ANIM_*} constants for available types.</li>
+ *     <li>Optional wrapping behavior, allowing seamless transition from the last view to the first, and vice-versa.</li>
+ *     <li>A floating label panel that displays labels for each child view, enhancing navigation.</li>
+ *     <li>Support for touch-based dragging to switch between views.</li>
+ *     <li>Methods to programmatically switch to specific views or to the next/previous view.</li>
+ *     <li>Customizable appearance through {@link Drawable}s and color schemes.</li>
+ *     <li>Ability to lock scrolling and freeze invalidation for specific use cases.</li>
+ * </ul>
+ *
+ * <p>Child views are added using {@link #addView(View, String)}, where a label is associated with each view.
+ * The current view can be controlled through touch gestures or programmatically.
+ *
+ * <p>Animations are applied during transitions, and the type of animation can be set using
+ * {@link #setAnimationType(int)} or randomized with {@link #setRandomizedAnimation(boolean)}.
+ *
+ * <p>The floating label panel can be shown or hidden using {@link #showPanel(boolean)}, and its appearance
+ * (text size, panel height) can be updated via {@link #updateConfig()}.
+ *
+ * <p><b>Note:</b> This class manages its own scrolling and touch event dispatching.
+ * It also handles drawing optimizations, such as enabling/disabling drawing caches on child views
+ * during animations and manually applying transformations for hardware-accelerated rendering.
  */
 public class SlideSwitcher extends ViewGroup {
     // Animation types

@@ -7,6 +7,10 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.widget.TextView;
 
+/**
+ * A custom TextView that detects clicks and notifies a listener.
+ * This class is used to create clickable links within a TextView.
+ */
 public class LinkTextView extends TextView {
     private LinkListener listener;
 

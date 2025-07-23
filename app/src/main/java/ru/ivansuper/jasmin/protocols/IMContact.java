@@ -3,7 +3,12 @@ package ru.ivansuper.jasmin.protocols;
 import ru.ivansuper.jasmin.protocols.utils.ClientInfo;
 import ru.ivansuper.jasmin.protocols.utils.Flags;
 
-/** @noinspection unused*/
+/**
+ * Represents an IM contact.
+ * This class extends {@link IMUnit} and implements the {@link Flags} interface.
+ * It stores information about a contact, such as their profile, ID, nickname, group, and flags.
+ *
+ */
 public class IMContact extends IMUnit implements Flags {
     /** @noinspection unused*/
     public static final long FLAG_ADDED = 2;

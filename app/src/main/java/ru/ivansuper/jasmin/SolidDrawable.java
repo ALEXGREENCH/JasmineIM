@@ -6,6 +6,10 @@ import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.Drawable;
 
+/**
+ * A Drawable that fills its bounds with a solid color.
+ * This class is useful for creating simple backgrounds or placeholders.
+ */
 public class SolidDrawable extends Drawable {
     private final int color;
 
@@ -13,7 +17,6 @@ public class SolidDrawable extends Drawable {
         this.color = color;
     }
 
-    /** @noinspection NullableProblems*/
     @Override
     public void draw(Canvas canvas) {
         Paint p = new Paint();

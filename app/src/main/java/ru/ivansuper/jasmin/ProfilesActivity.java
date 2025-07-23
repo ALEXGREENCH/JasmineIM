@@ -30,6 +30,39 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for managing user profiles.
+ * Allows users to add, edit, delete, and reorder profiles for various instant messaging services.
+ * <p>
+ * This activity interacts with a {@link jasminSvc} to perform profile operations and update the UI accordingly.
+ * It uses a {@link ProfilesAdapter} to display the list of profiles in a {@link ListView}.
+ * Dialogs are used for user interaction when adding, editing, or deleting profiles.
+ * </p>
+ * <p>
+ * Supported profile types include:
+ * <ul>
+ *     <li>ICQ</li>
+ *     <li>Jabber (XMPP)</li>
+ *     <li>VK (V Kontakte)</li>
+ *     <li>Yandex</li>
+ *     <li>Mail.Ru Agent (MMP)</li>
+ *     <li>QIP</li>
+ *     <li>GTalk</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Key functionalities:
+ * <ul>
+ *     <li>Displaying a list of configured profiles.</li>
+ *     <li>Adding new profiles of different types.</li>
+ *     <li>Editing existing profile details (credentials, server settings, etc.).</li>
+ *     <li>Deleting profiles.</li>
+ *     <li>Reordering profiles in the list.</li>
+ *     <li>Handling back button press to save changes and update the contact list.</li>
+ *     <li>Displaying a menu for adding new profiles (conditionally shown based on hardware menu key presence).</li>
+ * </ul>
+ * </p>
+ */
 public class ProfilesActivity extends Activity {
 
     @SuppressWarnings("unused")

@@ -9,6 +9,25 @@ import android.view.Gravity;
 
 import java.io.InputStream;
 
+/**
+ * A Drawable that wraps a bitmap and can be tiled, stretched, or aligned. You can create a
+ * BitmapDrawable from a file path, an input stream, through XML inflation, or from a {@link
+ * Bitmap} object.
+ *
+ * <p>It can be defined in an XML file with the <code>&lt;bitmap&gt;</code> element. For more
+ * information, see the guide to <a
+ * href="{@docRoot}guide/topics/resources/drawable-resource.html">Drawable Resources</a>.
+ *
+ * <p>Also see the {@link Bitmap} class, which handles the management and
+ * transformation of raw bitmap pixels.
+ *
+ * @attr ref android.R.styleable#BitmapDrawable_src
+ * @attr ref android.R.styleable#BitmapDrawable_antialias
+ * @attr ref android.R.styleable#BitmapDrawable_filter
+ * @attr ref android.R.styleable#BitmapDrawable_dither
+ * @attr ref android.R.styleable#BitmapDrawable_gravity
+ * @attr ref android.R.styleable#BitmapDrawable_tileMode
+ */
 public class BitmapDrawable extends Drawable {
 
     private static final int DEFAULT_PAINT_FLAGS = Paint.FILTER_BITMAP_FLAG | Paint.DITHER_FLAG;
@@ -77,7 +96,6 @@ public class BitmapDrawable extends Drawable {
         }
     }
 
-    // Paint getters/setters
     public final Paint getPaint() {
         return mBitmapState.mPaint;
     }
@@ -90,10 +108,12 @@ public class BitmapDrawable extends Drawable {
         this.mPaint = paint;
     }
 
+    /** @noinspection unused*/
     public void setTargetDensity(Canvas canvas) {
         setTargetDensity(canvas.getDensity());
     }
 
+    /** @noinspection unused*/
     public void setTargetDensity(DisplayMetrics metrics) {
         setTargetDensity(metrics.densityDpi);
     }
@@ -113,6 +133,7 @@ public class BitmapDrawable extends Drawable {
         mApplyGravity = true;
     }
 
+    /** @noinspection unused*/
     public void setAntiAlias(boolean aa) {
         mBitmapState.mPaint.setAntiAlias(aa);
     }
@@ -127,18 +148,22 @@ public class BitmapDrawable extends Drawable {
         mBitmapState.mPaint.setDither(dither);
     }
 
+    /** @noinspection unused*/
     public Shader.TileMode getTileModeX() {
         return mBitmapState.mTileModeX;
     }
 
+    /** @noinspection unused*/
     public Shader.TileMode getTileModeY() {
         return mBitmapState.mTileModeY;
     }
 
+    /** @noinspection unused*/
     public void setTileModeX(Shader.TileMode mode) {
         setTileModeXY(mode, mBitmapState.mTileModeY);
     }
 
+    /** @noinspection unused*/
     public void setTileModeY(Shader.TileMode mode) {
         setTileModeXY(mBitmapState.mTileModeX, mode);
     }
@@ -151,7 +176,7 @@ public class BitmapDrawable extends Drawable {
         }
     }
 
-    // Drawing
+    /** @noinspection NullableProblems*/
     @Override
     public void draw(Canvas canvas) {
         if (mBitmap == null) return;
@@ -185,13 +210,13 @@ public class BitmapDrawable extends Drawable {
         }
     }
 
+    /** @noinspection unused*/
     public static void draw(Canvas canvas, Bitmap bitmap, Rect rect, int x, int y, Paint paint) {
         int save = canvas.save();
         // Здесь возможно раньше была трансформация или поворот
         canvas.restoreToCount(save);
     }
 
-    // Overrides
     @Override
     public void setAlpha(int alpha) {
         mBitmapState.mPaint.setAlpha(alpha);
@@ -229,6 +254,7 @@ public class BitmapDrawable extends Drawable {
         return super.getChangingConfigurations() | mBitmapState.mChangingConfigurations;
     }
 
+    /** @noinspection UnclearExpression, NullableProblems */
     @Override
     public Drawable mutate() {
         if (!mMutated && super.mutate() == this) {
@@ -244,7 +270,6 @@ public class BitmapDrawable extends Drawable {
         return mBitmapState;
     }
 
-    // Private helpers
     private void computeBitmapSize() {
         mBitmapWidth = mBitmap.getScaledWidth(mTargetDensity);
         mBitmapHeight = mBitmap.getScaledHeight(mTargetDensity);
@@ -265,15 +290,16 @@ public class BitmapDrawable extends Drawable {
         this.mTargetDensity = (res != null)
                 ? res.getDisplayMetrics().densityDpi
                 : (state != null ? state.mTargetDensity : DisplayMetrics.DENSITY_DEFAULT);
+        //noinspection DataFlowIssue
         setBitmap(state.mBitmap);
     }
 
-    // Synthetic constructor from obfuscated code
-    /* synthetic */ BitmapDrawable(BitmapState state, Resources res, BitmapDrawable dummy) {
+    /** @noinspection unused*/
+    BitmapDrawable(BitmapState state, Resources res, BitmapDrawable dummy) {
         this(state, res);
     }
 
-    // Inner constant state
+
     static final class BitmapState extends ConstantState {
         Bitmap mBitmap;
         int mChangingConfigurations;
@@ -297,6 +323,7 @@ public class BitmapDrawable extends Drawable {
             this.mPaint = new Paint(copy.mPaint);
         }
 
+        /** @noinspection NullableProblems*/
         @Override
         public Drawable newDrawable() {
             return new BitmapDrawable(this, null);

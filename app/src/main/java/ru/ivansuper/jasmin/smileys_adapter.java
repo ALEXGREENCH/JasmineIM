@@ -8,13 +8,19 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.animate_tools.Movie;
 import ru.ivansuper.jasmin.animate_tools.SmileView;
 
+/**
+ * Adapter for displaying smileys in a list or grid.
+ * This adapter is responsible for providing the data and views for each smiley item.
+ * It uses a {@link Vector} of {@link Movie} objects to store the smileys and a
+ * {@link Vector} of {@link String} objects to store their corresponding tags.
+ * The smileys and tags are obtained from the {@link SmileysManager}.
+ */
 public class smileys_adapter extends BaseAdapter {
     private Vector<Movie> smileys;
     private Vector<String> tags;
 
     public smileys_adapter() {
         this.tags = new Vector<>();
-        //noinspection UnusedAssignment
         this.smileys = new Vector<>();
         this.tags = SmileysManager.selector_tags;
         this.smileys = SmileysManager.selector_smileys;

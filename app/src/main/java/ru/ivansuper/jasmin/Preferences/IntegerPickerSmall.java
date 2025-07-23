@@ -14,6 +14,26 @@ import android.widget.TextView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A custom {@link DialogPreference} that allows the user to pick an integer value
+ * using a {@link SeekBar}. The selected value is persisted in {@link SharedPreferences}.
+ * This preference is designed for picking relatively small integer values, with a
+ * default minimum of 1 and a maximum of 50 (inclusive, as SeekBar's max is 49, and progress starts from 0).
+ *
+ * <p>The dialog displays the current value, the title of the preference, and a SeekBar
+ * to adjust the value. The text size of the displayed current value also changes
+ * dynamically with the selected integer.
+ *
+ * <p>Usage in XML:
+ * <pre>
+ * &lt;ru.ivansuper.jasmin.Preferences.IntegerPickerSmall
+ *     android:key="your_preference_key"
+ *     android:title="Select a Value"
+ *     android:summary="Current value: %s"
+ *     android:defaultValue="10" /&gt;
+ * </pre>
+ * Note: The `android:defaultValue` should be a string representation of an integer.
+ */
 public class IntegerPickerSmall extends DialogPreference {
     private final SharedPreferences manager;
     /** @noinspection FieldCanBeLocal, unused */

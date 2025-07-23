@@ -4,6 +4,23 @@ import android.app.Activity;
 import android.content.Intent;
 import android.view.View;
 
+/**
+ * JFragment is a base class for fragments in the Jasmin application.
+ * It provides a basic structure for managing the lifecycle and UI of a fragment.
+ * <p>
+ * Fragments are used to create modular and reusable UI components.
+ * They can be combined to create complex user interfaces and can be easily
+ * managed by the Android system.
+ * <p>
+ * This class provides methods for attaching the fragment to an activity,
+ * setting the content view, and handling lifecycle events such as creation,
+ * starting, pausing, resuming, and destruction.
+ * <p>
+ * Subclasses should override the lifecycle methods to implement their own
+ * custom logic.
+ *
+ * @see android.app.Fragment
+ */
 public class JFragment {
     private Activity mActivity;
     private int mContainer;

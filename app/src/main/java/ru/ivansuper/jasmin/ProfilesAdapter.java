@@ -11,6 +11,11 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.jabber.JProfile;
 
+/**
+ * Adapter for displaying a list of profiles in a ListView.
+ * Each item in the list represents a user profile and shows an icon based on the profile type
+ * and a label with the profile ID.
+ */
 public class ProfilesAdapter extends BaseAdapter {
     public Vector<ProfilesAdapterItem> profiles = new Vector<>();
     /** @noinspection unused*/

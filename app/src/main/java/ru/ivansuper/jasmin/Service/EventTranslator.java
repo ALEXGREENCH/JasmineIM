@@ -10,13 +10,23 @@ import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * The EventTranslator class is responsible for sending broadcasts with information about application events,
+ * such as profile status changes, unread messages, application state changes, and the list of available profiles.
+ * These broadcasts are intended to be received by other components, potentially widgets or other applications,
+ * to display relevant information to the user.
+ *
+ * <p>All methods in this class are static and synchronized to ensure thread-safe operations,
+ * especially when interacting with the underlying service and sending broadcasts.
+ *
+ * <p>The broadcasts use a specific action ({@link #ACTION}) and include various extras to convey
+ * the event details. The type of event is indicated by the "notify_type" extra, which corresponds
+ * to one of the {@code TYPE_*} constants defined in this class.
+ */
 public class EventTranslator {
     public static final String ACTION = "ru.ivansuper.jasmin.JASMINE_NOTIFICATION";
-    /** @noinspection unused*/
     public static final int PROFILE_TYPE_ICQ = 0;
-    /** @noinspection unused*/
     public static final int PROFILE_TYPE_JABBER = 1;
-    /** @noinspection unused*/
     public static final int PROFILE_TYPE_MRIM = 2;
     /** @noinspection unused*/
     public static final int TYPE_APP_CLOSED = 1;

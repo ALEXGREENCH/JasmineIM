@@ -2,6 +2,11 @@ package ru.ivansuper.jasmin;
 
 import java.util.Arrays;
 
+/**
+ * A Base64 encoder/decoder.
+ *
+ * <p>This class is used to encode and decode data in Base64 format as described in RFC 1521.
+ */
 public class Base64Coder {
 
     private static final char[] map1 = new char[64];

@@ -12,7 +12,13 @@ import android.view.Window;
 import java.util.Iterator;
 import java.util.Vector;
 
-/** @noinspection unused*/
+/**
+ * Extended Fragment class providing additional functionalities and helper methods.
+ * This class serves as a base for other fragments within the application,
+ * offering convenient access to common Android Activity features and managing dialogs.
+ *
+ * @noinspection unused
+ */
 public class ExFragment extends JFragment {
 
     public Activity ACTIVITY;

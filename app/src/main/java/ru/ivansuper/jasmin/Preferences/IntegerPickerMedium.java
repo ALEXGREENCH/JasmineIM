@@ -14,6 +14,11 @@ import android.widget.TextView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A DialogPreference that allows the user to select an integer value using a SeekBar.
+ * The selected value is persisted in SharedPreferences.
+ * This specific implementation has a minimum value of 5 and a maximum value of 500 (5 + 495).
+ */
 public class IntegerPickerMedium extends DialogPreference {
     private final SharedPreferences manager;
     /** @noinspection FieldCanBeLocal, unused */

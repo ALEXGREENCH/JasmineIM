@@ -38,6 +38,34 @@ import ru.ivansuper.jasmin.jabber.JContact;
 import ru.ivansuper.jasmin.jabber.conference.Conference;
 import ru.ivansuper.jasmin.jabber.jzlib.JZlib;
 
+/**
+ * This class provides a collection of utility methods for various purposes,
+ * including string manipulation, hashing, date/time conversions, and Android-specific helpers.
+ *
+ * <p>Key functionalities include:
+ * <ul>
+ *     <li>Password "roasting" (XOR encryption).
+ *     <li>Hexadecimal string conversion.
+ *     <li>MD5 hash calculation (including legacy OSCAR versions).
+ *     <li>UTF-8 data validation and preparation.
+ *     <li>String splitting and replacement.
+ *     <li>Date and time formatting and conversion (GMT to local).
+ *     <li>Validation for UINs, MRIM addresses, and email addresses.
+ *     <li>Stack trace retrieval.
+ *     <li>Android ListView height adjustment.
+ *     <li>File path normalization and filename validation.
+ *     <li>SHA-1 hash generation.
+ *     <li>Checking for hardware menu key presence.
+ *     <li>Reflection-based method invocation.
+ * </ul>
+ *
+ * <p>The class also contains several constants for character sets,
+ * predefined randomized strings (purpose unclear from context), and reserved characters for filenames.
+ *
+ * <p><b>Note:</b> Some methods are marked with {@code @noinspection unused}. This might indicate
+ * that they are intended for future use, are part of a library where not all methods are
+ * used by every consumer, or are accessed via reflection.
+ */
 public class utilities {
     private static final String ReservedChars = "|\\?*<\":>+[]/'";
     private static MessageDigest digest;
@@ -46,9 +74,7 @@ public class utilities {
      */
     public static long used_memory;
     public static final Random RANDOM = new Random(System.currentTimeMillis());
-    /**
-     * @noinspection unused
-     */
+
     public static String chars = "0123456789AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZzАаБбВвГгДдЕеЁёЖжЗзИиЙйКкЛлМмНнОоПпРрСсТтУуФфХхЦцЧчШшЩщЪъЫыЬьЭэЮюЯя";
     /**
      * @noinspection unused
@@ -73,7 +99,6 @@ public class utilities {
     /**
      * @noinspection FieldMayBeFinal
      */
-    // Статический массив «жарящих» байт
     private static final byte[] ROAST_CHARS = new byte[]{
             (byte)0xF3, 0x26, (byte)0x81, (byte)0xC4, 0x39, (byte)0x86, (byte)0xDB, (byte)0x92,
             0x71, (byte)0xA3, (byte)0xB9, (byte)0xE6, 0x53, 0x7A, (byte)0x95, 0x7C
@@ -114,9 +139,6 @@ public class utilities {
         return buf.toString();
     }
 
-    /**
-     * @noinspection unused
-     */
     public static byte[] getHashArray(byte[] key, String password) throws Exception {
         //noinspection InjectedReferences
         byte[] passDigest = MD5.calculateMD5(password.getBytes("windows1251"));

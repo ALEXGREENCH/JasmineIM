@@ -4,6 +4,11 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * A custom View that listens for layout changes and notifies a listener.
+ * This class is used to detect when the layout of the view has changed,
+ * such as when the keyboard is shown or hidden.
+ */
 public class ConfigListenerView extends View {
     public OnLayoutListener listener;
 

@@ -3,7 +3,14 @@ package ru.ivansuper.jasmin.popup;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
-/** @noinspection unused*/
+/**
+ * Represents an item in a popup menu.
+ *
+ * <p>Each action item has an icon, a title, and an optional click listener.
+ * This class provides methods to set and get these properties.
+ *
+ * @noinspection unused
+ */
 public class ActionItem {
     private Drawable icon;
     private View.OnClickListener listener;

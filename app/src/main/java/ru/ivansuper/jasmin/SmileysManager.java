@@ -17,6 +17,33 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.animate_tools.Movie;
 import ru.ivansuper.jasmin.animate_tools.MySpan;
 
+/**
+ * Manages smileys, including loading, scaling, and replacing text with smileys.
+ * <p>
+ * This class provides static methods to handle smiley packs. It can load smileys
+ * from application assets or from external files. It also handles scaling of smileys
+ * and provides a method to convert text containing smiley tags into a
+ * SpannableStringBuilder with the tags replaced by smiley images.
+ * </p>
+ * <p>
+ * Key functionalities include:
+ * <ul>
+ *     <li>Initialization with an Android Context.</li>
+ *     <li>Loading smiley packs from assets or external storage.</li>
+ *     <li>Forcing a rescale of all loaded smileys.</li>
+ *     <li>Replacing smiley tags in text with corresponding smiley images.</li>
+ *     <li>Retrieving a smiley tag from the beginning of a given text.</li>
+ *     <li>Preloading smiley packs if they haven't been loaded yet.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * Smileys are represented by {@link Movie} objects and their corresponding text tags.
+ * The class maintains lists of these tags and movies.
+ * </p>
+ *
+ * @see Movie
+ * @see MySpan
+ */
 public class SmileysManager {
     @SuppressLint("StaticFieldLeak")
     private static Context ctx;
@@ -24,14 +51,15 @@ public class SmileysManager {
     public static int max_height = 1;
     public static int max_width = 1;
     public static boolean packLoaded = false;
-    public static Vector<Movie> selector_smileys = new Vector();
-    public static Vector<String> selector_tags = new Vector();
-    public static Vector<Movie> smileys = new Vector();
-    public static Vector<String> tags = new Vector();
+    public static Vector<Movie> selector_smileys = new Vector<>();
+    public static Vector<String> selector_tags = new Vector<>();
+    public static Vector<Movie> smileys = new Vector<>();
+    public static Vector<String> tags = new Vector<>();
 
     public static void forceChangeScale() {
         //noinspection deprecation
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
+        //noinspection DataFlowIssue
         int scaleValue = Integer.parseInt(preferences.getString("ms_smileys_scale", "3"));
 
         if (!selector_smileys.isEmpty()) {
@@ -248,6 +276,7 @@ public class SmileysManager {
     }
 
     public static void loadPack() {
+        //noinspection deprecation
         final String smilePackPath = PreferenceManager.getDefaultSharedPreferences(ctx).getString("current_smileys_pack", "$*INTERNAL*$");
 
         Runnable loadRunnable = new Runnable() {

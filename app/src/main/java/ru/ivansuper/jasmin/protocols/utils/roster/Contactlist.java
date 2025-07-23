@@ -5,7 +5,14 @@ import java.util.Vector;
 import ru.ivansuper.jasmin.protocols.IMContact;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
-/** @noinspection unused*/
+/**
+ * Represents a contact list for a specific instant messaging profile.
+ * This abstract class provides a framework for managing contacts,
+ * including adding, removing, and retrieving contacts.
+ *
+ * @param <PacketObject> The type of packet object used for parsing contact information.
+ * @noinspection unused
+ */
 public abstract class Contactlist<PacketObject> {
     /** @noinspection FieldCanBeLocal*/
     private final IMProfile mProfile;

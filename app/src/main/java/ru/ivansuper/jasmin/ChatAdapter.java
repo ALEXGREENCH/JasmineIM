@@ -25,12 +25,12 @@ import ru.ivansuper.jasmin.jabber.FileTransfer.TransferController;
 import ru.ivansuper.jasmin.jabber.juick.TextParser;
 import ru.ivansuper.jasmin.ui.MyTextView;
 
-/** @noinspection unused*/
 public class ChatAdapter extends BaseAdapter {
     private boolean IT_IS_JUICK;
     private Context ctx;
     private TextParser.OnIDClickedListener juick_listener;
     private ArrayList<HistoryItem> linkToHistory;
+    /** @noinspection unused*/
     private final ListView list_view;
     private int profile_type;
     private final ArrayList<HistoryItem> list = new ArrayList<>();
@@ -74,6 +74,7 @@ public class ChatAdapter extends BaseAdapter {
         this.linkToHistory = null;
     }
 
+    /** @noinspection unused*/
     public int getProfileType() {
         return this.profile_type;
     }

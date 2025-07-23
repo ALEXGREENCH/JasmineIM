@@ -10,6 +10,32 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.PopupWindow;
 
+/**
+ * Represents a custom popup window that can be anchored to a view.
+ *
+ * <p>This class provides a flexible way to create and display popup windows
+ * with custom content and behavior. It handles the creation and management
+ * of the underlying {@link PopupWindow} and provides methods for setting
+ * the content, background, and other properties.
+ *
+ * <p>Key features:
+ * <ul>
+ *   <li>Anchoring to a specific view.
+ *   <li>Customizable content using a layout resource or a {@link View} object.
+ *   <li>Optional background drawable.
+ *   <li>Automatic dismissal on outside touch.
+ *   <li>Lifecycle methods ({@code onCreate}, {@code onShow}, {@code preShow}) for custom setup.
+ * </ul>
+ *
+ * <p>Example usage:
+ * <pre>{@code
+ * // Assuming 'anchorView' is the view to which the popup will be anchored
+ * CustomPopupWindow popup = new CustomPopupWindow(anchorView);
+ * popup.setContentView(R.layout.my_popup_layout);
+ * // ... further customization ...
+ * popup.show(); // (Note: 'show()' method is typically implemented in a subclass)
+ * }</pre>
+ */
 public class CustomPopupWindow {
     protected final View anchor;
     private Drawable background = null;

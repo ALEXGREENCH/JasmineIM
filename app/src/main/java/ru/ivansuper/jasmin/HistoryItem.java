@@ -14,11 +14,14 @@ import ru.ivansuper.jasmin.jabber.JContact;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.jabber.conference.Conference;
 
+/**
+ * Represents an item in the chat history.
+ * This class stores information about a single message or event in a chat conversation,
+ * including its content, sender, timestamp, and various flags indicating its type and status.
+ */
 public class HistoryItem {
-    /** @noinspection unused*/
     public boolean addTwoPoints;
     public int authType;
-    /** @noinspection unused*/
     public Conference conf;
     public String conf_nick;
     public JProfile conf_profile;
@@ -31,18 +34,14 @@ public class HistoryItem {
     public String formattedDate;
     public boolean isAuthMessage;
     public boolean isFileMessage;
-    /** @noinspection unused*/
     public boolean isMe;
     public boolean isTheme;
     public boolean isXtrazMessage;
-    /** @noinspection unused*/
     public boolean itIsForMe;
-    /** @noinspection unused*/
     public String jabber_cookie;
     public JContact jcontact;
     public FileTransfer jtransfer;
     public MMPContact mcontact;
-    /** @noinspection unused*/
     public String me;
     public String message;
     public SpannableStringBuilder messageS;
@@ -70,7 +69,6 @@ public class HistoryItem {
     }
 
     public HistoryItem(long time) {
-        //noinspection UnusedAssignment
         this.date = 0L;
         this.formattedDate = "null";
         this.direction = 0;

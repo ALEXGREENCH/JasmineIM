@@ -1,5 +1,10 @@
 package ru.ivansuper.jasmin;
 
+/**
+ * Represents a summary of messages, typically used for displaying statistics or filtering.
+ * This class stores information about the total number of messages, messages from contacts,
+ * whether simple messages are included, and whether conference messages are included.
+ */
 public class MessagesDump {
     public boolean conferences;
     public int from_contacts;

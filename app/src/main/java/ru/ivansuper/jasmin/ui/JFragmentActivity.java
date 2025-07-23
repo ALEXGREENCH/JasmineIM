@@ -5,6 +5,11 @@ import android.view.ViewGroup;
 
 import java.util.Vector;
 
+/**
+ * A base activity class that provides fragment management capabilities.
+ * It allows attaching, detaching, and finding fragments within an activity.
+ * This class also handles the lifecycle events of its fragments.
+ */
 public class JFragmentActivity extends Activity {
     private final Vector<JFragment> mStack = new Vector<>();
 

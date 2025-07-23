@@ -6,7 +6,19 @@ import android.content.Intent;
 import java.util.Iterator;
 import java.util.Vector;
 
-/** @noinspection unused*/
+/**
+ * A utility class for managing broadcast intents within the application's service.
+ * <p>
+ * This class provides a centralized mechanism for components to listen for and react to
+ * specific intents broadcasted by the service. It allows for adding and removing listeners,
+ * and it dispatches incoming intents to registered listeners.
+ * </p>
+ * <p>
+ * Note: The {@code @noinspection unused} annotation suggests that this class might be part of a
+ * larger system where its usage is not directly apparent in the immediate context, or it's
+ * intended for use by external modules or plugins.
+ * </p>
+ */
 public class ServiceBroadcastReceiver {
     public static final Vector<OnBroadcastListener> intent_listeners = new Vector<>();
 

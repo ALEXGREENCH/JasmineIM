@@ -25,6 +25,50 @@ import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A ViewGroup that displays items in a vertically scrolling list with multiple columns.
+ * The number of columns can be configured.
+ * It supports item clicks, long clicks, and overscroll effects.
+ *
+ * <p><b>Usage:</b>
+ * <pre>
+ * {@code
+ * MultiColumnList multiColumnList = new MultiColumnList(context);
+ * // Set the number of columns
+ * multiColumnList.setColumnsNumber(2);
+ * // Set the adapter
+ * multiColumnList.setAdapter(new MyMultiColumnAdapter());
+ * // Set item click listener
+ * multiColumnList.setOnItemClickListener(new MultiColumnList.OnItemClickListener() {
+ *     @Override
+ *     public void onItemClick(MultiColumnList parent, View view, int position, long id) {
+ *         // Handle item click
+ *     }
+ * });
+ * // Set item long click listener
+ * multiColumnList.setOnItemLongClickListener(new MultiColumnList.OnItemLongClickListener() {
+ *     @Override
+ *     public void onItemLongClick(MultiColumnList parent, View view, int position, long id) {
+ *         // Handle item long click
+ *     }
+ * });
+ * }
+ * </pre>
+ *
+ * <p>The list recycles views for performance, similar to a RecyclerView.
+ * It also handles touch events for scrolling and item interactions.
+ *
+ * <p><b>Key Features:</b>
+ * <ul>
+ *   <li>Configurable number of columns.
+ *   <li>Efficient view recycling.
+ *   <li>Support for item click and long click listeners.
+ *   <li>Overscroll effects at the top and bottom.
+ *   <li>Smooth scrolling with a {@link Scroller}.
+ *   <li>Customizable item selector.
+ *   <li>Keyboard navigation support.
+ * </ul>
+ */
 @SuppressLint("ViewConstructor")
 public class MultiColumnList extends ViewGroup {
     /** @noinspection unused*/

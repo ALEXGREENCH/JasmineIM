@@ -31,6 +31,35 @@ import ru.ivansuper.jasmin.jabber.JContact;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for displaying contact history.
+ * <p>
+ * This activity allows users to view the message history with a specific contact.
+ * It supports different messaging protocols like ICQ, Jabber (JBR), and MMP.
+ * Users can search within the history, copy messages, and use a multiquote feature
+ * to copy multiple messages at once.
+ * </p>
+ * <p>
+ * The activity initializes its UI, loads message history based on the provided
+ * contact information (passed via Intent action), and displays it in a ListView.
+ * It handles user interactions such as clicking on messages (for multiquoting)
+ * and long-clicking (to copy a single message).
+ * </p>
+ * <p>
+ * Key features:
+ * <ul>
+ *     <li>Displays message history for ICQ, Jabber, and MMP contacts.</li>
+ *     <li>Allows searching within the message history.</li>
+ *     <li>Supports copying individual messages to the clipboard.</li>
+ *     <li>Provides a multiquote feature to select and copy multiple messages.</li>
+ *     <li>Customizable wallpaper and theme settings.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * The activity relies on a background service (jasminSvc) to fetch profile and
+ * contact information and to load the message history.
+ * </p>
+ */
 public class ContactHistoryActivity extends Activity {
 
     private static final int MODE_ICQ = 0;

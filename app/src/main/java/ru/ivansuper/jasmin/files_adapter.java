@@ -13,6 +13,10 @@ import java.util.Collections;
 import java.util.Vector;
 import ru.ivansuper.jasmin.icq.FileTransfer.FileTransfer;
 
+/**
+ * Adapter for displaying a list of files and directories.
+ * It handles loading icons for image files asynchronously in the background.
+ */
 public class files_adapter extends BaseAdapter {
     public File parent;
     private final Vector<Drawable> icons = new Vector<>();

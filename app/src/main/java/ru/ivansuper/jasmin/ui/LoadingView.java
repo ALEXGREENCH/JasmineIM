@@ -9,6 +9,10 @@ import android.view.View;
 import java.util.Random;
 import ru.ivansuper.jasmin.R;
 
+/**
+ * A custom View that displays a loading animation.
+ * The animation consists of a series of drawable frames that are faded in and out.
+ */
 public class LoadingView extends View {
     private Drawable[] ani;
     private Drawable back;

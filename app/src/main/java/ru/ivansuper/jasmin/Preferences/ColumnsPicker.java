@@ -14,6 +14,13 @@ import android.widget.TextView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A custom DialogPreference that allows the user to select the number of columns
+ * to display in a grid layout. The selected value is stored in SharedPreferences.
+ * <p>
+ * This class provides a dialog with radio buttons for selecting the number of columns
+ * (from 1 to 6). The current selection is displayed and saved when the dialog is closed.
+ */
 public class ColumnsPicker extends DialogPreference {
     private final SharedPreferences manager;
     /** @noinspection FieldCanBeLocal, FieldCanBeLocal , unused */

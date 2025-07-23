@@ -15,6 +15,21 @@ import ru.ivansuper.jasmin.icq.ICQProfile;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
+/**
+ * Manages user profiles for different instant messaging protocols.
+ * This class handles loading, saving, adding, removing, and retrieving profiles.
+ * It also provides methods to check profile status (connected, enabled, active)
+ * and interact with profiles (disconnect, close chats, get unread messages).
+ *
+ * <p>Profiles are stored in a configuration file ("profiles.cfg") and can be of
+ * different types: ICQ, Jabber (JProfile), and MMP (MMPProfile).
+ *
+ * <p>The class uses a simple encryption/decryption scheme (proceedISEM_A and proceedISEM_B)
+ * for storing sensitive profile data like passwords.
+ *
+ * <p>It interacts with the {@link jasminSvc} to notify about profile changes and
+ * handle contact list updates.
+ */
 public class ProfilesManager {
     private final boolean EnableFeatureFirstTime;
     private final Vector<IMProfile> profiles = new Vector<>();

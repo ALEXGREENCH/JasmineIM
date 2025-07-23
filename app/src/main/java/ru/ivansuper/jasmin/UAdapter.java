@@ -10,6 +10,41 @@ import android.widget.TextView;
 import java.util.Vector;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 
+/**
+ * UAdapter is a custom adapter class that extends BaseAdapter.
+ * It is used to display a list of items, each with an optional icon, label, and ID.
+ * The adapter supports filtering, selection, and customization of item appearance.
+ *
+ * <p>
+ * The adapter provides several modes for displaying items:
+ * <ul>
+ *     <li>{@link #SHOW_ALL}: Shows both icon and label.</li>
+ *     <li>{@link #FORCE_HIDE_ICON}: Hides the icon.</li>
+ *     <li>{@link #FORCE_HIDE_LABEL}: Hides the label.</li>
+ *     <li>{@link #FORCE_HIDE_LABEL_AND_ICON}: Hides both icon and label.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>
+ * The adapter also supports adding separators to the list.
+ * Separators can be simple lines or have a custom label.
+ * </p>
+ *
+ * <p>
+ * Items in the list can be selected, and the adapter provides methods for managing selection.
+ * The appearance of items, such as padding, text color, and text size, can be customized.
+ * </p>
+ *
+ * <p>
+ * The adapter supports filtering of items based on a search expression.
+ * When a filter is applied, only items whose labels start with the filter expression (case-insensitive) are displayed.
+ * </p>
+ *
+ * <p>
+ * The adapter uses a custom layout (R.layout.list_item) for displaying items.
+ * The layout includes an ImageView for the icon, a TextView for the label, and a LinearLayout for the separator.
+ * </p>
+ */
 public class UAdapter extends BaseAdapter {
     /** @noinspection unused*/
     public static final int FORCE_HIDE_ICON = 2;

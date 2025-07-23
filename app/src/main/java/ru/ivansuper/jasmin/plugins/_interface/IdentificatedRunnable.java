@@ -1,6 +1,9 @@
 package ru.ivansuper.jasmin.plugins._interface;
 
-/** @noinspection unused*/
+/**
+ * A Runnable task that is associated with an integer identifier.
+ * This class allows for tracking or categorizing runnable tasks by an ID.
+ */
 public class IdentificatedRunnable {
     public int id;
     public Runnable task;

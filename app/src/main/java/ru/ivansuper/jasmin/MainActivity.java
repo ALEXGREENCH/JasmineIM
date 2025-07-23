@@ -25,6 +25,11 @@ import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * The main entry point of the application. This activity handles the initial setup,
+ * permission checks, and service binding. It displays a splash screen during initialization
+ * and then navigates to the appropriate next activity (either profile setup or contact list).
+ */
 public class MainActivity extends Activity implements Handler.Callback {
 
     private static final int FOREGROUND_SERVICE_PERMISSION_REQUEST = 112;

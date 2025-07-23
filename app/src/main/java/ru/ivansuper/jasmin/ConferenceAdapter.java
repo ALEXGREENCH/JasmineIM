@@ -19,6 +19,13 @@ import ru.ivansuper.jasmin.chats.JConference;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.ui.MyTextView;
 
+/**
+ * Adapter for displaying conference messages in a ListView.
+ * This adapter handles the display of individual messages, including formatting for time, nickname, and message content,
+ * as well as handling message direction (incoming/outgoing), read confirmations, and special message types like themes or warnings.
+ * It supports features like message quoting via drag-and-drop, multiquoting with checkboxes, and visual highlighting for messages
+ * directed at the current user. The adapter also manages message limiting to prevent performance issues with very long conversations.
+ */
 public class ConferenceAdapter extends BaseAdapter {
     private Context ctx;
     private ArrayList<HistoryItem> linkToHistory;

@@ -75,6 +75,23 @@ import ru.ivansuper.jasmin.protocols.IMProfile;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * The main service class for the Jasmin IM application.
+ * This service handles various background tasks, including:
+ * <ul>
+ *   <li>Managing network connectivity and IM profiles.</li>
+ *   <li>Handling incoming and outgoing messages.</li>
+ *   <li>Displaying notifications for new messages, file transfers, and other events.</li>
+ *   <li>Managing application settings and preferences.</li>
+ *   <li>Interacting with UI components (Activities) through Handlers.</li>
+ *   <li>Controlling device features like vibration and wake locks.</li>
+ *   <li>Managing timed tasks using AlarmManager.</li>
+ *   <li>Providing a binder interface for Activities to interact with the service.</li>
+ * </ul>
+ * It implements {@link SharedPreferences.OnSharedPreferenceChangeListener} to react to
+ * changes in application settings and {@link Handler.Callback} to process messages
+ * on its own Handler.
+ */
 public class jasminSvc extends Service implements SharedPreferences.OnSharedPreferenceChangeListener, Handler.Callback {
 
     private final String CHANNEL_ID = "JASMINE_CHANEL";

@@ -45,6 +45,23 @@ import ru.ivansuper.jasmin.icq.SearchResultItem;
 import ru.ivansuper.jasmin.icq.SearchResultsAdapter;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for searching contacts.
+ * Allows users to set search criteria, view search results, and interact with found contacts.
+ * <p>
+ * This activity handles:
+ * <ul>
+ *     <li>Displaying a UI for setting search parameters (nick, name, lastname, gender, city).</li>
+ *     <li>Binding to the {@link jasminSvc} to perform search operations and manage ICQ profiles.</li>
+ *     <li>Displaying search results in a ListView.</li>
+ *     <li>Handling user interactions with search results, such as viewing contact info, copying UIN, and adding contacts.</li>
+ *     <li>Managing dialogs for search criteria input, contact actions, and displaying contact information.</li>
+ *     <li>Updating the UI based on search progress and results.</li>
+ * </ul>
+ * <p>
+ * It uses a {@link Handler} to process messages related to search results and displaying contact information.
+ * The activity also manages its lifecycle, including binding/unbinding from the service and saving/restoring state.
+ */
 public class SearchActivity extends Activity implements Handler.Callback {
 
     @SuppressWarnings("unused")

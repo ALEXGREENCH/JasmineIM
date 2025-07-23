@@ -6,25 +6,24 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import java.io.File;
 
+/**
+ * The Media class is responsible for playing sound events based on different application events.
+ * It uses the Android MediaPlayer to play sounds from either internal resources or external files.
+ * The class defines several constants representing different event types.
+ * It also manages the ring mode and phone mode to determine if a sound should be played.
+ */
 public class Media {
-    /** @noinspection unused*/
+
     public static final int AUTH_ACCEPTED = 1;
-    /** @noinspection unused*/
     public static final int AUTH_DENIED = 2;
-    /** @noinspection unused*/
     public static final int AUTH_REQUEST = 3;
-    /** @noinspection unused*/
     public static final int CONTACT_IN = 4;
-    /** @noinspection unused*/
     public static final int CONTACT_OUT = 5;
-    /** @noinspection unused*/
     public static final int INC_FILE = 6;
-    /** @noinspection unused*/
     public static final int INC_MSG = 0;
-    /** @noinspection unused*/
     public static final int OUT_MSG = 7;
-    /** @noinspection unused*/
     public static final int TRANSFER_REJECTED = 8;
+
     /** @noinspection FieldCanBeLocal, unused */
     private final Context ctx;
     private final MediaPlayer mp = new MediaPlayer();

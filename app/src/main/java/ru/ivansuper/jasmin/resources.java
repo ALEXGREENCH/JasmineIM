@@ -43,6 +43,20 @@ import ru.ivansuper.jasmin.jabber.JContact;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.slide_tools.SlideSwitcher;
 
+/**
+ * The `resources` class is a utility class for managing various resources used within the application.
+ * It handles tasks such as:
+ * - Storing and providing access to device information (heap size, OS version, etc.).
+ * - Managing application-specific paths (SD card paths for skins, incoming files, history).
+ * - Loading and caching graphical resources (icons, backgrounds, button styles) from assets or SD card.
+ * - Providing helper methods to apply styles and backgrounds to UI elements (Views, Buttons, EditTexts, CheckBoxes, Windows).
+ * - Offering utility methods for converting Drawables, copying assets, and determining device characteristics (e.g., if it's a tablet).
+ * - Managing localization and string resources.
+ * - Initializing core application resources and settings upon context provision.
+ *
+ * This class uses static fields and methods, making its functionalities globally accessible throughout the application.
+ * It plays a crucial role in the visual presentation and resource management of the application.
+ */
 public class resources {
     public static long DEVICE_HEAP_SIZE = 0L;
     public static long DEVICE_HEAP_USED_SIZE = 0L;

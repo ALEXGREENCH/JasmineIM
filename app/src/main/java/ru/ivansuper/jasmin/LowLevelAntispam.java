@@ -5,6 +5,21 @@ import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.Log;
 
+/**
+ * The LowLevelAntispam class provides methods to check if a given text message is likely to be spam.
+ * It uses a set of rules to determine if a message is spam, including checking for incorrect words,
+ * character count limits, links, long words, abnormal word/space ratios, and excessive use of
+ * uppercase letters or non-letter characters.
+ *
+ * The `proceedMessage` method takes a text message and a depth level as input. The depth level
+ * determines how many rules are applied to the message. A higher depth level means more rules are
+ * applied, making the spam detection more strict.
+ *
+ * The class uses a predefined list of incorrect words to check for offensive language. It also
+ * uses Android's Linkify class to detect links in the message.
+ *
+ * The class logs messages to the Android Logcat system when it detects potential spam.
+ */
 public class LowLevelAntispam {
     private static final String[] incorrect_words = {"пизд", "хуй", "хуи", "хуе", "хуё", "бляд", "еба", "ёба", "еби", "ёби", "пёзд", "fuck", "bastard"};
 

@@ -14,6 +14,43 @@ import android.widget.ListView;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A custom ListView with extended functionality for sliding, drag-and-drop, and multitouch interactions.
+ * This class enhances the standard Android ListView by providing:
+ * <ul>
+ *     <li><b>Sliding gestures:</b> Allows users to swipe list items to trigger actions like opening or closing chats.</li>
+ *     <li><b>Drag-and-drop:</b> Enables reordering of list items through dragging.</li>
+ *     <li><b>Multitouch support:</b> Handles multitouch events for more complex interactions.</li>
+ *     <li><b>Custom scroll control:</b> Offers an alternative scrolling behavior, especially for older Android versions (OS_VERSION <= 10).</li>
+ *     <li><b>Resize detection:</b> Notifies a listener when the ListView's size changes significantly.</li>
+ * </ul>
+ * <p>
+ * It utilizes several interfaces to communicate events to other parts of the application:
+ * <ul>
+ *     <li>{@link MultitouchListener}: For handling multitouch gestures.</li>
+ *     <li>{@link OnResizeListener}: For responding to size changes.</li>
+ *     <li>{@link SlideListener}: For managing sliding and flinging gestures.</li>
+ * </ul>
+ * </p>
+ * <p>
+ * The class also interacts with a {@code jasminSvc} (presumably a service class) to access application-specific data,
+ * such as the list of opened chats.
+ * </p>
+ * <p>
+ * Key features and behaviors:
+ * <ul>
+ *     <li><b>Initialization ({@code init()}):</b> Sets up default properties like stacking from the bottom, disabling cache color hints,
+ *         and setting a low drawing cache quality for performance.
+ *     </li>
+ *     <li><b>Layout ({@code onLayout()}):</b> Implements custom layout logic for older Android versions to ensure proper scrolling
+ *         when the list content changes.
+ *     </li>
+ *     <li><b>Size Change ({@code onSizeChanged()}):</b> Tracks size changes and invokes the {@code OnResizeListener} if the change
+ *         exceeds a certain threshold.
+ *     </li>
+ *     <li><b>Touch Event Handling ({@code onInterceptTouchEvent()} and {@code onTouchEvent()}):</b>
+ *         Manages complex touch interactions, distinguishing between scrolling, sliding, and drag-and-drop gestures.
+ */
 public class ListViewA extends ListView {
     /** @noinspection unused*/
     private Bitmap buffer;

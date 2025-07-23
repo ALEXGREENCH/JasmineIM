@@ -6,7 +6,22 @@ import android.view.ViewGroup;
 import java.util.Vector;
 import ru.ivansuper.jasmin.ChatAdapter;
 
-/** @noinspection unused*/
+/**
+ * Provides an interface for plugins to interact with the {@link ChatAdapter}.
+ * <p>
+ * This class allows plugins to:
+ * <ul>
+ *     <li>Listen for and potentially override the creation of views for chat items ({@link OnGetViewListener}).</li>
+ *     <li>Listen for and modify chat item views after they have been configured by the adapter ({@link OnConfigureItemListener}).</li>
+ *     <li>Listen for events after a chat item view has been configured ({@link OnAfterConfigureItemListener}).</li>
+ * </ul>
+ * <p>
+ * Listeners can be added and removed dynamically. Event dispatching ensures that all registered listeners
+ * are notified in the order they were added.
+ * <p>
+ * Note: The {@code @noinspection unused} annotation indicates that some elements might appear unused
+ * in the current context but are intended for use by external plugins.
+ */
 public class ChatAdapterInterface {
     public static final Vector<OnGetViewListener> get_view_listeners = new Vector<>();
     public static final Vector<OnConfigureItemListener> configure_item_listeners = new Vector<>();

@@ -18,14 +18,32 @@ import ru.ivansuper.jasmin.jabber.conference.ConferenceItem;
 import ru.ivansuper.jasmin.protocols.utils.Openable;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Abstract class representing an Instant Messaging (IM) profile.
+ * This class provides a common interface and shared functionality for different IM protocols.
+ * It implements the {@link Openable} interface, allowing profiles to be managed
+ * in a contact list or similar UI component.
+ *
+ * <p>Key features include:
+ * <ul>
+ *     <li>Constants for different IM protocol types (OSCAR, JABBER, MMP).</li>
+ *     <li>Constants for standardized user statuses (OFFLINE, ONLINE, AWAY, etc.).</li>
+ *     <li>Common profile attributes like autoconnect, enabled, connection state, nickname, and ID.</li>
+ *     <li>Management of connection lifecycle (connecting, disconnecting).</li>
+ *     <li>Handling of UI updates through a {@link BottomPanelNotifier}.</li>
+ *     <li>A {@link BanList} for managing blocked users.</li>
+ *     <li>Utility methods for retrieving profile-specific information like schema, ID, icon, and status.</li>
+ * </ul>
+ *
+ * Subclasses must implement abstract methods related to specific protocol actions,
+ * such as starting a connection, disconnecting, closing chats, and handling screen state changes.
+ */
 public abstract class IMProfile implements Openable {
 
-    // Типы протоколов
     public static final int OSCAR = 0;
     public static final int JABBER = 1;
     public static final int MMP = 2;
 
-    // Абстрактные статусы
     public static final int STATUS_OFFLINE = -1;
     public static final int STATUS_ONLINE = 0;
     public static final int STATUS_FFC = 1;
@@ -39,7 +57,6 @@ public abstract class IMProfile implements Openable {
     public static final int STATUS_OC = 9;
     public static final int STATUS_DND = 10;
 
-    // Поля профиля
     public boolean autoconnect;
     public boolean enabled;
     public boolean connected = false;
@@ -56,13 +73,11 @@ public abstract class IMProfile implements Openable {
     /** @noinspection unused*/
     public final BanList banlist = new BanList();
 
-    // Интерфейс для обновления UI
     public interface BottomPanelNotifier {
         void onConnectionStatusChanged();
         void onStatusChanged();
     }
 
-    // Методы жизненного цикла соединения
     public abstract void startConnecting();
     public abstract void disconnect();
     public abstract void closeAllChats();
@@ -73,7 +88,6 @@ public abstract class IMProfile implements Openable {
     /** @noinspection unused*/
     public abstract void setStatusText(String str);
 
-    // Openable интерфейс
     @Override
     public final boolean isOpened() {
         return openedInContactList;
@@ -132,7 +146,6 @@ public abstract class IMProfile implements Openable {
         remakeContactList();
     }
 
-    // Ban-лист
     public static final class BanList {
         /** @noinspection unused*/
         public static final int TRYES_LIMIT = 5;
@@ -142,7 +155,7 @@ public abstract class IMProfile implements Openable {
             list.clear();
         }
 
-        /** @noinspection unused*/
+        /** @noinspection unused, UnusedReturnValue */
         public synchronized int increase(String id) {
             Item item = get(id);
             if (item == null) {
@@ -180,7 +193,6 @@ public abstract class IMProfile implements Openable {
         }
     }
 
-    // Утилиты
     public static String getSchema(ContactlistItem contact) {
         switch (contact.itemType) {
             case 1:

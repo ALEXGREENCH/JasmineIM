@@ -14,6 +14,23 @@ import android.widget.TextView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A dialog preference for selecting the chat style.
+ *
+ * This preference allows the user to choose between different chat styles,
+ * which are presented as radio buttons in a dialog. The selected style is
+ * saved in SharedPreferences.
+ *
+ * <p>The available chat styles are:
+ * <ul>
+ *   <li>Style 1: Defined by the string resource "s_ms_chat_style_1"
+ *   <li>Style 2: Defined by the string resource "s_ms_chat_style_2"
+ * </ul>
+ *
+ * <p>The dialog layout is inflated from {@code R.layout.columns_picker}.
+ * The selected style is stored as a string ("0" for Style 1, "1" for Style 2)
+ * under the preference key.
+ */
 public class ChatStylePicker extends DialogPreference {
     private final SharedPreferences manager;
     /** @noinspection FieldCanBeLocal, unused */

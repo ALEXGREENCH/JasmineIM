@@ -7,6 +7,10 @@ import android.view.Window;
 import android.view.WindowInsets;
 import android.view.WindowManager;
 
+/**
+ * Utility class for managing system bars (status bar and navigation bar).
+ * Provides methods to configure their appearance, such as making them transparent.
+ */
 public class SystemBarUtils {
     public static void setupTransparentBars(Activity activity) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {

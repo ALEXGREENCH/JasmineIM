@@ -20,6 +20,19 @@ import ru.ivansuper.jasmin.locale.Language;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A custom {@link DialogPreference} for selecting the application language.
+ *
+ * <p>This preference displays a dialog with a list of available languages, allowing the user to
+ * choose their preferred language. The selected language is then saved in {@link SharedPreferences}.
+ *
+ * <p>The list of available languages is obtained from {@link Locale#getAvailable()}. Each language
+ * is displayed with its name, language code, and author.
+ *
+ * <p>When a language is selected and the dialog is closed, the selected language is saved, and the
+ * application's locale is updated via {@link Locale#prepare()}. Additionally, {@link
+ * SettingsActivity#update()} is called to refresh the settings screen.
+ */
 public class LanguagePicker extends DialogPreference {
     private final SharedPreferences manager;
     private int current;

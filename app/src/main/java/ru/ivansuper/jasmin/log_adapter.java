@@ -9,6 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
 
+/**
+ * Adapter for displaying log messages in a ListView.
+ * This adapter manages a list of log entries, formats them with timestamps,
+ * and provides views for displaying them in a list.
+ */
 public class log_adapter extends BaseAdapter {
     private final Vector<String> list = resources.log;
 

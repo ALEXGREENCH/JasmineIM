@@ -10,6 +10,30 @@ import java.util.Vector;
 
 import ru.ivansuper.jasmin.chats.JConference;
 
+/**
+ * Provides an interface for plugins to interact with the JConference window.
+ * This class allows plugins to listen for window lifecycle events, handle key events,
+ * create dialogs, modify options menus, and add custom menu items.
+ *
+ * <p><b>Usage:</b>
+ * <br> - Plugins can register {@link OnWindowListener} to receive notifications about window state changes
+ *   (started, paused, resumed, stopped) and to intercept events like key presses or menu creation.
+ * <br> - Plugins can register {@link OnBindMenuAction} to add custom items to specific menus within
+ *   the conference window (main menu, message menu, user list menu).
+ *
+ * <p>All listener registration and event dispatching methods are synchronized to ensure thread safety.
+ *
+ * <p><b>Event Dispatching:</b>
+ * <br> - Window lifecycle events ({@code OnWndStarted}, {@code OnWndPaused}, etc.) are dispatched to all registered {@link OnWindowListener}s.
+ * <br> - For events that can be "handled" or "intercepted" (e.g., {@code OnWndKeyDown}, {@code OnWndCreateDialog}, {@code OnWndCreateOptionsMenu}, {@code OnWndResult}),
+ *   the dispatching stops as soon as one listener returns {@code true} (for boolean methods) or a non-null dialog (for {@code OnWndCreateDialog}).
+ *   This means that the first listener to handle the event effectively consumes it.
+ * <br> - For menu item binding ({@code dispatchBindMenuItem}), the event is dispatched to the first registered {@link OnBindMenuAction} listener.
+ *
+ * <p><b>Note:</b> The {@code @noinspection unused} annotation is used for constants and methods that are
+ * intended to be used by plugins and might not be directly referenced within the core application code,
+ * thus appearing as "unused" to static analysis tools.
+ */
 public class JConferenceWindowInterface {
     public static final Vector<OnWindowListener> wnd_listeners = new Vector<>();
     public static final Vector<OnBindMenuAction> menu_items_bind_listeners = new Vector<>();

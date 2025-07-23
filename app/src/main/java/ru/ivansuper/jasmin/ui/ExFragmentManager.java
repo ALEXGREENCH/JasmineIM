@@ -2,6 +2,14 @@ package ru.ivansuper.jasmin.ui;
 
 import java.util.Vector;
 
+/**
+ * Manages a list of {@link ExFragment} instances and provides a mechanism to execute
+ * an {@link ExRunnable} on each of them. This class is designed to handle events
+ * or operations that need to be performed across multiple fragments.
+ *
+ * <p>All methods in this class are synchronized to ensure thread safety when
+ * adding, removing, or executing events on fragments.
+ */
 public class ExFragmentManager {
     private static final Vector<ExFragment> mList = new Vector<>();
 

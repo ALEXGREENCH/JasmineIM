@@ -7,6 +7,13 @@ import android.widget.CheckBox;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A custom CheckBox widget with a predefined button drawable and style.
+ *
+ * <p>This class extends the standard Android {@link CheckBox} and applies
+ * a specific drawable ({@code R.drawable.btn_check}) as its button and
+ * attaches a custom style using {@code resources.attachCheckStyle(this)}.
+ */
 public class MCheckBox extends CheckBox {
 
     public MCheckBox(Context context) {

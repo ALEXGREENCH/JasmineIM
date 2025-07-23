@@ -18,6 +18,25 @@ import ru.ivansuper.jasmin.chats.Chat;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for selecting smileys.
+ *
+ * <p>This activity displays a grid of smileys and allows the user to select one.
+ * The selected smiley is then returned to the calling activity.
+ *
+ * <p>The activity's theme and UI are initialized in the {@link #onCreate(Bundle)} method.
+ * The theme is determined by the "ms_wallpaper_type" preference, which can be set to "0", "1", or "2".
+ * The UI consists of a {@link GridView} that displays the smileys.
+ *
+ * <p>When a smiley is selected, the {@link AdapterView.OnItemClickListener} is triggered.
+ * This listener creates an {@link Intent} containing the selected smiley's tag and returns it to the calling activity.
+ *
+ * <p>The activity's visibility is tracked by the {@link #VISIBLE} flag.
+ * This flag is set to {@code true} in {@link #onResume()} and {@code false} in {@link #onPause()}.
+ *
+ * <p>The {@link #onResume()} method also notifies the adapter that the data set has changed,
+ * ensuring that the smileys are displayed correctly.
+ */
 public class SmileysSelector extends Activity {
 
     public static boolean VISIBLE;

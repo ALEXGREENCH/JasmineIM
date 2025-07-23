@@ -10,6 +10,23 @@ import java.net.URL;
 import java.net.URLConnection;
 import ru.ivansuper.jasmin.ui.MyTextView;
 
+/**
+ * A {@link ReplacementSpan} that loads an image from a URL and displays it.
+ * <p>
+ * This class handles asynchronous image loading in a separate thread.
+ * It initially displays a placeholder image ({@code resources.img_file}) and updates
+ * it with the loaded image, a "too big" image ({@code resources.img_file_big}), or an
+ * error image ({@code resources.img_file_bad}) upon completion or failure.
+ * </p>
+ * <p>
+ * Image dimensions are constrained to a maximum of 1024x1024 and are scaled to fit
+ * within the available width of the container {@link MyTextView}.
+ * </p>
+ * <p>
+ * After the image is loaded (or an error occurs), a layout request is posted to the
+ * container to reflect the changes.
+ * </p>
+ */
 public class URLImageSpan extends ReplacementSpan {
     private Bitmap image = ((BitmapDrawable) resources.img_file).getBitmap();
     private int width = this.image.getWidth();

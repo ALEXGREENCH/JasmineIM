@@ -16,6 +16,24 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.plugins._interface.ServiceBroadcastReceiver;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
+/**
+ * BroadcastReceiver for handling various system events and intents.
+ * This class is responsible for reacting to changes in ringer mode, screen state,
+ * phone state, and custom actions like PING and widget state requests.
+ * It interacts with the {@link jasminSvc} to perform actions based on these events.
+ *
+ * <p>Key functionalities include:
+ * <ul>
+ *     <li>Updating ringer mode status (vibrate/normal).</li>
+ *     <li>Handling screen on/off events.</li>
+ *     <li>Responding to PING requests to notify the service.</li>
+ *     <li>Updating phone call state (idle/active).</li>
+ *     <li>Processing widget state requests, including a mechanism to prevent too many fast requests
+ *         by locking the widget if a threshold is exceeded.</li>
+ *     <li>Delegating intent handling to {@link ServiceBroadcastReceiver} for plugin processing.</li>
+ * </ul>
+ * </p>
+ */
 public class BReceiver extends BroadcastReceiver {
     private static final long WIDGET_REQUESTS_INTERVAL = 2000;
     public static boolean mWidgetLocked = false;

@@ -14,6 +14,11 @@ import android.widget.TextView;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A DialogPreference that allows the user to select a background type.
+ * It presents a dialog with radio buttons for different background options.
+ * The selected option is saved in SharedPreferences.
+ */
 public class BackgroundPicker extends DialogPreference {
     private final SharedPreferences manager;
     /** @noinspection FieldCanBeLocal, unused */

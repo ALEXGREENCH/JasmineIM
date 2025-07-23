@@ -8,6 +8,13 @@ import android.graphics.Shader;
 import android.util.AttributeSet;
 import android.view.View;
 
+/**
+ * A custom progress bar view.
+ *
+ * <p>This class provides a custom progress bar implementation that can be used in Android
+ * applications. It allows setting a maximum value and updating the current progress. The progress
+ * bar is drawn with a shadow border and a custom progress line drawable.
+ */
 public class PB extends View {
     private long max;
     private android.graphics.drawable.BitmapDrawable progress;

@@ -10,6 +10,12 @@ import java.io.IOException;
 import ru.ivansuper.jasmin.resources;
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * The Manager class provides a set of static methods for managing application preferences.
+ * It handles the initialization of settings on the first start, and provides methods
+ * for storing and retrieving various data types (String, int, boolean) from SharedPreferences.
+ * All methods are synchronized to ensure thread safety when accessing preferences.
+ */
 public class Manager {
     public static void checkFirstStartAndReset() {
         File marker = new File(utilities.normalizePath(resources.dataPath) + "settings_initialized");

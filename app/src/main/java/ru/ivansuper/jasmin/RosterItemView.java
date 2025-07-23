@@ -35,6 +35,34 @@ import ru.ivansuper.jasmin.jabber.JProtocol;
 import ru.ivansuper.jasmin.jabber.conference.Conference;
 import ru.ivansuper.jasmin.jabber.conference.ConferenceItem;
 
+/**
+ * Represents a single item in the roster (contact list).
+ *
+ * This class is responsible for displaying information about a contact, group, profile,
+ * conference, or splitter in the roster. It handles rendering of the item's name,
+ * status, avatar, and other visual elements.
+ *
+ * The appearance and behavior of the RosterItemView are determined by its `type`
+ * and the data provided in the {@link #update(ContactlistItem)} method.
+ *
+ * Key features:
+ * - Displays different types of roster items:
+ *   - {@link #TYPE_CONTACT}: Regular contact.
+ *   - {@link #TYPE_GROUP}: A group of contacts.
+ *   - {@link #TYPE_PROFILE}: The user's own profile.
+ *   - {@link #TYPE_CONFERENCE}: A chat conference.
+ *   - {@link #TYPE_SPLITTER}: A visual separator in the list.
+ * - Shows contact name, status icon, and optional status text.
+ * - Displays avatars for contacts if enabled and available.
+ * - Indicates unread messages with a blinking effect and/or a counter.
+ * - Shows client icons if enabled and available.
+ * - Displays visibility status (e.g., visible, invisible).
+ * - Shows ignore status.
+ * - Handles typing notifications.
+ * - Adapts its layout and appearance based on the item type and available space.
+ * - Uses {@link TextPaint} for efficient text rendering.
+ * - Manages blinking animations for unread messages or important events.
+ */
 public class RosterItemView extends View {
     public static final int AVATAR_PADDING = 3;
     public static final int AVATAR_SIZE = 40;

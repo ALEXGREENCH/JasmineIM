@@ -9,8 +9,26 @@ import ru.ivansuper.jasmin.Preferences.Manager;
 import ru.ivansuper.jasmin.resources;
 
 /**
- * Позволяет изменять размер двух панелей (например, список контактов и область сообщений)
- * с помощью перетаскивания разделителя (bar).
+ * Allows resizing of two panels (e.g., contact list and message area)
+ * by dragging a separator bar.
+ *
+ * <p>This class manages the layout and touch events to enable dynamic resizing
+ * of two adjacent views. It enforces minimum and maximum size constraints
+ * and persists the last known size of the first panel.
+ *
+ * <p><b>Usage:</b>
+ * <pre>
+ * {@code
+ * Resizer.BIND(contactListPanel, messageAreaPanel, separatorBarView);
+ * }
+ * </pre>
+ *
+ * <p><b>Note:</b> This class uses a singleton pattern for simplicity, but care
+ * should be taken if multiple resizable panel pairs are needed in the same activity
+ * or fragment. The {@code StaticFieldLeak} suppression is due to the singleton
+ * holding a reference to views, which can lead to memory leaks if not managed
+ * carefully with the Android lifecycle. Ideally, the Resizer instance should be
+ * cleared when the views are no longer needed (e.g., in {@code onDestroyView} or {@code onDestroy}).
  */
 public class Resizer {
 

@@ -11,6 +11,17 @@ import java.io.File;
 
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for browsing files on the device.
+ *
+ * <p>This activity displays a list of files and directories, allowing the user to navigate
+ * through the file system and select a file. The selected file's path is returned as a result
+ * to the calling activity.
+ *
+ * <p>The activity starts by displaying the contents of the SD card. Users can navigate into
+ * directories by clicking on them. Clicking on a file will select it and finish the activity.
+ * The first item in the list is always ".." which allows navigating to the parent directory.
+ */
 public class FileBrowserActivity extends Activity {
     
     @SuppressWarnings("FieldCanBeLocal")

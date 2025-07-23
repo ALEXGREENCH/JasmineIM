@@ -2,6 +2,10 @@ package ru.ivansuper.jasmin.protocols.utils;
 
 import android.graphics.drawable.Drawable;
 
+/**
+ * Represents client information, including an icon and a description.
+ * This class is used to store and manage information about a client.
+ */
 public class ClientInfo {
     private String mDescription;
     private Drawable mIcon;

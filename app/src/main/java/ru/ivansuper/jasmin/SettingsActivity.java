@@ -22,6 +22,39 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.security.PasswordManager;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for managing application settings.
+ * It extends {@link PreferenceActivity} to provide a standard interface for settings.
+ * This class handles the initialization and management of various preferences,
+ * including UI settings, security options, and other application-specific configurations.
+ *
+ * <p>Key functionalities include:
+ * <ul>
+ *     <li>Loading preferences from an XML resource.</li>
+ *     <li>Setting up transparent system bars.</li>
+ *     <li>Handling lifecycle events (onCreate, onResume, onPause).</li>
+ *     <li>Dynamically enabling/disabling preferences based on other settings (e.g., "ms_chats_at_top" based on "ms_two_screens_mode").</li>
+ *     <li>Managing password security settings, including a dialog for password input.</li>
+ *     <li>Iterating through preferences to set localized titles, summaries, and dialog button texts.</li>
+ *     <li>Providing a static method to update the preference screen and content when settings change externally.</li>
+ * </ul>
+ * </p>
+ *
+ * <p>It uses a {@link Locker} inner class to prevent unintended preference changes during certain operations,
+ * particularly when handling password setup.
+ * </p>
+ *
+ * <p>Static instances ({@code static_instance} and {@code static_instance_preference_screen}) are used
+ * to allow other parts of the application to trigger updates to the settings UI.
+ * </p>
+ *
+ * @see PreferenceActivity
+ * @see PreferenceScreen
+ * @see Preference
+ * @see PasswordManager
+ * @see Locale
+ * @see SystemBarUtils
+ */
 @SuppressWarnings("deprecation")
 public class SettingsActivity extends PreferenceActivity {
 

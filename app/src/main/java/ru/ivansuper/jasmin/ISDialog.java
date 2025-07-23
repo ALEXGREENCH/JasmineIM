@@ -12,6 +12,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+/**
+ * Utility class for displaying custom dialogs.
+ * This class provides static methods to show different types of dialogs within the application.
+ */
 public class ISDialog {
     public static void showAch(final Drawable icon, final String text) {
         resources.service.runOnUi(new Runnable() {

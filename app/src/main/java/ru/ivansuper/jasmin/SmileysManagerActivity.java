@@ -18,6 +18,10 @@ import java.io.File;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.utils.SystemBarUtils;
 
+/**
+ * Activity for managing smiley packs.
+ * Allows users to select and apply different smiley packs.
+ */
 public class SmileysManagerActivity extends Activity {
 
     private LinearLayout list;

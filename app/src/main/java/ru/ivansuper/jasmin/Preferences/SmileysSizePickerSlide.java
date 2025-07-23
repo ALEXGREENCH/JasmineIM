@@ -17,6 +17,30 @@ import ru.ivansuper.jasmin.SmileysManager;
 import ru.ivansuper.jasmin.animate_tools.SmileView;
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * A custom DialogPreference that allows the user to select the size of smileys using a SeekBar.
+ *
+ * <p>This preference displays a dialog with a SeekBar to adjust the smiley size and a preview of
+ * a smiley with the selected size. The selected size is persisted in SharedPreferences.
+ *
+ * <p><b>XML attributes:</b>
+ *
+ * <ul>
+ *   <li>{@code android:key}: The key to use for storing the preference value.
+ *   <li>{@code android:title}: The title to display for the preference.
+ *   <li>{@code android:defaultValue}: The default value for the smiley size (as a percentage, e.g.,
+ *       "100").
+ * </ul>
+ *
+ * <p><b>Usage:</b>
+ *
+ * <pre>{@code
+ * <ru.ivansuper.jasmin.Preferences.SmileysSizePickerSlide
+ *     android:key="smiley_size"
+ *     android:title="Smiley Size"
+ *     android:defaultValue="100" />
+ * }</pre>
+ */
 public class SmileysSizePickerSlide extends DialogPreference {
     private final SharedPreferences manager;
     /** @noinspection FieldCanBeLocal, unused */

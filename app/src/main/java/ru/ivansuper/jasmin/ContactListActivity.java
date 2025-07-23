@@ -98,8 +98,6 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.popup.PopupBuilder;
 import ru.ivansuper.jasmin.popup.QuickAction;
 import ru.ivansuper.jasmin.protocols.IMProfile;
-import ru.ivansuper.jasmin.ContactlistItem;
-import ru.ivansuper.jasmin.ProfilesManager;
 import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.security.PasswordManager;
 import ru.ivansuper.jasmin.slide_tools.SlideSwitcher;
