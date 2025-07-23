@@ -703,7 +703,7 @@ public class JConference extends Chat implements Handler.Callback {
     }
 
     private void checkOrientation() {
-        if (resources.ctx.getResources().getConfiguration().orientation == 2) {
+        if (resources.ctx.getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
             if (this.userList != null) {
                 this.mUsersToggleButton.setVisibility(View.VISIBLE);
                 toggleUserlistVisibility(false);

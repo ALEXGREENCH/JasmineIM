@@ -958,17 +958,17 @@ public class MultiColumnList extends ViewGroup {
         int keyCode = event.getKeyCode();
         Log.e("KEY_EVENT:child", "CODE: " + keyCode + "     EVENT: " + event.getAction());
         boolean handled = false;
-        if (event.getAction() == 0) {
+        if (event.getAction() == KeyEvent.ACTION_DOWN) {
             if (this.keyboard_used) {
                 switch (keyCode) {
-                    case 19:
+                    case KeyEvent.KEYCODE_DPAD_UP:
                         if (this.mSelectedViewIndex > 0) {
                             this.mSelectedViewIndex--;
                             handled = true;
                             break;
                         }
                         break;
-                    case 20:
+                    case KeyEvent.KEYCODE_DPAD_DOWN:
                         if (this.mSelectedViewIndex < this.mAdapter.getCount() - 1) {
                             this.mSelectedViewIndex = getNextBottomDirectionIndex(this.mSelectedViewIndex);
                             handled = true;
