@@ -34,17 +34,18 @@ import ru.ivansuper.jasmin.jabber.JGroup;
 import ru.ivansuper.jasmin.jabber.JProtocol;
 import ru.ivansuper.jasmin.jabber.conference.Conference;
 import ru.ivansuper.jasmin.jabber.conference.ConferenceItem;
+import ru.ivansuper.jasmin.protocols.IMProfile;
 
 /**
  * Represents a single item in the roster (contact list).
- *
+ * <p>
  * This class is responsible for displaying information about a contact, group, profile,
  * conference, or splitter in the roster. It handles rendering of the item's name,
  * status, avatar, and other visual elements.
- *
+ * <p>
  * The appearance and behavior of the RosterItemView are determined by its `type`
  * and the data provided in the {@link #update(ContactlistItem)} method.
- *
+ * <p>
  * Key features:
  * - Displays different types of roster items:
  *   - {@link #TYPE_CONTACT}: Regular contact.
