@@ -348,16 +348,17 @@ public class ProfilesActivity extends Activity {
                 });
                 return ad4;
             case 4:
+                /// TODO: мб пофиксить остальные сервера
                 final UAdapter adp = new UAdapter();
                 adp.setPadding(10);
                 adp.setTextColor(-1);
                 adp.put(this.service.getResources().getDrawable(R.drawable.icq_status_online), resources.getString("s_profile_type_icq"), 0);
-                adp.put(this.service.getResources().getDrawable(R.drawable.mrim_contact_status_online), resources.getString("s_profile_type_mail"), 4);
+                ////adp.put(this.service.getResources().getDrawable(R.drawable.mrim_contact_status_online), resources.getString("s_profile_type_mail"), 4);
                 adp.put(this.service.getResources().getDrawable(R.drawable.xmpp), resources.getString("s_profile_type_jabber"), 1);
-                adp.put(this.service.getResources().getDrawable(R.drawable.vk_online), resources.getString("s_profile_type_vk"), 2);
-                adp.put(this.service.getResources().getDrawable(R.drawable.ya_online), resources.getString("s_profile_type_yandex"), 3);
-                adp.put(this.service.getResources().getDrawable(R.drawable.qip_online), resources.getString("s_profile_type_qip"), 5);
-                adp.put(this.service.getResources().getDrawable(R.drawable.gtalk_online), resources.getString("s_profile_type_gtalk"), 6);
+                ////adp.put(this.service.getResources().getDrawable(R.drawable.vk_online), resources.getString("s_profile_type_vk"), 2);
+                ////adp.put(this.service.getResources().getDrawable(R.drawable.ya_online), resources.getString("s_profile_type_yandex"), 3);
+                ////adp.put(this.service.getResources().getDrawable(R.drawable.qip_online), resources.getString("s_profile_type_qip"), 5);
+                ////adp.put(this.service.getResources().getDrawable(R.drawable.gtalk_online), resources.getString("s_profile_type_gtalk"), 6);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad5 = DialogBuilder.create(this, resources.getString("s_add_profile"), adp, new AdapterView.OnItemClickListener() {
                     @Override
