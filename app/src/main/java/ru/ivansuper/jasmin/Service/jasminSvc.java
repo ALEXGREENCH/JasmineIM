@@ -695,13 +695,13 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     private static int getMessagesCount(ContactlistItem contact) {
         int messagesCount = 0;
-        if (contact.itemType == 1) {
+        if (contact.itemType == ContactlistItem.CONTACT) {
             messagesCount = ((ICQContact) contact).getUnreadCount();
-        } else if (contact.itemType == 4) {
+        } else if (contact.itemType == ContactlistItem.JABBER_CONTACT) {
             messagesCount = ((JContact) contact).getUnreadCount();
-        } else if (contact.itemType == 7) {
+        } else if (contact.itemType == ContactlistItem.MMP_CONTACT) {
             messagesCount = ((MMPContact) contact).getUnreadCount();
-        } else if (contact.itemType == 10) {
+        } else if (contact.itemType == ContactlistItem.JABBER_CONFERENCE) {
             messagesCount = ((ConferenceItem) contact).getUnreadCount();
         }
         return messagesCount;

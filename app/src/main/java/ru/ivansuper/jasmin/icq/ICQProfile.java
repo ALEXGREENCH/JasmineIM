@@ -2220,7 +2220,7 @@ public class ICQProfile extends IMProfile {
         int i = 0;
         while (i < this.svc.opened_chats.size()) {
             ContactlistItem contact = this.svc.opened_chats.get(i);
-            if (contact.itemType == 1 && ((ICQContact) contact).profile.equals(this)) {
+            if (contact.itemType == ContactlistItem.CONTACT && ((ICQContact) contact).profile.equals(this)) {
                 closeChat((ICQContact) contact);
                 i--;
             }

@@ -2290,7 +2290,7 @@ public class JProfile extends IMProfile {
             int i = 0;
             while (i < this.contacts.size()) {
                 ContactlistItem item = this.contacts.get(i);
-                if (item.itemType == 10) {
+                if (item.itemType == ContactlistItem.JABBER_CONFERENCE) {
                     this.contacts.remove(i);
                     i--;
                 }
@@ -2303,7 +2303,7 @@ public class JProfile extends IMProfile {
         synchronized (ContactsAdapter.locker) {
             for (int i = 0; i < this.contacts.size(); i++) {
                 ContactlistItem item = this.contacts.get(i);
-                if (item != null && item.itemType == 10) {
+                if (item != null && item.itemType == ContactlistItem.JABBER_CONFERENCE) {
                     Conference conference = ((ConferenceItem) item).conference;
                     if (lost && conference.isTurnedOn()) {
                         conference.setIsNormalShutdown(false);
@@ -2323,7 +2323,7 @@ public class JProfile extends IMProfile {
         synchronized (ContactsAdapter.locker) {
             for (int i = 0; i < this.contacts.size(); i++) {
                 ContactlistItem it = this.contacts.get(i);
-                if (it.itemType == 6 && it.name.equals(name)) {
+                if (it.itemType == ContactlistItem.JABBER_GROUP && it.name.equals(name)) {
                     return (JGroup) it;
                 }
             }
@@ -2339,7 +2339,7 @@ public class JProfile extends IMProfile {
             int i = 0;
             while (i < this.contacts.size()) {
                 ContactlistItem it = this.contacts.get(i);
-                if (it.itemType == 6) {
+                if (it.itemType == ContactlistItem.JABBER_GROUP) {
                     JGroup group = (JGroup) this.contacts.remove(i);
                     if (group.id == -1) {
                         without_group = group;
@@ -2362,7 +2362,7 @@ public class JProfile extends IMProfile {
             list = new Vector<>();
             for (int i = 0; i < this.contacts.size(); i++) {
                 ContactlistItem it = this.contacts.get(i);
-                if (it.itemType == 6) {
+                if (it.itemType == ContactlistItem.JABBER_GROUP) {
                     JGroup group = (JGroup) this.contacts.get(i);
                     if (group.id != -1) {
                         list.add(group);
@@ -2385,7 +2385,7 @@ public class JProfile extends IMProfile {
             while (true) {
                 if (i < this.contacts.size()) {
                     ContactlistItem it = this.contacts.get(i);
-                    if (it.itemType == 4 && it.ID.equals(JID_)) {
+                    if (it.itemType == ContactlistItem.JABBER_CONTACT && it.ID.equals(JID_)) {
                         jContact = (JContact) it;
                         break;
                     }
@@ -2407,7 +2407,7 @@ public class JProfile extends IMProfile {
                 while (true) {
                     if (i < this.contacts.size()) {
                         ContactlistItem it = this.contacts.get(i);
-                        if (it.itemType != 4 || !it.ID.equals(JID_)) {
+                        if (it.itemType != ContactlistItem.JABBER_CONTACT || !it.ID.equals(JID_)) {
                             i++;
                         } else {
                             this.svc.removeMessageNotify(this.contacts.remove(i));
@@ -2428,7 +2428,7 @@ public class JProfile extends IMProfile {
             int i = 0;
             while (i < this.contacts.size()) {
                 ContactlistItem it = this.contacts.get(i);
-                if (it.itemType == 4) {
+                if (it.itemType == ContactlistItem.JABBER_CONTACT) {
                     JContact contact = (JContact) it;
                     if (contact.group.equals(name)) {
                         this.contacts.remove(i);
@@ -2509,7 +2509,7 @@ public class JProfile extends IMProfile {
         int i = 0;
         while (i < this.svc.opened_chats.size()) {
             ContactlistItem contact = this.svc.opened_chats.get(i);
-            if (contact.itemType == 4 && ((JContact) contact).profile.equals(this)) {
+            if (contact.itemType == ContactlistItem.JABBER_CONTACT && ((JContact) contact).profile.equals(this)) {
                 closeChat((JContact) contact);
                 i--;
             }
@@ -2523,7 +2523,7 @@ public class JProfile extends IMProfile {
             setConferenceItemsOffline(lost);
             for (int i = 0; i < this.contacts.size(); i++) {
                 ContactlistItem item = this.contacts.get(i);
-                if (item.itemType == 4) {
+                if (item.itemType == ContactlistItem.JABBER_CONTACT) {
                     JContact contact = (JContact) item;
                     contact.presence_initialized = false;
                     contact.clearResources();
@@ -2538,7 +2538,7 @@ public class JProfile extends IMProfile {
         synchronized (ContactsAdapter.locker) {
             for (int i = 0; i < this.contacts.size(); i++) {
                 ContactlistItem item = this.contacts.get(i);
-                if (item.itemType == 4) {
+                if (item.itemType == ContactlistItem.JABBER_CONTACT) {
                     JContact contact = (JContact) item;
                     contact.presence_initialized = true;
                 }
@@ -2823,7 +2823,7 @@ public class JProfile extends IMProfile {
     public final JContact getContact(String JID) {
         synchronized (ContactsAdapter.locker) {
             for (ContactlistItem item : this.contacts) {
-                if (item.itemType == 4 && item.ID.equals(JID)) {
+                if (item.itemType == ContactlistItem.JABBER_CONTACT && item.ID.equals(JID)) {
                     return (JContact) item;
                 }
             }
@@ -2836,7 +2836,7 @@ public class JProfile extends IMProfile {
         synchronized (ContactsAdapter.locker) {
             list = new Vector<>();
             for (ContactlistItem item : this.contacts) {
-                if (item.itemType == 4) {
+                if (item.itemType == ContactlistItem.JABBER_CONTACT) {
                     list.add(item);
                 }
             }
@@ -2849,7 +2849,7 @@ public class JProfile extends IMProfile {
         synchronized (ContactsAdapter.locker) {
             list = new Vector<>();
             for (ContactlistItem item : this.contacts) {
-                if (item.itemType == 4 && ((JContact) item).conf_pm) {
+                if (item.itemType == ContactlistItem.JABBER_CONTACT && ((JContact) item).conf_pm) {
                     list.add((JContact) item);
                 }
             }
@@ -2863,7 +2863,7 @@ public class JProfile extends IMProfile {
         synchronized (ContactsAdapter.locker) {
             list = new Vector<>();
             for (ContactlistItem item : this.contacts) {
-                if (item.itemType == 4) {
+                if (item.itemType == ContactlistItem.JABBER_CONTACT) {
                     list.add((JContact) item);
                 }
             }
@@ -2875,7 +2875,7 @@ public class JProfile extends IMProfile {
         synchronized (ContactsAdapter.locker) {
             for (int i = 0; i < this.contacts.size(); i++) {
                 ContactlistItem item = this.contacts.get(i);
-                if (item.itemType == 4 && ((JContact) item).isChating) {
+                if (item.itemType == ContactlistItem.JABBER_CONTACT && ((JContact) item).isChating) {
                     return true;
                 }
             }
@@ -2901,7 +2901,7 @@ public class JProfile extends IMProfile {
         synchronized (ContactsAdapter.locker) {
             list = new Vector<>();
             for (ContactlistItem item : this.contacts) {
-                if (item.itemType == 4) {
+                if (item.itemType == ContactlistItem.JABBER_CONTACT) {
                     list.add((JContact) item);
                 }
             }
@@ -3078,7 +3078,7 @@ public class JProfile extends IMProfile {
             for (int i = 0; i < this.contacts.size(); i++) {
                 ContactlistItem it = this.contacts.get(i);
                 if (it != null) {
-                    if (it.itemType == 4) {
+                    if (it.itemType == ContactlistItem.JABBER_CONTACT) {
                         JContact contact = (JContact) it;
                         if (contact.hasUnreadMessages) {
                             dump.simple_messages = true;
@@ -3105,7 +3105,7 @@ public class JProfile extends IMProfile {
             for (int i = 0; i < this.contacts.size(); i++) {
                 ContactlistItem it = this.contacts.get(i);
                 if (it != null) {
-                    if (it.itemType == 4) {
+                    if (it.itemType == ContactlistItem.JABBER_CONTACT) {
                         JContact contact = (JContact) it;
                         if (contact.group.equals(jgroup.name) || (contact.group.isEmpty() && jgroup.id == -1)) {
                             if (!contact.conf_pm) {
