@@ -72,4 +72,5 @@ public class PreferenceTable {
     public static boolean wake_lock;
     public static boolean wifi_lock;
     public static boolean writeHistory;
+    public static int uiFontScale;
 }
