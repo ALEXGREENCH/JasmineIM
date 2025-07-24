@@ -165,6 +165,15 @@ public class ChatAdapter extends BaseAdapter {
             selector.setVisibility(View.GONE);
         }
         message.setTextSize(PreferenceTable.chatTextSize);
+        if (PreferenceTable.ms_telegram_style) {
+            if (hst.direction == 1) {
+                message.setBackgroundResource(R.drawable.telegram_bubble_in);
+                message.setTextColor(ctx.getResources().getColor(R.color.telegram_text_primary));
+            } else {
+                message.setBackgroundResource(R.drawable.telegram_bubble_out);
+                message.setTextColor(ctx.getResources().getColor(R.color.telegram_text_primary));
+            }
+        }
         if (PreferenceTable.ms_chat_style == 1) {
             status.setVisibility(View.GONE);
             if (hst.direction == 1) {
