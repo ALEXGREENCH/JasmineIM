@@ -1011,7 +1011,6 @@ public class JConference extends Chat implements Handler.Callback {
         }
         resources.attachChatTopPanel(TOP_PANEL);
         resources.attachChatBottomPanel(bottomPanel);
-        resources.swapPanelsForTelegram(chat_back, TOP_PANEL, bottomPanel);
 
         // Text styles
         nick_.setTextSize(PreferenceTable.chatTextSize);
