@@ -15,6 +15,9 @@ import android.widget.TextView;
 import android.view.Gravity;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 import ru.ivansuper.jasmin.Preferences.Manager;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
@@ -36,6 +39,20 @@ public class ChatAdapter extends BaseAdapter {
     private int profile_type;
     private final ArrayList<HistoryItem> list = new ArrayList<>();
     private int cutted = 0;
+    private final SimpleDateFormat dayFormat = new SimpleDateFormat("dd MMM yyyy");
+
+    private boolean isNewDay(long prev, long current) {
+        Calendar c1 = Calendar.getInstance();
+        c1.setTimeInMillis(prev);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTimeInMillis(current);
+        return c1.get(Calendar.YEAR) != c2.get(Calendar.YEAR) ||
+                c1.get(Calendar.DAY_OF_YEAR) != c2.get(Calendar.DAY_OF_YEAR);
+    }
+
+    private String formatDay(long time) {
+        return dayFormat.format(new Date(time));
+    }
 
     public ChatAdapter(Context ctxParam, ArrayList<HistoryItem> history, int profile_type, ListView list) {
         //noinspection UnusedAssignment
@@ -137,6 +154,7 @@ public class ChatAdapter extends BaseAdapter {
         if (!PreferenceTable.nickInChat) {
             nick.setVisibility(View.GONE);
         }
+        TextView daySep = msg.findViewById(R.id.msg_day_separator);
         TextView time = msg.findViewById(R.id.msg_time);
         MyTextView message = msg.findViewById(R.id.msg_text);
         message.setFocusable(false);
@@ -145,6 +163,12 @@ public class ChatAdapter extends BaseAdapter {
         ImageView sts = msg.findViewById(R.id.msg_sts_icon);
         CheckBox selector = msg.findViewById(R.id.chat_item_checkbox);
         HistoryItem hst = getItem(arg0);
+        if (arg0 == 0 || isNewDay(getItem(arg0 - 1).date, hst.date)) {
+            daySep.setVisibility(View.VISIBLE);
+            daySep.setText(formatDay(hst.date));
+        } else {
+            daySep.setVisibility(View.GONE);
+        }
         if (arg0 > 0 && PreferenceTable.ms_use_messages_merging) {
             if (getItem(arg0 - 1).direction == hst.direction && !hst.isAuthMessage && !hst.isFileMessage && !hst.isXtrazMessage && hst.jtransfer == null) {
                 top_panel.setVisibility(View.GONE);
@@ -170,7 +194,7 @@ public class ChatAdapter extends BaseAdapter {
         if (PreferenceTable.ms_telegram_style) {
             if (hst.direction == 1) {
                 message.setBackgroundResource(R.drawable.telegram_bubble_in);
-                message.setTextColor(ctx.getResources().getColor(R.color.telegram_text_primary));
+                message.setTextColor(0xffffffff);
                 ((LinearLayout.LayoutParams) msgContainer.getLayoutParams()).gravity = Gravity.START;
             } else {
                 message.setBackgroundResource(R.drawable.telegram_bubble_out);
