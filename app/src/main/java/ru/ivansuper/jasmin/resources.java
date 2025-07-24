@@ -2209,14 +2209,14 @@ public class resources {
             case DisplayMetrics.DENSITY_MEDIUM:
                 return 24;
             case DisplayMetrics.DENSITY_HIGH:
-                return 32;
+                return 48; // was 32
             case DisplayMetrics.DENSITY_XHIGH:
-                return 48;
+                return 64; // was 48
             case DisplayMetrics.DENSITY_XXHIGH:
             case DisplayMetrics.DENSITY_XXXHIGH:
-                return 64;
+                return 96; // was 64
             default:
-                return 32; // Fallback for other densities
+                return 48; // Fallback for other densities
         }
     }
 
