@@ -300,6 +300,9 @@
             android:key="ms_old_chat_style"
             android:title="Старый стиль ввода в чате" />
         <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="ms_telegram_style" />
+        <CheckBoxPreference
             android:defaultValue="true"
             android:key="ms_use_overscroll" />
         <ListPreference

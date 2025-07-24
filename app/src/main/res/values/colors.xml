@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="transparent">#00000000</color>
+    <color name="telegram_primary">#54a9eb</color>
+    <color name="telegram_background">#e5f3ff</color>
 </resources>

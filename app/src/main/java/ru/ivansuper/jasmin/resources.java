@@ -325,7 +325,6 @@ public class resources {
         if (auth_accepted_message_back != null) {
             view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), auth_accepted_message_back, auth_accepted_message_back.getNinePatchChunk(), auth_accepted_message_back_padding, null));
         }
-
     }
 
     /**
@@ -2155,6 +2154,10 @@ public class resources {
                 var33.close();
             } catch (Exception ignored) {
             }
+        }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
+        if (prefs.getBoolean("ms_telegram_style", false)) {
+            custom_wallpaper = ctx.getResources().getDrawable(R.drawable.telegram_wallpaper);
         }
 
     }

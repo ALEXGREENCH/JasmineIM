@@ -61,5 +61,6 @@
 <boolean name="ms_conf_show_theme" value="true" />
 <boolean name="ms_use_messages_merging" value="false" />
 <boolean name="ms_round_avatars" value="false" />
+<boolean name="ms_telegram_style" value="false" />
 </map>
 

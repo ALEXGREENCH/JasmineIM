@@ -1519,6 +1519,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         PreferenceTable.ms_animated_smileys = this.sharedPreferences.getBoolean("ms_animated_smileys", true);
         PreferenceTable.ms_show_avatars = this.sharedPreferences.getBoolean("ms_show_avatars", false);
         PreferenceTable.ms_round_avatars = this.sharedPreferences.getBoolean("ms_round_avatars", false);
+        PreferenceTable.ms_telegram_style = this.sharedPreferences.getBoolean("ms_telegram_style", false);
         PreferenceTable.ms_chats_at_top = this.sharedPreferences.getBoolean("ms_chats_at_top", false);
         PreferenceTable.ms_chat_style = Integer.parseInt(this.sharedPreferences.getString("ms_chat_style", "0"));
         PreferenceTable.ms_dragdrop_quoting = this.sharedPreferences.getBoolean("ms_dragdrop_quoting", true);

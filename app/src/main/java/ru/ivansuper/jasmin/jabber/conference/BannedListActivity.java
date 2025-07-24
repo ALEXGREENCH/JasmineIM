@@ -52,20 +52,24 @@ public class BannedListActivity extends Activity {
     public void onCreate(Bundle bundle) {
         //noinspection deprecation
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-        String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
-        //noinspection DataFlowIssue
-        switch (wallpaper_type) {
-            case "0":
-                setTheme(R.style.WallpaperNoTitleTheme);
-                break;
-            case "1":
-                setTheme(R.style.BlackNoTitleTheme);
-                getWindow().setBackgroundDrawable(resources.custom_wallpaper);
-                break;
-            case "2":
-                setTheme(R.style.BlackNoTitleTheme);
-                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
-                break;
+        if (sp.getBoolean("ms_telegram_style", false)) {
+            setTheme(R.style.TelegramTheme);
+        } else {
+            String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
+            //noinspection DataFlowIssue
+            switch (wallpaper_type) {
+                case "0":
+                    setTheme(R.style.WallpaperNoTitleTheme);
+                    break;
+                case "1":
+                    setTheme(R.style.BlackNoTitleTheme);
+                    getWindow().setBackgroundDrawable(resources.custom_wallpaper);
+                    break;
+                case "2":
+                    setTheme(R.style.BlackNoTitleTheme);
+                    getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
+                    break;
+            }
         }
         super.onCreate(bundle);
         resources.applyFontScale(this);
