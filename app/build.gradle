@@ -12,7 +12,7 @@ android {
         //noinspection ExpiredTargetSdkVersion
         targetSdk 32
         versionCode 30
-        versionName "5.5.2"
+        versionName "5.5.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
