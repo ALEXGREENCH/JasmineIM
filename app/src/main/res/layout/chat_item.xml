@@ -4,6 +4,16 @@
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/msg_day_separator"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="4dp"
+        android:textColor="@color/telegram_text_secondary"
+        android:textSize="12sp"
+        android:visibility="gone" />
+
     <FrameLayout
         android:id="@+id/chat_item_back"
         android:layout_width="match_parent"
