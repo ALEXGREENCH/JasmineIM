@@ -420,7 +420,6 @@
     <public name="chat_item_top_panel" id="0x7f0b0052" type="id" />
     <public name="msg_sts_icon" id="0x7f0b0053" type="id" />
     <public name="msg_time" id="0x7f0b0054" type="id" />
-    <public name="msg_time_bottom" id="0x7f0b0135" type="id" />
     <public name="msg_status" id="0x7f0b0055" type="id" />
     <public name="msg_text" id="0x7f0b0056" type="id" />
     <public name="transfer_layout" id="0x7f0b0057" type="id" />
