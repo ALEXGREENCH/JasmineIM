@@ -67,6 +67,7 @@ public class ColorEditorActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         setContentView(R.layout.color_editor);
         SystemBarUtils.setupTransparentBars(this);
         initViews();

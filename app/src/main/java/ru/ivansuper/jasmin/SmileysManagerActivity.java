@@ -51,6 +51,7 @@ public class SmileysManagerActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         //noinspection deprecation
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         selectedPack = sp.getString("current_smileys_pack", "$*INTERNAL*$");

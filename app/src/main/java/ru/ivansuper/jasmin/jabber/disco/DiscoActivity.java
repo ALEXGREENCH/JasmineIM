@@ -72,6 +72,7 @@ public class DiscoActivity extends Activity {
         }
         setVolumeControlStream(3);
         super.onCreate(bundle);
+        resources.applyFontScale(this);
         setContentView(R.layout.disco_activity);
         SystemBarUtils.setupTransparentBars(this);
         initViews();

@@ -61,6 +61,7 @@ public class BookmarksActivity extends Activity {
                 break;
         }
         super.onCreate(bundle);
+        resources.applyFontScale(this);
         if (PROFILE == null) {
             finish();
             return;

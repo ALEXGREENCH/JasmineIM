@@ -94,6 +94,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         //noinspection deprecation
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (sp.getBoolean("ms_sys_wallpaper", false)) {

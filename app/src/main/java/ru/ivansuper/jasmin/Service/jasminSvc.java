@@ -1448,6 +1448,12 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             this.sharedPreferences.edit().putString("ms_chat_time_size", "14").commit();
         }
         try {
+            PreferenceTable.uiFontScale = Integer.parseInt(this.sharedPreferences.getString("ms_ui_font_scale", "100"));
+        } catch (Exception e) {
+            this.sharedPreferences.edit().putString("ms_ui_font_scale", "100").commit();
+            PreferenceTable.uiFontScale = 100;
+        }
+        try {
             PreferenceTable.vibroLength = Long.parseLong(this.sharedPreferences.getString("ms_vibro_length", "200"));
         } catch (Exception e4) {
             this.sharedPreferences.edit().putString("ms_vibro_length", "200").commit();

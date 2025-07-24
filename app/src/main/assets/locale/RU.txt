@@ -730,6 +730,7 @@ s_ms_log_clickable := Кликабельные уведомления
 s_ms_log_clickable_desc := Открывать чат при нажатии на всплывающее уведомление (только для сообщений). Нужна перезагрузка.
 s_ms_use_overscroll := Эффект перепрокрутки
 s_ms_use_overscroll_desc := Включить эффект перепрокрутки в списке контактов
+s_ms_ui_font_scale := Размер интерфейса
 s_ms_show_xstatuses := Показывать доп. статус
 s_ms_show_clients := Показывать иконки клиентов
 s_ms_jabber_category := Jabber (XMPP)

@@ -44,6 +44,7 @@ public class MainActivity extends Activity implements Handler.Callback {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         getWindowManager().getDefaultDisplay().getMetrics(resources.dm);
         setContentView(R.layout.activity_main);
         SystemBarUtils.setupTransparentBars(this);

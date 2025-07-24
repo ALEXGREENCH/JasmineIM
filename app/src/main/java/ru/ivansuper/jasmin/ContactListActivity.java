@@ -207,6 +207,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
     public void onCreate(Bundle savedInstanceState) {
         this.IT_IS_PORTRAIT = true;
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         Intent i = getIntent();
         //noinspection deprecation
         sp = PreferenceManager.getDefaultSharedPreferences(this);

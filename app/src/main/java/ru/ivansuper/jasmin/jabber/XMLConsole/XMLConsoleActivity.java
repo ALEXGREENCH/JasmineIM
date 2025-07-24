@@ -46,6 +46,7 @@ public class XMLConsoleActivity extends Activity implements Handler.Callback {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         setContentView(R.layout.xml_console);
         SystemBarUtils.setupTransparentBars(this);
         setVolumeControlStream(3);
