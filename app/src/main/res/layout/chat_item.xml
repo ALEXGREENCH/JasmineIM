@@ -67,7 +67,8 @@
                         android:background="#ffaaaa00" />
 
                     <LinearLayout
-                        android:layout_width="match_parent"
+                        android:id="@+id/msg_container"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:orientation="vertical">
 
@@ -76,7 +77,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_margin="2sp"
-                            android:layout_weight="1" />
+                            android:textColor="@color/telegram_text_primary" />
 
                         <LinearLayout
                             android:id="@+id/transfer_layout"

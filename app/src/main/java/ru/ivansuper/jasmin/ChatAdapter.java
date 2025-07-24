@@ -12,6 +12,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.view.Gravity;
 
 import java.util.ArrayList;
 
@@ -139,6 +140,7 @@ public class ChatAdapter extends BaseAdapter {
         TextView time = msg.findViewById(R.id.msg_time);
         MyTextView message = msg.findViewById(R.id.msg_text);
         message.setFocusable(false);
+        LinearLayout msgContainer = msg.findViewById(R.id.msg_container);
         LinearLayout status = msg.findViewById(R.id.msg_status);
         ImageView sts = msg.findViewById(R.id.msg_sts_icon);
         CheckBox selector = msg.findViewById(R.id.chat_item_checkbox);
@@ -169,9 +171,11 @@ public class ChatAdapter extends BaseAdapter {
             if (hst.direction == 1) {
                 message.setBackgroundResource(R.drawable.telegram_bubble_in);
                 message.setTextColor(ctx.getResources().getColor(R.color.telegram_text_primary));
+                ((LinearLayout.LayoutParams) msgContainer.getLayoutParams()).gravity = Gravity.START;
             } else {
                 message.setBackgroundResource(R.drawable.telegram_bubble_out);
                 message.setTextColor(ctx.getResources().getColor(R.color.telegram_text_primary));
+                ((LinearLayout.LayoutParams) msgContainer.getLayoutParams()).gravity = Gravity.END;
             }
         }
         if (PreferenceTable.ms_chat_style == 1) {
