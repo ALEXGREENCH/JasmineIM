@@ -49,7 +49,12 @@ public class ExportImportActivity extends Activity {
     @SuppressLint("ResourceType")
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setTheme(16973833);
+        SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
+        if (sp.getBoolean("ms_telegram_style", false)) {
+            setTheme(R.style.TelegramTheme);
+        } else {
+            setTheme(16973833);
+        }
         super.onCreate(savedInstanceState);
         resources.applyFontScale(this);
         setContentView(R.layout.import_history);

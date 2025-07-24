@@ -97,7 +97,9 @@ public class SearchActivity extends Activity implements Handler.Callback {
         resources.applyFontScale(this);
         //noinspection deprecation
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
-        if (sp.getBoolean("ms_sys_wallpaper", false)) {
+        if (sp.getBoolean("ms_telegram_style", false)) {
+            setTheme(R.style.TelegramTheme);
+        } else if (sp.getBoolean("ms_sys_wallpaper", false)) {
             setTheme(R.style.WallpaperNoTitleTheme);
         } else {
             setTheme(R.style.BlackNoTitleTheme);
