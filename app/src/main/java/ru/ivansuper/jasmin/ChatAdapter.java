@@ -178,20 +178,21 @@ public class ChatAdapter extends BaseAdapter {
                 ((LinearLayout.LayoutParams) msgContainer.getLayoutParams()).gravity = Gravity.END;
             }
         }
-        if (PreferenceTable.ms_chat_style == 1) {
-            status.setVisibility(View.GONE);
-            if (hst.direction == 1) {
-                sts.setImageDrawable(resources.msg_in);
-            } else if (hst.confirmed) {
-                sts.setImageDrawable(resources.msg_out_c);
+        if (!PreferenceTable.ms_telegram_style) {
+            if (PreferenceTable.ms_chat_style == 1) {
+                status.setVisibility(View.GONE);
+                if (hst.direction == 1) {
+                    sts.setImageDrawable(resources.msg_in);
+                } else if (hst.confirmed) {
+                    sts.setImageDrawable(resources.msg_out_c);
+                } else {
+                    sts.setImageDrawable(resources.msg_out);
+                }
             } else {
-                sts.setImageDrawable(resources.msg_out);
+                status.setVisibility(View.VISIBLE);
+                sts.setImageDrawable(null);
             }
-        } else {
-            status.setVisibility(View.VISIBLE);
-            sts.setImageDrawable(null);
-        }
-        if (hst.isAuthMessage) {
+            if (hst.isAuthMessage) {
             if (hst.contact != null) {
                 nick.setText(hst.contact.name);
             }
@@ -299,6 +300,7 @@ public class ChatAdapter extends BaseAdapter {
             }
             msg.setBackgroundColor(ColorScheme.getColor(18));
             resources.attachOutMsg(msg);
+        }
         }
         boolean update_imgs = false;
         if (hst.messageS == null) {
