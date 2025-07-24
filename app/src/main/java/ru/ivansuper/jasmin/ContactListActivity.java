@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
+import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -851,9 +852,10 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                     adp_11.put(resources.getString("s_search"), 7);
                 }
                 adp_11.put(resources.getString("s_settings"), 2);
-                if (!resources.DONATE_INSTALLED) {
-                    adp_11.put(resources.getString("s_donate"), 5);
-                }
+                ///  TODO: БЕЗ ДОНАТОВ :)
+                ///if (!resources.DONATE_INSTALLED) {
+                ///    adp_11.put(resources.getString("s_donate"), 5);
+                ///}
                 adp_11.put(resources.getString("s_about"), 3);
                 if (ADB.getActivatedCount() > 0) {
                     adp_11.put(Locale.getString("s_achs"), 8);
@@ -2650,6 +2652,12 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         }
 
         int sizeInPixels = getResources().getDimensionPixelSize(R.dimen.bottom_panel_icon_size);
+        int marginStart = getResources().getDimensionPixelSize(R.dimen.start_margin);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
+                sizeInPixels, sizeInPixels
+        );
+        params.setMargins(marginStart, 0, 0, 0);
 
         connectionStatusPanel.removeAllViews();
         profilesPanel.removeAllViews();
@@ -2675,9 +2683,8 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         final ICQProfile icqProfile = (ICQProfile) improfile;
                         final ImageView status2 = new ImageView(this);
                         status2.setClickable(true);
-                        status2.setPadding(8, 7, 8, 7);
 
-                        status2.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
+                        status2.setLayoutParams(params);
 
                         status2.setBackgroundDrawable(resources.getListSelector());
                         status2.setOnClickListener(new View.OnClickListener() {
@@ -2711,9 +2718,9 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         profilesPanel.addView(status2);
                         final ImageView status3 = new ImageView(this);
                         status3.setClickable(true);
-                        status3.setPadding(8, 7, 8, 7);
+                        status3.setPadding(marginStart, 0, 0, 0);
 
-                        status3.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
+                        status3.setLayoutParams(params);
 
                         status3.setBackgroundDrawable(resources.getListSelector());
                         status3.setOnClickListener(new View.OnClickListener() {
@@ -2748,9 +2755,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         profilesPanel.addView(status3);
                         final ImageView status4 = new ImageView(this);
                         status4.setClickable(true);
-                        status4.setPadding(8, 7, 8, 7);
-
-                        status4.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
+                        status4.setLayoutParams(params);
 
                         status4.setBackgroundDrawable(resources.getListSelector());
                         status4.setOnClickListener(new View.OnClickListener() {
@@ -2873,10 +2878,8 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         final JProfile jprofile = (JProfile) improfile;
                         final ImageView status = new ImageView(this);
                         status.setClickable(true);
-                        status.setPadding(8, 7, 8, 7);
 
-
-                        status.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
+                        status.setLayoutParams(params);
 
                         status.setBackgroundDrawable(resources.getListSelector());
                         profilesPanel.addView(status);
