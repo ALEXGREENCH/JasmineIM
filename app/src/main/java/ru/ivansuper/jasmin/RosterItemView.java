@@ -137,7 +137,7 @@ public class RosterItemView extends View {
         this.effect.setAntiAlias(true);
         this.effect.setStrokeWidth(3.0F);
         this.avatar_path = new Path();
-        this.avatar_path.addRoundRect(new RectF(1.0F, 1.0F, (float)(var2 - 1), (float)(var2 - 1)), 5.0F, 5.0F, Direction.CCW);
+        updateAvatarPath();
         this.avatar_border_ = new Paint();
         this.avatar_border_.setColor(2013265919);
         this.avatar_border_.setStrokeWidth(0.0F);
@@ -215,6 +215,16 @@ public class RosterItemView extends View {
             this.mStatusDrawer.draw(var1);
         }
 
+    }
+
+    private void updateAvatarPath() {
+        int size = (int)(AVATAR_SIZE * resources.dm.density);
+        this.avatar_path.reset();
+        if (PreferenceTable.ms_round_avatars) {
+            this.avatar_path.addCircle(size / 2f, size / 2f, size / 2f - 1f, Direction.CCW);
+        } else {
+            this.avatar_path.addRoundRect(new RectF(1f, 1f, size - 1f, size - 1f), 5f, 5f, Direction.CCW);
+        }
     }
 
     private final float getCounterHeight() {
@@ -360,6 +370,7 @@ public class RosterItemView extends View {
         Rect var2 = new Rect();
         this.avatar_back.getPadding(var2);
         this.avatar_bounds = new Rect(var2.left, var2.top, var1 - var2.right, var1 - var2.bottom);
+        updateAvatarPath();
         this.draw_avatar = false;
         this.online = 0;
         this.total = 0;
@@ -411,7 +422,14 @@ public class RosterItemView extends View {
                     var10 = var1.save();
                     var1.translate(3.0F, 3.0F);
                     this.avatar_back.draw(var1);
-                    this.avatar.draw(var1);
+                    if (PreferenceTable.ms_round_avatars) {
+                        int clip = var1.save();
+                        var1.clipPath(this.avatar_path);
+                        this.avatar.draw(var1);
+                        var1.restoreToCount(clip);
+                    } else {
+                        this.avatar.draw(var1);
+                    }
                     var1.restoreToCount(var10);
                     var10 = 0 + this.avatar_back.getBounds().width();
                 }
