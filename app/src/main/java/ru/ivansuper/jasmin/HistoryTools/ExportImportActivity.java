@@ -51,6 +51,7 @@ public class ExportImportActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         setTheme(16973833);
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         setContentView(R.layout.import_history);
         SystemBarUtils.setupTransparentBars(this);
         initViews();

@@ -97,6 +97,7 @@ public class ContactHistoryActivity extends Activity {
                 break;
         }
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         SystemBarUtils.setupTransparentBars(this);
         setVolumeControlStream(3);
         setContentView(R.layout.contact_history);

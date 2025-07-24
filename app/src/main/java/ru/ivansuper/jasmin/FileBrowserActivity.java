@@ -31,6 +31,7 @@ public class FileBrowserActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         setVolumeControlStream(3);
         setContentView(R.layout.file_browser_activity);
         SystemBarUtils.setupTransparentBars(this);

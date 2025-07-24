@@ -73,6 +73,7 @@ public class SmileysSelector extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         initializeTheme();
         initializeUI();
     }

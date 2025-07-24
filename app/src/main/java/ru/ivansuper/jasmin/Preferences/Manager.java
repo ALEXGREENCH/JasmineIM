@@ -72,6 +72,7 @@ public class Manager {
             editor.putString("ms_chat_time_size", String.valueOf(fontSize));
             editor.putString("ms_smileys_scale", String.valueOf(smileScale));
             editor.putString("ms_cl_avatar_size", String.valueOf(avatarSize));
+            editor.putString("ms_ui_font_scale", "100");
             editor.apply();
         }
     }

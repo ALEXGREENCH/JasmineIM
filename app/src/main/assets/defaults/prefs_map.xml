@@ -14,6 +14,7 @@
 <boolean name="ms_triple_vibro" value="true" />
 <boolean name="ms_use_popup" value="true" />
 <boolean name="ms_use_overscroll" value="true" />
+<string name="ms_ui_font_scale">100</string>
 <boolean name="ms_animated_smileys" value="true" />
 <string name="ms_turn_sts_timeout">300</string>
 <string name="ms_chat_style">1</string>

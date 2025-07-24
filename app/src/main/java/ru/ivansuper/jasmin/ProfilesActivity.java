@@ -76,6 +76,7 @@ public class ProfilesActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         setVolumeControlStream(3);
         setContentView(R.layout.profiles);
         SystemBarUtils.setupTransparentBars(this);

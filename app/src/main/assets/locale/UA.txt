@@ -731,6 +731,7 @@ s_ms_log_clickable:= Клікабельні повідомлення
 s_ms_log_clickable_desc:= Відкривати чат при натисканні на спливаюче повідомлення (тільки для повідомлень). Потрібна перезавантаження.
 s_ms_use_overscroll:= Ефект перепрокрутки
 s_ms_use_overscroll_desc := Увімкнути ефект перепрокрутки в списку контактів
+s_ms_ui_font_scale := Розмір інтерфейсу
 s_ms_show_xstatuses := Показувати дод. статус
 s_ms_show_clients := Показувати іконки клієнтів
 s_ms_jabber_category := Jabber (XMPP)

@@ -17,6 +17,8 @@ import android.graphics.drawable.NinePatchDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Environment;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -2332,6 +2334,26 @@ public class resources {
         initInternalGraphics();
         res = null;
         System.gc();
+    }
+
+    /** Apply global font scale based on user preference */
+    public static void applyFontScale(Context context) {
+        if (context == null) {
+            return;
+        }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        float scale;
+        try {
+            scale = Float.parseFloat(prefs.getString("ms_ui_font_scale", "100")) / 100f;
+        } catch (Exception e) {
+            scale = 1f;
+        }
+        Resources r = context.getResources();
+        Configuration cfg = new Configuration(r.getConfiguration());
+        if (cfg.fontScale != scale) {
+            cfg.fontScale = scale;
+            r.updateConfiguration(cfg, r.getDisplayMetrics());
+        }
     }
 
     private static void createDirectories(String... paths) {

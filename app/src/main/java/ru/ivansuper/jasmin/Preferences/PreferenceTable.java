@@ -25,6 +25,8 @@ public class PreferenceTable {
     public static int clTextSize;
     /** Size of contact list avatars in density-independent pixels */
     public static int clAvatarSize;
+    /** Global interface font scale percentage */
+    public static int uiFontScale;
     public static boolean enable_x_in_bottom_panel;
     public static boolean hideEmptyGroups;
     public static boolean hideOffline;

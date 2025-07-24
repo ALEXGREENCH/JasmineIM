@@ -34,6 +34,7 @@ public class GMailActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         visible = true;
         setContentView(R.layout.google_mail);
         SystemBarUtils.setupTransparentBars(this);

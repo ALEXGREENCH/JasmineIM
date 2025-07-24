@@ -40,6 +40,7 @@ public class MediaManagerActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         super.onCreate(savedInstanceState);
+        resources.applyFontScale(this);
         setVolumeControlStream(3);
         setContentView(R.layout.media_manager);
         SystemBarUtils.setupTransparentBars(this);

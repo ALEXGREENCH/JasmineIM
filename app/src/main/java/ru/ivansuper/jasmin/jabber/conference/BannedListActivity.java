@@ -68,6 +68,7 @@ public class BannedListActivity extends Activity {
                 break;
         }
         super.onCreate(bundle);
+        resources.applyFontScale(this);
         setVolumeControlStream(3);
         setContentView(R.layout.banned_list);
         SystemBarUtils.setupTransparentBars(this);
