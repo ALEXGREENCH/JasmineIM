@@ -3,7 +3,9 @@ package ru.ivansuper.jasmin.HistoryTools;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
@@ -49,6 +51,7 @@ public class ExportImportActivity extends Activity {
     @SuppressLint("ResourceType")
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        //noinspection deprecation
         SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this);
         if (sp.getBoolean("ms_telegram_style", false)) {
             setTheme(R.style.TelegramTheme);
