@@ -62,6 +62,8 @@ public class JChatActivity extends Chat implements Handler.Callback {
     /** @noinspection FieldCanBeLocal*/
     @SuppressLint("StaticFieldLeak")
     private static LinearLayout TOP_PANEL;
+    @SuppressLint("StaticFieldLeak")
+    private static LinearLayout chat_back;
     public static JContact contact;
     @SuppressLint("StaticFieldLeak")
     private static LinearLayout opened_chats_markers;
@@ -614,6 +616,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
     public void initViews() {
         super.initViews();
         this.quot_view = (QuotingView) findViewById(R.id.chat_quoting_view);
+        chat_back = (LinearLayout) findViewById(R.id.chat_back);
         this.mainStatus = (ImageView) findViewById(R.id.mainStatus);
         this.xStatus = (ImageView) findViewById(R.id.xStatus);
         this.nickname = (TextView) findViewById(R.id.nickname);
@@ -762,6 +765,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         }
         resources.attachChatTopPanel(TOP_PANEL);
         resources.attachChatBottomPanel(linearLayout);
+        resources.swapPanelsForTelegram(chat_back, TOP_PANEL, linearLayout);
         opened_chats_markers = (LinearLayout) findViewById(R.id.chat_chats_markers);
         opened_chats_markers.setVisibility(PreferenceTable.ms_show_markers_in_chat ? View.VISIBLE : View.GONE);
         this.nick_.setTextSize(PreferenceTable.chatTextSize);

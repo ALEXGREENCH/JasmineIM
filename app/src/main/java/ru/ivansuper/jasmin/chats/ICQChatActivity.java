@@ -546,6 +546,7 @@ public class ICQChatActivity extends Chat {
         linearLayout.setBackgroundColor(ColorScheme.getColor(9));
         resources.attachChatTopPanel(TOP_PANEL);
         resources.attachChatBottomPanel(linearLayout);
+        resources.swapPanelsForTelegram(chat_back, TOP_PANEL, linearLayout);
         nick_.setTextSize(PreferenceTable.chatTextSize);
         this.input.setTextSize(PreferenceTable.chatTextSize);
         nick_.setTextColor(ColorScheme.getColor(22));
