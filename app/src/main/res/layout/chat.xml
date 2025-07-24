@@ -86,10 +86,11 @@
                         android:id="@+id/chat_menu_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
-                        android:background="@drawable/telegram_button"
                         android:drawableLeft="@drawable/ic_menu"
                         android:paddingLeft="8sp"
-                        android:paddingRight="8sp" />
+                        android:paddingRight="8sp"
+                        android:layout_marginRight="4dp"
+                        android:layout_marginTop="4dp"/>
                 </LinearLayout>
 
                 <HorizontalScrollView
@@ -324,6 +325,14 @@
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
 
+                            <Button
+                                android:id="@+id/chat_smiley_btn"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:gravity="center"
+                                android:paddingLeft="14sp"
+                                android:paddingRight="14sp" />
+
                             <EditText
                                 android:id="@+id/input"
                                 android:layout_width="match_parent"
@@ -333,20 +342,9 @@
                                 android:maxLines="4" />
 
                             <Button
-                                android:id="@+id/chat_smiley_btn"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/telegram_button"
-                                android:drawableLeft="@drawable/smile_button"
-                                android:gravity="center"
-                                android:paddingLeft="14sp"
-                                android:paddingRight="14sp" />
-
-                            <Button
                                 android:id="@+id/send"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/telegram_button"
                                 android:paddingLeft="18sp"
                                 android:paddingRight="18sp"
                                 android:shadowColor="#ff000000"
