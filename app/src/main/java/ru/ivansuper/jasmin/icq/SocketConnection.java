@@ -64,6 +64,12 @@ public abstract class SocketConnection {
     public String lastServer = "none";
     public int lastPort = 0;
 
+    /**
+     * Timeout in milliseconds used for {@link Socket#connect(java.net.SocketAddress, int)}.
+     * A longer timeout helps avoid intermittent connection failures on slow networks.
+     */
+    public static final int CONNECT_TIMEOUT_MS = 15000;
+
     public abstract void onConnect();
 
     public abstract void onConnecting();
@@ -207,7 +213,7 @@ public abstract class SocketConnection {
                 Log.v("SOCKET", "Socket options set: keepAlive, tcpNoDelay");
                 addr = new InetSocketAddress(lastServer, lastPort);
                 Log.v("SOCKET", "Connecting to " + lastServer + ":" + lastPort);
-                socket.connect(addr, popup_log_adapter.INFO_DISPLAY_TIME);
+                socket.connect(addr, CONNECT_TIMEOUT_MS);
                 Log.v("SOCKET", "Socket connected");
                 socket.setSoTimeout(0);
                 socketIn = socket.getInputStream();
