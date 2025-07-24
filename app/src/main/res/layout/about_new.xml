@@ -3,7 +3,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:paddingLeft="3sp">
+    android:padding="12dp"
+    android:background="#000000">
 
     <ScrollView
         android:layout_width="match_parent"
@@ -18,35 +19,39 @@
                 android:id="@+id/about1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="    Jasmine IM это клиент для платформы Google Android. Создан для быстрого и удобного общения."
-                android:textColor="#ffffffff" />
+                android:text="Jasmine IM — это ICQ-клиент для Android. Проект модифицирован и дорабатывается ALEXGREENCH."
+                android:textColor="#FFFFFFFF"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/about2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Автор программы Кудряков Иван (Ivansuper)."
-                android:textColor="#ffffffff" />
+                android:text="Исходная версия: Кудряков Иван (Ivansuper)"
+                android:textColor="#FFFFFFFF"
+                android:textSize="14sp"
+                android:layout_marginTop="6dp" />
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="8dp">
 
                 <TextView
                     android:id="@+id/about3"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="3sp"
                     android:text="Версия: "
-                    android:textColor="#ffffeeee"
+                    android:textColor="#FFEEEEEE"
                     android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/version"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="version"
-                    android:textColor="#ffffeeee"
+                    android:text="mod-version"
+                    android:textColor="#FFEEEEEE"
                     android:textStyle="bold" />
             </LinearLayout>
 
@@ -54,44 +59,45 @@
                 android:id="@+id/about4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="11sp"
-                android:layout_marginBottom="6sp"
+                android:layout_marginTop="12dp"
                 android:autoLink="web"
-                android:text="Официальный сайт: jasmineicq.ru"
-                android:textColorLink="#ffffffff" />
+                android:text="GitHub проекта: https://github.com/ALEXGREENCH/JasmineIM"
+                android:textColorLink="#FFFFFFFF"
+                android:textSize="14sp" />
 
             <TextView
                 android:id="@+id/about5"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Telegram (сервер на iServerD): https://t.me/kicq_official"
                 android:autoLink="web"
-                android:text="Сайт-партнер: SexyDroid.ru"
-                android:textColorLink="#ffffffff" />
+                android:textColorLink="#FFFFFFFF"
+                android:textSize="14sp"
+                android:layout_marginTop="6dp" />
 
             <TextView
                 android:id="@+id/about6"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6sp"
+                android:text="ВКонтакте: https://vk.com/oldicq"
                 android:autoLink="web"
-                android:text="Форум: http://4pda.ru/forum/index.php?showtopic=246247"
-                android:textColorLink="#ffffffff"
-                android:textSize="12sp" />
+                android:textColorLink="#FFFFFFFF"
+                android:textSize="14sp"
+                android:layout_marginTop="6dp" />
 
             <TextView
                 android:id="@+id/about7"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="6sp"
-                android:autoLink="web"
-                android:text="Маркет: https://market.android.com/details?id=ru.ivansuper.jasmin"
-                android:textColorLink="#ffffffff"
-                android:textSize="12sp" />
+                android:text=""
+                android:visibility="gone" />
 
             <ImageView
                 android:layout_width="match_parent"
-                android:layout_height="80sp"
-                android:src="@drawable/trade_mark_new" />
+                android:layout_height="80dp"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/trade_mark"
+                android:scaleType="centerInside" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

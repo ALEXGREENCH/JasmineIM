@@ -956,13 +956,13 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 break;
             case 3:
                 LinearLayout about = (LinearLayout) View.inflate(this, R.layout.about, null);
-                ((TextView) about.findViewById(R.id.about1)).setText(resources.getString("s_about_1"));
-                ((TextView) about.findViewById(R.id.about2)).setText(resources.getString("s_about_2"));
-                ((TextView) about.findViewById(R.id.about3)).setText(resources.getString("s_about_3"));
-                ((TextView) about.findViewById(R.id.about4)).setText(resources.getString("s_about_4"));
-                ((TextView) about.findViewById(R.id.about5)).setText(resources.getString("s_about_5"));
-                ((TextView) about.findViewById(R.id.about6)).setText(resources.getString("s_about_6"));
-                ((TextView) about.findViewById(R.id.about7)).setText(resources.getString("s_about_7"));
+                ((TextView) about.findViewById(R.id.about1)).setText(resources.getString("s_about_1_new"));
+                ((TextView) about.findViewById(R.id.about2)).setText(resources.getString("s_about_2_new"));
+                ((TextView) about.findViewById(R.id.about3)).setText(resources.getString("s_about_3_new"));
+                ((TextView) about.findViewById(R.id.about4)).setText(resources.getString("s_about_4_new"));
+                ((TextView) about.findViewById(R.id.about5)).setText(resources.getString("s_about_5_new"));
+                ((TextView) about.findViewById(R.id.about6)).setText(resources.getString("s_about_6_new"));
+                ((TextView) about.findViewById(R.id.about7)).setText(resources.getString("s_about_7_new"));
                 TextView version = about.findViewById(R.id.version);
                 version.setText(resources.VERSION);
                 ad = DialogBuilder.create(this, resources.getString("s_about"), about, 48);
