@@ -138,6 +138,15 @@
                             </LinearLayout>
                         </LinearLayout>
                     </LinearLayout>
+
+                    <TextView
+                        android:id="@+id/msg_time_bottom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="2dp"
+                        android:textSize="12sp"
+                        android:textColor="@color/telegram_text_secondary"
+                        android:visibility="gone" />
                 </LinearLayout>
             </LinearLayout>
 
