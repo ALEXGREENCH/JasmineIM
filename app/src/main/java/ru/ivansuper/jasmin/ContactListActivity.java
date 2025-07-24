@@ -2649,9 +2649,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
             return;
         }
 
-        // todo; 32 dp - hardcode
-        final float scale = getResources().getDisplayMetrics().density;
-        int sizeInPixels = (int) (32 * scale + 0.5f);
+        int sizeInPixels = getResources().getDimensionPixelSize(R.dimen.bottom_panel_icon_size);
 
         connectionStatusPanel.removeAllViews();
         profilesPanel.removeAllViews();
@@ -2679,7 +2677,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         status2.setClickable(true);
                         status2.setPadding(8, 7, 8, 7);
 
-                        // todo; 32 dp - hardcode
                         status2.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
 
                         status2.setBackgroundDrawable(resources.getListSelector());
@@ -2716,7 +2713,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         status3.setClickable(true);
                         status3.setPadding(8, 7, 8, 7);
 
-                        // todo; 32 dp - hardcode
                         status3.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
 
                         status3.setBackgroundDrawable(resources.getListSelector());
@@ -2754,7 +2750,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         status4.setClickable(true);
                         status4.setPadding(8, 7, 8, 7);
 
-                        // todo; 32 dp - hardcode
                         status4.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
 
                         status4.setBackgroundDrawable(resources.getListSelector());
@@ -2881,7 +2876,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         status.setPadding(8, 7, 8, 7);
 
 
-                        // todo; 32 dp - hardcode
                         status.setLayoutParams(new ViewGroup.LayoutParams(sizeInPixels, sizeInPixels));
 
                         status.setBackgroundDrawable(resources.getListSelector());
