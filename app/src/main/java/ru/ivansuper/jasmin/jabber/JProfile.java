@@ -503,7 +503,21 @@ public class JProfile extends IMProfile {
                 if (realm == null) {
                     realm = "";
                 }
-                Node node = new Node("response", Base64Coder.encodeString(JProtocol.getResponse(this.ID, this.PASS, realm, "xmpp/" + this.host, values.get("nonce"), "5534491fa36be80ffbade139ea1a48ac")), "urn:ietf:params:xml:ns:xmpp-sasl");
+                String cnonce = Long.toHexString(utilities.RANDOM.nextLong());
+                Node node = new Node(
+                        "response",
+                        Base64Coder.encodeString(
+                                JProtocol.getResponse(
+                                        this.ID,
+                                        this.PASS,
+                                        realm,
+                                        "xmpp/" + this.host,
+                                        values.get("nonce"),
+                                        cnonce
+                                )
+                        ),
+                        "urn:ietf:params:xml:ns:xmpp-sasl"
+                );
                 this.stream.write(node, this);
                 return;
             } catch (Exception e) {
