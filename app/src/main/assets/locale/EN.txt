@@ -654,6 +654,7 @@ s_ms_simple_list := Solid list
 s_ms_simple_list_desc := Solid list w/o separation by profiles and by groups
 s_ms_cl_columns := Columns count
 s_ms_cl_font_size := Font size
+s_ms_cl_avatar_size := Avatar size
 s_ms_show_away := Show status
 s_ms_show_away_desc := Show status text under contacts
 s_ms_show_avatars := Show avatars

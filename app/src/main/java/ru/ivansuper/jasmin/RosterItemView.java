@@ -122,7 +122,7 @@ public class RosterItemView extends View {
 
     public RosterItemView(Context var1) {
         super(var1);
-        int var2 = (int)(40.0F * resources.dm.density);
+        int var2 = (int) (PreferenceTable.clAvatarSize * resources.dm.density);
         this.avatar_back = (NinePatchDrawable)this.getContext().getResources().getDrawable(R.drawable.avatar_back);
         this.avatar_back.setBounds(0, 0, var2, var2);
         this.name_ = new TextPaint();
@@ -356,7 +356,7 @@ public class RosterItemView extends View {
     }
 
     private final void reset() {
-        int var1 = (int)(40.0F * resources.dm.density);
+        int var1 = (int) (PreferenceTable.clAvatarSize * resources.dm.density);
         Rect var2 = new Rect();
         this.avatar_back.getPadding(var2);
         this.avatar_bounds = new Rect(var2.left, var2.top, var1 - var2.right, var1 - var2.bottom);

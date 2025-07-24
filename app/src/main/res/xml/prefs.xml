@@ -158,6 +158,9 @@
         <ru.ivansuper.jasmin.Preferences.IntegerPickerSmall
             android:defaultValue="18"
             android:key="ms_cl_font_size" />
+        <ru.ivansuper.jasmin.Preferences.IntegerPickerSmall
+            android:defaultValue="40"
+            android:key="ms_cl_avatar_size" />
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="ms_show_away"
