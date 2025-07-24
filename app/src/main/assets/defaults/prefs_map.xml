@@ -2,6 +2,7 @@
 <map>
 <boolean name="ms_restore_conf_presence" value="true" />
 <string name="ms_cl_font_size">15</string>
+<string name="ms_cl_avatar_size">40</string>
 <boolean name="ms_offline" value="true" />
 <boolean name="ms_auto_open_keyboard" value="true" />
 <string name="ms_wallpaper_type">0</string>

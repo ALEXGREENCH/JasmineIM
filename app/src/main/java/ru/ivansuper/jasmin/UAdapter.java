@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Vector;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
+import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 
 /**
  * UAdapter is a custom adapter class that extends BaseAdapter.
@@ -137,7 +138,7 @@ public class UAdapter extends BaseAdapter {
      * The size of the text in the list items.
      * The default value is 16.
      */
-    private int text_size = 16;
+    private int text_size = PreferenceTable.clTextSize;
     /**
      * The current filter string used to filter the list items.
      * If empty, all items are displayed. Otherwise, only items whose labels
@@ -151,6 +152,11 @@ public class UAdapter extends BaseAdapter {
      * @noinspection FieldCanBeLocal, unused
      */
     private boolean use_shadow = false;
+
+    /** Creates a new adapter with text size taken from preferences */
+    public UAdapter() {
+        this.text_size = PreferenceTable.clTextSize;
+    }
 
     /**
      * Returns the number of items in the adapter.
