@@ -53,9 +53,21 @@
         <item name="android:listSelector">@drawable/telegram_bubble_out</item>
     </style>
 
+    <style name="TelegramMessageIncoming" parent="@style/TextViewStyle">
+        <item name="android:background">@drawable/telegram_bubble_in</item>
+        <item name="android:textColor">@color/telegram_text_primary</item>
+    </style>
+
+    <style name="TelegramMessageOutgoing" parent="@style/TextViewStyle">
+        <item name="android:background">@drawable/telegram_bubble_out</item>
+        <item name="android:textColor">@color/telegram_text_primary</item>
+    </style>
+
     <style name="TelegramTheme" parent="@style/BlackNoTitleTheme">
         <item name="android:windowBackground">@drawable/telegram_wallpaper</item>
         <item name="android:textColor">@color/telegram_primary</item>
+        <item name="android:textColorPrimary">@color/telegram_text_primary</item>
+        <item name="android:textColorSecondary">@color/telegram_text_secondary</item>
         <item name="android:buttonStyle">@style/TelegramButtonStyle</item>
         <item name="android:editTextStyle">@style/TelegramEditTextStyle</item>
         <item name="android:listViewStyle">@style/TelegramListSelector</item>

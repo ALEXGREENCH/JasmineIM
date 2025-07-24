@@ -28,6 +28,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -598,7 +599,9 @@ public class resources {
      * @noinspection unused
      */
     public static void attachIngMsg(View view) {
-        if (incoming_message_back != null) {
+        if (PreferenceTable.ms_telegram_style) {
+            view.setBackgroundResource(R.drawable.telegram_bubble_in);
+        } else if (incoming_message_back != null) {
             view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), incoming_message_back, incoming_message_back.getNinePatchChunk(), incoming_message_back_padding, null));
         }
 
@@ -615,7 +618,9 @@ public class resources {
      * @noinspection unused
      */
     public static void attachOutMsg(View view) {
-        if (outgoing_message_back != null) {
+        if (PreferenceTable.ms_telegram_style) {
+            view.setBackgroundResource(R.drawable.telegram_bubble_out);
+        } else if (outgoing_message_back != null) {
             view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), outgoing_message_back, outgoing_message_back.getNinePatchChunk(), outgoing_message_back_padding, null));
         }
 
