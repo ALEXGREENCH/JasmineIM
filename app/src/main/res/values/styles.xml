@@ -38,9 +38,27 @@
         <item name="android:background">@drawable/btn_default_small</item>
     </style>
 
+    <!-- Telegram specific widget styles -->
+    <style name="TelegramButtonStyle" parent="@android:style/Widget.Button">
+        <item name="android:background">@drawable/telegram_button</item>
+        <item name="android:textColor">@android:color/white</item>
+    </style>
+
+    <style name="TelegramEditTextStyle" parent="@android:style/Widget.EditText">
+        <item name="android:background">@drawable/telegram_bubble_in</item>
+        <item name="android:textColor">@android:color/black</item>
+    </style>
+
+    <style name="TelegramListSelector" parent="@android:style/Widget.ListView">
+        <item name="android:listSelector">@drawable/telegram_bubble_out</item>
+    </style>
+
     <style name="TelegramTheme" parent="@style/BlackNoTitleTheme">
         <item name="android:windowBackground">@drawable/telegram_wallpaper</item>
         <item name="android:textColor">@color/telegram_primary</item>
+        <item name="android:buttonStyle">@style/TelegramButtonStyle</item>
+        <item name="android:editTextStyle">@style/TelegramEditTextStyle</item>
+        <item name="android:listViewStyle">@style/TelegramListSelector</item>
     </style>
 
     <style name="EditTextStyle" parent="@android:style/Widget.EditText">

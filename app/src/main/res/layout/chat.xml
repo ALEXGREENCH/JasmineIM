@@ -25,7 +25,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alwaysDrawnWithCache="false"
-                android:background="#77000000"
+                android:background="@drawable/telegram_toolbar"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
@@ -162,7 +162,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alwaysDrawnWithCache="false"
-                android:background="#77000000"
+                android:background="@drawable/telegram_toolbar"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 
@@ -302,7 +302,7 @@
                                 android:id="@+id/chat_menu_btn"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
-                                android:background="@drawable/btn_default_small"
+                                android:background="@drawable/telegram_button"
                                 android:drawableLeft="@drawable/ic_menu"
                                 android:paddingLeft="8sp"
                                 android:paddingRight="8sp" />
@@ -319,6 +319,7 @@
                                 android:id="@+id/chat_smiley_btn"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
+                                android:background="@drawable/telegram_button"
                                 android:drawableLeft="@drawable/smile_button"
                                 android:gravity="center"
                                 android:paddingLeft="14sp"
@@ -328,6 +329,7 @@
                                 android:id="@+id/send"
                                 android:layout_width="wrap_content"
                                 android:layout_height="match_parent"
+                                android:background="@drawable/telegram_button"
                                 android:paddingLeft="18sp"
                                 android:paddingRight="18sp"
                                 android:shadowColor="#ff000000"
