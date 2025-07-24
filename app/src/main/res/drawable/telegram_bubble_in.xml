@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
-    <solid android:color="@color/telegram_bubble_in"/>
-    <corners android:radius="8dp"/>
-</shape>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/telegram_bubble_in"/>
+            <corners android:radius="8dp"/>
+        </shape>
+    </item>
+    <item android:gravity="bottom|left">
+        <rotate android:fromDegrees="45" android:toDegrees="45">
+            <shape android:shape="rectangle">
+                <size android:width="8dp" android:height="8dp"/>
+                <solid android:color="@color/telegram_bubble_in"/>
+            </shape>
+        </rotate>
+    </item>
+</layer-list>
