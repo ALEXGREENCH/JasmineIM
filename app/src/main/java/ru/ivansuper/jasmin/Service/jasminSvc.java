@@ -1438,11 +1438,6 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             this.sharedPreferences.edit().putString("ms_cl_font_size", "16").commit();
         }
         try {
-            PreferenceTable.clAvatarSize = Integer.parseInt(this.sharedPreferences.getString("ms_cl_avatar_size", "40"));
-        } catch (Exception e) {
-            this.sharedPreferences.edit().putString("ms_cl_avatar_size", "40").commit();
-        }
-        try {
             PreferenceTable.chatTextSize = Integer.parseInt(this.sharedPreferences.getString("ms_chat_text_size", "16"));
         } catch (Exception e2) {
             this.sharedPreferences.edit().putString("ms_chat_text_size", "16").commit();

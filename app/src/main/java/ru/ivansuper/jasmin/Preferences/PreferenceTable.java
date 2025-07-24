@@ -23,8 +23,6 @@ public class PreferenceTable {
     public static boolean chat_dividers;
     public static boolean chat_zebra;
     public static int clTextSize;
-    /** Size of contact list avatars in density-independent pixels */
-    public static int clAvatarSize;
     public static boolean enable_x_in_bottom_panel;
     public static boolean hideEmptyGroups;
     public static boolean hideOffline;

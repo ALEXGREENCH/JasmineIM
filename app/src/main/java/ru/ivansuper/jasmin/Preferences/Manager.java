@@ -46,23 +46,18 @@ public class Manager {
             int density = metrics.densityDpi;
             int fontSize;
             int smileScale;
-            int avatarSize;
             if (density >= DisplayMetrics.DENSITY_XXHIGH) {
                 fontSize = 24;
                 smileScale = 320;
-                avatarSize = 48;
             } else if (density >= DisplayMetrics.DENSITY_XHIGH) {
                 fontSize = 20;
                 smileScale = 240;
-                avatarSize = 44;
             } else if (density >= DisplayMetrics.DENSITY_HIGH) {
                 fontSize = 18;
                 smileScale = 180;
-                avatarSize = 40;
             } else {
                 fontSize = 15;
                 smileScale = 160;
-                avatarSize = 36;
             }
 
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
@@ -71,7 +66,6 @@ public class Manager {
             editor.putString("ms_chat_text_size", String.valueOf(fontSize));
             editor.putString("ms_chat_time_size", String.valueOf(fontSize));
             editor.putString("ms_smileys_scale", String.valueOf(smileScale));
-            editor.putString("ms_cl_avatar_size", String.valueOf(avatarSize));
             editor.apply();
         }
     }
