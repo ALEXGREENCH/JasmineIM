@@ -3,4 +3,9 @@
     <color name="transparent">#00000000</color>
     <color name="telegram_primary">#54a9eb</color>
     <color name="telegram_background">#e5f3ff</color>
+    <!-- Additional Telegram colors -->
+    <color name="telegram_accent">#0088cc</color>
+    <color name="telegram_bubble_in">#ffffff</color>
+    <color name="telegram_bubble_out">#cfe9ff</color>
+    <color name="telegram_toolbar">#54a9eb</color>
 </resources>
