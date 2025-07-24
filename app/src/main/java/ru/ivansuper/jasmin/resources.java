@@ -23,6 +23,7 @@ import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
@@ -2375,6 +2376,32 @@ public class resources {
                 e.printStackTrace();
             }
         }
+    }
+
+    /**
+     * Repositions the chat header and bottom panel when Telegram style is enabled.
+     * <p>
+     * When {@link PreferenceTable#ms_telegram_style} is {@code true}, the bottom panel
+     * is moved to the top of the specified parent and the header is placed at the
+     * bottom. This mimics Telegram's layout where controls are positioned above the
+     * chat list.
+     *
+     * @param parent      Parent container holding both panels
+     * @param header      View representing the page header
+     * @param bottomPanel View representing the bottom panel
+     */
+    public static void swapPanelsForTelegram(ViewGroup parent, View header, View bottomPanel) {
+        if (!PreferenceTable.ms_telegram_style) {
+            return;
+        }
+        if (parent == null || header == null || bottomPanel == null) {
+            return;
+        }
+
+        parent.removeView(bottomPanel);
+        parent.removeView(header);
+        parent.addView(bottomPanel, 0);
+        parent.addView(header);
     }
 
     public static boolean sd_mounted() {
