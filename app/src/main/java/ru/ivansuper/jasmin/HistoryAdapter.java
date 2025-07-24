@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.view.Gravity;
 import java.util.Vector;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
@@ -97,15 +98,19 @@ public class HistoryAdapter extends BaseAdapter {
             nick.setVisibility(View.GONE);
         }
         TextView time = msg.findViewById(R.id.msg_time);
+        TextView timeBottom = msg.findViewById(R.id.msg_time_bottom);
         MyTextView message = msg.findViewById(R.id.msg_text);
         CheckBox selector = msg.findViewById(R.id.chat_item_checkbox);
         LinearLayout status = msg.findViewById(R.id.msg_status);
         ImageView sts = msg.findViewById(R.id.msg_sts_icon);
         HistoryItem hst = getItem(position);
         time.setText(hst.formattedDate);
+        timeBottom.setText(hst.formattedDate);
         nick.setTextSize(PreferenceTable.chatTextSize - 2);
         time.setTextSize(PreferenceTable.chatTextSize);
+        timeBottom.setTextSize(PreferenceTable.chatTextSize);
         time.setTextColor(ColorScheme.getColor(10));
+        timeBottom.setTextColor(ColorScheme.getColor(10));
         if (ContactHistoryActivity.multiquoting) {
             selector.setVisibility(View.VISIBLE);
             selector.setChecked(hst.selected);
@@ -116,13 +121,20 @@ public class HistoryAdapter extends BaseAdapter {
         message.selectMatches(this.pattern);
         message.setTextSize(PreferenceTable.chatTextSize);
         if (PreferenceTable.ms_telegram_style) {
+            time.setVisibility(View.GONE);
+            timeBottom.setVisibility(View.VISIBLE);
             if (hst.direction == 1) {
                 message.setBackgroundResource(R.drawable.telegram_bubble_in);
                 message.setTextColor(ctx.getResources().getColor(R.color.telegram_text_primary));
+                ((LinearLayout.LayoutParams) timeBottom.getLayoutParams()).gravity = Gravity.START;
             } else {
                 message.setBackgroundResource(R.drawable.telegram_bubble_out);
                 message.setTextColor(ctx.getResources().getColor(R.color.telegram_text_primary));
+                ((LinearLayout.LayoutParams) timeBottom.getLayoutParams()).gravity = Gravity.END;
             }
+        } else {
+            time.setVisibility(View.VISIBLE);
+            timeBottom.setVisibility(View.GONE);
         }
         if (PreferenceTable.ms_chat_style == 1) {
             status.setVisibility(View.GONE);

@@ -156,6 +156,7 @@ public class ChatAdapter extends BaseAdapter {
         }
         TextView daySep = msg.findViewById(R.id.msg_day_separator);
         TextView time = msg.findViewById(R.id.msg_time);
+        TextView timeBottom = msg.findViewById(R.id.msg_time_bottom);
         MyTextView message = msg.findViewById(R.id.msg_text);
         message.setFocusable(false);
         LinearLayout msgContainer = msg.findViewById(R.id.msg_container);
@@ -177,9 +178,12 @@ public class ChatAdapter extends BaseAdapter {
             }
         }
         time.setText(hst.formattedDate);
+        timeBottom.setText(hst.formattedDate);
         nick.setTextSize(PreferenceTable.chatTextSize);
         time.setTextSize(PreferenceTable.chatTimeSize);
+        timeBottom.setTextSize(PreferenceTable.chatTimeSize);
         time.setTextColor(ColorScheme.getColor(10));
+        timeBottom.setTextColor(ColorScheme.getColor(10));
         if (hst.message == null) {
             hst.message = "NULL";
         }
@@ -192,17 +196,23 @@ public class ChatAdapter extends BaseAdapter {
         }
         message.setTextSize(PreferenceTable.chatTextSize);
         if (PreferenceTable.ms_telegram_style) {
+            time.setVisibility(View.GONE);
+            timeBottom.setVisibility(View.VISIBLE);
             if (hst.direction == 1) {
                 message.setBackgroundResource(R.drawable.telegram_bubble_in);
                 message.setTextColor(0xffffffff);
                 ((LinearLayout.LayoutParams) msgContainer.getLayoutParams()).gravity = Gravity.START;
+                ((LinearLayout.LayoutParams) timeBottom.getLayoutParams()).gravity = Gravity.START;
             } else {
                 message.setBackgroundResource(R.drawable.telegram_bubble_out);
                 message.setTextColor(ctx.getResources().getColor(R.color.telegram_text_primary));
                 ((LinearLayout.LayoutParams) msgContainer.getLayoutParams()).gravity = Gravity.END;
+                ((LinearLayout.LayoutParams) timeBottom.getLayoutParams()).gravity = Gravity.END;
             }
         }
         if (!PreferenceTable.ms_telegram_style) {
+            time.setVisibility(View.VISIBLE);
+            timeBottom.setVisibility(View.GONE);
             if (PreferenceTable.ms_chat_style == 1) {
                 status.setVisibility(View.GONE);
                 if (hst.direction == 1) {
