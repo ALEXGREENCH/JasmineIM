@@ -654,7 +654,6 @@ s_ms_simple_list := Литий список
 s_ms_simple_list_desc := Відображення без поділу на профілі і без поділу на групи
 s_ms_cl_columns := Кількість колонок
 s_ms_cl_font_size := Розмір шрифту
-s_ms_cl_avatar_size := Розмір аватара
 s_ms_show_away := Показувати статус
 s_ms_show_away_desc := Показувати текст статусу під контактами
 s_ms_show_avatars := Показувати аватари

@@ -1,3 +1,4 @@
 <resources>
-    <dimen name="bottom_panel_icon_size">42dp</dimen>
+    <dimen name="bottom_panel_icon_size">32dp</dimen>
+    <dimen name="start_margin">4dp</dimen>
 </resources>
