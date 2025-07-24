@@ -41,6 +41,7 @@ public class PreferenceTable {
     public static boolean ms_messages_limit_enabled;
     public static boolean ms_rejoin_to_conferences;
     public static boolean ms_show_avatars;
+    public static boolean ms_round_avatars;
     public static boolean ms_show_markers_in_chat;
     public static boolean ms_two_screens_mode;
     public static boolean ms_use_bookmark_autojoin;
