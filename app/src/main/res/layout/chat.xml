@@ -30,47 +30,66 @@
                 android:orientation="vertical">
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
-                    <ImageView
-                        android:id="@+id/chat_avatar"
-                        android:layout_width="40dp"
-                        android:layout_height="40dp"
-                        android:layout_marginLeft="4dp"
-                        android:src="@drawable/no_avatar" />
-
-                    <ImageView
-                        android:id="@+id/mainStatus"
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="5sp"
-                        android:src="@drawable/icq_status_chat" />
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingLeft="4dp"
+                        android:paddingTop="4dp">
 
-                    <ImageView
-                        android:id="@+id/xStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:src="@drawable/x_funny" />
+                        <ImageView
+                            android:id="@+id/chat_avatar"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_marginLeft="4dp"
+                            android:src="@drawable/no_avatar" />
 
-                    <TextView
-                        android:id="@+id/nickname"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5sp"
-                        android:layout_marginBottom="5sp"
-                        android:text="Nickname"
-                        android:textColor="#ffffffff"
-                        android:textSize="16sp" />
+                        <ImageView
+                            android:id="@+id/mainStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="5sp"
+                            android:src="@drawable/icq_status_chat" />
 
-                    <ImageView
-                        android:id="@+id/typing_field"
+                        <ImageView
+                            android:id="@+id/xStatus"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/x_funny" />
+
+                        <TextView
+                            android:id="@+id/nickname"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="5sp"
+                            android:layout_marginBottom="5sp"
+                            android:text="Nickname"
+                            android:textColor="#ffffffff"
+                            android:textSize="16sp" />
+
+                        <ImageView
+                            android:id="@+id/typing_field"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="3sp"
+                            android:src="@drawable/typing" />
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/chat_menu_btn"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="3sp"
-                        android:src="@drawable/typing" />
+                        android:layout_height="match_parent"
+                        android:background="@drawable/telegram_button"
+                        android:drawableLeft="@drawable/ic_menu"
+                        android:paddingLeft="8sp"
+                        android:paddingRight="8sp" />
                 </LinearLayout>
 
                 <HorizontalScrollView
@@ -304,15 +323,6 @@
                             android:drawingCacheQuality="low"
                             android:gravity="center_vertical"
                             android:orientation="horizontal">
-
-                            <Button
-                                android:id="@+id/chat_menu_btn"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:background="@drawable/telegram_button"
-                                android:drawableLeft="@drawable/ic_menu"
-                                android:paddingLeft="8sp"
-                                android:paddingRight="8sp" />
 
                             <EditText
                                 android:id="@+id/input"
