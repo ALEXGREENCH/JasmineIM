@@ -10,6 +10,17 @@ import java.nio.charset.StandardCharsets;
 
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * A utility class for reading and writing data to a byte array.
+ * This class provides methods for reading and writing various data types,
+ * including bytes, words, dwords, longs, and strings in different encodings.
+ * It also supports TLV (Type-Length-Value) data structures.
+ *
+ * The ByteBuffer maintains internal read and write positions to keep track of the
+ * current location in the buffer.
+ *
+ * This class uses a {@link ByteCache} to potentially reuse byte arrays for efficiency.
+ */
 public class ByteBuffer {
     public byte[] bytes;
     public int readPos;

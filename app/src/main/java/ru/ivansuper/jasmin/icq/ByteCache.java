@@ -3,8 +3,25 @@ package ru.ivansuper.jasmin.icq;
 import java.util.Vector;
 import ru.ivansuper.jasmin.ContactListActivity;
 
+/**
+ * A cache for byte arrays. This class is used to reduce the number of
+ * allocations and deallocations of byte arrays, which can improve performance.
+ *
+ * <p>The cache stores a pool of byte arrays of different sizes. When a byte array
+ * is needed, the cache is checked to see if an array of the desired size is
+ * available. If so, the array is returned from the cache. Otherwise, a new
+ * array is allocated.
+ *
+ * <p>When a byte array is no longer needed, it can be returned to the cache
+ * using the {@link #recycle(byte[])} method. This allows the array to be reused
+ * later, rather than being deallocated.
+ *
+ * <p>The cache can be reinitialized using the {@link #reinit()} method. This
+ * clears the cache and repopulates it with a default set of byte arrays.
+ */
 public class ByteCache {
-    private static Vector<byte[]> buffer = new Vector<>();
+    /** @noinspection MismatchedQueryAndUpdateOfCollection*/
+    private static final Vector<byte[]> buffer = new Vector<>();
 
     /** @noinspection unused*/
     public static void recycle(byte[] array) {

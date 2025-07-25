@@ -7,6 +7,30 @@ import java.io.File;
 
 import ru.ivansuper.jasmin.resources;
 
+/**
+ * Handles the ICQ avatar protocol for uploading and retrieving user avatars.
+ * This class manages the connection to the avatar server, sends and receives
+ * FLAP (Frame Layer Protocol) and SNAC (Simple Network Access Control) packets
+ * to interact with the ICQ avatar service.
+ *
+ * <p>Key functionalities include:
+ * <ul>
+ *     <li>Establishing a connection to the avatar server.</li>
+ *     <li>Handling server hello and cookie authentication.</li>
+ *     <li>Processing server family information.</li>
+ *     <li>Uploading new avatar images.</li>
+ *     <li>Receiving and processing server replies for avatar uploads.</li>
+ *     <li>Handling server icon replies (though currently, the retrieved icon data is not directly used beyond parsing).</li>
+ *     <li>Managing connection state and automatic reconnection attempts upon disconnection.</li>
+ * </ul>
+ *
+ * <p>The protocol involves a sequence of FLAP and SNAC messages exchanged between the client
+ * and the server. This class encapsulates the logic for constructing these messages and
+ * interpreting the server's responses.
+ *
+ * <p>Note: Some parts of the icon reply handling might be incomplete or not fully utilized
+ * in the current implementation (e.g., {@code last_contact_for_result}).
+ */
 public class AvatarProtocol {
     public boolean connected = false;
     private byte[] cookie;

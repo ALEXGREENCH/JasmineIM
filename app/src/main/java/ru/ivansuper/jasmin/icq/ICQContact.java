@@ -41,12 +41,12 @@ import ru.ivansuper.jasmin.utilities;
  * This class stores various details about an ICQ contact, including their
  * avatar, status, profile information, capabilities, message history,
  * and other ICQ-specific attributes.
- *
+ * <p>
  * It provides methods for managing contact information, handling avatars
  * (fetching, reading local), managing message history (loading, writing,
  * preloading, clearing), and checking contact states (visible, invisible,
  * ignore).
- *
+ * <p>
  * The class also includes functionality for history format conversion
  * (e.g., to UNI16) and real-time history export.
  */
@@ -266,7 +266,6 @@ public class ICQContact extends ContactlistItem {
                             }
                         }
                     } else {
-                        //noinspection CatchMayIgnoreException
                         try {
                             if (!avatar_file.exists()) {
                                 //noinspection ResultOfMethodCallIgnored
@@ -306,7 +305,6 @@ public class ICQContact extends ContactlistItem {
             if (bmp == null) {
                 throw new NullPointerException("Result bitmap is null");
             }
-            //noinspection deprecation
             this.avatar = new BitmapDrawable(bmp.copy(Bitmap.Config.ARGB_4444, false));
             fis2 = fis;
             //noinspection ConstantValue
@@ -345,7 +343,6 @@ public class ICQContact extends ContactlistItem {
             throw new NullPointerException("Result bitmap is null");
         }
         fis2 = fis;
-        //noinspection deprecation
         avatar = new BitmapDrawable(bmp.copy(Bitmap.Config.ARGB_4444, false));
         //noinspection ConstantValue
         if (fis2 != null) {
@@ -490,8 +487,8 @@ public class ICQContact extends ContactlistItem {
                                 e.printStackTrace();
                             }
                         } catch (Exception e2) {
-                            ////e = e2;
-                            ////e.printStackTrace();
+                            //noinspection CallToPrintStackTrace
+                            e2.printStackTrace();
                             this.historyPreLoaded = false;
                             this.profile.makeShortToast(resources.getString("s_history_preload_error"));
                             return;
@@ -552,8 +549,8 @@ public class ICQContact extends ContactlistItem {
                                 dis = dis2;
                             }
                         } catch (Exception e2) {
-                            ////e = e2;
-                            ////e.printStackTrace();
+                            //noinspection CallToPrintStackTrace
+                            e2.printStackTrace();
                             this.historyPreLoaded = false;
                             this.profile.makeShortToast(resources.getString("s_history_preload_error"));
                             return;
@@ -570,8 +567,8 @@ public class ICQContact extends ContactlistItem {
                 temp.clear();
                 this.profile.svc.handleChatNeedRefresh(this);
                 System.gc();
-            } catch (Exception e4) {
-                ////e = e4;
+            } catch (Exception ignored) {
+
             }
         }
     }
@@ -620,15 +617,15 @@ public class ICQContact extends ContactlistItem {
                             e.printStackTrace();
                         }
                     } catch (Exception e2) {
-                        ////e = e2;
                         dis = dis2;
-                        ////e.printStackTrace();
+                        //noinspection CallToPrintStackTrace
+                        e2.printStackTrace();
                         dis.close();
                     }
                 }
             } catch (Exception e3) {
-                ////e = e3;
-                ///e.printStackTrace();
+                //noinspection CallToPrintStackTrace
+                e3.printStackTrace();
                 //noinspection DataFlowIssue
                 dis.close();
             }
@@ -672,14 +669,13 @@ public class ICQContact extends ContactlistItem {
                         dis = dis2;
                     }
                 } catch (Exception e2) {
-                    ////e = e2;
                     dis = dis2;
-                    ////e.printStackTrace();
+                    //noinspection CallToPrintStackTrace
+                    e2.printStackTrace();
                     dis.close();
                 }
             }
-        } catch (Exception e3) {
-            ////e = e3;
+        } catch (Exception ignored) {
         }
         try {
             //noinspection DataFlowIssue
@@ -843,25 +839,24 @@ public class ICQContact extends ContactlistItem {
                         dos = dos2;
                         dis = dis2;
                     } catch (Exception e2) {
-                        ////e = e2;
                         dos = dos2;
                         dis = dis2;
                         //noinspection DataFlowIssue
                         success = false;
-                        ///e.printStackTrace();
+                        //noinspection CallToPrintStackTrace
+                        e2.printStackTrace();
                         dis.close();
                         dos.close();
                         //noinspection ConstantValue
                         return success;
                     }
                 } catch (Exception e3) {
-                    ////e = e3;
                     dis = dis2;
                 }
             }
             success = true;
-        } catch (Exception e4) {
-            ///e = e4;
+        } catch (Exception ignored) {
+
         }
         try {
             //noinspection DataFlowIssue

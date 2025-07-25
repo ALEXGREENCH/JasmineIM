@@ -4,6 +4,11 @@ import java.util.Vector;
 
 import ru.ivansuper.jasmin.utilities;
 
+/**
+ * Represents a collection of ICQ capabilities.
+ * Capabilities are identified by GUIDs (Globally Unique Identifiers)
+ * and are used to indicate supported features by an ICQ client.
+ */
 public class Capabilities {
     public final Vector<String> list = new Vector<>();
 
