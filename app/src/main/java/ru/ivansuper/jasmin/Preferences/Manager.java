@@ -45,26 +45,37 @@ public class Manager {
             DisplayMetrics metrics = resources.ctx.getResources().getDisplayMetrics();
             int density = metrics.densityDpi;
             int fontSize;
+            int chatFontSize;
+            int timeFontSize;
             int smileScale;
             if (density >= DisplayMetrics.DENSITY_XXHIGH) {
                 fontSize = 24;
+                chatFontSize = 22;
+                timeFontSize = 20;
                 smileScale = 320;
             } else if (density >= DisplayMetrics.DENSITY_XHIGH) {
                 fontSize = 20;
+                chatFontSize = 18;
+                timeFontSize = 16;
                 smileScale = 240;
             } else if (density >= DisplayMetrics.DENSITY_HIGH) {
                 fontSize = 18;
+                chatFontSize = 16;
+                timeFontSize = 14;
                 smileScale = 180;
             } else {
                 fontSize = 15;
+                chatFontSize = 14;
+                timeFontSize = 12;
                 smileScale = 160;
             }
 
+            //noinspection deprecation
             SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString("ms_cl_font_size", String.valueOf(fontSize));
-            editor.putString("ms_chat_text_size", String.valueOf(fontSize));
-            editor.putString("ms_chat_time_size", String.valueOf(fontSize));
+            editor.putString("ms_chat_text_size", String.valueOf(chatFontSize));
+            editor.putString("ms_chat_time_size", String.valueOf(timeFontSize));
             editor.putString("ms_smileys_scale", String.valueOf(smileScale));
             editor.apply();
         }
