@@ -126,6 +126,9 @@ public class RosterItemView extends View {
         int var2 = (int)(40.0F * resources.dm.density);
         this.avatar_back = (NinePatchDrawable)this.getContext().getResources().getDrawable(R.drawable.avatar_back);
         this.avatar_back.setBounds(0, 0, var2, var2);
+        Rect padding = new Rect();
+        this.avatar_back.getPadding(padding);
+        this.avatar_bounds = new Rect(padding.left, padding.top, var2 - padding.right, var2 - padding.bottom);
         this.name_ = new TextPaint();
         this.name_.setAntiAlias(true);
         this.status_text_ = new TextPaint();
@@ -220,11 +223,17 @@ public class RosterItemView extends View {
 
     private void updateAvatarPath() {
         int size = (int)(AVATAR_SIZE * resources.dm.density);
+        RectF rect = this.avatar_bounds != null
+                ? new RectF(this.avatar_bounds)
+                : new RectF(0f, 0f, size, size);
         this.avatar_path.reset();
         if (PreferenceTable.ms_round_avatars) {
-            this.avatar_path.addCircle(size / 2f, size / 2f, size / 2f - 1f, Direction.CCW);
+            float cx = rect.centerX();
+            float cy = rect.centerY();
+            float radius = Math.min(rect.width(), rect.height()) / 2f;
+            this.avatar_path.addCircle(cx, cy, radius, Direction.CCW);
         } else {
-            this.avatar_path.addRoundRect(new RectF(1f, 1f, size - 1f, size - 1f), 5f, 5f, Direction.CCW);
+            this.avatar_path.addRoundRect(rect, 5f, 5f, Direction.CCW);
         }
     }
 
