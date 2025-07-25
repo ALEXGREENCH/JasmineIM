@@ -779,7 +779,7 @@ public class JProfile extends IMProfile {
             } else {
                 this.svc.putMessageNotify(hst.jcontact, hst.jcontact.name, receiver.file_name);
             }
-            this.svc.lastContactForNonMultiNotify = hst.jcontact;
+            this.svc.last_contact_for_non_multi_notify = hst.jcontact;
         }
         this.svc.handleIncomingMessage(hst);
         if (!hst.jcontact.isChating) {
@@ -1059,7 +1059,7 @@ public class JProfile extends IMProfile {
             } else {
                 this.svc.putMessageNotify(from, from.name, body2);
             }
-            this.svc.lastContactForNonMultiNotify = from;
+            this.svc.last_contact_for_non_multi_notify = from;
             remakeContactList();
         }
         this.svc.handleIncomingMessage(hst);

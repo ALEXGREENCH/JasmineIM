@@ -130,7 +130,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     /** @noinspection unused*/
     public boolean hideOffline;
     /** @noinspection unused*/
-    public ContactlistItem lastContactForNonMultiNotify;
+    public ContactlistItem last_contact_for_non_multi_notify;
     private Media media;
     private NotificationManager notificationManager;
     /** @noinspection FieldCanBeLocal*/

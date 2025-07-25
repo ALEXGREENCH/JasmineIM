@@ -18,6 +18,8 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.IOException;
 import java.util.Vector;
 import ru.ivansuper.jasmin.MMP.MMPContact;
 import ru.ivansuper.jasmin.MMP.MMPProfile;
@@ -233,7 +235,11 @@ public class ContactHistoryActivity extends Activity {
                         jcontact.loadHistory(temp);
                         break;
                     case MODE_MMP:
-                        mcontact.loadHistory(temp);
+                        try {
+                            mcontact.loadHistory(temp);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
                         break;
                 }
                 Runnable r = new Runnable() {
