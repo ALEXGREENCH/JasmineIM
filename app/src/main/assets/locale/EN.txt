@@ -627,6 +627,7 @@ s_ms_server_settings := Network
 s_ms_server_settings_icq := ICQ
 s_ms_server := Server
 s_ms_port := Port
+s_ms_avatar_base_url := Avatar server
 s_ms_auth_method := Authentication method
 s_ms_server_settings_keepalive := Connection
 s_ms_use_ping := Forced ping

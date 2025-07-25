@@ -22,6 +22,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
+
 import ru.ivansuper.jasmin.Clients.ClientInfo;
 import ru.ivansuper.jasmin.ContactlistItem;
 import ru.ivansuper.jasmin.HistoryItem;
@@ -99,7 +102,9 @@ public class ICQContact extends ContactlistItem {
             @Override
             public void run() {
                 try {
-                    URL url = new URL("http://45.144.154.209/avatar/" + UIN + "?hq=1");
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
+                    String base = sp.getString("ms_avatar_base_url", "http://45.144.154.209");
+                    URL url = new URL(base + "/avatar/" + UIN + "?hq=1");
                     HttpURLConnection c = (HttpURLConnection) url.openConnection();
                     if (c.getResponseCode() == 200) {
                         InputStream in = new BufferedInputStream(c.getInputStream());
@@ -221,7 +226,9 @@ public class ICQContact extends ContactlistItem {
             public void run() {
                 try {
                     File avatar_file = new File(resources.dataPath + ICQContact.this.profile.ID + "/avatars/" + ICQContact.this.ID);
-                    URL url = new URL("http://45.144.154.209/avatar/" + contact.ID);
+                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
+                    String base = sp.getString("ms_avatar_base_url", "http://45.144.154.209");
+                    URL url = new URL(base + "/avatar/" + contact.ID);
                     HttpURLConnection c = (HttpURLConnection) url.openConnection();
 
                     if (c.getResponseCode() == 200) {

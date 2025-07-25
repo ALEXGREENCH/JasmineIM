@@ -47,6 +47,11 @@
             android:key="ms_port"
             android:negativeButtonText="Отмена"
             android:positiveButtonText="Ok" />
+        <EditTextPreference
+            android:defaultValue="http://45.144.154.209"
+            android:key="ms_avatar_base_url"
+            android:negativeButtonText="Отмена"
+            android:positiveButtonText="Ok" />
         <ListPreference
             android:defaultValue="1"
             android:entries="@array/auth_methods"
