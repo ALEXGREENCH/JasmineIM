@@ -3,10 +3,12 @@ package ru.ivansuper.jasmin.icq.FileTransfer;
 import android.annotation.SuppressLint;
 import android.text.SpannableStringBuilder;
 import android.util.Log;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Vector;
+
 import ru.ivansuper.jasmin.HistoryItem;
 import ru.ivansuper.jasmin.icq.ByteBuffer;
 import ru.ivansuper.jasmin.resources;
@@ -19,10 +21,7 @@ import ru.ivansuper.jasmin.utilities;
  * including proxy support, error handling, and UI updates.
  */
 public class FileReceiver extends FileTransfer {
-    private File file;
     public String ip;
-    private ByteBuffer oft;
-    private FileOutputStream out;
     public String proxy_ip;
     public ProxySocketConnection socket;
     public boolean use_proxy;
@@ -32,9 +31,12 @@ public class FileReceiver extends FileTransfer {
     public int files_received = 0;
     public boolean redirected = false;
     public boolean accepted = false;
+    public Vector<File> received_files = new Vector<>();
+    private File file;
+    private ByteBuffer oft;
+    private FileOutputStream out;
     private boolean files_received_b = false;
     private String save_path = "";
-    public Vector<File> received_files = new Vector<>();
 
     public FileReceiver() {
         this.direction = 1;

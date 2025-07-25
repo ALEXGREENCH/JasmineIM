@@ -30,7 +30,7 @@ import ru.ivansuper.jasmin.utils.SystemBarUtils;
  * permission checks, and service binding. It displays a splash screen during initialization
  * and then navigates to the appropriate next activity (either profile setup or contact list).
  */
-public class MainActivity extends Activity implements Handler.Callback {
+public class main extends Activity implements Handler.Callback {
 
     private static final int FOREGROUND_SERVICE_PERMISSION_REQUEST = 112;
     private static final int READ_PHONE_STATE_PERMISSION_REQUEST = 113;
@@ -46,7 +46,7 @@ public class MainActivity extends Activity implements Handler.Callback {
         super.onCreate(savedInstanceState);
         resources.applyFontScale(this);
         getWindowManager().getDefaultDisplay().getMetrics(resources.dm);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.main);
         SystemBarUtils.setupTransparentBars(this);
 
         initializeViews();

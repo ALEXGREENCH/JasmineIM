@@ -6,9 +6,9 @@ package ru.ivansuper.jasmin.icq;
  * It encapsulates the message content, recipient information, and protocol-specific formatting.
  */
 public class ICQMessageChannel1 {
+    private final int sequence;
     public ByteBuffer data;
     public String receiver;
-    private final int sequence;
     public String text;
 
     public ICQMessageChannel1(int seq, String Receiver, String MessageText, boolean check_enabled, byte[] cookie) {

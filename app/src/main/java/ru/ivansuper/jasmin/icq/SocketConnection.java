@@ -43,6 +43,15 @@ import ru.ivansuper.jasmin.popup_log_adapter;
 public abstract class SocketConnection {
 
     /**
+     * @noinspection FieldCanBeLocal, unused
+     */
+    private final jasminSvc svc;
+    public boolean connected = false;
+    public boolean connecting = false;
+    public int lastErrorCode = -1;
+    public String lastServer = "none";
+    public int lastPort = 0;
+    /**
      * @noinspection FieldCanBeLocal
      */
     private InetSocketAddress addr;
@@ -53,16 +62,11 @@ public abstract class SocketConnection {
     private Socket socket;
     private InputStream socketIn;
     private OutputStream socketOut;
-    /**
-     * @noinspection FieldCanBeLocal, unused
-     */
-    private final jasminSvc svc;
     private writeThread writeThrd;
-    public boolean connected = false;
-    public boolean connecting = false;
-    public int lastErrorCode = -1;
-    public String lastServer = "none";
-    public int lastPort = 0;
+
+    public SocketConnection(jasminSvc param) {
+        this.svc = param;
+    }
 
     public abstract void onConnect();
 
@@ -75,10 +79,6 @@ public abstract class SocketConnection {
     public abstract void onLostConnection();
 
     public abstract void onRawData(ByteBuffer byteBuffer);
-
-    public SocketConnection(jasminSvc param) {
-        this.svc = param;
-    }
 
     private synchronized void errorOccured() {
         if (this.socket != null && this.connected) {

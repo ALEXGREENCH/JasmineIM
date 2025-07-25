@@ -159,16 +159,16 @@
             android:defaultValue="18"
             android:key="ms_cl_font_size" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="ms_show_away"
             android:summary="Показывать текст статуса под контактами (Не совместимо с несколькими колонками)"
             android:title="Показывать статус" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="ms_show_avatars"
             android:title="Показывать аватары" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="ms_round_avatars"
             android:title="Круглые аватары" />
         <CheckBoxPreference
@@ -186,7 +186,7 @@
             android:key="ms_send_by_enter"
             android:title="Отправка по Enter" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="ms_dragdrop_quoting"
             android:title="Drag&amp;Drop цитирование" />
         <ru.ivansuper.jasmin.Preferences.IntegerPickerSmall
@@ -216,7 +216,7 @@
             android:key="ms_chat_dividers"
             android:title="Разделители сообщений" />
         <CheckBoxPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="ms_show_markers_in_chat" />
         <CheckBoxPreference
             android:defaultValue="false"
@@ -228,7 +228,7 @@
             android:key="ms_chat_style"
             android:summary="Стиль индикаторов доставки сообщений в чате" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="ms_links_to_images"
             android:summary="Подгружать изображение заменяя им ссылку"
             android:title="Загружать картинки" />

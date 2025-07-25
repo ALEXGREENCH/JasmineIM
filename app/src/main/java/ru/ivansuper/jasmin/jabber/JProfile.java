@@ -1339,8 +1339,7 @@ public class JProfile extends IMProfile {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void handleStreamRoomsList(Node node) {
+    private void handleStreamRoomsList(Node node) {
         if (this.room_list_callback != null) {
             if (node == null) {
                 this.room_list_callback.error();
@@ -1567,8 +1566,8 @@ public class JProfile extends IMProfile {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void sendPresence(int temp_status) {
+    /** @noinspection SameParameterValue*/
+    private void sendPresence(int temp_status) {
         Node presence = new Node("presence");
         Node priority = new Node("priority");
         priority.setValue(String.valueOf(this.priority));
@@ -1713,8 +1712,7 @@ public class JProfile extends IMProfile {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void parseRoster(Node node) {
+    private void parseRoster(Node node) {
         Log.e(getClass().getSimpleName(), "Parsing start (Thread: " + Thread.currentThread().getName() + ")");
         Vector<ContactlistItem> updated = new Vector<>();
         Vector<String> groups = new Vector<>();
@@ -1917,8 +1915,7 @@ public class JProfile extends IMProfile {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void handleStreamFailure(Node data) {
+    private void handleStreamFailure(Node data) {
         String description = resources.getString("s_jabber_connection_error");
         String content = xml_utils.getTagContent(data.compile(), "failure");
         if (content != null) {
@@ -2004,8 +2001,7 @@ public class JProfile extends IMProfile {
         this.stream.disconnect();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void handleStreamError(Node data) {
+    private void handleStreamError(Node data) {
         String description = resources.getString("s_jabber_connection_error");
         Node text = data.findFirstNodeByName("text");
         if (data.findFirstNodeByName("temporary-auth-failure") != null) {
@@ -2533,8 +2529,7 @@ public class JProfile extends IMProfile {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void setAllContactsPresenceInitialized() {
+    private void setAllContactsPresenceInitialized() {
         synchronized (ContactsAdapter.locker) {
             for (int i = 0; i < this.contacts.size(); i++) {
                 ContactlistItem item = this.contacts.get(i);
@@ -3274,8 +3269,7 @@ public class JProfile extends IMProfile {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void sendPingPacket() {
+    private void sendPingPacket() {
         if (this.connected) {
             Node iq = new Node("iq");
             iq.putParameter("to", getFullJIDWithResource()).putParameter("type", "get").putParameter("id", "self_ping_thread");

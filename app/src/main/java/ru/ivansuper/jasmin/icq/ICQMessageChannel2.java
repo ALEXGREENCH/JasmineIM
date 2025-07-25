@@ -9,9 +9,9 @@ import ru.ivansuper.jasmin.utilities;
  * TLV (Type-Length-Value) structures.
  */
 public class ICQMessageChannel2 {
+    private final int sequence;
     public ByteBuffer data;
     public String receiver;
-    private final int sequence;
     public String text;
 
     public ICQMessageChannel2(int seq, String Receiver, String MessageText, int encoding, boolean internalUTF8, byte[] cookie) {

@@ -32,6 +32,26 @@ public class FLAP {
         this.dataSize = ByteBuffer.previewWord(4, source.bytes);
     }
 
+    /** @noinspection unused*/
+    public static boolean itIsFlapPacket(ByteBuffer buffer) {
+        return buffer.previewByte(0) == 42;
+    }
+
+    /** @noinspection unused*/
+    public static int allFlapSize(ByteBuffer buffer) {
+        return buffer.previewWord(4) + 6;
+    }
+
+    public static ByteBuffer createFlap(byte channel, int seq, ByteBuffer source) {
+        ByteBuffer buffer = new ByteBuffer(source.writePos + 6);
+        buffer.writeByte((byte) 42);
+        buffer.writeByte(channel);
+        buffer.writeWord(seq);
+        buffer.writeWord(source.writePos);
+        buffer.writeByteBuffer(source);
+        return buffer;
+    }
+
     public final int getChannel() {
         return this.channel;
     }
@@ -50,26 +70,6 @@ public class FLAP {
         ByteBuffer buffer = new ByteBuffer(this.localBuffer);
         buffer.readPos = 6;
         buffer.writePos = this.dataSize + 6;
-        return buffer;
-    }
-
-    /** @noinspection unused*/
-    public static boolean itIsFlapPacket(ByteBuffer buffer) {
-        return buffer.previewByte(0) == 42;
-    }
-
-    /** @noinspection unused*/
-    public static int allFlapSize(ByteBuffer buffer) {
-        return buffer.previewWord(4) + 6;
-    }
-
-    public static ByteBuffer createFlap(byte channel, int seq, ByteBuffer source) {
-        ByteBuffer buffer = new ByteBuffer(source.writePos + 6);
-        buffer.writeByte((byte) 42);
-        buffer.writeByte(channel);
-        buffer.writeWord(seq);
-        buffer.writeWord(source.writePos);
-        buffer.writeByteBuffer(source);
         return buffer;
     }
 }

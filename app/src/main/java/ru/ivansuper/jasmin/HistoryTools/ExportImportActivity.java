@@ -9,7 +9,6 @@ import android.preference.PreferenceManager;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -99,7 +98,7 @@ public class ExportImportActivity extends Activity {
 
     public final void initViews() {
         ((TextView) findViewById(R.id.l1)).setText(Locale.getString("s_history_tools_header"));
-        mList = (ListView) findViewById(R.id.history_export_profiles);
+        mList = findViewById(R.id.history_export_profiles);
         mList.setDividerHeight(0);
         mList.setSelector(resources.getListSelector());
         UAdapter adp = new UAdapter();
@@ -111,7 +110,7 @@ public class ExportImportActivity extends Activity {
             adp.put(IMProfile.getProfileIcon(profile), IMProfile.getProfileID(profile), i);
             i++;
         }
-        mList.setAdapter((ListAdapter) adp);
+        mList.setAdapter(adp);
         mList.setOnItemClickListener(new AnonymousClass3(profiles));
     }
 
@@ -259,7 +258,7 @@ public class ExportImportActivity extends Activity {
                 }
 
                 @Override
-                public void onClick(View arg0) {
+                public void onClick(View view) {
                     final String directory = utilities.normalizePath(val$fs.getCurrentDirPath());
                     String archive_name = IMProfile.getProfileID(val$profile) + "_" + utilities.getCurrentDateTimeString();
                     final EditText input = new EditText(ExportImportActivity.this);

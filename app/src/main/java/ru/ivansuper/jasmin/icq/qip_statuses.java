@@ -1,6 +1,7 @@
 package ru.ivansuper.jasmin.icq;
 
 import android.graphics.drawable.Drawable;
+
 import ru.ivansuper.jasmin.resources;
 
 public class qip_statuses {

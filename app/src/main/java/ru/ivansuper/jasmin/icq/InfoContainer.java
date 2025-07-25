@@ -2,6 +2,7 @@ package ru.ivansuper.jasmin.icq;
 
 import android.graphics.drawable.Drawable;
 import android.util.Log;
+
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 

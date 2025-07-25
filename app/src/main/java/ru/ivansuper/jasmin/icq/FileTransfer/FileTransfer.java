@@ -1,8 +1,10 @@
 package ru.ivansuper.jasmin.icq.FileTransfer;
 
 import android.util.Log;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
 import ru.ivansuper.jasmin.ContactListActivity;
 import ru.ivansuper.jasmin.icq.ByteBuffer;
 import ru.ivansuper.jasmin.icq.ICQContact;
@@ -22,6 +24,19 @@ public abstract class FileTransfer {
     public String file_name;
     public long file_size;
     public int port;
+
+    public static String getSizeLabel(long size) {
+        if ((double) size < 1024.0d) {
+            return (double) size + " b";
+        }
+        if (size >= 1024 && size < 1048576) {
+            return BigDecimal.valueOf((double) size / 1024.0d).setScale(2, RoundingMode.UP).doubleValue() + " KB";
+        }
+        if (size < 1048576) {
+            return "[]";
+        }
+        return BigDecimal.valueOf(((double) size / 1024.0d) / 1024.0d).setScale(2, RoundingMode.UP).doubleValue() + " MB";
+    }
 
     public abstract void cancel();
 
@@ -105,18 +120,5 @@ public abstract class FileTransfer {
         data.writeWord(oft2_packet.writePos + 6);
         data.write(ByteBuffer.normalizeBytes(oft2_packet.bytes, oft2_packet.writePos));
         return data;
-    }
-
-    public static String getSizeLabel(long size) {
-        if ((double) size < 1024.0d) {
-            return (double) size + " b";
-        }
-        if (size >= 1024 && size < 1048576) {
-            return BigDecimal.valueOf((double) size / 1024.0d).setScale(2, RoundingMode.UP).doubleValue() + " KB";
-        }
-        if (size < 1048576) {
-            return "[]";
-        }
-        return BigDecimal.valueOf(((double) size / 1024.0d) / 1024.0d).setScale(2, RoundingMode.UP).doubleValue() + " MB";
     }
 }

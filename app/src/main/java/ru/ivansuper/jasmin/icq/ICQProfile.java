@@ -67,22 +67,22 @@ public class ICQProfile extends IMProfile {
      * @noinspection unused
      */
     public static final int VISIBILITY_INV_FOR_ALL = 2;
-    private PendingIntentHandler PING_TASK;
+    public final Contactlist contactlist = new Contactlist(this);
+    public final ArrayList<ssi_item> phantom_list = new ArrayList<>();
+    public final ArrayList<ssi_item> visible_list = new ArrayList<>();
+    public final ArrayList<ssi_item> invisible_list = new ArrayList<>();
+    public final ArrayList<ssi_item> ignore_list = new ArrayList<>();
+    public final InfoContainer info_container = new InfoContainer();
     private final PendingIntentHandler ach_task_1;
-    private String bos_server;
+    private final Vector<HistoryItem> messagesForConfurming = new Vector<>();
+    private final reconnector rcn = new reconnector();
+    private final screen_controller screen_ctrlr = new screen_controller(this, null);
+    private final ArrayList<String> offlineMessages = new ArrayList<>();
+    private final ArrayList<FileTransfer> transfers = new ArrayList<>();
+    private final ArrayList<InfoOperation> info_requests = new ArrayList<>();
+    private final ICQContact temp_info_container = new ICQContact();
     public byte[] buddy_hash;
-    private byte[] cookies;
-    private boolean http_auth_used;
-    private AvatarProtocol icon_proto;
-    private SSIOperation lastAdd;
-    private SSIOperation lastDelete;
-    private SSIOperation lastRename;
     public String password;
-    /**
-     * @noinspection unused
-     */
-    private ping_thread pinger;
-    private SocketConnection socket;
     public SharedPreferences sp;
     public String xdesc;
     public int xsts;
@@ -91,7 +91,6 @@ public class ICQProfile extends IMProfile {
     public int visibilityId = GifDecoder.MaxStackSize;
     public int visibilityStatus = 1;
     public int sequence = 1;
-    public final Contactlist contactlist = new Contactlist(this);
     public boolean authorized = false;
     public boolean authFirstStageCompleted = false;
     public boolean connectedToBOS = false;
@@ -99,53 +98,29 @@ public class ICQProfile extends IMProfile {
      * @noinspection unused
      */
     public boolean connectionLosted = false;
-    private boolean jumpingToBOS = false;
-    private final Vector<HistoryItem> messagesForConfurming = new Vector<>();
-    public final ArrayList<ssi_item> phantom_list = new ArrayList<>();
-    public final ArrayList<ssi_item> visible_list = new ArrayList<>();
-    public final ArrayList<ssi_item> invisible_list = new ArrayList<>();
-    public final ArrayList<ssi_item> ignore_list = new ArrayList<>();
-    private final reconnector rcn = new reconnector();
-
-    private boolean useMD5Login = false;
-    private boolean useMD5NewLogin = false;
-    private final screen_controller screen_ctrlr = new screen_controller(this, null);
-    private final ArrayList<String> offlineMessages = new ArrayList<>();
-    private final ArrayList<FileTransfer> transfers = new ArrayList<>();
-    private final ArrayList<InfoOperation> info_requests = new ArrayList<>();
-    private final ICQContact temp_info_container = new ICQContact();
-    private boolean ping_answer_received = true;
     public String buddy_name = "";
     public int buddy_group = 0;
     public int buddy_id = 0;
     public String away_text = "";
     public String away_text_backup = "";
-    public final InfoContainer info_container = new InfoContainer();
+    private PendingIntentHandler PING_TASK;
+    private String bos_server;
+    private byte[] cookies;
+    private boolean http_auth_used;
+    private AvatarProtocol icon_proto;
+    private SSIOperation lastAdd;
+    private SSIOperation lastDelete;
+    private SSIOperation lastRename;
+    /**
+     * @noinspection unused
+     */
+    private ping_thread pinger;
+    private SocketConnection socket;
+    private boolean jumpingToBOS = false;
+    private boolean useMD5Login = false;
+    private boolean useMD5NewLogin = false;
+    private boolean ping_answer_received = true;
     private ByteBuffer BUFFER = new ByteBuffer(0);
-
-    private InfoOperation getInfoOperation(int id) {
-        for (int i = 0; i < this.info_requests.size(); i++) {
-            InfoOperation operation = this.info_requests.get(i);
-            if (operation.id == id) {
-                return operation;
-            }
-        }
-        return null;
-    }
-
-    private void removeOperation(int id) {
-        for (int i = 0; i < this.info_requests.size(); i++) {
-            InfoOperation operation = this.info_requests.get(i);
-            if (operation.id == id) {
-                this.info_requests.remove(i);
-                return;
-            }
-        }
-    }
-
-    private void putInfoOperation(String uin, int type, int id) {
-        this.info_requests.add(new InfoOperation(uin, type, id));
-    }
 
     public ICQProfile(String uin, String pass, jasminSvc svcParam, boolean autoconnect, boolean enabled) {
         this.password = "";
@@ -206,6 +181,30 @@ public class ICQProfile extends IMProfile {
             setStatus(this.status);
             startConnectingChosed();
         }
+    }
+
+    private InfoOperation getInfoOperation(int id) {
+        for (int i = 0; i < this.info_requests.size(); i++) {
+            InfoOperation operation = this.info_requests.get(i);
+            if (operation.id == id) {
+                return operation;
+            }
+        }
+        return null;
+    }
+
+    private void removeOperation(int id) {
+        for (int i = 0; i < this.info_requests.size(); i++) {
+            InfoOperation operation = this.info_requests.get(i);
+            if (operation.id == id) {
+                this.info_requests.remove(i);
+                return;
+            }
+        }
+    }
+
+    private void putInfoOperation(String uin, int type, int id) {
+        this.info_requests.add(new InfoOperation(uin, type, id));
     }
 
     private void initSocket() {
@@ -2266,13 +2265,13 @@ public class ICQProfile extends IMProfile {
     }
 
     @Override // ru.ivansuper.jasmin.protocols.IMProfile
-    public final void setStatusText(String text) {
-        setAwayText(text);
+    public final String getStatusText() {
+        return this.away_text;
     }
 
     @Override // ru.ivansuper.jasmin.protocols.IMProfile
-    public final String getStatusText() {
-        return this.away_text;
+    public final void setStatusText(String text) {
+        setAwayText(text);
     }
 
     public final void setStatus(int statusParam) {
@@ -2293,8 +2292,7 @@ public class ICQProfile extends IMProfile {
         EventTranslator.sendProfilePresence(this);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void setTempStatus(int statusParam) {
+    private void setTempStatus(int statusParam) {
         this.BUFFER = ICQProtocol.createSetStatus(this.sequence, statusParam, 256);
         userSend();
         setAwayTextA(this.away_text);
@@ -2894,54 +2892,6 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-
-    /**
-     * @noinspection unused
-     */
-    public final class http_auth_listener implements HTTPAuthorizer.HTTPAuthListener {
-        private http_auth_listener() {
-        }
-
-        /**
-         * @noinspection unused
-         */ /* synthetic */ http_auth_listener(ICQProfile iCQProfile, http_auth_listener http_auth_listenerVar) {
-            this();
-        }
-
-        @Override
-        public void onSuccess(String bos, byte[] cookie) {
-            ICQProfile.this.bos_server = bos;
-            ICQProfile.this.cookies = cookie;
-            ICQProfile.this.jumpingToBOS = false;
-            jasminSvc.pla.put(ICQProfile.this.nickname, utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{bos}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-            ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{bos}));
-            ICQProfile.this.authFirstStageCompleted = true;
-            ICQProfile.this.socket.connect(ICQProfile.this.bos_server);
-        }
-
-        @Override
-        public void onError(int code) {
-            Log.e("ICQProfile", "HTTP authorization error code=" + code);
-            ICQProfile.this.proceedLoginError(code);
-        }
-
-        @Override
-        public void onProgress(int state) {
-            ICQProfile.this.setConnectionStatus((state * 3) + 10);
-            switch (state) {
-                case 1:
-                    jasminSvc.pla.put(ICQProfile.this.nickname, resources.getString("s_icq_http_connecting_1"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + resources.getString("s_icq_http_connecting_1"));
-                    return;
-                case 2:
-                    jasminSvc.pla.put(ICQProfile.this.nickname, resources.getString("s_icq_http_connecting_2"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + resources.getString("s_icq_http_connecting_2"));
-                    return;
-                default:
-            }
-        }
-    }
-
     private void userSend() {
         if (this.connected) {
             send();
@@ -2990,11 +2940,90 @@ public class ICQProfile extends IMProfile {
         }
     }
 
+    @Override
+    public final void handleScreenTurnedOff() {
+        if (!this.screen_ctrlr.is_active && PreferenceTable.auto_change_status) {
+            this.screen_ctrlr.start();
+        }
+    }
+
+    @Override
+    public final void handleScreenTurnedOn() {
+        if (this.screen_ctrlr.status_changed) {
+            Log.e("Auto-Away", "Main status recovered");
+            this.away_text = this.away_text_backup;
+            setStatus(this.status);
+        }
+        this.screen_ctrlr.stop();
+    }
+
+    public final void sendPingPacket() {
+        ByteBuffer buffer = ICQProtocol.createInvalidPacket(this.sequence);
+        send(buffer);
+    }
+
+    public final void reinitParams(ProfilesAdapterItem pdata) {
+        this.ID = pdata.id;
+        this.password = pdata.pass;
+        this.autoconnect = pdata.autoconnect;
+        this.enabled = pdata.enabled;
+        if (!this.enabled && this.connected) {
+            disconnect();
+        }
+    }
+
+    /**
+     * @noinspection unused
+     */
+    public final class http_auth_listener implements HTTPAuthorizer.HTTPAuthListener {
+        private http_auth_listener() {
+        }
+
+        /**
+         * @noinspection unused
+         */ /* synthetic */ http_auth_listener(ICQProfile iCQProfile, http_auth_listener http_auth_listenerVar) {
+            this();
+        }
+
+        @Override
+        public void onSuccess(String bos, byte[] cookie) {
+            ICQProfile.this.bos_server = bos;
+            ICQProfile.this.cookies = cookie;
+            ICQProfile.this.jumpingToBOS = false;
+            jasminSvc.pla.put(ICQProfile.this.nickname, utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{bos}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+            ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + utilities.match(resources.getString("s_icq_connecting_to_BOS"), new String[]{bos}));
+            ICQProfile.this.authFirstStageCompleted = true;
+            ICQProfile.this.socket.connect(ICQProfile.this.bos_server);
+        }
+
+        @Override
+        public void onError(int code) {
+            Log.e("ICQProfile", "HTTP authorization error code=" + code);
+            ICQProfile.this.proceedLoginError(code);
+        }
+
+        @Override
+        public void onProgress(int state) {
+            ICQProfile.this.setConnectionStatus((state * 3) + 10);
+            switch (state) {
+                case 1:
+                    jasminSvc.pla.put(ICQProfile.this.nickname, resources.getString("s_icq_http_connecting_1"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+                    ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + resources.getString("s_icq_http_connecting_1"));
+                    return;
+                case 2:
+                    jasminSvc.pla.put(ICQProfile.this.nickname, resources.getString("s_icq_http_connecting_2"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+                    ICQProfile.this.svc.put_log(ICQProfile.this.nickname + ": " + resources.getString("s_icq_http_connecting_2"));
+                    return;
+                default:
+            }
+        }
+    }
+
     public final class reconnector {
-        private volatile reconnect_timer rt;
         public boolean is_active = false;
         public boolean enabled = false;
         public int limit = -1;
+        private volatile reconnect_timer rt;
         private int tryes = 0;
 
         public reconnector() {
@@ -3101,23 +3130,6 @@ public class ICQProfile extends IMProfile {
         }
     }
 
-    @Override
-    public final void handleScreenTurnedOff() {
-        if (!this.screen_ctrlr.is_active && PreferenceTable.auto_change_status) {
-            this.screen_ctrlr.start();
-        }
-    }
-
-    @Override
-    public final void handleScreenTurnedOn() {
-        if (this.screen_ctrlr.status_changed) {
-            Log.e("Auto-Away", "Main status recovered");
-            this.away_text = this.away_text_backup;
-            setStatus(this.status);
-        }
-        this.screen_ctrlr.stop();
-    }
-
     private final class screen_controller {
         private final PendingIntentHandler away_task;
         public boolean is_active;
@@ -3154,11 +3166,6 @@ public class ICQProfile extends IMProfile {
             this.status_changed = false;
             ICQProfile.this.svc.removeTimedTask(this.away_task);
         }
-    }
-
-    public final void sendPingPacket() {
-        ByteBuffer buffer = ICQProtocol.createInvalidPacket(this.sequence);
-        send(buffer);
     }
 
     public final class ping_thread extends Thread {
@@ -3203,16 +3210,6 @@ public class ICQProfile extends IMProfile {
                     }
                 }
             }
-        }
-    }
-
-    public final void reinitParams(ProfilesAdapterItem pdata) {
-        this.ID = pdata.id;
-        this.password = pdata.pass;
-        this.autoconnect = pdata.autoconnect;
-        this.enabled = pdata.enabled;
-        if (!this.enabled && this.connected) {
-            disconnect();
         }
     }
 }

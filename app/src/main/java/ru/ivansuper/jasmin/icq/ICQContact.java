@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
@@ -20,6 +21,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
+
 import ru.ivansuper.jasmin.Clients.ClientInfo;
 import ru.ivansuper.jasmin.ContactlistItem;
 import ru.ivansuper.jasmin.HistoryItem;
@@ -49,18 +51,18 @@ import ru.ivansuper.jasmin.utilities;
  * (e.g., to UNI16) and real-time history export.
  */
 public class ICQContact extends ContactlistItem {
+    public final Capabilities capabilities = new Capabilities();
+    public final InfoContainer inf = new InfoContainer();
+    public final ClientInfo client = new ClientInfo();
+    public final DCInfo dc_info = new DCInfo();
+    public final ArrayList<HistoryItem> history = new ArrayList<>();
     public Drawable avatar;
     public String away_status;
     public int group;
     public int id;
     public ICQProfile profile;
     public byte[] transfer_cookie;
-    private int unread_count;
     public String xtraz_text;
-    public final Capabilities capabilities = new Capabilities();
-    public final InfoContainer inf = new InfoContainer();
-    public final ClientInfo client = new ClientInfo();
-    public final DCInfo dc_info = new DCInfo();
     public int status = -1;
     public int protoVersion = 0;
     /** @noinspection unused*/
@@ -80,15 +82,42 @@ public class ICQContact extends ContactlistItem {
     public int xsts = -1;
     public boolean hasUnreadedAuthRequest = false;
     public boolean hasUnreadedFileRequest = false;
-    public final ArrayList<HistoryItem> history = new ArrayList<>();
     public boolean historyPreLoaded = false;
     /** @noinspection unused*/
     public String typedText = "";
     public boolean isChating = false;
     public boolean as_accepted = true;
+    private int unread_count;
 
     public ICQContact() {
         this.itemType = 1;
+    }
+
+    /** @noinspection unused*/
+    public static void getAvatar(final Callback callback, final String UIN, String PID, final jasminSvc service) {
+        Runnable r = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    URL url = new URL("http://45.144.154.209/avatar/" + UIN + "?hq=1");
+                    HttpURLConnection c = (HttpURLConnection) url.openConnection();
+                    if (c.getResponseCode() == 200) {
+                        InputStream in = new BufferedInputStream(c.getInputStream());
+                        Drawable icon = Drawable.createFromStream(in, "Avatar");
+                        in.close();
+                        if (callback != null) {
+                            callback.notify(icon, 0);
+                        }
+                    }
+                } catch (Exception e) {
+                    //noinspection CallToPrintStackTrace
+                    e.printStackTrace();
+                }
+            }
+        };
+
+        Thread t = new Thread(r);
+        t.start();
     }
 
     /** @noinspection unused*/
@@ -186,33 +215,6 @@ public class ICQContact extends ContactlistItem {
         }
     }
 
-    /** @noinspection unused*/
-    public static void getAvatar(final Callback callback, final String UIN, String PID, final jasminSvc service) {
-        Runnable r = new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    URL url = new URL("http://45.144.154.209/avatar/" + UIN + "?hq=1");
-                    HttpURLConnection c = (HttpURLConnection) url.openConnection();
-                    if (c.getResponseCode() == 200) {
-                        InputStream in = new BufferedInputStream(c.getInputStream());
-                        Drawable icon = Drawable.createFromStream(in, "Avatar");
-                        in.close();
-                        if (callback != null) {
-                            callback.notify(icon, 0);
-                        }
-                    }
-                } catch (Exception e) {
-                    //noinspection CallToPrintStackTrace
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        Thread t = new Thread(r);
-        t.start();
-    }
-
     public final void getAvatar(final ICQContact contact, final jasminSvc service) {
         Runnable r = new Runnable() {
             @Override
@@ -243,11 +245,13 @@ public class ICQContact extends ContactlistItem {
                             } else {
                                 try {
                                     in.close();
-                                } catch (Exception ignored) {}
+                                } catch (Exception ignored) {
+                                }
 
                                 try {
                                     fos.close();
-                                } catch (Exception ignored) {}
+                                } catch (Exception ignored) {
+                                }
 
                                 ByteCache.recycle(buffer);
 

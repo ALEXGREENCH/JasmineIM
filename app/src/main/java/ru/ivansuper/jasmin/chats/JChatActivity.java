@@ -177,8 +177,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         res.show();
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void startSendFile(File file, String resource) {
+    private void startSendFile(File file, String resource) {
         SIFileSender sender = new SIFileSender(contact.profile, contact, resource, file);
         TransferController.putTransfer(sender);
         sender.start();
@@ -196,7 +195,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         service.handleContactlistNeedRemake();
     }
 
-    @Override // ru.ivansuper.jasmin.ui.ExFragment
+    @Override
     public Dialog onCreateDialog(int id) {
         Dialog catched = JChatWindowInterface.dispatchWindowCreateDialogEvent(this, id);
         if (catched == null) {
@@ -296,7 +295,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         this.sendByEnter = this.sp.getBoolean("ms_send_by_enter", false);
     }
 
-    @Override // ru.ivansuper.jasmin.ui.JFragment
+    @Override
     public void onResume() {
         super.onResume();
         is_any_chat_opened = true;
@@ -332,7 +331,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         JChatWindowInterface.dispatchWindowEvent(this, 1);
     }
 
-    @Override // ru.ivansuper.jasmin.chats.Chat, ru.ivansuper.jasmin.ui.ExFragment, ru.ivansuper.jasmin.ui.JFragment
+    @Override
     public void onDestroy() {
         if (contact != null && contact.historyPreLoaded && !contact.isChating) {
             contact.clearPreloadedHistory();
@@ -357,8 +356,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         initChatInterface(false);
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void initChatInterface(boolean fling) {
+    private void initChatInterface(boolean fling) {
         int cursor_pos;
         service.cancelPersonalMessageNotify(utilities.getHash(contact));
         contact.setHasNoUnreadMessages();
@@ -416,14 +414,13 @@ public class JChatActivity extends Chat implements Handler.Callback {
         }
     }
 
-    /* renamed from: ru.ivansuper.jasmin.chats.JChatActivity$2, reason: invalid class name */
     class AnonymousClass2 implements TextParser.OnIDClickedListener {
         Dialog d;
 
         AnonymousClass2() {
         }
 
-        @Override // ru.ivansuper.jasmin.jabber.juick.TextParser.OnIDClickedListener
+        @Override
         public void OnUserClicked(final String user) {
             if (JChatActivity.contact.profile.connected) {
                 final UAdapter adp = new UAdapter();
@@ -478,7 +475,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
             }
         }
 
-        @Override // ru.ivansuper.jasmin.jabber.juick.TextParser.OnIDClickedListener
+        @Override
         public void OnMessageClicked(final String message_id) {
             final UAdapter adp = new UAdapter();
             adp.setMode(2);
@@ -528,8 +525,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public final void popupKeyboard() {
+    private void popupKeyboard() {
         input_manager.showSoftInput(this.input, 0);
     }
 
@@ -660,18 +656,18 @@ public class JChatActivity extends Chat implements Handler.Callback {
                 JChatActivity.this.messageList.clearAnimation();
             }
 
-            @Override // ru.ivansuper.jasmin.slide_tools.ListViewA.SlideListener
+            @Override
             public void onMoving(float lastX, float offset) {
                 JChatActivity.this.setViewBufferOffset((int) lastX, (int) offset);
             }
 
-            @Override // ru.ivansuper.jasmin.slide_tools.ListViewA.SlideListener
+            @Override
             public void onFling(boolean toRight, float factor) {
                 JChatActivity.this.setViewBufferOffset(0, 0);
                 JChatActivity.this.handleFling(toRight, factor);
             }
 
-            @Override // ru.ivansuper.jasmin.slide_tools.ListViewA.SlideListener
+            @Override
             public void onCancel(float absolute_offset, float space) {
                 JChatActivity.this.setViewBufferOffset(0, 0);
                 JChatActivity.this.messageList.startAnimation(AnimationCalculator.calculateCancelAnimation(absolute_offset, space));
@@ -801,13 +797,11 @@ public class JChatActivity extends Chat implements Handler.Callback {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void setViewBufferOffset(int static_offset, int offset) {
+    private void setViewBufferOffset(int static_offset, int offset) {
         this.messageList.scrollTo(-(offset - static_offset), this.messageList.getScrollY());
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void handleFling(boolean toRight, float factor) {
+    private void handleFling(boolean toRight, float factor) {
         resetSelection();
         this.TypingThread.forceStop();
         int chats_count = service.opened_chats.size();
@@ -832,8 +826,8 @@ public class JChatActivity extends Chat implements Handler.Callback {
                     TranslateAnimation ta = new TranslateAnimation(1, factor, 1, 1.0f, 1, 0.0f, 1, 0.0f);
                     ta.setDuration(150L);
                     ta.setInterpolator(resources.ctx, android.R.anim.linear_interpolator);
-                    ta.setAnimationListener(new Animation.AnimationListener() { // from class: ru.ivansuper.jasmin.chats.JChatActivity.10
-                        @Override // android.view.animation.Animation.AnimationListener
+                    ta.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
                         public void onAnimationEnd(Animation animation) {
                             JChatActivity.this.initChatInterface(true);
                             TranslateAnimation ta2 = new TranslateAnimation(1, -1.5f, 1, 0.0f, 1, 0.0f, 1, 0.0f);
@@ -842,11 +836,11 @@ public class JChatActivity extends Chat implements Handler.Callback {
                             JChatActivity.this.messageList.startAnimation(ta2);
                         }
 
-                        @Override // android.view.animation.Animation.AnimationListener
+                        @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
 
-                        @Override // android.view.animation.Animation.AnimationListener
+                        @Override
                         public void onAnimationStart(Animation animation) {
                         }
                     });
@@ -869,8 +863,8 @@ public class JChatActivity extends Chat implements Handler.Callback {
                     TranslateAnimation ta2 = new TranslateAnimation(1, factor, 1, -1.0f, 1, 0.0f, 1, 0.0f);
                     ta2.setDuration(150L);
                     ta2.setInterpolator(resources.ctx, android.R.anim.linear_interpolator);
-                    ta2.setAnimationListener(new Animation.AnimationListener() { // from class: ru.ivansuper.jasmin.chats.JChatActivity.11
-                        @Override // android.view.animation.Animation.AnimationListener
+                    ta2.setAnimationListener(new Animation.AnimationListener() {
+                        @Override
                         public void onAnimationEnd(Animation animation) {
                             JChatActivity.this.initChatInterface(true);
                             TranslateAnimation ta3 = new TranslateAnimation(1, 1.5f, 1, 0.0f, 1, 0.0f, 1, 0.0f);
@@ -879,11 +873,11 @@ public class JChatActivity extends Chat implements Handler.Callback {
                             JChatActivity.this.messageList.startAnimation(ta3);
                         }
 
-                        @Override // android.view.animation.Animation.AnimationListener
+                        @Override
                         public void onAnimationRepeat(Animation animation) {
                         }
 
-                        @Override // android.view.animation.Animation.AnimationListener
+                        @Override
                         public void onAnimationStart(Animation animation) {
                         }
                     });
@@ -895,8 +889,7 @@ public class JChatActivity extends Chat implements Handler.Callback {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void performQuote(int idx) {
+    private void performQuote(int idx) {
         String nick;
         String res;
         if (this.chatAdp != null) {
@@ -1209,15 +1202,13 @@ public class JChatActivity extends Chat implements Handler.Callback {
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public void resetSelection() {
+    private void resetSelection() {
         for (int i = 0; i < this.chatAdp.getCount(); i++) {
             this.chatAdp.getItem(i).selected = false;
         }
     }
 
-    /* JADX INFO: Access modifiers changed from: private */
-    public String computeMultiQuote() {
+    private String computeMultiQuote() {
         String nick;
         StringBuilder res = new StringBuilder();
         for (int i = 0; i < this.chatAdp.getCount(); i++) {
@@ -1266,15 +1257,15 @@ public class JChatActivity extends Chat implements Handler.Callback {
             }
         }
 
-        @Override // android.text.TextWatcher
+        @Override
         public void afterTextChanged(Editable arg0) {
         }
 
-        @Override // android.text.TextWatcher
+        @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
         }
 
-        @Override // android.text.TextWatcher
+        @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (!this.buffer.equals(s.toString()) && s.length() != 0) {
                 if (s.length() - this.buffer.length() == 1) {

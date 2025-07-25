@@ -2,6 +2,7 @@ package ru.ivansuper.jasmin.icq.FileTransfer;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,11 +13,13 @@ import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
 import ru.ivansuper.jasmin.icq.ByteBuffer;
 import ru.ivansuper.jasmin.icq.ByteCache;
 import ru.ivansuper.jasmin.popup_log_adapter;
@@ -59,17 +62,22 @@ public abstract class ProxySocketConnection {
     public static final int PROXY_AUTH_MODE = 1;
     /** @noinspection unused*/
     public static final int TRANSFERING_MODE = 3;
-    private connectedThread connectedThrd;
     public int mode;
-    private Socket socket;
-    private InputStream socketIn;
-    private OutputStream socketOut;
     public boolean connected = false;
     public boolean connecting = false;
     public int lastErrorCode = -1;
     public String lastServer = "none";
     public int lastPort = 0;
     byte[] oft_header_ethalon = {79, 70, 84, 50};
+    private connectedThread connectedThrd;
+    private Socket socket;
+    private InputStream socketIn;
+    private OutputStream socketOut;
+
+    public ProxySocketConnection(int m) {
+        this.mode = m;
+        Log.v("ProxySocket", "Initialized with " + this.mode);
+    }
 
     public abstract void onConnect();
 
@@ -86,11 +94,6 @@ public abstract class ProxySocketConnection {
     public abstract void onProxyPacket(ByteBuffer byteBuffer);
 
     public abstract void onRawFileData(byte[] bArr, int i);
-
-    public ProxySocketConnection(int m) {
-        this.mode = m;
-        Log.v("ProxySocket", "Initialized with " + this.mode);
-    }
 
     private void errorOccured() {
         if (this.socket != null && this.connected) {

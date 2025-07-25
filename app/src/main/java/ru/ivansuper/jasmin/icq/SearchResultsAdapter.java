@@ -7,7 +7,9 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import java.util.Vector;
+
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.resources;
 

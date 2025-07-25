@@ -14,7 +14,7 @@
         tools:ignore="UnusedAttribute">
 
         <activity
-            android:name="ru.ivansuper.jasmin.MainActivity"
+            android:name="ru.ivansuper.jasmin.main"
             android:clearTaskOnLaunch="true"
             android:configChanges="orientation|keyboardHidden"
             android:exported="true"

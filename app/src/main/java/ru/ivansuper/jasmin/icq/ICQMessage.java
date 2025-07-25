@@ -1,7 +1,9 @@
 package ru.ivansuper.jasmin.icq;
 
 import android.util.Log;
+
 import java.io.IOException;
+
 import ru.ivansuper.jasmin.jabber.xml_utils;
 import ru.ivansuper.jasmin.utilities;
 
@@ -39,11 +41,11 @@ public class ICQMessage {
     public int port;
     public String proxy_ip;
     public String sender;
-    long timestamp;
     public int transfer_step;
     public int type;
     public boolean use_proxy;
     public String verified_ip;
+    long timestamp;
 
     public ICQMessage(ByteBuffer buffer) {
         byte[] bArr = new byte[8];

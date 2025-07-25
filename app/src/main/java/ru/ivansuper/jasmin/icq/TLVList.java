@@ -1,6 +1,7 @@
 package ru.ivansuper.jasmin.icq;
 
 import android.util.Log;
+
 import java.util.Vector;
 
 /**
@@ -16,8 +17,8 @@ import java.util.Vector;
  * </ul>
  */
 public class TLVList {
-    public int TLVCount;
     private final Vector<TLV> list = new Vector<>();
+    public int TLVCount;
 
     public TLVList(ByteBuffer buffer, int count) {
         //noinspection UnusedAssignment

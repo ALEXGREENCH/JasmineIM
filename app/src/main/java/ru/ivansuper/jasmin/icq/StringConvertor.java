@@ -109,11 +109,11 @@ public class StringConvertor {
                 seqLen = 3;
             } else //noinspection ConstantValue
                 if ((bt & JZlib.Z_MEM_ERROR) == 248) {
-                seqLen = 4;
-            } else //noinspection ConstantValue
+                    seqLen = 4;
+                } else //noinspection ConstantValue
                     if ((bt & JZlib.Z_STREAM_ERROR) == 252) {
-                seqLen = 5;
-            }
+                        seqLen = 5;
+                    }
             if (seqLen == 0) {
                 if ((bt & 128) == 128) {
                     return false;

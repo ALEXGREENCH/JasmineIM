@@ -8,7 +8,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -46,7 +45,7 @@ import ru.ivansuper.jasmin.ContactlistItem;
 import ru.ivansuper.jasmin.HistoryItem;
 import ru.ivansuper.jasmin.MMP.MMPContact;
 import ru.ivansuper.jasmin.MMP.MMPProfile;
-import ru.ivansuper.jasmin.MainActivity;
+import ru.ivansuper.jasmin.main;
 import ru.ivansuper.jasmin.Media;
 import ru.ivansuper.jasmin.MessagesDump;
 import ru.ivansuper.jasmin.popup_log_adapter;
@@ -341,7 +340,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     private Notification getNotification(int icon) {
         Notification notification;
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, main.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 this,
                 0,
@@ -557,7 +556,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     public void showInBarNotify(CharSequence header, CharSequence message, boolean led) {
         Notification notification;
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, main.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 this,
                 0,
@@ -628,7 +627,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
         Notification notification;
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, main.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 this,
                 0,
@@ -712,7 +711,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             @Override
             public void run() {
                 MNotification mn = new MNotification();
-                Intent intent = new Intent(jasminSvc.this, MainActivity.class);
+                Intent intent = new Intent(jasminSvc.this, main.class);
                 String scheme = IMProfile.getSchema(contact);
                 intent.setAction(scheme);
                 mn.intent = intent;
@@ -862,7 +861,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     /** @noinspection unused*/
     @SuppressLint("NotificationPermission")
     public void showMailMessageNotify(final CharSequence header, final CharSequence message, final boolean led, final int id, final int count, final String JID) {
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, main.class);
         intent.setAction("%GMAIL%" + JID);
 
         PendingIntent contentIntent = PendingIntent.getActivity(
@@ -957,7 +956,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     @SuppressLint("NotificationPermission")
     public void showAntispamNotify(String id, String message) {
         this.notification = new Notification(R.drawable.cross, resources.getString("s_antispam_notify") + " " + id, System.currentTimeMillis());
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, MainActivity.class), PendingIntent.FLAG_MUTABLE);
+        PendingIntent contentIntent = PendingIntent.getActivity(this, 0, new Intent(this, main.class), PendingIntent.FLAG_MUTABLE);
         RemoteViews rv = new RemoteViews(getPackageName(), R.layout.notify_remote_view);
         rv.setTextViewText(R.id.notify_remote_view, message);
         this.notification.icon = R.drawable.cross;
@@ -1037,7 +1036,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     public void showMulticonnectNotify(final String id) {
         Notification notification;
 
-        Intent intent = new Intent(this, MainActivity.class);
+        Intent intent = new Intent(this, main.class);
         PendingIntent contentIntent = PendingIntent.getActivity(
                 this,
                 0,
@@ -1501,7 +1500,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         } catch (Exception e9) {
             this.sharedPreferences.edit().putString("ms_turn_sts_timeout", "300").commit();
         }
-        PreferenceTable.show_away_in_cl = this.sharedPreferences.getBoolean("ms_show_away", false);
+        PreferenceTable.show_away_in_cl = this.sharedPreferences.getBoolean("ms_show_away", true);
         PreferenceTable.send_typing_notify = this.sharedPreferences.getBoolean("ms_typing_notify", false);
         PreferenceTable.auto_close_chat = this.sharedPreferences.getBoolean("ms_auto_close_chat", false);
         PreferenceTable.auto_xtraz = this.sharedPreferences.getBoolean("ms_auto_xtraz", false);
@@ -1517,12 +1516,12 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         PreferenceTable.chat_dividers = this.sharedPreferences.getBoolean("ms_chat_dividers", false);
         PreferenceTable.triple_vibro = this.sharedPreferences.getBoolean("ms_triple_vibro", true);
         PreferenceTable.ms_animated_smileys = this.sharedPreferences.getBoolean("ms_animated_smileys", true);
-        PreferenceTable.ms_show_avatars = this.sharedPreferences.getBoolean("ms_show_avatars", false);
-        PreferenceTable.ms_round_avatars = this.sharedPreferences.getBoolean("ms_round_avatars", false);
+        PreferenceTable.ms_show_avatars = this.sharedPreferences.getBoolean("ms_show_avatars", true);
+        PreferenceTable.ms_round_avatars = this.sharedPreferences.getBoolean("ms_round_avatars", true);
         PreferenceTable.ms_telegram_style = this.sharedPreferences.getBoolean("ms_telegram_style", false);
         PreferenceTable.ms_chats_at_top = this.sharedPreferences.getBoolean("ms_chats_at_top", false);
         PreferenceTable.ms_chat_style = Integer.parseInt(this.sharedPreferences.getString("ms_chat_style", "0"));
-        PreferenceTable.ms_dragdrop_quoting = this.sharedPreferences.getBoolean("ms_dragdrop_quoting", true);
+        PreferenceTable.ms_dragdrop_quoting = this.sharedPreferences.getBoolean("ms_dragdrop_quoting", false);
         PreferenceTable.ms_hide_not_connected_profiles = this.sharedPreferences.getBoolean("ms_hide_not_connected_profiles", false);
         PreferenceTable.ms_links_to_images = this.sharedPreferences.getBoolean("ms_links_to_images", false);
         PreferenceTable.ms_use_overscroll = this.sharedPreferences.getBoolean("ms_use_overscroll", true);

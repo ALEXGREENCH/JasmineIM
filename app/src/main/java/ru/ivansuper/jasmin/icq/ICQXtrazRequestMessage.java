@@ -8,10 +8,10 @@ import ru.ivansuper.jasmin.utilities;
  * that involves XTRAZ data, typically for notifications or status updates.
  */
 public class ICQXtrazRequestMessage {
+    private final int sequence;
     public ByteBuffer data;
     public String receiver;
     public String sender;
-    private final int sequence;
 
     public ICQXtrazRequestMessage(int seq, String Sender, String Receiver, int xsts) {
         this.sender = Sender;

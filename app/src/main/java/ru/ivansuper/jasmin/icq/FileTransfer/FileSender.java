@@ -1,9 +1,11 @@
 package ru.ivansuper.jasmin.icq.FileTransfer;
 
 import android.util.Log;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+
 import ru.ivansuper.jasmin.HistoryItem;
 import ru.ivansuper.jasmin.icq.ByteBuffer;
 import ru.ivansuper.jasmin.icq.ByteCache;
@@ -18,15 +20,15 @@ import ru.ivansuper.jasmin.utilities;
  */
 public class FileSender extends FileTransfer {
     public File file;
-    private FileInputStream in;
     public ProxySocketConnection socket;
     public int sended = 0;
     /** @noinspection unused*/
     public int checksum = 0;
     public boolean accepted = false;
     public boolean sending = false;
-    private boolean file_sended = false;
     public boolean initialized = false;
+    private FileInputStream in;
+    private boolean file_sended = false;
 
     public FileSender() {
         this.direction = 0;
@@ -221,6 +223,22 @@ public class FileSender extends FileTransfer {
         shutDown();
     }
 
+    @Override
+    public void shutDown() {
+        this.initialized = false;
+        try {
+            this.socket.disconnect();
+        } catch (Exception ignored) {
+        }
+        try {
+            this.in.close();
+        } catch (Exception ignored) {
+        }
+        if (!this.file_sended) {
+            handleFileTransferCanceled();
+        }
+    }
+
     private class sending_thread extends Thread {
 
         @Override
@@ -244,22 +262,6 @@ public class FileSender extends FileTransfer {
                     return;
                 }
             }
-        }
-    }
-
-    @Override
-    public void shutDown() {
-        this.initialized = false;
-        try {
-            this.socket.disconnect();
-        } catch (Exception ignored) {
-        }
-        try {
-            this.in.close();
-        } catch (Exception ignored) {
-        }
-        if (!this.file_sended) {
-            handleFileTransferCanceled();
         }
     }
 }

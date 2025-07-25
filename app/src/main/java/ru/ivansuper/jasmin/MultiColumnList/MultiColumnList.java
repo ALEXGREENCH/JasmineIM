@@ -1047,47 +1047,7 @@ public class MultiColumnList extends ViewGroup {
         return (child.getLeft() / (child.getRight() - child.getLeft())) + 1;
     }
 
-    /** @noinspection unused*/ /* JADX WARN: Code restructure failed: missing block: B:10:0x001c, code lost:
-
-        r3 = true;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    /**
-    private int getNextUpDirectionIndex(int source) {
-        int available = 0;
-        int count = this.mAdapter.getCount() - 1;
-        int counter = source;
-        while (true) {
-            int type = this.mAdapter.getItemType(counter);
-            if (type == 0 || available >= this.mColumnsNumber || counter >= count) {
-                break;
-            }
-            counter--;
-            available++;
-        }
-        boolean last_is_group = false;
-        //noinspection ConstantValue
-        if (last_is_group && counter < count && available == 0) {
-            available++;
-        }
-        int row = getChildRowNumber(source);
-        Log.e("CurrentRow", String.valueOf(row));
-        Log.e("Available", String.valueOf(available));
-        Log.e("LastIsGroup", String.valueOf(last_is_group));
-        if (!last_is_group) {
-            return source + available;
-        }
-        int available2 = available - 1;
-        if (available2 <= this.mColumnsNumber - row) {
-            return source + available2 + 1;
-        }
-        return source + available2;
-    }
-     * @noinspection unused
-     */
-
+    /** @noinspection unused*/
     private int getNextUpDirectionIndex(int source) {
         int available = 0;
         int counter = source;
@@ -1103,48 +1063,6 @@ public class MultiColumnList extends ViewGroup {
         int row = getChildRowNumber(source);
         return source - available;
     }
-
-    /* JADX WARN: Code restructure failed: missing block: B:10:0x001c, code lost:
-
-        r3 = true;
-     */
-    /*
-        Code decompiled incorrectly, please refer to instructions dump.
-    */
-    /**
-    private int getNextBottomDirectionIndex(int source) {
-        int available = 0;
-        int count = this.mAdapter.getCount() - 1;
-        int counter = source;
-        while (true) {
-            int type = this.mAdapter.getItemType(counter);
-            if (type == 0 || available >= this.mColumnsNumber || counter >= count) {
-                break;
-            }
-            counter++;
-            available++;
-        }
-        boolean last_is_group = false;
-        //noinspection ConstantValue
-        if (last_is_group && counter < count && available == 0) {
-            //noinspection unused
-            int i = counter + 1;
-            available++;
-        }
-        int row = getChildRowNumber(source);
-        Log.e("CurrentRow", String.valueOf(row));
-        Log.e("Available", String.valueOf(available));
-        Log.e("LastIsGroup", String.valueOf(last_is_group));
-        if (!last_is_group) {
-            return source + available;
-        }
-        int available2 = available - 1;
-        if (available2 <= this.mColumnsNumber - row) {
-            return source + available2 + 1;
-        }
-        return source + available2;
-    }
-     */
 
     private int getNextBottomDirectionIndex(int source) {
         int available = 0;
@@ -1226,26 +1144,25 @@ public class MultiColumnList extends ViewGroup {
         }
     }
 
-    /** @noinspection UnusedReturnValue, unused , SameParameterValue */
     /**
-    protected final boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-        synchronized (this) {
-            this.mScroller.fling(0, this.mNextY, 0, (int) velocityY, 0, 0, MMPProtocol.MMP_FLAG_INVISIBLE, Integer.MAX_VALUE);
-        }
-        requestLayout();
-        return true;
-    }
+     * protected final boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+     * synchronized (this) {
+     * this.mScroller.fling(0, this.mNextY, 0, (int) velocityY, 0, 0, MMPProtocol.MMP_FLAG_INVISIBLE, Integer.MAX_VALUE);
+     * }
+     * requestLayout();
+     * return true;
+     * }
+     *
      * @noinspection unused, SameParameterValue
      */
 
-    protected final boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+    protected final void onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
         if (mScroller != null) {
             synchronized (this) {
                 mScroller.fling(0, mNextY, 0, (int) velocityY, 0, 0, 0, Integer.MAX_VALUE);
             }
             requestLayout();
         }
-        return true;
     }
 
     /** @noinspection unused*/
@@ -1253,21 +1170,6 @@ public class MultiColumnList extends ViewGroup {
         this.mScroller.forceFinished(true);
         return true;
     }
-
-    /**
-    private static int getMax(int[] array) {
-        int max = MMPProtocol.MMP_FLAG_INVISIBLE;
-        if (array == null || array.length == 0) {
-            return 0;
-        }
-        for (int i : array) {
-            if (max < i) {
-                max = i;
-            }
-        }
-        return max;
-    }
-     */
 
     private static int getMax(int[] array) {
         if (array == null || array.length == 0) return 0;
@@ -1278,7 +1180,6 @@ public class MultiColumnList extends ViewGroup {
         return max;
     }
 
-    /** @noinspection SpellCheckingInspection*/
     /**
     public final void clearup() {
         removeAllViews();
