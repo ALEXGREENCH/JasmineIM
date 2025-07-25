@@ -290,7 +290,7 @@ s_about_4 := Офіційний сайт: jasmineicq.ru
 s_about_5 := Сайти партнери:[NL]samandroid.ru[NL]SexyDroid.ru[NL]dimonvideo.ru[NL]wjfs-dev.com
 s_about_6 := Форум: http://4pda.ru/forum/index.php?showtopic=246247
 s_about_7 := Маркет: https://market.android.com/details?id=ru.ivansuper.jasmin
-s_about_1_new := Jasmine IM — це клієнт ICQ для Android. Проєкт модифіковано та підтримується AlexGreench.[NL]
+s_about_1_new := Jasmine IM - це ICQ-клієнт для Android. Проект модифікований та доопрацьовується спільнотою KICQ .[NL]
 s_about_2_new := Оригінальна версія:[NL] Кудряков Іван (Ivansuper)[NL]
 s_about_3_new := Версія:
 s_about_4_new := GitHub проєкту:[NL] https://github.com/ALEXGREENCH/JasmineIM
