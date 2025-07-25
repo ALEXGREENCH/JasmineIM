@@ -65,6 +65,7 @@ import ru.ivansuper.jasmin.protocols.IMProfile;
  * - Manages blinking animations for unread messages or important events.
  */
 public class RosterItemView extends View {
+    /** @noinspection unused*/
     public static final int AVATAR_PADDING = 3;
     public static final int AVATAR_SIZE = 40;
     public static final int BLINK_INTERVAL_MILLIS = 500;
@@ -227,11 +228,11 @@ public class RosterItemView extends View {
         }
     }
 
-    private final float getCounterHeight() {
+    private float getCounterHeight() {
         return Math.abs(this.counter_.getTextSize() + this.counter_.descent());
     }
 
-    private final float getCounterWidth() {
+    private float getCounterWidth() {
         return Math.abs(this.counter_.measureText(String.valueOf(this.unreaded_count)));
     }
 
@@ -239,8 +240,7 @@ public class RosterItemView extends View {
         int var1 = 0;
         int var2 = 0;
         int var3 = 0;
-        byte var4 = 0;
-        int var5 = var4;
+        int var5 = (byte) 0;
         if (this.type != 4) {
             int var6 = resources.group_opened.getIntrinsicHeight();
             if (this.status != null) {
@@ -249,22 +249,19 @@ public class RosterItemView extends View {
 
             var1 = var6;
             var2 = var3;
-            var5 = var4;
             if (this.ex_status != null) {
                 var5 = this.ex_status.getIntrinsicHeight();
-                var2 = var3;
-                var1 = var6;
             }
         }
 
         return this.max(var1, var2, var5, (int)(this.name_.getTextSize() + 6.0F)) / 2;
     }
 
-    private final int max(int var1, int var2, int var3, int var4) {
+    private int max(int var1, int var2, int var3, int var4) {
         return Math.max(var1, Math.max(var2, Math.max(var3, var4)));
     }
 
-    private final void measureHeight(int var1) {
+    private void measureHeight(int var1) {
         float var2 = (float)(-this.name_.getFontMetricsInt().ascent - this.name_.getFontMetricsInt().descent);
         this.lbl_left = 3.0F;
         this.icons_center = (float)(this.getVCenter() + 3);
@@ -312,7 +309,7 @@ public class RosterItemView extends View {
             var2 = var3;
             if (this.status_text != null) {
                 var2 = var3;
-                if (this.status_text.length() > 0) {
+                if (!this.status_text.isEmpty()) {
                     var2 = (float)this.measureText(this.status_text, (int)this.status_text_.getTextSize(), (int)((float)this.available_width - this.sts_left));
                 }
             }
@@ -643,11 +640,7 @@ public class RosterItemView extends View {
                 } else {
                     this.draw_avatar = false;
                 }
-                if (contact.hasUnreadMessages) {
-                    this.has_unreaded = true;
-                } else {
-                    this.has_unreaded = false;
-                }
+                this.has_unreaded = contact.hasUnreadMessages;
                 if (contact.typing) {
                     this.status = resources.typing;
                     this.typing = true;
