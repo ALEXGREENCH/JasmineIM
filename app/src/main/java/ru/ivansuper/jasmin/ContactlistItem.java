@@ -84,11 +84,13 @@ public abstract class ContactlistItem implements Comparable<ContactlistItem> {
                 if (a == b) {
                     lvl++;
                 } else {
-                    return Integer.compare(a, b);
+                    return IntegerCompat.compare(a, b);
                 }
             }
 
-            return Integer.compare(nameA.length(), nameB.length());
+            int lenA = nameA.length();
+            int lenB = nameB.length();
+            return IntegerCompat.compare(lenA, lenB);
 
         } catch (Exception e) {
             //noinspection CallToPrintStackTrace
