@@ -39,6 +39,7 @@ import ru.ivansuper.jasmin.UAdapter;
 import ru.ivansuper.jasmin.base.ach.ADB;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
+import ru.ivansuper.jasmin.utils.ImageUtils;
 import ru.ivansuper.jasmin.icq.FileTransfer.FileReceiver;
 import ru.ivansuper.jasmin.icq.FileTransfer.FileSender;
 import ru.ivansuper.jasmin.icq.FileTransfer.FileTransfer;
@@ -372,6 +373,9 @@ public class ICQChatActivity extends Chat {
             }
             if (contact.avatar == null) {
                 bmp = ((BitmapDrawable) resources.ctx.getResources().getDrawable(R.drawable.no_avatar)).getBitmap();
+            }
+            if (PreferenceTable.ms_round_avatars) {
+                bmp = ru.ivansuper.jasmin.utils.ImageUtils.toRoundBitmap(bmp);
             }
             avatar.setImageBitmap(bmp);
         }

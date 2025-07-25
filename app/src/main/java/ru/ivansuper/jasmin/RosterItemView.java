@@ -418,7 +418,9 @@ public class RosterItemView extends View {
                 if (this.draw_avatar) {
                     var10 = var1.save();
                     var1.translate(3.0F, 3.0F);
-                    this.avatar_back.draw(var1);
+                    if (!PreferenceTable.ms_round_avatars) {
+                        this.avatar_back.draw(var1);
+                    }
                     if (PreferenceTable.ms_round_avatars) {
                         int clip = var1.save();
                         var1.clipPath(this.avatar_path);

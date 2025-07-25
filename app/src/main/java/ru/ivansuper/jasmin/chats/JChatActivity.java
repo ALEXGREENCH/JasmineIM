@@ -33,6 +33,7 @@ import ru.ivansuper.jasmin.HistoryItem;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 import ru.ivansuper.jasmin.R;
 import ru.ivansuper.jasmin.UAdapter;
+import ru.ivansuper.jasmin.utils.ImageUtils;
 import ru.ivansuper.jasmin.base.ach.ADB;
 import ru.ivansuper.jasmin.color_editor.ColorScheme;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
@@ -541,6 +542,9 @@ public class JChatActivity extends Chat implements Handler.Callback {
             }
             if (contact.avatar == null) {
                 bmp = ((BitmapDrawable) resources.ctx.getResources().getDrawable(R.drawable.no_avatar)).getBitmap();
+            }
+            if (PreferenceTable.ms_round_avatars) {
+                bmp = ru.ivansuper.jasmin.utils.ImageUtils.toRoundBitmap(bmp);
             }
             avatar.setImageBitmap(bmp);
         }
