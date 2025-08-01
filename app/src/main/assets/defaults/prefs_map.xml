@@ -12,6 +12,7 @@
 <boolean name="ms_preload_history" value="true" />
 <boolean name="ms_triple_vibro" value="true" />
 <boolean name="ms_use_popup" value="true" />
+<boolean name="ms_heads_up_notify" value="true" />
 <boolean name="ms_use_overscroll" value="true" />
 <string name="ms_ui_font_scale">100</string>
 <boolean name="ms_animated_smileys" value="true" />

@@ -122,6 +122,10 @@
             android:key="ms_use_popup"
             android:title="Всплывающие уведомления" />
         <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="ms_heads_up_notify"
+            android:title="Heads-up уведомления" />
+        <CheckBoxPreference
             android:defaultValue="false"
             android:key="ms_log_clickable" />
     </PreferenceScreen>
