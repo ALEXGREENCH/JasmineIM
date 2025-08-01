@@ -156,7 +156,6 @@ s_import_colors_success := Импорт цветовой схемы заверш
 //Misc
 //=============================
 s_changing_avatar := Смена аватара ...
-s_loading_avatar := Загрузка аватара ...
 s_change_avatar_error_1 := Таймаут операции, аватар не изменен
 s_change_avatar_error_2 := Ошибка, аватар не изменен
 s_change_avatar_success := Аватар успешно обновлен
