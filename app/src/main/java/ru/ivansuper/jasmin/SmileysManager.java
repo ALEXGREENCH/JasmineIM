@@ -128,7 +128,6 @@ public class SmileysManager {
     public static void forceChangeScale() {
         //noinspection deprecation
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(ctx);
-        //noinspection DataFlowIssue
         int scaleValue = Integer.parseInt(preferences.getString("ms_smileys_scale", "3"));
 
         if (!selector_smileys.isEmpty()) {
@@ -572,7 +571,6 @@ public class SmileysManager {
             @Override
             public void run() {
                 try {
-                    //noinspection DataFlowIssue
                     if (smilePackPath.equals("$*INTERNAL*$")) {
                         SmileysManager.loadFromAssets();
                     } else {

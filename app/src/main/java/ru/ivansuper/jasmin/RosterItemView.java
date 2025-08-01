@@ -70,33 +70,43 @@ public class RosterItemView extends View {
     public static final int AVATAR_SIZE = 40;
     public static final int BLINK_INTERVAL_MILLIS = 500;
     public static final int BLINK_TIME_MILLIS = 15000;
+    /** @noinspection unused*/
     private static final int HORIZONTAL_PADDING = 3;
+    /** @noinspection unused*/
     private static final int ICON_HPADDING = 3;
     public static final int MODULATOR_SPEED = 10;
+    /** @noinspection unused*/
     private static final int TEXT_PADDING = 3;
+    /** @noinspection unused*/
     public static final int TYPE_CONFERENCE = 3;
+    /** @noinspection unused*/
     public static final int TYPE_CONTACT = 0;
+    /** @noinspection unused*/
     public static final int TYPE_GROUP = 1;
+    /** @noinspection unused*/
     public static final int TYPE_PROFILE = 2;
+    /** @noinspection unused*/
     public static final int TYPE_SPLITTER = 4;
+    /** @noinspection unused*/
     private static final int VERTICAL_PADDING = 3;
     private float av_h;
     private int available_width = 0;
     private Drawable avatar;
-    private NinePatchDrawable avatar_back;
-    private Paint avatar_border_;
+    private final NinePatchDrawable avatar_back;
+    /** @noinspection FieldCanBeLocal*/
+    private final Paint avatar_border_;
     private Rect avatar_bounds;
-    private Path avatar_path;
+    private final Path avatar_path;
     private boolean blink_posted = false;
     private boolean blink_visible = false;
     private long blink_zero_ts;
     private Drawable client;
-    private TextPaint counter_;
+    private final TextPaint counter_;
     private int direction_ = 10;
     private boolean draw_avatar;
     private boolean draw_client;
     private boolean draw_status_desc;
-    private Paint effect;
+    private final Paint effect;
     private Drawable ex_status;
     private boolean has_unreaded;
     private float icons_center;
@@ -105,12 +115,12 @@ public class RosterItemView extends View {
     private float lbl_top;
     private TextView mStatusDrawer;
     private String name;
-    private TextPaint name_;
+    private final TextPaint name_;
     private int online;
     private boolean opened;
     private Drawable status;
     private String status_text;
-    private TextPaint status_text_;
+    private final TextPaint status_text_;
     private float sts_left;
     private float sts_top;
     private int total;
@@ -152,71 +162,71 @@ public class RosterItemView extends View {
         this.setWillNotCacheDrawing(true);
     }
 
-    private final float calculateNameAvail() {
-        float var1 = (float)(this.available_width - 3) - this.lbl_left;
-        float var2 = var1;
+    private float calculateNameAvail() {
+        float labelWidth = (float)(this.available_width - 3) - this.lbl_left;
+        float adjustedLabelWidth = labelWidth;
         if (this.draw_client) {
-            var2 = var1;
+            adjustedLabelWidth = labelWidth;
             if (this.client != null) {
-                var2 = var1 - (float)this.client.getBounds().width();
+                adjustedLabelWidth = labelWidth - (float)this.client.getBounds().width();
             }
         }
 
-        var1 = var2;
+        labelWidth = adjustedLabelWidth;
         if (this.visibility != null) {
-            var1 = var2 - (float)this.visibility.getIntrinsicWidth();
+            labelWidth = adjustedLabelWidth - (float)this.visibility.getIntrinsicWidth();
         }
 
-        var2 = var1;
+        adjustedLabelWidth = labelWidth;
         if (this.ignore != null) {
-            var2 = var1 - (float)this.ignore.getIntrinsicWidth();
+            adjustedLabelWidth = labelWidth - (float)this.ignore.getIntrinsicWidth();
         }
 
-        return var2;
+        return adjustedLabelWidth;
     }
 
     private void checkNeedBlinking() {
-        this.use_blink = Math.abs(System.currentTimeMillis() - this.blink_zero_ts) <= 15000L;
+        this.use_blink = Math.abs(System.currentTimeMillis() - this.blink_zero_ts) <= BLINK_TIME_MILLIS;
     }
 
-    public static final void computeBounds(Drawable var0, Rect var1) {
-        int var2 = var1.left;
-        int var3 = var1.top;
-        int var4 = var1.width();
-        int var5 = var1.height();
-        float var6 = (float)var4 / (float)Math.max(var0.getIntrinsicWidth(), var0.getIntrinsicHeight());
-        int var7 = (int)((float)var0.getIntrinsicWidth() * var6);
-        int var8 = (int)((float)var0.getIntrinsicHeight() * var6);
-        var1.left = var4 / 2 + var2 - var7 / 2;
-        var1.top = var5 / 2 + var3 - var8 / 2;
-        var1.right = var1.left + var7;
-        var1.bottom = var1.top + var8;
+    public static void computeBounds(Drawable boundsProvider, Rect outRect) {
+        int outRectLeft = outRect.left;
+        int outRectTop = outRect.top;
+        int outRectWidth = outRect.width();
+        int outRectHeight = outRect.height();
+        float scaleFactor = (float)outRectWidth / (float)Math.max(boundsProvider.getIntrinsicWidth(), boundsProvider.getIntrinsicHeight());
+        int scaledWidth = (int)((float)boundsProvider.getIntrinsicWidth() * scaleFactor);
+        int scaledHeight = (int)((float)boundsProvider.getIntrinsicHeight() * scaleFactor);
+        outRect.left = outRectWidth / 2 + outRectLeft - scaledWidth / 2;
+        outRect.top = outRectHeight / 2 + outRectTop - scaledHeight / 2;
+        outRect.right = outRect.left + scaledWidth;
+        outRect.bottom = outRect.top + scaledHeight;
     }
 
-    private void drawIcon(Drawable var1, Canvas var2, float var3) {
-        int var4 = var2.save();
-        var2.translate(3.0F + var3, this.icons_center - (float)(var1.getIntrinsicHeight() / 2));
-        var1.draw(var2);
-        var2.restoreToCount(var4);
+    private void drawIcon(Drawable icon, Canvas destination, float horizontalOffset) {
+        int canvasState = destination.save();
+        destination.translate(3.0F + horizontalOffset, this.icons_center - (float)(icon.getIntrinsicHeight() / 2));
+        icon.draw(destination);
+        destination.restoreToCount(canvasState);
     }
 
-    private void drawIconInverse(Drawable var1, Canvas var2, float var3) {
-        int var4 = var2.save();
-        var2.translate((float)(this.available_width - 3) - var3 - (float)var1.getBounds().width(), this.icons_center - (float)(var1.getBounds().height() / 2));
-        var1.draw(var2);
-        var2.restoreToCount(var4);
+    private void drawIconInverse(Drawable iconDrawable, Canvas canvasInstance, float iconXOffset) {
+        int canvasState = canvasInstance.save();
+        canvasInstance.translate((float)(this.available_width - 3) - iconXOffset - (float)iconDrawable.getBounds().width(), this.icons_center - (float)(iconDrawable.getBounds().height() / 2));
+        iconDrawable.draw(canvasInstance);
+        canvasInstance.restoreToCount(canvasState);
     }
 
-    private void drawText(Canvas var1, int var2) {
+    private void drawText(Canvas targetCanvas, int textColor) {
         if (this.mStatusDrawer != null) {
-            this.mStatusDrawer.setTextColor(var2);
+            this.mStatusDrawer.setTextColor(textColor);
             if (PreferenceTable.use_contactlist_items_shadow) {
-                this.mStatusDrawer.setShadowLayer(1.0F, 1.0F, 1.0F, -16777216);
+                this.mStatusDrawer.setShadowLayer(1.0F, 1.0F, 1.0F, 0xFF000000);
             } else {
                 this.mStatusDrawer.setShadowLayer(0.0F, 0.0F, 0.0F, 0);
             }
 
-            this.mStatusDrawer.draw(var1);
+            this.mStatusDrawer.draw(targetCanvas);
         }
 
     }
@@ -246,24 +256,24 @@ public class RosterItemView extends View {
     }
 
     private int getVCenter() {
-        int var1 = 0;
-        int var2 = 0;
-        int var3 = 0;
-        int var5 = (byte) 0;
+        int groupIconHeight = 0;
+        int statusIconHeight = 0;
+        int statusHeight = 0;
+        int exStatusIconHeight = (byte) 0;
         if (this.type != 4) {
-            int var6 = resources.group_opened.getIntrinsicHeight();
+            int groupOpenedHeight = resources.group_opened.getIntrinsicHeight();
             if (this.status != null) {
-                var3 = this.status.getIntrinsicHeight();
+                statusHeight = this.status.getIntrinsicHeight();
             }
 
-            var1 = var6;
-            var2 = var3;
+            groupIconHeight = groupOpenedHeight;
+            statusIconHeight = statusHeight;
             if (this.ex_status != null) {
-                var5 = this.ex_status.getIntrinsicHeight();
+                exStatusIconHeight = this.ex_status.getIntrinsicHeight();
             }
         }
 
-        return this.max(var1, var2, var5, (int)(this.name_.getTextSize() + 6.0F)) / 2;
+        return this.max(groupIconHeight, statusIconHeight, exStatusIconHeight, (int)(this.name_.getTextSize() + 6.0F)) / 2;
     }
 
     private int max(int var1, int var2, int var3, int var4) {
@@ -271,10 +281,10 @@ public class RosterItemView extends View {
     }
 
     private void measureHeight(int var1) {
-        float var2 = (float)(-this.name_.getFontMetricsInt().ascent - this.name_.getFontMetricsInt().descent);
+        float totalFontHeight = (float)(-this.name_.getFontMetricsInt().ascent - this.name_.getFontMetricsInt().descent);
         this.lbl_left = 3.0F;
         this.icons_center = (float)(this.getVCenter() + 3);
-        this.lbl_top = this.icons_center + var2 / 2.0F;
+        this.lbl_top = this.icons_center + totalFontHeight / 2.0F;
         this.sts_top = this.lbl_top + 3.0F + 3.0F;
         switch (this.type) {
             case 0:
@@ -284,9 +294,9 @@ public class RosterItemView extends View {
                 }
 
                 if (this.draw_avatar) {
-                    var2 = (float)this.avatar_back.getBounds().width();
-                    this.lbl_left += var2;
-                    this.av_h = var2;
+                    totalFontHeight = (float)this.avatar_back.getBounds().width();
+                    this.lbl_left = this.lbl_left + totalFontHeight;
+                    this.av_h = totalFontHeight;
                 }
                 break;
             case 1:
@@ -313,48 +323,48 @@ public class RosterItemView extends View {
         this.name = TextUtils.ellipsize(this.name, this.name_, this.calculateNameAvail(), TruncateAt.END).toString();
         this.sts_left = this.lbl_left + 3.0F;
         float var3 = 0.0F;
-        var2 = var3;
+        totalFontHeight = var3;
         if (this.draw_status_desc) {
-            var2 = var3;
+            totalFontHeight = var3;
             if (this.status_text != null) {
-                var2 = var3;
+                totalFontHeight = var3;
                 if (!this.status_text.isEmpty()) {
-                    var2 = (float)this.measureText(this.status_text, (int)this.status_text_.getTextSize(), (int)((float)this.available_width - this.sts_left));
+                    totalFontHeight = (float)this.measureText(this.status_text, (int)this.status_text_.getTextSize(), (int)((float)this.available_width - this.sts_left));
                 }
             }
         }
 
-        var2 = Math.max(this.av_h, this.icons_center * 2.0F - 6.0F + var2);
-        this.setMeasuredDimension(var1, (int)((float)0 + var2 + 6.0F));
+        totalFontHeight = Math.max(this.av_h, this.icons_center * 2.0F - 6.0F + totalFontHeight);
+        this.setMeasuredDimension(var1, (int)((float)0 + totalFontHeight + 6.0F));
     }
 
     @SuppressLint("Range")
-    private final int measureText(String var1, int var2, int var3) {
+    private int measureText(String textToMeasure, int textSizeInSp, int specMode) {
         this.mStatusDrawer = new TextView(this.getContext());
         this.mStatusDrawer.setDrawingCacheEnabled(false);
         this.mStatusDrawer.setWillNotCacheDrawing(true);
         this.mStatusDrawer.setMaxLines(5);
         this.mStatusDrawer.setEllipsize(TruncateAt.END);
-        this.mStatusDrawer.setText(var1);
-        this.mStatusDrawer.setTextSize((float)var2);
-        var2 = MeasureSpec.makeMeasureSpec(1_073_741_824, var3);
-        var3 = MeasureSpec.makeMeasureSpec(Integer.MIN_VALUE, MeasureSpec.UNSPECIFIED);
-        this.mStatusDrawer.measure(var2, var3);
+        this.mStatusDrawer.setText(textToMeasure);
+        this.mStatusDrawer.setTextSize((float)textSizeInSp);
+        textSizeInSp = MeasureSpec.makeMeasureSpec(1_073_741_824, specMode);
+        specMode = MeasureSpec.makeMeasureSpec(Integer.MIN_VALUE, MeasureSpec.UNSPECIFIED);
+        this.mStatusDrawer.measure(textSizeInSp, specMode);
         this.mStatusDrawer.layout(0, 0, this.mStatusDrawer.getMeasuredWidth(), this.mStatusDrawer.getMeasuredHeight());
         return this.mStatusDrawer.getMeasuredHeight();
     }
 
-    private final void prepareModulator() {
+    private void prepareModulator() {
         if (this.has_unreaded) {
             this.value_ += this.direction_;
             if (this.value_ > 255) {
                 this.value_ = 255;
-                this.direction_ = -10;
+                this.direction_ = MODULATOR_SPEED * -1;
             }
 
             if (this.value_ < 0) {
                 this.value_ = 0;
-                this.direction_ = 10;
+                this.direction_ = MODULATOR_SPEED;
             }
 
             this.effect.setAlpha(this.value_);
@@ -363,19 +373,20 @@ public class RosterItemView extends View {
 
     }
 
-    private final int proceedBlinkColor(long var1, long var3, int var5) {
-        if ((int)(Math.abs(var1 - var3) / 500L) % 2 == 0) {
-            var5 = 0;
+    /** @noinspection unused*/
+    private int proceedBlinkColor(long currentTime, long blinkStartTime, int currentColor) {
+        if ((int)(Math.abs(currentTime - blinkStartTime) / BLINK_INTERVAL_MILLIS) % 2 == 0) {
+            currentColor = 0;
         }
 
-        return var5;
+        return currentColor;
     }
 
     private void reset() {
-        int var1 = (int)(40.0F * resources.dm.density);
-        Rect var2 = new Rect();
-        this.avatar_back.getPadding(var2);
-        this.avatar_bounds = new Rect(var2.left, var2.top, var1 - var2.right, var1 - var2.bottom);
+        int avatarSize = (int)(40.0F * resources.dm.density);
+        Rect avatarPadding = new Rect();
+        this.avatar_back.getPadding(avatarPadding);
+        this.avatar_bounds = new Rect(avatarPadding.left, avatarPadding.top, avatarSize - avatarPadding.right, avatarSize - avatarPadding.bottom);
         updateAvatarPath();
         this.draw_avatar = false;
         this.online = 0;
@@ -398,48 +409,48 @@ public class RosterItemView extends View {
         this.sts_left = 0.0F;
     }
 
-    public final void dispatchDraw(Canvas var1) {
+    public final void dispatchDraw(Canvas drawTarget) {
         this.prepareModulator();
         if (this.name != null) {
-            int var2 = 0;
+            int nameColor = 0;
             if (this.use_blink) {
-                var2 = this.name_.getColor();
+                nameColor = this.name_.getColor();
                 if (this.blink_visible) {
-                    this.name_.setColor(var2);
+                    this.name_.setColor(nameColor);
                 } else {
                     this.name_.setColor(0);
                 }
             }
 
             if (this.has_unreaded) {
-                var1.drawText(this.name, this.lbl_left, this.lbl_top, this.effect);
+                drawTarget.drawText(this.name, this.lbl_left, this.lbl_top, this.effect);
             }
 
-            var1.drawText(this.name, this.lbl_left, this.lbl_top, this.name_);
+            drawTarget.drawText(this.name, this.lbl_left, this.lbl_top, this.name_);
             if (this.use_blink) {
-                this.name_.setColor(var2);
+                this.name_.setColor(nameColor);
             }
         }
 
         switch (this.type) {
             case 0:
-                int var10 = 0;
+                int saveCount = 0;
                 if (this.draw_avatar) {
-                    var10 = var1.save();
-                    var1.translate(3.0F, 3.0F);
+                    saveCount = drawTarget.save();
+                    drawTarget.translate(3.0F, 3.0F);
                     if (!PreferenceTable.ms_round_avatars) {
-                        this.avatar_back.draw(var1);
+                        this.avatar_back.draw(drawTarget);
                     }
                     if (PreferenceTable.ms_round_avatars) {
-                        int clip = var1.save();
-                        var1.clipPath(this.avatar_path);
-                        this.avatar.draw(var1);
-                        var1.restoreToCount(clip);
+                        int clip = drawTarget.save();
+                        drawTarget.clipPath(this.avatar_path);
+                        this.avatar.draw(drawTarget);
+                        drawTarget.restoreToCount(clip);
                     } else {
-                        this.avatar.draw(var1);
+                        this.avatar.draw(drawTarget);
                     }
-                    var1.restoreToCount(var10);
-                    var10 = 0 + this.avatar_back.getBounds().width();
+                    drawTarget.restoreToCount(saveCount);
+                    saveCount = this.avatar_back.getBounds().width();
                 }
 
                 if (this.has_unreaded) {
@@ -449,108 +460,108 @@ public class RosterItemView extends View {
                         this.status.setAlpha(this.value_);
                     }
 
-                    this.drawIcon(this.status, var1, (float)var10);
+                    this.drawIcon(this.status, drawTarget, (float)saveCount);
                     ((BitmapDrawable)this.status).setCustomPaint(this.effect);
-                    this.drawIcon(this.status, var1, (float)var10);
-                    ((BitmapDrawable)this.status).setCustomPaint((Paint)null);
+                    this.drawIcon(this.status, drawTarget, (float)saveCount);
+                    ((BitmapDrawable)this.status).setCustomPaint(null);
                 } else {
-                    this.drawIcon(this.status, var1, (float)var10);
+                    this.drawIcon(this.status, drawTarget, (float)saveCount);
                 }
 
-                int var15 = var10 + this.status.getIntrinsicWidth();
-                var10 = var15;
+                int horizontalOffset = saveCount + this.status.getIntrinsicWidth();
+                saveCount = horizontalOffset;
                 if (this.ex_status != null) {
-                    this.drawIcon(this.ex_status, var1, (float)var15);
+                    this.drawIcon(this.ex_status, drawTarget, (float)horizontalOffset);
                     if (this.has_unreaded) {
                         ((BitmapDrawable)this.ex_status).setCustomPaint(this.effect);
-                        this.drawIcon(this.ex_status, var1, (float)var15);
-                        ((BitmapDrawable)this.ex_status).setCustomPaint((Paint)null);
+                        this.drawIcon(this.ex_status, drawTarget, (float)horizontalOffset);
+                        ((BitmapDrawable)this.ex_status).setCustomPaint(null);
                     }
 
-                    var10 = var15 + this.ex_status.getIntrinsicWidth();
+                    saveCount = horizontalOffset + this.ex_status.getIntrinsicWidth();
                 }
 
                 if (this.unreaded_count > 1) {
-                    float var4 = this.getCounterWidth();
-                    float var5 = this.getCounterHeight();
-                    var15 = var1.save();
-                    float var6 = this.icons_center;
-                    float var7 = (float)(this.status.getIntrinsicHeight() / 2);
-                    var1.translate((float)var10 - var4, var6 + var7 - var5);
-                    Drawable var8 = resources.msgs_number_back;
-                    var8.setBounds(-3, -3, (int)var4 + 3, (int)this.counter_.getTextSize() + 3);
-                    var8.draw(var1);
-                    var1.drawText(String.valueOf(this.unreaded_count), 0.0F, -this.counter_.ascent(), this.counter_);
-                    var1.restoreToCount(var15);
+                    float counterWidthInPixels = this.getCounterWidth();
+                    float counterHeightInPixels = this.getCounterHeight();
+                    horizontalOffset = drawTarget.save();
+                    float iconCenterY = this.icons_center;
+                    float iconHeightInPixels = (float)(this.status.getIntrinsicHeight() / 2);
+                    drawTarget.translate((float)saveCount - counterWidthInPixels, iconCenterY + iconHeightInPixels - counterHeightInPixels);
+                    Drawable unreadMessageBackground = resources.msgs_number_back;
+                    unreadMessageBackground.setBounds(-3, -3, (int)counterWidthInPixels + 3, (int)this.counter_.getTextSize() + 3);
+                    unreadMessageBackground.draw(drawTarget);
+                    drawTarget.drawText(String.valueOf(this.unreaded_count), 0.0F, -this.counter_.ascent(), this.counter_);
+                    drawTarget.restoreToCount(horizontalOffset);
                 }
 
-                var15 = 0;
-                var10 = var15;
+                horizontalOffset = 0;
+                saveCount = horizontalOffset;
                 if (this.draw_client) {
-                    var10 = var15;
+                    saveCount = horizontalOffset;
                     if (this.client != null) {
-                        this.drawIconInverse(this.client, var1, (float)0);
-                        var10 = 0 + this.client.getBounds().width();
+                        this.drawIconInverse(this.client, drawTarget, (float)0);
+                        saveCount = this.client.getBounds().width();
                     }
                 }
 
-                var15 = var10;
+                horizontalOffset = saveCount;
                 if (this.visibility != null) {
-                    this.drawIconInverse(this.visibility, var1, (float)var10);
-                    var15 = var10 + this.visibility.getIntrinsicWidth();
+                    this.drawIconInverse(this.visibility, drawTarget, (float)saveCount);
+                    horizontalOffset = saveCount + this.visibility.getIntrinsicWidth();
                 }
 
                 if (this.ignore != null) {
-                    this.drawIconInverse(this.ignore, var1, (float)var15);
+                    this.drawIconInverse(this.ignore, drawTarget, (float)horizontalOffset);
                     this.ignore.getIntrinsicWidth();
                 }
 
                 if (this.draw_status_desc && this.status_text != null) {
-                    var15 = var1.save();
-                    var1.translate(this.sts_left, this.sts_top);
-                    var10 = 0;
+                    horizontalOffset = drawTarget.save();
+                    drawTarget.translate(this.sts_left, this.sts_top);
+                    saveCount = 0;
                     if (this.use_blink) {
-                        var10 = this.status_text_.getColor();
+                        saveCount = this.status_text_.getColor();
                         if (this.blink_visible) {
-                            this.status_text_.setColor(var10);
+                            this.status_text_.setColor(saveCount);
                         } else {
                             this.status_text_.setColor(0);
                         }
                     }
 
-                    this.drawText(var1, this.status_text_.getColor());
+                    this.drawText(drawTarget, this.status_text_.getColor());
                     if (this.use_blink) {
-                        this.status_text_.setColor(var10);
+                        this.status_text_.setColor(saveCount);
                     }
 
-                    var1.restoreToCount(var15);
+                    drawTarget.restoreToCount(horizontalOffset);
                 }
                 break;
             case 1:
                 if (this.opened) {
-                    this.drawIcon(resources.group_opened, var1, (float)0);
+                    this.drawIcon(resources.group_opened, drawTarget, (float)0);
                 } else {
-                    this.drawIcon(resources.group_closed, var1, (float)0);
+                    this.drawIcon(resources.group_closed, drawTarget, (float)0);
                 }
 
                 resources.group_opened.getIntrinsicWidth();
                 break;
             case 2:
                 if (this.opened) {
-                    this.drawIcon(resources.group_opened, var1, (float)0);
+                    this.drawIcon(resources.group_opened, drawTarget, (float)0);
                 } else {
-                    this.drawIcon(resources.group_closed, var1, (float)0);
+                    this.drawIcon(resources.group_closed, drawTarget, (float)0);
                 }
 
-                int var3 = 0 + resources.group_opened.getIntrinsicWidth();
-                int var9 = var3;
+                int groupIconWidth = resources.group_opened.getIntrinsicWidth();
+                int horizontalPosition = groupIconWidth;
                 if (this.status != null) {
-                    this.drawIcon(this.status, var1, (float)(var3 + 3));
-                    var9 = var3 + this.status.getIntrinsicWidth();
+                    this.drawIcon(this.status, drawTarget, (float)(groupIconWidth + 3));
+                    horizontalPosition = groupIconWidth + this.status.getIntrinsicWidth();
                 }
 
                 if (this.ex_status != null) {
-                    this.drawIcon(this.ex_status, var1, (float)(var9 + 3));
+                    this.drawIcon(this.ex_status, drawTarget, (float)(horizontalPosition + 3));
                     this.ex_status.getIntrinsicWidth();
                 }
         }
@@ -558,14 +569,14 @@ public class RosterItemView extends View {
         if (this.use_blink && !this.blink_posted) {
             this.postDelayed(new Runnable() {
                 public void run() {
-                    boolean var1 = false;
+                    boolean isVisible = false;
                     RosterItemView.this.blink_posted = false;
                     RosterItemView var2 = RosterItemView.this;
                     if (!RosterItemView.this.blink_visible) {
-                        var1 = true;
+                        isVisible = true;
                     }
 
-                    var2.blink_visible = var1;
+                    var2.blink_visible = isVisible;
                     RosterItemView.this.invalidate();
                     RosterItemView.this.checkNeedBlinking();
                 }
@@ -575,10 +586,10 @@ public class RosterItemView extends View {
 
     }
 
-    public final void onMeasure(int var1, int var2) {
-        var1 = MeasureSpec.getSize(var1);
-        this.available_width = var1;
-        this.measureHeight(var1);
+    public final void onMeasure(int newWidthMeasureSpec, int heightSpec) {
+        newWidthMeasureSpec = MeasureSpec.getSize(newWidthMeasureSpec);
+        this.available_width = newWidthMeasureSpec;
+        this.measureHeight(newWidthMeasureSpec);
     }
 
     public final void update(ContactlistItem item) {
@@ -589,13 +600,13 @@ public class RosterItemView extends View {
         this.status_text_.setTextSize((this.name_.getTextSize() * 0.7f) / resources.dm.density);
         this.counter_.setTextSize(this.name_.getTextSize() * 0.8f);
         this.counter_.setColor(-1);
-        this.counter_.setShadowLayer(1.0f, 0.0f, 0.0f, -16777216);
+        this.counter_.setShadowLayer(1.0f, 0.0f, 0.0f, 0xFF000000);
         this.effect.setColor(-1);
         this.effect.setTextSize(this.name_.getTextSize());
         if (!PreferenceTable.use_contactlist_items_shadow) {
             this.name_.setShadowLayer(0.0f, 0.0f, 0.0f, 0);
         } else {
-            this.name_.setShadowLayer(1.0f, 1.0f, 1.0f, -16777216);
+            this.name_.setShadowLayer(1.0f, 1.0f, 1.0f, 0xFF000000);
         }
         this.blink_zero_ts = item.presense_timestamp;
         checkNeedBlinking();
@@ -700,7 +711,7 @@ public class RosterItemView extends View {
                 this.opened = group.opened;
                 this.online = group.online;
                 this.total = group.total;
-                this.name = String.valueOf(this.name) + "(" + this.online + "/" + this.total + ")";
+                this.name = this.name + "(" + this.online + "/" + this.total + ")";
                 this.type = 1;
                 this.draw_avatar = false;
                 break;
@@ -726,7 +737,7 @@ public class RosterItemView extends View {
                 this.opened = group2.profile.openedInContactList;
                 this.online = group2.online;
                 this.total = group2.total;
-                this.name = String.valueOf(this.name) + "(" + this.online + "/" + this.total + ")";
+                this.name = this.name + "(" + this.online + "/" + this.total + ")";
                 this.type = 2;
                 this.draw_avatar = false;
                 break;
@@ -771,11 +782,7 @@ public class RosterItemView extends View {
                 } else {
                     this.draw_avatar = false;
                 }
-                if (jcontact.hasUnreadMessages) {
-                    this.has_unreaded = true;
-                } else {
-                    this.has_unreaded = false;
-                }
+                this.has_unreaded = jcontact.hasUnreadMessages;
                 if (jcontact.typing) {
                     this.status = resources.typing;
                     this.typing = true;
@@ -811,35 +818,32 @@ public class RosterItemView extends View {
                         case 1:
                             if (jcontact.isOnline()) {
                                 this.status = resources.vk_online;
-                                break;
                             } else {
                                 this.status = resources.vk_offline;
-                                break;
                             }
+                            break;
                         case 2:
                             if (jcontact.isOnline()) {
                                 this.status = resources.yandex_online;
-                                break;
                             } else {
                                 this.status = resources.yandex_offline;
-                                break;
                             }
+                            break;
                         case 3:
                             if (jcontact.isOnline()) {
                                 this.status = resources.gtalk_online;
-                                break;
                             } else {
                                 this.status = resources.gtalk_offline;
-                                break;
                             }
+                            break;
                         case 4:
                             if (jcontact.isOnline()) {
+                                //noinspection UnusedAssignment
                                 this.status = resources.qip_online;
-                                break;
                             } else {
                                 this.status = resources.qip_offline;
-                                break;
                             }
+                            break;
                     }
                     if (jcontact.hasUnreadMessages) {
                         this.status = resources.msg_in_blink;
@@ -888,40 +892,36 @@ public class RosterItemView extends View {
                     case 1:
                         if (group3.jprofile.connected) {
                             this.status = resources.vk_online;
-                            break;
                         } else {
                             this.status = resources.vk_offline;
-                            break;
                         }
+                        break;
                     case 2:
                         if (group3.jprofile.connected) {
                             this.status = resources.yandex_online;
-                            break;
                         } else {
                             this.status = resources.yandex_offline;
-                            break;
                         }
+                        break;
                     case 3:
                         if (group3.jprofile.connected) {
                             this.status = resources.gtalk_online;
-                            break;
                         } else {
                             this.status = resources.gtalk_offline;
-                            break;
                         }
+                        break;
                     case 4:
                         if (group3.jprofile.connected) {
                             this.status = resources.qip_online;
-                            break;
                         } else {
                             this.status = resources.qip_offline;
-                            break;
                         }
+                        break;
                 }
                 this.opened = group3.jprofile.openedInContactList;
                 this.online = group3.online;
                 this.total = group3.total;
-                this.name = String.valueOf(this.name) + "(" + this.online + "/" + this.total + ")";
+                this.name = this.name + "(" + this.online + "/" + this.total + ")";
                 this.type = 2;
                 this.draw_avatar = false;
                 break;
@@ -933,7 +933,7 @@ public class RosterItemView extends View {
                 this.opened = jgroup.opened;
                 this.online = jgroup.online;
                 this.total = jgroup.total;
-                this.name = String.valueOf(this.name) + "(" + this.online + "/" + this.total + ")";
+                this.name = this.name + "(" + this.online + "/" + this.total + ")";
                 this.type = 1;
                 this.draw_avatar = false;
                 break;
@@ -963,11 +963,7 @@ public class RosterItemView extends View {
                 } else {
                     this.draw_avatar = false;
                 }
-                if (mmp_contact.hasUnreadMessages) {
-                    this.has_unreaded = true;
-                } else {
-                    this.has_unreaded = false;
-                }
+                this.has_unreaded = mmp_contact.hasUnreadMessages;
                 if (mmp_contact.typing) {
                     this.status = resources.typing;
                     this.typing = true;
@@ -975,12 +971,6 @@ public class RosterItemView extends View {
                     switch (mmp_contact.status) {
                         case 0:
                             this.status = resources.mrim_offline;
-                            break;
-                        case 1:
-                        case 3:
-                        case 4:
-                        default:
-                            this.status = resources.mrim_online;
                             break;
                         case 2:
                             this.status = resources.mrim_away;
@@ -1011,6 +1001,9 @@ public class RosterItemView extends View {
                             break;
                         case 13:
                             this.status = resources.mrim_chat;
+                            break;
+                        default: // 1 - 4
+                            this.status = resources.mrim_online;
                             break;
                     }
                     if (mmp_contact.hasUnreadMessages) {
@@ -1034,12 +1027,6 @@ public class RosterItemView extends View {
                         case 0:
                             this.status = resources.mrim_offline;
                             break;
-                        case 1:
-                        case 3:
-                        case 4:
-                        default:
-                            this.status = resources.mrim_online;
-                            break;
                         case 2:
                             this.status = resources.mrim_away;
                             break;
@@ -1070,6 +1057,9 @@ public class RosterItemView extends View {
                         case 13:
                             this.status = resources.mrim_chat;
                             break;
+                        default: // 1 - 4
+                            this.status = resources.mrim_online;
+                            break;
                     }
                 } else {
                     this.status = resources.mrim_offline;
@@ -1077,7 +1067,7 @@ public class RosterItemView extends View {
                 this.opened = mmpgroup.profile.openedInContactList;
                 this.online = mmpgroup.online;
                 this.total = mmpgroup.total;
-                this.name = String.valueOf(this.name) + "(" + this.online + "/" + this.total + ")";
+                this.name = this.name + "(" + this.online + "/" + this.total + ")";
                 this.type = 2;
                 this.draw_avatar = false;
                 break;
@@ -1089,7 +1079,7 @@ public class RosterItemView extends View {
                 this.opened = mmpgroup2.opened;
                 this.online = mmpgroup2.online;
                 this.total = mmpgroup2.total;
-                this.name = String.valueOf(this.name) + "(" + this.online + "/" + this.total + ")";
+                this.name = this.name + "(" + this.online + "/" + this.total + ")";
                 this.type = 1;
                 this.draw_avatar = false;
                 break;

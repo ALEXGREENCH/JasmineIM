@@ -4,13 +4,13 @@ plugins {
 
 android {
     //noinspection GradleDependency
-    compileSdk 32
+    compileSdk 33
 
     defaultConfig {
         applicationId "ru.ivansuper.jasmin"
         minSdk 10
-        //noinspection ExpiredTargetSdkVersion
-        targetSdk 32
+        //noinspection EditedTargetSdkVersion,ExpiredTargetSdkVersion
+        targetSdk 33
         versionCode 30
         versionName "5.5.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

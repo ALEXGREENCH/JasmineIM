@@ -595,7 +595,7 @@ public class UAdapter extends BaseAdapter {
                 label.setTextColor(this.text_color);
                 label.setText(lbl);
                 label.setBackgroundColor(ColorScheme.getColor(44));
-                label.setShadowLayer(1.0f, 0.0f, 0.0f, -16777216);
+                label.setShadowLayer(1.0f, 0.0f, 0.0f, 0xFF000000);
             } else {
                 label.setVisibility(View.GONE);
             }
@@ -624,7 +624,7 @@ public class UAdapter extends BaseAdapter {
                 }
                 label.setTextSize(this.text_size);
                 label.setTextColor(this.text_color);
-                label.setShadowLayer(1.0f, 0.0f, 0.0f, -16777216);
+                label.setShadowLayer(1.0f, 0.0f, 0.0f, 0xFF000000);
                 label.setText(this.labels.get(position));
                 if (this.mode != 0) {
                     if (this.mode == 2) {
@@ -641,7 +641,7 @@ public class UAdapter extends BaseAdapter {
             } else {
                 label.setTextSize(this.text_size);
                 label.setTextColor(this.text_color);
-                label.setShadowLayer(3.0f, 0.0f, 0.0f, -4988581);
+                label.setShadowLayer(3.0f, 0.0f, 0.0f, 0xFFB1B1B1);
                 label.setText(this.filtered.get(position).label);
             }
         }

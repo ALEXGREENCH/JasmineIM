@@ -55,7 +55,7 @@ import ru.ivansuper.jasmin.slide_tools.SlideSwitcher;
  * - Offering utility methods for converting Drawables, copying assets, and determining device characteristics (e.g., if it's a tablet).
  * - Managing localization and string resources.
  * - Initializing core application resources and settings upon context provision.
- *
+ * <p>
  * This class uses static fields and methods, making its functionalities globally accessible throughout the application.
  * It plays a crucial role in the visual presentation and resource management of the application.
  */
