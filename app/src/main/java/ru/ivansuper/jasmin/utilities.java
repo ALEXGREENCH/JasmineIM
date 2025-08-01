@@ -1128,9 +1128,6 @@ public class utilities {
      * @return The normalized file path string, guaranteed to end with a file separator.
      */
     public static String normalizePath(String path) {
-        if (path == null || path.isEmpty()) {
-            return "";
-        }
         if (!path.endsWith(File.separator)) {
             return path + File.separator;
         }
