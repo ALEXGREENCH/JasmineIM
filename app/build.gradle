@@ -10,7 +10,7 @@ android {
         applicationId "ru.ivansuper.jasmin"
         minSdk 10
         //noinspection EditedTargetSdkVersion,ExpiredTargetSdkVersion
-        targetSdk 33
+        targetSdk 32
         versionCode 30
         versionName "5.5.3"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
