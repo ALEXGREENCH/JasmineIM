@@ -156,6 +156,7 @@ s_import_colors_success := Import completed
 //Misc
 //=============================
 s_changing_avatar := Changing avatar ...
+s_loading_avatar := Loading avatar ...
 s_change_avatar_error_1 := Timeout, avatar didn't change
 s_change_avatar_error_2 := Error, avatar didn't change
 s_change_avatar_success := Avatar updated
