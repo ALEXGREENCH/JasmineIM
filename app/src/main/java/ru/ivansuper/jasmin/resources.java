@@ -2297,6 +2297,7 @@ public class resources {
 
         // Store all application files on external storage so they are easily
         // accessible via the built-in file browser.
+        dataPath = JASMINE_SD_PATH;
 
         am = ctx.getAssets();
         Locale.prepare();
@@ -2308,7 +2309,6 @@ public class resources {
             SD_PATH = ctx.getFilesDir().getAbsolutePath();
         }
         JASMINE_SD_PATH = SD_PATH + "/Jasmine/";
-        dataPath = JASMINE_SD_PATH;
         JASMINE_LOG_PATH = JASMINE_SD_PATH + "Logs/";
         JASMINE_INCOMING_FILES_PATH = JASMINE_SD_PATH + "RcvdFiles/";
         JASMINE_JHA_PATH = JASMINE_SD_PATH + "Jasmine History Archive/";
