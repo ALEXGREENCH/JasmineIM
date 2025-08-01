@@ -28,7 +28,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import ru.ivansuper.jasmin.Preferences.PreferenceTable;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -599,9 +598,7 @@ public class resources {
      * @noinspection unused
      */
     public static void attachIngMsg(View view) {
-        if (PreferenceTable.ms_telegram_style) {
-            view.setBackgroundResource(R.drawable.telegram_bubble_in);
-        } else if (incoming_message_back != null) {
+        if (incoming_message_back != null) {
             view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), incoming_message_back, incoming_message_back.getNinePatchChunk(), incoming_message_back_padding, null));
         }
 
@@ -618,9 +615,7 @@ public class resources {
      * @noinspection unused
      */
     public static void attachOutMsg(View view) {
-        if (PreferenceTable.ms_telegram_style) {
-            view.setBackgroundResource(R.drawable.telegram_bubble_out);
-        } else if (outgoing_message_back != null) {
+        if (outgoing_message_back != null) {
             view.setBackgroundDrawable(new NinePatchDrawable(ctx.getResources(), outgoing_message_back, outgoing_message_back.getNinePatchChunk(), outgoing_message_back_padding, null));
         }
 
@@ -2160,32 +2155,20 @@ public class resources {
             } catch (Exception ignored) {
             }
         }
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx);
-        if (prefs.getBoolean("ms_telegram_style", false)) {
-            custom_wallpaper = ctx.getResources().getDrawable(R.drawable.telegram_wallpaper);
-        }
-
-    }
-
-    public static Drawable mutateDrawableA(Drawable var0) {
-        Bitmap var2 = ((BitmapDrawable) var0).getBitmap();
-        BitmapDrawable var1 = new BitmapDrawable(var2);
-        var1.setBounds(0, 0, var2.getWidth(), var2.getHeight());
-        return var1;
     }
 
     public static Drawable normalize(Drawable drawable) {
-        ru.ivansuper.jasmin.BitmapDrawable var1;
+        ru.ivansuper.jasmin.BitmapDrawable bitmapDrawable;
         if (drawable == null) {
-            var1 = null;
+            bitmapDrawable = null;
         } else {
-            Bitmap var2 = ((BitmapDrawable) drawable).getBitmap().copy(Config.ARGB_4444, false);
-            var2.setDensity(0);
-            var1 = new ru.ivansuper.jasmin.BitmapDrawable(var2);
-            var1.setBounds(0, 0, var1.getIntrinsicWidth(), var1.getIntrinsicHeight());
+            Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap().copy(Config.ARGB_4444, false);
+            bitmap.setDensity(0);
+            bitmapDrawable = new ru.ivansuper.jasmin.BitmapDrawable(bitmap);
+            bitmapDrawable.setBounds(0, 0, bitmapDrawable.getIntrinsicWidth(), bitmapDrawable.getIntrinsicHeight());
         }
 
-        return var1;
+        return bitmapDrawable;
     }
 
     /**

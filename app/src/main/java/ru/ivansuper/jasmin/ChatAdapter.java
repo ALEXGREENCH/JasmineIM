@@ -12,12 +12,11 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.view.Gravity;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.text.SimpleDateFormat;
 
 import ru.ivansuper.jasmin.Preferences.Manager;
 import ru.ivansuper.jasmin.Preferences.PreferenceTable;
@@ -39,6 +38,7 @@ public class ChatAdapter extends BaseAdapter {
     private int profile_type;
     private final ArrayList<HistoryItem> list = new ArrayList<>();
     private int cutted = 0;
+    @SuppressLint("SimpleDateFormat")
     private final SimpleDateFormat dayFormat = new SimpleDateFormat("dd MMM yyyy");
 
     private boolean isNewDay(long prev, long current) {
@@ -158,7 +158,6 @@ public class ChatAdapter extends BaseAdapter {
         TextView time = msg.findViewById(R.id.msg_time);
         MyTextView message = msg.findViewById(R.id.msg_text);
         message.setFocusable(false);
-        LinearLayout msgContainer = msg.findViewById(R.id.msg_container);
         LinearLayout status = msg.findViewById(R.id.msg_status);
         ImageView sts = msg.findViewById(R.id.msg_sts_icon);
         CheckBox selector = msg.findViewById(R.id.chat_item_checkbox);
@@ -191,32 +190,20 @@ public class ChatAdapter extends BaseAdapter {
             selector.setVisibility(View.GONE);
         }
         message.setTextSize(PreferenceTable.chatTextSize);
-        if (PreferenceTable.ms_telegram_style) {
+        if (PreferenceTable.ms_chat_style == 1) {
+            status.setVisibility(View.GONE);
             if (hst.direction == 1) {
-                message.setBackgroundResource(R.drawable.telegram_bubble_in);
-                message.setTextColor(0xffffffff);
-                ((LinearLayout.LayoutParams) msgContainer.getLayoutParams()).gravity = Gravity.START;
+                sts.setImageDrawable(resources.msg_in);
+            } else if (hst.confirmed) {
+                sts.setImageDrawable(resources.msg_out_c);
             } else {
-                message.setBackgroundResource(R.drawable.telegram_bubble_out);
-                message.setTextColor(ctx.getResources().getColor(R.color.telegram_text_primary));
-                ((LinearLayout.LayoutParams) msgContainer.getLayoutParams()).gravity = Gravity.END;
+                sts.setImageDrawable(resources.msg_out);
             }
+        } else {
+            status.setVisibility(View.VISIBLE);
+            sts.setImageDrawable(null);
         }
-        if (!PreferenceTable.ms_telegram_style) {
-            if (PreferenceTable.ms_chat_style == 1) {
-                status.setVisibility(View.GONE);
-                if (hst.direction == 1) {
-                    sts.setImageDrawable(resources.msg_in);
-                } else if (hst.confirmed) {
-                    sts.setImageDrawable(resources.msg_out_c);
-                } else {
-                    sts.setImageDrawable(resources.msg_out);
-                }
-            } else {
-                status.setVisibility(View.VISIBLE);
-                sts.setImageDrawable(null);
-            }
-            if (hst.isAuthMessage) {
+        if (hst.isAuthMessage) {
             if (hst.contact != null) {
                 nick.setText(hst.contact.name);
             }
@@ -257,74 +244,6 @@ public class ChatAdapter extends BaseAdapter {
                     }
                     break;
             }
-        } else if (hst.direction == 1) {
-            if (hst.contact != null) {
-                nick.setText(hst.contact.name);
-            }
-            if (hst.jcontact != null) {
-                nick.setText(hst.jcontact.name);
-            }
-            if (hst.mcontact != null) {
-                nick.setText(hst.mcontact.name);
-            }
-            nick.setTextColor(ColorScheme.getColor(17));
-            if (hst.isXtrazMessage) {
-                nick.setVisibility(View.GONE);
-                sts.setImageDrawable(null);
-                status.setBackgroundColor(0);
-                message.setTextColor(ColorScheme.getColor(26));
-                message.setLinkTextColor(ColorScheme.getColor(26));
-                msg.setBackgroundColor(ColorScheme.getColor(24));
-                resources.attachStatusMsg(msg);
-                time.setPadding(5, 5, 5, 5);
-                time.setCompoundDrawables(hst.xTrazIcon, null, null, null);
-            } else if (hst.isFileMessage) {
-                nick.setText("");
-                status.setBackgroundColor(ColorScheme.getColor(15));
-                message.setTextColor(ColorScheme.getColor(16));
-                message.setLinkTextColor(ColorScheme.getColor(16));
-                msg.setBackgroundColor(ColorScheme.getColor(14));
-                resources.attachTransferMsg(msg);
-                time.setPadding(5, 5, 5, 5);
-                time.setCompoundDrawables(resources.file_for_chat, null, null, null);
-            } else {
-                status.setBackgroundColor(ColorScheme.getColor(15));
-                message.setTextColor(ColorScheme.getColor(16));
-                message.setLinkTextColor(ColorScheme.getColor(16));
-                msg.setBackgroundColor(ColorScheme.getColor(14));
-                resources.attachIngMsg(msg);
-                time.setPadding(0, 0, 0, 0);
-                if (hst.wakeup_alarm) {
-                    time.setCompoundDrawables(resources.mrim_wakeup, null, null, null);
-                } else {
-                    time.setCompoundDrawables(null, null, null, null);
-                }
-            }
-        } else {
-            if (hst.contact != null) {
-                nick.setText(hst.contact.profile.nickname);
-            }
-            if (hst.jcontact != null) {
-                nick.setText(hst.jcontact.profile.ID);
-            }
-            if (hst.mcontact != null) {
-                nick.setText(hst.mcontact.profile.ID);
-            }
-            nick.setTextColor(ColorScheme.getColor(22));
-            time.setPadding(0, 0, 0, 0);
-            time.setCompoundDrawables(null, null, null, null);
-            if (hst.confirmed) {
-                status.setBackgroundColor(ColorScheme.getColor(19));
-                message.setTextColor(ColorScheme.getColor(21));
-                message.setLinkTextColor(ColorScheme.getColor(21));
-            } else {
-                status.setBackgroundColor(ColorScheme.getColor(20));
-                message.setTextColor(ColorScheme.getColor(23));
-                message.setLinkTextColor(ColorScheme.getColor(23));
-            }
-            msg.setBackgroundColor(ColorScheme.getColor(18));
-            resources.attachOutMsg(msg);
-        }
         }
         boolean update_imgs = false;
         if (hst.messageS == null) {

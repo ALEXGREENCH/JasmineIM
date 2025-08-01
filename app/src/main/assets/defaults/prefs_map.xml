@@ -61,7 +61,7 @@
 <string name="ms_messages_limit_value">100</string>
 <boolean name="ms_conf_show_theme" value="true" />
 <boolean name="ms_use_messages_merging" value="false" />
-<boolean name="ms_round_avatars" value="false" />
-<boolean name="ms_telegram_style" value="false" />
+<boolean name="ms_show_avatars" value="true" />
+<boolean name="ms_round_avatars" value="true" />
 </map>
 

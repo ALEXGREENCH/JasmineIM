@@ -10,7 +10,6 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:padding="4dp"
-        android:textColor="@color/telegram_text_secondary"
         android:textSize="12sp"
         android:visibility="gone" />
 
@@ -74,7 +73,8 @@
                         android:layout_width="2sp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="2sp"
-                        android:background="#ffaaaa00" />
+                        android:background="#ffaaaa00"
+                        android:orientation="horizontal" />
 
                     <LinearLayout
                         android:id="@+id/msg_container"
@@ -90,8 +90,7 @@
                             android:id="@+id/msg_text"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_margin="2sp"
-                            android:textColor="@color/telegram_text_primary" />
+                            android:layout_margin="2sp" />
 
                         <LinearLayout
                             android:id="@+id/transfer_layout"

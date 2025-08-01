@@ -57,22 +57,18 @@ public class DiscoActivity extends Activity {
     public void onCreate(Bundle bundle) {
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
-        if (sp.getBoolean("ms_telegram_style", false)) {
-            setTheme(R.style.TelegramTheme);
-        } else {
-            switch (wallpaper_type) {
-                case "0":
-                    setTheme(R.style.WallpaperNoTitleTheme);
-                    break;
-                case "1":
-                    setTheme(R.style.BlackNoTitleTheme);
-                    getWindow().setBackgroundDrawable(resources.custom_wallpaper);
-                    break;
-                case "2":
-                    setTheme(R.style.BlackNoTitleTheme);
-                    getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
-                    break;
-            }
+        switch (wallpaper_type) {
+            case "0":
+                setTheme(R.style.WallpaperNoTitleTheme);
+                break;
+            case "1":
+                setTheme(R.style.BlackNoTitleTheme);
+                getWindow().setBackgroundDrawable(resources.custom_wallpaper);
+                break;
+            case "2":
+                setTheme(R.style.BlackNoTitleTheme);
+                getWindow().setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
+                break;
         }
         setVolumeControlStream(3);
         super.onCreate(bundle);

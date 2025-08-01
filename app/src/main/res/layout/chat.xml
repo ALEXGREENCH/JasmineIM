@@ -25,7 +25,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alwaysDrawnWithCache="false"
-                android:background="@drawable/telegram_toolbar"
                 android:gravity="center_vertical"
                 android:orientation="vertical">
 
@@ -148,6 +147,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:background="@drawable/smiley_and_send_btn"
+                        android:orientation="horizontal"
                         android:paddingTop="3sp" />
                 </LinearLayout>
 
@@ -189,7 +189,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:alwaysDrawnWithCache="false"
-                android:background="@drawable/telegram_toolbar"
                 android:gravity="center_horizontal"
                 android:orientation="vertical">
 

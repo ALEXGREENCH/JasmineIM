@@ -96,26 +96,22 @@ public class SmileysSelector extends Activity {
         String wallpaper_type = sp.getString("ms_wallpaper_type", "0");
 
         //noinspection DataFlowIssue
-        if (sp.getBoolean("ms_telegram_style", false)) {
-            setTheme(R.style.TelegramTheme);
-        } else {
-            switch (wallpaper_type) {
-                case "0":
-                    setTheme(R.style.WallpaperNoTitleTheme);
-                    break;
-                case "1":
-                case "2":
-                    setTheme(R.style.BlackNoTitleTheme);
-                    Window wnd = getWindow();
-                    if (wallpaper_type.equals("1")) {
-                        wnd.setBackgroundDrawable(resources.custom_wallpaper);
-                    } else //noinspection ConstantValue
-                        if (wallpaper_type.equals("2")) {
+        switch (wallpaper_type) {
+            case "0":
+                setTheme(R.style.WallpaperNoTitleTheme);
+                break;
+            case "1":
+            case "2":
+                setTheme(R.style.BlackNoTitleTheme);
+                Window wnd = getWindow();
+                if (wallpaper_type.equals("1")) {
+                    wnd.setBackgroundDrawable(resources.custom_wallpaper);
+                } else //noinspection ConstantValue
+                    if (wallpaper_type.equals("2")) {
                         wnd.setBackgroundDrawable(ColorScheme.getSolid(ColorScheme.getColor(13)));
                     }
-                    resources.attachChatMessagesBack(wnd);
-                    break;
-            }
+                resources.attachChatMessagesBack(wnd);
+                break;
         }
     }
 
