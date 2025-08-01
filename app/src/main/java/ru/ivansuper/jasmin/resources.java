@@ -70,6 +70,8 @@ public class resources {
     public static String JASMINE_JHA_PATH;
     public static String JASMINE_SD_PATH;
     public static String JASMINE_SKIN_PATH;
+    /** Directory on external storage where log files are written */
+    public static String JASMINE_LOG_PATH;
     public static int OS_VERSION = 3;
     public static String OS_VERSION_STR = "";
     @SuppressLint("SdCardPath")
@@ -2293,23 +2295,21 @@ public class resources {
             e.printStackTrace();
         }
 
-        try {
-            File dataDir = new File(ctx.getPackageManager().getApplicationInfo(ctx.getPackageName(), 0).dataDir);
-            dataPath = dataDir.getAbsolutePath() + "/";
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+        // Store all application files on external storage so they are easily
+        // accessible via the built-in file browser.
+        dataPath = JASMINE_SD_PATH;
 
         am = ctx.getAssets();
         Locale.prepare();
         OS_VERSION = Integer.parseInt(android.os.Build.VERSION.SDK);
-        File ext = ctx.getExternalFilesDir(null);
-        if (ext != null) {
-            SD_PATH = ext.getAbsolutePath();
+        File extStorage = Environment.getExternalStorageDirectory();
+        if (extStorage != null) {
+            SD_PATH = extStorage.getAbsolutePath();
         } else {
             SD_PATH = ctx.getFilesDir().getAbsolutePath();
         }
         JASMINE_SD_PATH = SD_PATH + "/Jasmine/";
+        JASMINE_LOG_PATH = JASMINE_SD_PATH + "Logs/";
         JASMINE_INCOMING_FILES_PATH = JASMINE_SD_PATH + "RcvdFiles/";
         JASMINE_JHA_PATH = JASMINE_SD_PATH + "Jasmine History Archive/";
         JASMINE_SKIN_PATH = JASMINE_SD_PATH + "Skin/";
@@ -2318,7 +2318,7 @@ public class resources {
         DEVICE_STR = utilities.compute(Build.BRAND, Build.MODEL);
         SOFTWARE_STR = Build.ID;
 
-        createDirectories(JASMINE_INCOMING_FILES_PATH, JASMINE_SD_PATH, JASMINE_JHA_PATH, JASMINE_SKIN_PATH);
+        createDirectories(JASMINE_INCOMING_FILES_PATH, JASMINE_SD_PATH, JASMINE_JHA_PATH, JASMINE_SKIN_PATH, JASMINE_LOG_PATH);
 
         res = ctx.getResources();
         loadGraphics();
