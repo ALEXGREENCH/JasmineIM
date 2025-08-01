@@ -647,6 +647,7 @@ s_ms_log_xtraz_reading := Monitor reading of status
 s_ms_log_online := Monitor online
 s_ms_log_offline := Monitor offline
 s_ms_use_popup := Pop-up notifications
+s_ms_heads_up_notify := Heads-up notifications
 s_ms_contactlist := Contact list
 s_ms_groups := Show groups
 s_ms_emptygroups := Hide empty groups

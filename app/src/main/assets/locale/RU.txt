@@ -647,6 +647,7 @@ s_ms_log_xtraz_reading := Следить за чтением статуса
 s_ms_log_online := Следить за входом
 s_ms_log_offline := Следить за выходом
 s_ms_use_popup := Всплывающие уведомления
+s_ms_heads_up_notify := Heads-up уведомления
 s_ms_contactlist := Список контактов
 s_ms_groups := Показывать группы
 s_ms_emptygroups := Скрывать пустые группы

@@ -68,6 +68,8 @@ public class PreferenceTable {
     public static boolean use_contactlist_items_shadow;
     public static boolean use_ping;
     public static boolean use_popup;
+    /** Enables heads-up style system notifications for incoming messages */
+    public static boolean heads_up_notify;
     public static boolean vibroEnabled;
     public static long vibroLength;
     public static boolean wake_lock;

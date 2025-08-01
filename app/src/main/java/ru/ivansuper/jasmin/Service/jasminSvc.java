@@ -94,6 +94,8 @@ import ru.ivansuper.jasmin.utilities;
 public class jasminSvc extends Service implements SharedPreferences.OnSharedPreferenceChangeListener, Handler.Callback {
 
     private final String CHANNEL_ID = "JASMINE_CHANEL";
+    private static final String MESSAGE_CHANNEL_DEFAULT_ID = "JASMINE_MSG_DEFAULT";
+    private static final String MESSAGE_CHANNEL_HEADSUP_ID = "JASMINE_MSG_HEADSUP";
 
     /** @noinspection unused*/
     public static final int PUT_INTO_LOG = 4;
@@ -321,6 +323,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     private void startFC() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel();
+            createMessageNotificationChannels();
         }
         currentTrayIcon = R.drawable.not_connected;
         startForeground(65331, getNotification(currentTrayIcon));
@@ -337,6 +340,24 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
         NotificationManager notificationManager = getSystemService(NotificationManager.class);
         notificationManager.createNotificationChannel(channel);
+    }
+
+    @TargetApi(Build.VERSION_CODES.O)
+    private void createMessageNotificationChannels() {
+        NotificationManager manager = getSystemService(NotificationManager.class);
+        if (manager == null) return;
+        NotificationChannel high = new NotificationChannel(
+                MESSAGE_CHANNEL_HEADSUP_ID,
+                "Messages (Heads-up)",
+                NotificationManager.IMPORTANCE_HIGH
+        );
+        NotificationChannel normal = new NotificationChannel(
+                MESSAGE_CHANNEL_DEFAULT_ID,
+                "Messages",
+                NotificationManager.IMPORTANCE_DEFAULT
+        );
+        manager.createNotificationChannel(high);
+        manager.createNotificationChannel(normal);
     }
 
     @SuppressWarnings("deprecation")
@@ -571,9 +592,18 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
                         : 0
         );
 
+        String channelId = PreferenceTable.heads_up_notify ? MESSAGE_CHANNEL_HEADSUP_ID : MESSAGE_CHANNEL_DEFAULT_ID;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            Notification.Builder builder = new Notification.Builder(this)
-                    .setSmallIcon(R.drawable.icq_msg_in)
+            Notification.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                builder = new Notification.Builder(this, channelId);
+            } else {
+                builder = new Notification.Builder(this);
+                if (PreferenceTable.heads_up_notify && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    builder.setPriority(Notification.PRIORITY_HIGH);
+                }
+            }
+            builder.setSmallIcon(R.drawable.icq_msg_in)
                     .setContentTitle(header)
                     .setContentText(message)
                     .setContentIntent(contentIntent)
@@ -581,6 +611,13 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
             if (led) {
                 builder.setLights(0xFF00FF00, 1000, 1000);
+            }
+
+            if (PreferenceTable.heads_up_notify) {
+                builder.setDefaults(Notification.DEFAULT_ALL);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder.setCategory(Notification.CATEGORY_MESSAGE);
+                }
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -645,9 +682,18 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         int messagesCount = getMessagesCount(contact);
         int iconResId = resources.getTrayMessageIconResId(messagesCount);
 
+        String channelId = PreferenceTable.heads_up_notify ? MESSAGE_CHANNEL_HEADSUP_ID : MESSAGE_CHANNEL_DEFAULT_ID;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            Notification.Builder builder = new Notification.Builder(this)
-                    .setSmallIcon(iconResId)
+            Notification.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                builder = new Notification.Builder(this, channelId);
+            } else {
+                builder = new Notification.Builder(this);
+                if (PreferenceTable.heads_up_notify && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    builder.setPriority(Notification.PRIORITY_HIGH);
+                }
+            }
+            builder.setSmallIcon(iconResId)
                     .setContentTitle(header)
                     .setContentText(message)
                     .setContentIntent(contentIntent)
@@ -655,6 +701,13 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
             if (led) {
                 builder.setLights(0xFF00FF00, 1000, 1000);
+            }
+
+            if (PreferenceTable.heads_up_notify) {
+                builder.setDefaults(Notification.DEFAULT_ALL);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder.setCategory(Notification.CATEGORY_MESSAGE);
+                }
             }
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -807,9 +860,18 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
                         : PendingIntent.FLAG_UPDATE_CURRENT
         );
 
+        String channelId = PreferenceTable.heads_up_notify ? MESSAGE_CHANNEL_HEADSUP_ID : MESSAGE_CHANNEL_DEFAULT_ID;
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            Notification.Builder builder = new Notification.Builder(this)
-                    .setSmallIcon(R.drawable.icq_msg_in)
+            Notification.Builder builder;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                builder = new Notification.Builder(this, channelId);
+            } else {
+                builder = new Notification.Builder(this);
+                if (PreferenceTable.heads_up_notify && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    builder.setPriority(Notification.PRIORITY_HIGH);
+                }
+            }
+            builder.setSmallIcon(R.drawable.icq_msg_in)
                     .setContentTitle(header)
                     .setContentText(message)
                     .setContentIntent(contentIntent)
@@ -817,6 +879,13 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
             if (led) {
                 builder.setLights(0xFF00FF00, 1000, 1000);
+            }
+
+            if (PreferenceTable.heads_up_notify) {
+                builder.setDefaults(Notification.DEFAULT_ALL);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    builder.setCategory(Notification.CATEGORY_MESSAGE);
+                }
             }
 
             // setNumber доступен с API 11
@@ -1519,6 +1588,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         PreferenceTable.log_online = this.sharedPreferences.getBoolean("ms_log_online", true);
         PreferenceTable.log_offline = this.sharedPreferences.getBoolean("ms_log_offline", true);
         PreferenceTable.use_popup = this.sharedPreferences.getBoolean("ms_use_popup", true);
+        PreferenceTable.heads_up_notify = this.sharedPreferences.getBoolean("ms_heads_up_notify", true);
         PreferenceTable.use_contactlist_items_shadow = this.sharedPreferences.getBoolean("ms_use_items_shadow", true);
         PreferenceTable.chat_zebra = this.sharedPreferences.getBoolean("ms_chat_zebra", true);
         PreferenceTable.chat_dividers = this.sharedPreferences.getBoolean("ms_chat_dividers", false);
