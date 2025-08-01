@@ -146,6 +146,9 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     public Vibrator vibrator;
     /** @noinspection unused*/
     public boolean vibroEnabled;
+    // Tracks currently shown icon to avoid redundant notification updates
+    private int currentTrayIcon = -1;
+
     private PowerManager.WakeLock wakeLock;
     private WifiManager.WifiLock wifiLock;
     public static boolean ACTIVE = false;
@@ -162,14 +165,13 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent == null) {
-            return Service.START_STICKY_COMPATIBILITY;
+        if (intent != null) {
+            String action = intent.getAction();
+            if (ACTION_PING.equals(action)) {
+                notifyPingTask(intent.getLongExtra("ID", -1L));
+            }
         }
-        String action = intent.getAction();
-        if (action != null && action.equals(ACTION_PING)) {
-            notifyPingTask(intent.getLongExtra("ID", -1L));
-        }
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_STICKY;
     }
 
     /** @noinspection unused*/
@@ -320,7 +322,8 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel();
         }
-        startForeground(65331, getNotification(R.drawable.not_connected));
+        currentTrayIcon = R.drawable.not_connected;
+        startForeground(65331, getNotification(currentTrayIcon));
     }
 
     @SuppressLint("UseRequiresApi")
@@ -363,6 +366,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             builder.setContentText("");
             builder.setContentIntent(contentIntent);
             builder.setAutoCancel(true);
+            builder.setOngoing(true);
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 notification = builder.build(); // API 16+
@@ -387,6 +391,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
                 notification.icon = icon;
                 notification.when = System.currentTimeMillis();
                 notification.flags |= Notification.FLAG_AUTO_CANCEL;
+                notification.flags |= Notification.FLAG_ONGOING_EVENT;
 
                 setLatestEventInfo.invoke(
                         notification,
@@ -780,8 +785,11 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
                 if (this.clHdl != null) {
                     this.clHdl.sendEmptyMessage(ContactListActivity.UPDATE_BLINK_STATE);
                 }
-                Notification n = getNotification(icon);
-                this.notificationManager.notify(65331, n);
+                if (icon != currentTrayIcon) {
+                    Notification n = getNotification(icon);
+                    this.notificationManager.notify(65331, n);
+                    currentTrayIcon = icon;
+                }
             }
         }
     }
