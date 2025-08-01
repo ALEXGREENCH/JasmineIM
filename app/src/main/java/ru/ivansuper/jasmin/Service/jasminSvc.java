@@ -111,6 +111,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     public static final int MESSAGE_NOTIFY_ID = 65530;
     public static final int ANTISPAM_NOTIFY_ID = 65531;
     public static final int MULTICONNECT_NOTIFY_ID = 65532;
+    public static final int AVATAR_PROGRESS_NOTIFY_ID = 65533;
 
     public static final String ACTION_PING = "ru.ivansuper.jasmin.PING";
 
@@ -933,6 +934,26 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     public void cancelMessageNotification(int id) {
         this.notificationManager.cancel(id);
+    }
+
+    @SuppressLint("NotificationPermission")
+    public void showAvatarProgress(CharSequence text) {
+        Notification.Builder builder;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            builder = new Notification.Builder(this, CHANNEL_ID);
+        } else {
+            builder = new Notification.Builder(this);
+        }
+        builder.setSmallIcon(R.drawable.no_avatar)
+                .setContentTitle(text)
+                .setProgress(0, 0, true)
+                .setOngoing(true);
+
+        this.notificationManager.notify(AVATAR_PROGRESS_NOTIFY_ID, builder.build());
+    }
+
+    public void cancelAvatarProgress() {
+        this.notificationManager.cancel(AVATAR_PROGRESS_NOTIFY_ID);
     }
 
     /** @noinspection unused*/
