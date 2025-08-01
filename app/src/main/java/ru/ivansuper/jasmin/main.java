@@ -32,10 +32,12 @@ import ru.ivansuper.jasmin.utils.SystemBarUtils;
  */
 public class main extends Activity implements Handler.Callback {
 
+    ////public static final String POST_NOTIFICATIONS = "android.permission.POST_NOTIFICATIONS";
+
     private static final int FOREGROUND_SERVICE_PERMISSION_REQUEST = 112;
     private static final int READ_PHONE_STATE_PERMISSION_REQUEST = 113;
     private static final int READ_STORAGE_PERMISSION_REQUEST = 114;
-    private static final int POST_NOTIFICATIONS_PERMISSION_REQUEST = 115;
+    ////private static final int POST_NOTIFICATIONS_PERMISSION_REQUEST = 115;
 
     private final Handler handler = new Handler(this);
     private jasminSvc jasminService;
@@ -100,27 +102,31 @@ public class main extends Activity implements Handler.Callback {
             boolean needsReadStoragePermission =
                     checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
 
-            boolean needsPostNotificationsPermission =
-                    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-                            checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED;
+            ////boolean needsPostNotificationsPermission =
+            ////        Build.VERSION.SDK_INT >= 33 &&
+            ////                checkSelfPermission(POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED;
 
             if (needsForegroundServicePermission || needsReadPhoneStatePermission ||
-                    needsReadStoragePermission || needsPostNotificationsPermission) {
+                    ////needsReadStoragePermission || needsPostNotificationsPermission) {
+                    needsReadStoragePermission) {
                 int size = 0;
                 if (needsForegroundServicePermission) size++;
                 if (needsReadPhoneStatePermission) size++;
                 if (needsReadStoragePermission) size++;
-                if (needsPostNotificationsPermission) size++;
+                ///if (needsPostNotificationsPermission) size++;
                 String[] permissions = new String[size];
                 int i = 0;
                 if (needsForegroundServicePermission) permissions[i++] = Manifest.permission.FOREGROUND_SERVICE;
                 if (needsReadPhoneStatePermission) permissions[i++] = Manifest.permission.READ_PHONE_STATE;
                 if (needsReadStoragePermission) permissions[i++] = Manifest.permission.READ_EXTERNAL_STORAGE;
-                if (needsPostNotificationsPermission) permissions[i] = Manifest.permission.POST_NOTIFICATIONS;
+                ////if (needsPostNotificationsPermission) permissions[i] = POST_NOTIFICATIONS;
 
-                int requestCode = needsPostNotificationsPermission
-                        ? POST_NOTIFICATIONS_PERMISSION_REQUEST
-                        : (needsReadStoragePermission ? READ_STORAGE_PERMISSION_REQUEST : READ_PHONE_STATE_PERMISSION_REQUEST);
+                ////int requestCode = needsPostNotificationsPermission
+                ////        ? POST_NOTIFICATIONS_PERMISSION_REQUEST
+                ////        : (needsReadStoragePermission ? READ_STORAGE_PERMISSION_REQUEST : READ_PHONE_STATE_PERMISSION_REQUEST);
+
+                int requestCode = needsReadStoragePermission ? READ_STORAGE_PERMISSION_REQUEST : READ_PHONE_STATE_PERMISSION_REQUEST;
+
                 requestPermissions(permissions, requestCode);
                 return;
             }
@@ -196,7 +202,6 @@ public class main extends Activity implements Handler.Callback {
         }
     }
 
-    /** @noinspection NullableProblems*/
     @Override
     public boolean handleMessage(Message msg) {
         switch (msg.what) {
@@ -225,8 +230,7 @@ public class main extends Activity implements Handler.Callback {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == FOREGROUND_SERVICE_PERMISSION_REQUEST ||
                 requestCode == READ_PHONE_STATE_PERMISSION_REQUEST ||
-                requestCode == READ_STORAGE_PERMISSION_REQUEST ||
-                requestCode == POST_NOTIFICATIONS_PERMISSION_REQUEST) {
+                requestCode == READ_STORAGE_PERMISSION_REQUEST) {
             boolean granted = true;
             for (int result : grantResults) {
                 if (result != PackageManager.PERMISSION_GRANTED) {
