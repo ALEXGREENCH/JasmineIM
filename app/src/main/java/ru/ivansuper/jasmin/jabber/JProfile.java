@@ -2561,6 +2561,7 @@ public class JProfile extends IMProfile {
             this.svc.showToast(Locale.getString("s_change_avatar_invalid_image"), 1);
             return;
         }
+        this.svc.showAvatarProgress(Locale.getString("s_changing_avatar"));
         PacketHandler h = new PacketHandler(z) { // from class: ru.ivansuper.jasmin.jabber.JProfile.24
             @Override // ru.ivansuper.jasmin.jabber.PacketHandler
             public void execute() {
@@ -2574,6 +2575,7 @@ public class JProfile extends IMProfile {
                 } else {
                     JProfile.this.svc.showToast(Locale.getString("s_change_avatar_error_2"), 1);
                 }
+                JProfile.this.svc.cancelAvatarProgress();
                 progress.dismiss();
             }
         };
