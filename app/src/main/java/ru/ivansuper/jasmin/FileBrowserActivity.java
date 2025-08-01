@@ -18,8 +18,7 @@ import ru.ivansuper.jasmin.utils.SystemBarUtils;
  * through the file system and select a file. The selected file's path is returned as a result
  * to the calling activity.
  *
- * <p>The activity starts by displaying the contents of the Jasmine folder on the
- * external storage. Users can navigate into
+ * <p>The activity starts by displaying the contents of the SD card. Users can navigate into
  * directories by clicking on them. Clicking on a file will select it and finish the activity.
  * The first item in the list is always ".." which allows navigating to the parent directory.
  */
@@ -38,7 +37,7 @@ public class FileBrowserActivity extends Activity {
         SystemBarUtils.setupTransparentBars(this);
         initViews();
         adp = new files_adapter();
-        File sd = new File(resources.JASMINE_SD_PATH);
+        File sd = new File(resources.SD_PATH);
         adp.setData(sd.listFiles(), sd.getParentFile());
         list.setAdapter(adp);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {

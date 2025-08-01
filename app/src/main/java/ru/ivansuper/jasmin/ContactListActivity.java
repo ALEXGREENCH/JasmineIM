@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -43,6 +44,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Vector;
@@ -243,7 +247,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         if (i.getBooleanExtra("no_profiles", false)) {
             showDialogA(17);
         }
-        File marker = new File(resources.JASMINE_LOG_PATH + "ForceClosed.marker");
+        File marker = new File(resources.dataPath + "ForceClosed.marker");
         if (marker.exists()) {
             if (resources.sd_mounted()) {
                 //noinspection ResultOfMethodCallIgnored
@@ -352,12 +356,54 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
         }
     }
 
-    /**
-     * Legacy method kept for compatibility. Logs are now stored directly on the
-     * external storage, so copying is no longer required.
-     */
     private void copyDumpsToSD() {
-        // No-op: logs already in {@code resources.JASMINE_LOG_PATH}
+        //noinspection deprecation
+        new CopyFilesTask().execute();
+    }
+
+    /** @noinspection deprecation*/
+    @SuppressLint("StaticFieldLeak")
+    private static class CopyFilesTask extends AsyncTask<Void, Void, Void> {
+
+        /** @noinspection deprecation*/
+        @Override
+        protected Void doInBackground(Void... params) {
+            byte[] buffer = new byte[16384];
+            File data_dir = new File(resources.dataPath);
+            FilenameFilter filter = new FilenameFilter() {
+                @Override
+                public boolean accept(File dir, String filename) {
+                    return filename.endsWith(".st");
+                }
+            };
+            File[] dumps = data_dir.listFiles(filter);
+            assert dumps != null;
+            for (File dump : dumps) {
+                try {
+                    File out = new File(resources.JASMINE_SD_PATH + "/" + dump.getName());
+                    FileOutputStream fos = new FileOutputStream(out);
+                    FileInputStream fis = new FileInputStream(dump);
+                    while (fis.available() > 0) {
+                        //noinspection SpellCheckingInspection
+                        int readed = fis.read(buffer, 0, 16384);
+                        fos.write(buffer, 0, readed);
+                    }
+                    fos.close();
+                    fis.close();
+                    //noinspection ResultOfMethodCallIgnored
+                    dump.delete();
+                } catch (Exception e) {
+                    //noinspection CallToPrintStackTrace
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+
+        }
     }
 
     @Override

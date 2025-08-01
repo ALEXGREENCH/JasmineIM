@@ -73,7 +73,7 @@ public class debug {
             }
             if (resources.sd_mounted()) {
                 String unique_id = String.valueOf(System.currentTimeMillis());
-                File dump = new File(resources.JASMINE_LOG_PATH + "stack_trace_" + unique_id.substring(unique_id.length() - 7) + ".st");
+                File dump = new File(resources.dataPath + "stack_trace_" + unique_id.substring(unique_id.length() - 7) + ".st");
                 if (!dump.exists()) {
                     try {
                         //noinspection ResultOfMethodCallIgnored
@@ -105,7 +105,7 @@ public class debug {
                 out.print("Jasmine IM Version: " + resources.VERSION);
                 ex.printStackTrace(out);
                 out.close();
-                File marker = new File(resources.JASMINE_LOG_PATH + "ForceClosed.marker");
+                File marker = new File(resources.dataPath + "ForceClosed.marker");
                 try {
                     //noinspection ResultOfMethodCallIgnored
                     marker.createNewFile();
