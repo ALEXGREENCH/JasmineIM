@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
+import ru.ivansuper.jasmin.locale.Locale;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Vector;
@@ -152,6 +153,7 @@ public class MMPContact extends ContactlistItem {
             @Override
             public void run() {
                 try {
+                    service.showAvatarProgress(Locale.getString("s_loading_avatar"));
                     File avatar_file = new File(resources.dataPath + MMPContact.this.profile.ID + "/avatars/" + MMPContact.this.ID);
                     String url_ = "http://obraz.foto.mail.ru/" + MMPProtocol.retreiveDomain(contact.ID) + "/" + MMPProtocol.retreiveLogin(contact.ID) + "/_mrimavatarsmall";
                     Log.e("AvatarURL", url_);
@@ -175,6 +177,7 @@ public class MMPContact extends ContactlistItem {
                                 in.close();
                                 fos.close();
                                 ByteCache.recycle(buffer);
+                                service.cancelAvatarProgress();
                                 jasminSvc jasminsvc = service;
                                 final MMPContact mMPContact = contact;
                                 jasminsvc.runOnUi(new Runnable() {
@@ -193,8 +196,11 @@ public class MMPContact extends ContactlistItem {
                             }
                         } catch (Exception e2) {
                         }
+                        service.cancelAvatarProgress();
                     }
+                    service.cancelAvatarProgress();
                 } catch (Exception e3) {
+                    service.cancelAvatarProgress();
                     e3.printStackTrace();
                 }
             }
