@@ -26,7 +26,6 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import ru.ivansuper.jasmin.Clients.ClientInfo;
-import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.ContactlistItem;
 import ru.ivansuper.jasmin.HistoryItem;
 import ru.ivansuper.jasmin.HistoryTools.ExportImportActivity;
@@ -103,7 +102,6 @@ public class ICQContact extends ContactlistItem {
             @Override
             public void run() {
                 try {
-                    service.showAvatarProgress(Locale.getString("s_loading_avatar"));
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
                     String base = sp.getString("ms_avatar_base_url", "http://45.144.154.209");
                     URL url = new URL(base + "/avatar/" + UIN + "?hq=1");
@@ -116,9 +114,7 @@ public class ICQContact extends ContactlistItem {
                             callback.notify(icon, 0);
                         }
                     }
-                    service.cancelAvatarProgress();
                 } catch (Exception e) {
-                    service.cancelAvatarProgress();
                     //noinspection CallToPrintStackTrace
                     e.printStackTrace();
                 }
@@ -229,7 +225,6 @@ public class ICQContact extends ContactlistItem {
             @Override
             public void run() {
                 try {
-                    service.showAvatarProgress(Locale.getString("s_loading_avatar"));
                     File avatar_file = new File(resources.dataPath + ICQContact.this.profile.ID + "/avatars/" + ICQContact.this.ID);
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
                     String base = sp.getString("ms_avatar_base_url", "http://45.144.154.209");
@@ -266,7 +261,7 @@ public class ICQContact extends ContactlistItem {
                                 }
 
                                 ByteCache.recycle(buffer);
-                                service.cancelAvatarProgress();
+
                                 service.runOnUi(new Runnable() {
                                     @Override
                                     public void run() {
@@ -286,11 +281,8 @@ public class ICQContact extends ContactlistItem {
                         } catch (Exception e2) {
                             // ignore
                         }
-                        service.cancelAvatarProgress();
                     }
-                    service.cancelAvatarProgress();
                 } catch (Exception e3) {
-                    service.cancelAvatarProgress();
                     //noinspection CallToPrintStackTrace
                     e3.printStackTrace();
                 }
