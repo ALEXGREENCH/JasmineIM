@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:alwaysDrawnWithCache="false"
     android:animationCache="false"
     android:orientation="vertical">
@@ -48,7 +49,9 @@
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:layout_marginLeft="4dp"
-                            android:src="@drawable/no_avatar" />
+                            android:src="@drawable/no_avatar"
+                            android:visibility="gone"
+                            tools:visibility="visible"/>
 
                         <ImageView
                             android:id="@+id/mainStatus"

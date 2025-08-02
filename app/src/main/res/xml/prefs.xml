@@ -404,7 +404,7 @@
             android:title="Автозакрытие чата" />
         <PreferenceCategory />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="ms_auto_xtraz"
             android:summary="Автоматически запрашивать статус при его изменении"
             android:title="Автостатус" />

@@ -1601,7 +1601,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         PreferenceTable.show_away_in_cl = this.sharedPreferences.getBoolean("ms_show_away", true);
         PreferenceTable.send_typing_notify = this.sharedPreferences.getBoolean("ms_typing_notify", false);
         PreferenceTable.auto_close_chat = this.sharedPreferences.getBoolean("ms_auto_close_chat", false);
-        PreferenceTable.auto_xtraz = this.sharedPreferences.getBoolean("ms_auto_xtraz", false);
+        PreferenceTable.auto_xtraz = this.sharedPreferences.getBoolean("ms_auto_xtraz", true);
         PreferenceTable.auto_open_keyboard = this.sharedPreferences.getBoolean("ms_auto_open_keyboard", false);
         PreferenceTable.auto_cap = this.sharedPreferences.getBoolean("ms_use_auto_cap", true);
         PreferenceTable.enable_x_in_bottom_panel = this.sharedPreferences.getBoolean("ms_enable_x_in_bottom_panel", true);

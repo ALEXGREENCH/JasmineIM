@@ -366,7 +366,9 @@ public class ICQChatActivity extends Chat {
     @SuppressLint("SetTextI18n")
     private void drawReceiverData() {
         ImageView avatar = (ImageView) findViewById(R.id.chat_avatar);
-        if (avatar != null) {
+
+        if (PreferenceTable.ms_show_avatars) {
+            avatar.setVisibility(View.VISIBLE);
             Bitmap bmp = null;
             if (contact.avatar != null) {
                 bmp = ((BitmapDrawable) contact.avatar).getBitmap();
@@ -375,10 +377,13 @@ public class ICQChatActivity extends Chat {
                 bmp = ((BitmapDrawable) resources.ctx.getResources().getDrawable(R.drawable.no_avatar)).getBitmap();
             }
             if (PreferenceTable.ms_round_avatars) {
-                bmp = ru.ivansuper.jasmin.utils.ImageUtils.toRoundBitmap(bmp);
+                bmp = ImageUtils.toRoundBitmap(bmp);
             }
             avatar.setImageBitmap(bmp);
+        } else {
+            avatar.setVisibility(View.GONE);
         }
+
         if (contact.typing) {
             typing_field.setImageDrawable(resources.typing);
         } else {

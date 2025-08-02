@@ -531,7 +531,8 @@ public class JChatActivity extends Chat implements Handler.Callback {
 
     private void drawReceiverData() {
         ImageView avatar = (ImageView) findViewById(R.id.chat_avatar);
-        if (avatar != null) {
+        if (PreferenceTable.ms_show_avatars) {
+            avatar.setVisibility(View.VISIBLE);
             Bitmap bmp = null;
             if (contact.avatar != null) {
                 bmp = ((BitmapDrawable) contact.avatar).getBitmap();
@@ -543,6 +544,8 @@ public class JChatActivity extends Chat implements Handler.Callback {
                 bmp = ru.ivansuper.jasmin.utils.ImageUtils.toRoundBitmap(bmp);
             }
             avatar.setImageBitmap(bmp);
+        }else {
+            avatar.setVisibility(View.GONE);
         }
         if (contact.typing) {
             this.typing_field.setImageDrawable(resources.typing);
