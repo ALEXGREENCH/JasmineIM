@@ -17,6 +17,9 @@
         <item name="android:textViewStyle">@style/TextViewStyle</item>
     </style>
 
+    <!-- Theme used for the Settings screen on legacy Android versions -->
+    <style name="SettingsTheme" parent="@style/BlackNoTitleTheme" />
+
     <style name="ListViewStyle" parent="@android:style/Widget.ListView">
         <item name="android:listSelector">@drawable/list_selector_background</item>
     </style>
