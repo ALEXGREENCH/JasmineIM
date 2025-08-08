@@ -64,6 +64,12 @@ public class ColumnsPicker extends DialogPreference {
         this.r4 = view.findViewById(R.id.r4);
         this.r5 = view.findViewById(R.id.r5);
         this.r6 = view.findViewById(R.id.r6);
+        resources.attachRadioStyle(this.r1);
+        resources.attachRadioStyle(this.r2);
+        resources.attachRadioStyle(this.r3);
+        resources.attachRadioStyle(this.r4);
+        resources.attachRadioStyle(this.r5);
+        resources.attachRadioStyle(this.r6);
         switch (this.current) {
             case 1:
                 this.r1.setChecked(true);

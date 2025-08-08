@@ -66,6 +66,7 @@ public class IntegerPickerSmall extends DialogPreference {
         label.setText(String.valueOf(this.current));
         label.setTextSize(this.current);
         SeekBar seekbar = view.findViewById(R.id.seekbar1);
+        resources.attachSeekBar(seekbar);
         seekbar.setMax(49);
         seekbar.setProgress(this.current - 1);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

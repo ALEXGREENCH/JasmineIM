@@ -51,6 +51,7 @@ public class IntegerPickerBig extends DialogPreference {
         title.setText(getTitle());
         label.setText(String.valueOf(this.current));
         SeekBar seekbar = view.findViewById(R.id.seekbar1);
+        resources.attachSeekBar(seekbar);
         seekbar.setMax(950);
         seekbar.setProgress(this.current - 50);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

@@ -37,17 +37,17 @@
         <PreferenceCategory
             android:key="ms_server_settings_icq"
             android:title="ICQ" />
-        <EditTextPreference
+        <ru.ivansuper.jasmin.Preferences.ThemedEditTextPreference
             android:defaultValue="195.66.114.37"
             android:key="ms_server"
             android:negativeButtonText="Отмена"
             android:positiveButtonText="Применить" />
-        <EditTextPreference
+        <ru.ivansuper.jasmin.Preferences.ThemedEditTextPreference
             android:defaultValue="5190"
             android:key="ms_port"
             android:negativeButtonText="Отмена"
             android:positiveButtonText="Ok" />
-        <EditTextPreference
+        <ru.ivansuper.jasmin.Preferences.ThemedEditTextPreference
             android:defaultValue="http://45.144.154.209"
             android:key="ms_avatar_base_url"
             android:negativeButtonText="Отмена"
@@ -338,19 +338,19 @@
             android:defaultValue="true"
             android:key="ms_as_qest_enable"
             android:title="Включить вопрос" />
-        <EditTextPreference
+        <ru.ivansuper.jasmin.Preferences.ThemedEditTextPreference
             android:defaultValue="Сколько будет 2x2?"
             android:dependency="ms_as_qest_enable"
             android:key="ms_as_question"
             android:summary="Будет задан собеседнику"
             android:title="Вопрос" />
-        <EditTextPreference
+        <ru.ivansuper.jasmin.Preferences.ThemedEditTextPreference
             android:defaultValue="4"
             android:dependency="ms_as_qest_enable"
             android:key="ms_as_answer"
             android:summary="Что должен ответить собеседник"
             android:title="Ответ" />
-        <EditTextPreference
+        <ru.ivansuper.jasmin.Preferences.ThemedEditTextPreference
             android:defaultValue="Вы успешно прошли антиспам!"
             android:dependency="ms_as_qest_enable"
             android:key="ms_as_allowed"
