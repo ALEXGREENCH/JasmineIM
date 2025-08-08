@@ -89,6 +89,7 @@ public class TransitionPicker extends DialogPreference {
         rg.removeAllViews();
         RadioButton r = new RadioButton(getContext());
         r.setText(resources.getString("s_transition_effect_cube"));
+        resources.attachRadioStyle(r);
         r.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,6 +102,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r2 = new RadioButton(getContext());
         r2.setText(resources.getString("s_transition_effect_flip1"));
+        resources.attachRadioStyle(r2);
         r2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,6 +115,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r3 = new RadioButton(getContext());
         r3.setText(resources.getString("s_transition_effect_flip2"));
+        resources.attachRadioStyle(r3);
         r3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,6 +128,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r4 = new RadioButton(getContext());
         r4.setText(resources.getString("s_transition_effect_shift"));
+        resources.attachRadioStyle(r4);
         r4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -137,6 +141,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r5 = new RadioButton(getContext());
         r5.setText(resources.getString("s_transition_effect_rot1"));
+        resources.attachRadioStyle(r5);
         r5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -149,6 +154,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r6 = new RadioButton(getContext());
         r6.setText(resources.getString("s_transition_effect_rot2"));
+        resources.attachRadioStyle(r6);
         r6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -161,6 +167,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r7 = new RadioButton(getContext());
         r7.setText(resources.getString("s_transition_effect_rot3"));
+        resources.attachRadioStyle(r7);
         r7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -173,6 +180,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r8 = new RadioButton(getContext());
         r8.setText(resources.getString("s_transition_effect_ics"));
+        resources.attachRadioStyle(r8);
         r8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -185,6 +193,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r9 = new RadioButton(getContext());
         r9.setText(resources.getString("s_transition_effect_ics2"));
+        resources.attachRadioStyle(r9);
         r9.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -197,6 +206,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r10 = new RadioButton(getContext());
         r10.setText(resources.getString("s_transition_effect_snake"));
+        resources.attachRadioStyle(r10);
         r10.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -209,6 +219,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r11 = new RadioButton(getContext());
         r11.setText(resources.getString("s_transition_effect_rot4"));
+        resources.attachRadioStyle(r11);
         r11.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -221,6 +232,7 @@ public class TransitionPicker extends DialogPreference {
         }
         RadioButton r12 = new RadioButton(getContext());
         r12.setText(resources.getString("s_transition_effect_rnd"));
+        resources.attachRadioStyle(r12);
         r12.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

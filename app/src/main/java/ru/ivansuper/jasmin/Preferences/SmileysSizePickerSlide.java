@@ -89,6 +89,7 @@ public class SmileysSizePickerSlide extends DialogPreference {
             container.addView(this.sv);
         }
         SeekBar seekbar = view.findViewById(R.id.seekbar1);
+        resources.attachSeekBar(seekbar);
         seekbar.setMax(49);
         seekbar.setProgress((this.current / 10) - 1);
         final SmileView wrap = this.sv;

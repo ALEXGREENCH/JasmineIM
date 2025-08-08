@@ -122,6 +122,16 @@ public class SettingsActivity extends PreferenceActivity {
     }
 
     /**
+     * Ensures padding for transparent system bars is applied whenever the
+     * preference content changes (e.g., when opening sub-screens).
+     */
+    @Override
+    public void onContentChanged() {
+        super.onContentChanged();
+        SystemBarUtils.setupTransparentBars(this);
+    }
+
+    /**
      * Sets up the behavior and interactions for specific preferences within the given PreferenceScreen.
      * This method is responsible for:
      * <p>
