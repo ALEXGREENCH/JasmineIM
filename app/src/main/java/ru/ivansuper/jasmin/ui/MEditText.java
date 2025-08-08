@@ -27,7 +27,7 @@ public class MEditText extends EditText {
     }
 
     private void init() {
-        setBackgroundResource(R.drawable.edit_text);
+        setBackgroundResource(R.drawable.edittext_background);
         resources.attachEditText(this);
     }
 }
