@@ -75,7 +75,6 @@ public class LanguagePicker extends DialogPreference {
                     LanguagePicker.this.current = ii;
                 }
             });
-            resources.attachRadioStyle(r);
             rg.addView(r);
             if (this.current == i) {
                 r.setChecked(true);
