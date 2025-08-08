@@ -121,6 +121,18 @@ public class SettingsActivity extends PreferenceActivity {
         super.onPause();
     }
 
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+        boolean result = super.onPreferenceTreeClick(preferenceScreen, preference);
+        if (preference instanceof PreferenceScreen) {
+            Dialog dialog = ((PreferenceScreen) preference).getDialog();
+            if (dialog != null) {
+                SystemBarUtils.setupTransparentBars(dialog);
+            }
+        }
+        return result;
+    }
+
     /**
      * Sets up the behavior and interactions for specific preferences within the given PreferenceScreen.
      * This method is responsible for:
