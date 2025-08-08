@@ -50,7 +50,6 @@ public class IntegerPickerMedium extends DialogPreference {
         title.setText(getTitle());
         label.setText(String.valueOf(this.current));
         SeekBar seekbar = view.findViewById(R.id.seekbar1);
-        resources.attachSeekBar(seekbar);
         seekbar.setMax(495);
         seekbar.setProgress(this.current - 5);
         seekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {

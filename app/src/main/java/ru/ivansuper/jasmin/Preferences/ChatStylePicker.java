@@ -76,12 +76,6 @@ public class ChatStylePicker extends DialogPreference {
         this.r4 = view.findViewById(R.id.r4);
         this.r5 = view.findViewById(R.id.r5);
         this.r6 = view.findViewById(R.id.r6);
-        resources.attachRadioStyle(this.r1);
-        resources.attachRadioStyle(this.r2);
-        resources.attachRadioStyle(this.r3);
-        resources.attachRadioStyle(this.r4);
-        resources.attachRadioStyle(this.r5);
-        resources.attachRadioStyle(this.r6);
         this.r1.setText(resources.getString("s_ms_chat_style_1"));
         this.r2.setText(resources.getString("s_ms_chat_style_2"));
         this.r3.setVisibility(View.GONE);

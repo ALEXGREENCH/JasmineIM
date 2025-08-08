@@ -28,10 +28,6 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.SeekBar;
-import android.content.res.ColorStateList;
-import android.graphics.PorterDuff;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -457,45 +453,6 @@ public class resources {
         stateListDrawable.addState(new int[]{android.R.attr.state_checkable}, checkOnDrawable);
 
         return stateListDrawable;
-    }
-
-    /**
-     * Applies themed styling to a {@link android.widget.RadioButton}.
-     *
-     * <p>The radio button text and indicator are tinted using the current
-     * {@link ColorScheme}. This ensures that option selectors inside dialogs
-     * respect the active light or dark theme.</p>
-     *
-     * @param radioButton the radio button to style
-     */
-    public static void attachRadioStyle(RadioButton radioButton) {
-        int color = ColorScheme.getColor(43);
-        radioButton.setTextColor(color);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            radioButton.setButtonTintList(ColorStateList.valueOf(color));
-        }
-    }
-
-    /**
-     * Applies themed styling to a {@link android.widget.SeekBar}.
-     *
-     * <p>The progress and thumb drawables are tinted to match the current
-     * {@link ColorScheme}, refreshing the old default appearance.</p>
-     *
-     * @param seekBar the seek bar to style
-     */
-    public static void attachSeekBar(SeekBar seekBar) {
-        int color = ColorScheme.getColor(43);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            ColorStateList tint = ColorStateList.valueOf(color);
-            seekBar.setProgressTintList(tint);
-            seekBar.setThumbTintList(tint);
-        } else {
-            seekBar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.SRC_IN);
-            if (seekBar.getThumb() != null) {
-                seekBar.getThumb().setColorFilter(color, PorterDuff.Mode.SRC_IN);
-            }
-        }
     }
 
     public static void attachContactlistBack(View view) {
