@@ -48,7 +48,7 @@
             android:negativeButtonText="Отмена"
             android:positiveButtonText="Ok" />
         <EditTextPreference
-            android:defaultValue="http://45.144.154.209"
+            android:defaultValue="http://217.147.15.238"
             android:key="ms_avatar_base_url"
             android:negativeButtonText="Отмена"
             android:positiveButtonText="Ok" />

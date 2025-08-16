@@ -105,7 +105,7 @@ public class ICQContact extends ContactlistItem {
                 try {
                     service.showAvatarProgress(Locale.getString("s_loading_avatar"));
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
-                    String base = sp.getString("ms_avatar_base_url", "http://45.144.154.209");
+                    String base = sp.getString("ms_avatar_base_url", "http://217.147.15.238");
                     URL url = new URL(base + "/avatar/" + UIN + "?hq=1");
                     HttpURLConnection c = (HttpURLConnection) url.openConnection();
                     if (c.getResponseCode() == 200) {
@@ -232,7 +232,7 @@ public class ICQContact extends ContactlistItem {
                     service.showAvatarProgress(Locale.getString("s_loading_avatar"));
                     File avatar_file = new File(resources.dataPath + ICQContact.this.profile.ID + "/avatars/" + ICQContact.this.ID);
                     SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
-                    String base = sp.getString("ms_avatar_base_url", "http://45.144.154.209");
+                    String base = sp.getString("ms_avatar_base_url", "http://217.147.15.238");
                     URL url = new URL(base + "/avatar/" + contact.ID);
                     HttpURLConnection c = (HttpURLConnection) url.openConnection();
 

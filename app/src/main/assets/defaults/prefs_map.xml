@@ -32,7 +32,7 @@
 <boolean name="ms_dragdrop_quoting" value="true" />
 <boolean name="ms_log_online" value="true" />
 <string name="ms_port">5190</string>
-<string name="ms_avatar_base_url">http://45.144.154.209</string>
+<string name="ms_avatar_base_url">http://217.147.15.238</string>
 <boolean name="ms_nick_in_chat" value="true" />
 <boolean name="ms_log_xtraz_reading" value="true" />
 <boolean name="ms_typing_notify" value="true" />
