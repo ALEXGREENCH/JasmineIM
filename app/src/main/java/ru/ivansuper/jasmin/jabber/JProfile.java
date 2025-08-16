@@ -2554,15 +2554,13 @@ public class JProfile extends IMProfile {
         }
     }
 
-    public final void updateAvatar(File file, final Dialog progress) {
-        boolean z = false;
+    public final void updateAvatar(File file) {
         Bitmap avatar = Avatar.normalizeAvatar(file);
         if (avatar == null) {
             this.svc.showToast(Locale.getString("s_change_avatar_invalid_image"), 1);
             return;
         }
-        this.svc.showAvatarProgress(Locale.getString("s_changing_avatar"));
-        PacketHandler h = new PacketHandler(z) { // from class: ru.ivansuper.jasmin.jabber.JProfile.24
+        PacketHandler h = new PacketHandler(false) { // from class: ru.ivansuper.jasmin.jabber.JProfile.24
             @Override // ru.ivansuper.jasmin.jabber.PacketHandler
             public void execute() {
                 Node stanzas = this.slot;
@@ -2575,8 +2573,6 @@ public class JProfile extends IMProfile {
                 } else {
                     JProfile.this.svc.showToast(Locale.getString("s_change_avatar_error_2"), 1);
                 }
-                JProfile.this.svc.cancelAvatarProgress();
-                progress.dismiss();
             }
         };
         putPacketHandler(h);

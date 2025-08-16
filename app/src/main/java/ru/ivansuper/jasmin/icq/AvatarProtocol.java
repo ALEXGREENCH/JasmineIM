@@ -7,7 +7,6 @@ import java.io.File;
 
 import ru.ivansuper.jasmin.resources;
 
-import ru.ivansuper.jasmin.locale.Locale;
 /**
  * Handles the ICQ avatar protocol for uploading and retrieving user avatars.
  * This class manages the connection to the avatar server, sends and receives
@@ -115,8 +114,6 @@ public class AvatarProtocol {
         Thread t = new Thread() {
             @Override
             public void run() {
-                AvatarProtocol.this.profile.svc.displayProgress(resources.getString("s_changing_avatar"));
-                AvatarProtocol.this.profile.svc.showAvatarProgress(Locale.getString("s_changing_avatar"));
                 try {
                     AvatarProtocol.this.send(ICQProtocol.createAvatarUpload(file, AvatarProtocol.this.sequence));
                     sleep(7000L);
@@ -125,8 +122,6 @@ public class AvatarProtocol {
                         throw new Exception();
                     }
                 } catch (Exception e) {
-                    AvatarProtocol.this.profile.svc.cancelProgress();
-                    AvatarProtocol.this.profile.svc.cancelAvatarProgress();
                     //noinspection CallToPrintStackTrace
                     e.printStackTrace();
                 }
@@ -173,8 +168,6 @@ public class AvatarProtocol {
 
     /** @noinspection unused*/
     private void handleServerUploadReply(ByteBuffer data, int flags) {
-        this.profile.svc.cancelProgress();
-        this.profile.svc.cancelAvatarProgress();
         int unknown = data.readDWord();
         if (unknown == 257) {
             if (data.writePos - data.readPos > 4) {
