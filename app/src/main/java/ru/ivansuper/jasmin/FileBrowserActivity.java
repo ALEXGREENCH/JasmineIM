@@ -3,6 +3,7 @@ package ru.ivansuper.jasmin;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -37,7 +38,10 @@ public class FileBrowserActivity extends Activity {
         SystemBarUtils.setupTransparentBars(this);
         initViews();
         adp = new files_adapter();
-        File sd = new File(resources.SD_PATH);
+        File sd = Environment.getExternalStorageDirectory();
+        if (sd == null) {
+            sd = new File(resources.SD_PATH);
+        }
         adp.setData(sd.listFiles(), sd.getParentFile());
         list.setAdapter(adp);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
