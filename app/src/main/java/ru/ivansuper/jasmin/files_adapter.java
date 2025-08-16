@@ -35,19 +35,21 @@ public class files_adapter extends BaseAdapter {
         this.icons.clear();
         this.parent = parent;
         this.list.clear();
-        for (File file : list) {
-            try {
-                if (file.isDirectory()) {
-                    this.dirs.add(file);
-                } else {
-                    this.files.add(file);
+        if (list != null) {
+            for (File file : list) {
+                try {
+                    if (file.isDirectory()) {
+                        this.dirs.add(file);
+                    } else {
+                        this.files.add(file);
+                    }
+                    this.icons.add(null);
+                } catch (Exception e) {
+                    this.dirs.clear();
+                    this.files.clear();
+                    this.list.clear();
+                    this.list.add(parent);
                 }
-                this.icons.add(null);
-            } catch (Exception e) {
-                this.dirs.clear();
-                this.files.clear();
-                this.list.clear();
-                this.list.add(parent);
             }
         }
         Collections.sort(this.dirs);
