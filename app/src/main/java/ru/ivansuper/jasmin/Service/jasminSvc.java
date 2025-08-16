@@ -938,22 +938,11 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     @SuppressLint("NotificationPermission")
     public void showAvatarProgress(CharSequence text) {
-        Notification.Builder builder;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            builder = new Notification.Builder(this, CHANNEL_ID);
-        } else {
-            builder = new Notification.Builder(this);
-        }
-        builder.setSmallIcon(R.drawable.no_avatar)
-                .setContentTitle(text)
-                .setProgress(0, 0, true)
-                .setOngoing(true);
-
-        this.notificationManager.notify(AVATAR_PROGRESS_NOTIFY_ID, builder.build());
+        // Avatar upload/download progress is now handled silently.
     }
 
     public void cancelAvatarProgress() {
-        this.notificationManager.cancel(AVATAR_PROGRESS_NOTIFY_ID);
+        // No progress notification to cancel.
     }
 
     /** @noinspection unused*/

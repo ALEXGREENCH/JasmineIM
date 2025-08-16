@@ -758,9 +758,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
 
 
     private void uploadJabberAvatar(File file) {
-        Dialog progress = DialogBuilder.createProgress(this, Locale.getString("s_please_wait"), true);
-        progress.show();
-        contextJProfile.updateAvatar(file, progress);
+        contextJProfile.updateAvatar(file);
     }
 
     public void showDialogA(int id) {
@@ -818,7 +816,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                     @Override
                                     public void run() {
                                         setPriority(1);
-                                        service.displayProgress(Locale.getString("s_refreshing_avatars"));
                                         Vector<ICQContact> list = contextProfile.contactlist.getContacts();
                                         for (ICQContact contact : list) {
                                             contact.getAvatar(contact, service);
@@ -827,7 +824,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                             } catch (InterruptedException ignored) {
                                             }
                                         }
-                                        service.cancelProgress();
                                     }
                                 };
                                 t.start();
@@ -1738,7 +1734,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                     @Override
                                     public void run() {
                                         setPriority(1);
-                                        service.displayProgress(Locale.getString("s_refreshing_avatars"));
                                         Vector<JContact> list = contextJProfile.getOnlyContacts();
                                         for (JContact contact : list) {
                                             contact.getAvatar();
@@ -1747,7 +1742,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                             } catch (InterruptedException ignored) {
                                             }
                                         }
-                                        service.cancelProgress();
                                     }
                                 };
                                 t.start();
@@ -2162,7 +2156,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                     @Override
                                     public void run() {
                                         setPriority(1);
-                                        service.displayProgress(Locale.getString("s_refreshing_avatars"));
                                         Vector<MMPContact> list = contextMrimProfile.getContacts();
                                         for (MMPContact contact : list) {
                                             contact.getAvatar(contact, service);
@@ -2171,7 +2164,6 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                             } catch (InterruptedException ignored) {
                                             }
                                         }
-                                        service.cancelProgress();
                                     }
                                 };
                                 t.start();
