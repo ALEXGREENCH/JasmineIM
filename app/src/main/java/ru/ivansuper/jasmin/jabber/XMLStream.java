@@ -179,11 +179,12 @@ public abstract class XMLStream {
     // -- TLS --------------------------------------------------------------------------
 
     private SSLSocket upgradeToTls(Socket plain) throws IOException {
-        // The certificate must be for the XMPP domain; a certificate for the host the user
-        // typed as "server" is accepted too, since they chose it explicitly.
+        // The certificate must be for the XMPP domain. A certificate for the host the user typed
+        // as "server" is accepted too, since they chose it explicitly - but NOT for a host that
+        // came out of an (unauthenticated) SRV lookup, per RFC 6120 §13.7.2.1.
         List<String> names = new ArrayList<>();
         names.add(profile.host);
-        if (lastServer != null && !lastServer.equalsIgnoreCase(profile.host)) names.add(lastServer);
+        if (!profile.isServerAutomatic() && !profile.server.equalsIgnoreCase(profile.host)) names.add(profile.server);
         return TlsSupport.upgrade(plain, profile.host, lastPort, names, PreferenceTable.ms_check_tls_certificate);
     }
 

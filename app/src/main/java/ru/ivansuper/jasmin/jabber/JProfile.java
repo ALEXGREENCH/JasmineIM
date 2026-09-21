@@ -92,6 +92,7 @@ public class JProfile extends IMProfile {
     public boolean use_compression;
     public boolean use_sasl;
     public boolean use_tls;
+    private static final boolean COMPRESSION_SUPPORTED = false;
     private int messages_seq = 0;
     public String resource = "JasmineIM";
     public Vector<ContactlistItem> contacts = new Vector<>();
@@ -408,8 +409,12 @@ public class JProfile extends IMProfile {
             this.stream.write(new Node("starttls", "", "urn:ietf:params:xml:ns:xmpp-tls"), this);
             return;
         }
+        // XEP-0138 stream compression is deprecated (compression over TLS leaks plaintext, CRIME
+        // style) and modern servers ship with it off, so it is no longer negotiated and its
+        // checkbox is hidden in the profile dialogs. The stored flag is kept but ignored.
         Node compression = node.findFirstLocalNodeByNameAndNamespace("compression", "http://jabber.org/features/compress");
-        if (compression != null && !this.compressed && this.use_compression && compression.getNodeContainValue("zlib") != null) {
+        //noinspection ConstantValue
+        if (COMPRESSION_SUPPORTED && compression != null && !this.compressed && this.use_compression && compression.getNodeContainValue("zlib") != null) {
             jasminSvc.pla.put(this.nickname, resources.getString("s_jabber_compressing"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
             this.svc.put_log(this.nickname + ":\n" + resources.getString("s_jabber_compressing"));
             Node stanzas = new Node("compress", "", "http://jabber.org/protocol/compress");
@@ -2227,9 +2232,18 @@ public class JProfile extends IMProfile {
         return getStatusDescription();
     }
 
+    /** Incremented on every connect() so a late SRV answer cannot start a connection the user has since cancelled. */
+    private int connectGeneration = 0;
+
+    /** An empty server field means "find the server from the JID's domain" (SRV record, else the domain itself). */
+    public final boolean isServerAutomatic() {
+        return this.server == null || this.server.trim().isEmpty();
+    }
+
     public final void connect() {
-        jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_jabber_connecting"), new String[]{this.server, String.valueOf(this.port)}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-        this.svc.put_log(this.nickname + ":\n" + utilities.match(resources.getString("s_jabber_connecting"), new String[]{this.server, String.valueOf(this.port)}));
+        String shownServer = isServerAutomatic() ? this.host + " (SRV)" : this.server;
+        jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_jabber_connecting"), new String[]{shownServer, String.valueOf(this.port)}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+        this.svc.put_log(this.nickname + ":\n" + utilities.match(resources.getString("s_jabber_connecting"), new String[]{shownServer, String.valueOf(this.port)}));
         setConnectionStatus(15);
         PacketHandler.task_id = 0L;
         this.messages_seq = 0;
@@ -2237,7 +2251,22 @@ public class JProfile extends IMProfile {
         this.auth_chlng_received = false;
         this.tls_enabled = false;
         this.compressed = false;
-        this.stream.connect(this.server, this.port);
+        if (!isServerAutomatic()) {
+            this.stream.connect(this.server, this.port);
+            return;
+        }
+        final int generation = ++this.connectGeneration;
+        XmppSrvResolver.resolveAsync(this.host, this.port, new XmppSrvResolver.Callback() {
+            @Override
+            public void onResult(XmppSrvResolver.Target target) {
+                if (generation != JProfile.this.connectGeneration || JProfile.this.connected
+                        || (!JProfile.this.connecting && JProfile.this.status == -1)) {
+                    return;   // cancelled or superseded while the lookup was running
+                }
+                JProfile.this.svc.put_log(JProfile.this.nickname + ": " + JProfile.this.host + " -> " + target);
+                JProfile.this.stream.connect(target.host, target.port);
+            }
+        });
     }
 
     public final void addConference(String jid, String name, String nick, String pass, boolean connect) {

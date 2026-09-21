@@ -36,6 +36,12 @@
         android:inputType="textPassword" />
 
     <ru.ivansuper.jasmin.ui.MCheckBox
+        android:id="@+id/profile_show_pass"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Show password" />
+
+    <ru.ivansuper.jasmin.ui.MCheckBox
         android:id="@+id/mrim_profile_add_enabled"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

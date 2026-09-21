@@ -44,6 +44,12 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
 
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/profile_show_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show password" />
+
             <TextView
                 android:id="@+id/l3"
                 android:layout_width="wrap_content"
@@ -96,12 +102,14 @@
 
             <ru.ivansuper.jasmin.ui.MCheckBox
                 android:id="@+id/xmpp_profile_add_zlib"
+                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Compression" />
 
             <ru.ivansuper.jasmin.ui.MCheckBox
                 android:id="@+id/xmpp_profile_add_tls"
+                android:checked="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TLS" />

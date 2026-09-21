@@ -44,6 +44,12 @@
                 android:layout_height="wrap_content"
                 android:inputType="textPassword" />
 
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/profile_show_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show password" />
+
             <CheckBox
                 android:id="@+id/xmpp_profile_add_tls"
                 android:layout_width="wrap_content"

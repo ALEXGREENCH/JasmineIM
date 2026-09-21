@@ -906,3 +906,6 @@ s_enc_deriving := Deriving encryption key, please wait...
 s_enc_on_toast := Encryption is on
 s_enc_off_toast := Encryption is off
 s_enc_derive_failed := Could not derive the encryption key
+s_dialog_show_pass := Show password
+s_jabber_server_auto_hint := automatic (from JID)
+s_jabber_srv_not_found := No SRV record for %%%1. Leave the field empty to connect to the domain itself, or enter the server manually.
