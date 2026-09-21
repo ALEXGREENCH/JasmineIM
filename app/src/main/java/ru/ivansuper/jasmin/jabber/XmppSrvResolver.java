@@ -41,16 +41,19 @@ public final class XmppSrvResolver {
         public final int port;
         /** true when the answer came from an SRV record, false for the plain-domain fallback */
         public final boolean fromSrv;
+        /** true when no DNS server could be reached at all (as opposed to a definite "no record") */
+        public final boolean lookupFailed;
 
-        Target(String host, int port, boolean fromSrv) {
+        Target(String host, int port, boolean fromSrv, boolean lookupFailed) {
             this.host = host;
             this.port = port;
             this.fromSrv = fromSrv;
+            this.lookupFailed = lookupFailed;
         }
 
         @Override
         public String toString() {
-            return host + ":" + port + (fromSrv ? " (SRV)" : " (no SRV, domain itself)");
+            return host + ":" + port + (fromSrv ? " (SRV)" : lookupFailed ? " (DNS lookup failed, domain itself)" : " (no SRV, domain itself)");
         }
     }
 
@@ -77,16 +80,20 @@ public final class XmppSrvResolver {
                 SrvRecord best = records.get(0);
                 if (!".".equals(best.target) && !best.target.isEmpty()) {
                     Log.i(TAG, domain + " -> " + best.target + ":" + best.port + " (SRV, " + records.size() + " record(s))");
-                    return new Target(best.target, best.port, true);
+                    return new Target(best.target, best.port, true, false);
                 }
                 Log.i(TAG, domain + " publishes SRV '.' - service explicitly not available; using the domain");
+            } else if (records == null) {
+                Log.w(TAG, "SRV lookup for " + domain + " failed (no DNS answer); using the domain itself");
+                return new Target(domain, fallbackPort, false, true);
             } else {
                 Log.i(TAG, domain + " has no SRV record; using the domain itself");
             }
         } catch (Exception e) {
             Log.w(TAG, "SRV lookup for " + domain + " failed: " + e);
+            return new Target(domain, fallbackPort, false, true);
         }
-        return new Target(domain, fallbackPort, false);
+        return new Target(domain, fallbackPort, false, false);
     }
 
     /** Runs {@link #resolve} on a background thread and delivers the result on the UI thread. */
@@ -113,21 +120,36 @@ public final class XmppSrvResolver {
         String target;
     }
 
-    /** Returns the SRV records, an empty list for a definite "none", or null when no resolver answered. */
+    /**
+     * Returns the SRV records, an empty list for a definite "none", or null when no resolver
+     * answered. A "none" from the network's own resolvers is double-checked with a public one:
+     * carrier and home-router resolvers are known to filter SRV or to keep a stale negative
+     * answer cached for hours after a record is created.
+     */
     private static List<SrvRecord> querySrv(String name) {
-        List<String> resolvers = systemResolvers();
-        for (String r : PUBLIC_RESOLVERS) if (!resolvers.contains(r)) resolvers.add(r);
-        Exception last = null;
-        for (String resolver : resolvers) {
-            try {
-                return querySrv(name, resolver);
-            } catch (Exception e) {
-                last = e;
-                Log.w(TAG, "resolver " + resolver + " failed: " + e);
+        List<String> system = systemResolvers();
+        List<String> pub = new ArrayList<>();
+        for (String r : PUBLIC_RESOLVERS) if (!system.contains(r)) pub.add(r);
+
+        boolean anyAnswered = false;
+        for (List<String> group : new List[]{system, pub}) {
+            for (String resolver : group) {
+                try {
+                    List<SrvRecord> records = querySrv(name, resolver);
+                    anyAnswered = true;
+                    if (!records.isEmpty()) return records;
+                    Log.i(TAG, resolver + " says " + name + " has no SRV record" + (group == system ? "; asking a public resolver too" : ""));
+                    break;   // this group's verdict is "none": move on to the next group
+                } catch (Exception e) {
+                    Log.w(TAG, "resolver " + resolver + " failed: " + e);
+                }
             }
         }
-        Log.w(TAG, "no resolver answered for " + name + (last != null ? ": " + last : ""));
-        return null;
+        if (!anyAnswered) {
+            Log.w(TAG, "no resolver answered for " + name);
+            return null;
+        }
+        return new ArrayList<>();
     }
 
     private static List<SrvRecord> querySrv(String name, String resolver) throws Exception {

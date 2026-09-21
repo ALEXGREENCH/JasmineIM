@@ -909,3 +909,4 @@ s_enc_derive_failed := Could not derive the encryption key
 s_dialog_show_pass := Show password
 s_jabber_server_auto_hint := automatic (from JID)
 s_jabber_srv_not_found := No SRV record for %%%1. Leave the field empty to connect to the domain itself, or enter the server manually.
+s_jabber_srv_lookup_failed := DNS lookup for %%%1 failed (no DNS server answered). Check the connection, or enter the server manually.

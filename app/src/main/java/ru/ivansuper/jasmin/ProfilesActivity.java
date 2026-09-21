@@ -473,7 +473,8 @@ public class ProfilesActivity extends Activity {
                                         editText.setText(target.host);
                                         portText.setText(String.valueOf(target.port));
                                     } else {
-                                        Toast.makeText(ProfilesActivity.this, utilities.match(resources.getString("s_jabber_srv_not_found"), new String[]{parts[1]}), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(ProfilesActivity.this, utilities.match(resources.getString(
+                                            target.lookupFailed ? "s_jabber_srv_lookup_failed" : "s_jabber_srv_not_found"), new String[]{parts[1]}), Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
@@ -595,7 +596,8 @@ public class ProfilesActivity extends Activity {
                                         editText.setText(target.host);
                                         portText.setText(String.valueOf(target.port));
                                     } else {
-                                        Toast.makeText(ProfilesActivity.this, utilities.match(resources.getString("s_jabber_srv_not_found"), new String[]{parts[1]}), Toast.LENGTH_LONG).show();
+                                        Toast.makeText(ProfilesActivity.this, utilities.match(resources.getString(
+                                            target.lookupFailed ? "s_jabber_srv_lookup_failed" : "s_jabber_srv_not_found"), new String[]{parts[1]}), Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
