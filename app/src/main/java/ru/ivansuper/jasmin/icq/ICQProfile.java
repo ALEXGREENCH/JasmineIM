@@ -43,6 +43,7 @@ import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.popup_log_adapter;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 import ru.ivansuper.jasmin.resources;
+import ru.ivansuper.jasmin.security.ChatCrypto;
 import ru.ivansuper.jasmin.utilities;
 
 public class ICQProfile extends IMProfile {
@@ -1944,6 +1945,17 @@ public class ICQProfile extends IMProfile {
     /* JADX WARN: Can't fix incorrect switch cases order, some code will duplicate */
     private void handleMessage(ICQContact contact, ICQMessage msg, boolean sendConfirm) {
         String preview;
+        // End-to-end encryption: if this sender has a passphrase and the body opens with its
+        // key, the plaintext replaces the ciphertext here, before previews, notifications and
+        // history ever see it. Anything else (plain text, another passphrase) is shown as-is.
+        boolean encrypted = false;
+        if (msg.message != null) {
+            String plain = ChatCrypto.decryptIncoming(ChatCrypto.conversationId(this.ID, msg.sender), msg.message);
+            if (plain != null) {
+                msg.message = plain;
+                encrypted = true;
+            }
+        }
         if (msg.message.length() > 64) {
             preview = msg.message.substring(0, 64) + "...";
         } else {
@@ -2047,6 +2059,7 @@ public class ICQProfile extends IMProfile {
         HistoryItem hst = new HistoryItem(msg.timestamp);
         hst.message = msg.message;
         hst.direction = 1;
+        hst.encrypted = encrypted;
         hst.contact = contact;
         contact.loadLastHistory();
         contact.history.add(hst);
@@ -2315,6 +2328,19 @@ public class ICQProfile extends IMProfile {
     public final void sendMessage(String receiverUIN, String text, HistoryItem hst) {
         ICQContact contact = this.contactlist.getContactByUIN(receiverUIN);
         if (contact != null) {
+            // End-to-end encryption: only the wire copy is encrypted, the history item keeps
+            // what the user typed. When encryption is on but the key is not ready this throws
+            // rather than send plaintext; the chat screen checks readiness before calling us.
+            String conversation = ChatCrypto.conversationId(this.ID, receiverUIN);
+            if (ChatCrypto.isEnabled(conversation)) {
+                try {
+                    text = ChatCrypto.encryptOutgoing(conversation, text);
+                } catch (Exception e) {
+                    Log.e("ICQProfile:send_msg", "message not sent, encryption failed: " + e);
+                    return;
+                }
+                hst.encrypted = true;
+            }
             ByteBuffer cookie = new ByteBuffer(8);
             long id = System.currentTimeMillis();
             try {

@@ -60,6 +60,8 @@ public class ICQContact extends ContactlistItem {
     public final ClientInfo client = new ClientInfo();
     public final DCInfo dc_info = new DCInfo();
     public final ArrayList<HistoryItem> history = new ArrayList<>();
+    /** Bit in the (formerly reserved) flags int of a UNI16 history record: the message was end-to-end encrypted. */
+    public static final int HISTORY_FLAG_ENCRYPTED = 1;
     public Drawable avatar;
     public String away_status;
     public int group;
@@ -425,7 +427,7 @@ public class ICQContact extends ContactlistItem {
                 HistoryItem message = this.history.get(start + j);
                 bos.writeByte((byte) message.direction);
                 bos.writeBoolean(message.isXtrazMessage);
-                bos.writeInt(0);
+                bos.writeInt(message.encrypted ? HISTORY_FLAG_ENCRYPTED : 0);
                 bos.writeLong(message.date);
                 bos.writeInt(message.message.length() * 2);
                 utilities.writeStringUnicodeBE(message.message, new DataOutputStream(bos));
@@ -543,7 +545,7 @@ public class ICQContact extends ContactlistItem {
                             while (dis2.available() > 0) {
                                 int direction = dis2.readByte();
                                 boolean xtraz = dis2.readBoolean();
-                                dis2.readInt();
+                                int flags = dis2.readInt();
                                 long time = dis2.readLong();
                                 int msgLen = dis2.readInt();
                                 String msg = utilities.readStringUnicodeBE(dis2, msgLen);
@@ -552,6 +554,7 @@ public class ICQContact extends ContactlistItem {
                                 item.confirmed = true;
                                 item.message = msg;
                                 item.isXtrazMessage = xtraz;
+                                item.encrypted = (flags & HISTORY_FLAG_ENCRYPTED) != 0;
                                 item.contact = this;
                                 temp.add(item);
                             }
@@ -663,7 +666,7 @@ public class ICQContact extends ContactlistItem {
                     while (dis2.available() > 0) {
                         int direction = dis2.readByte();
                         boolean xtraz = dis2.readBoolean();
-                        dis2.readInt();
+                        int flags = dis2.readInt();
                         long time = dis2.readLong();
                         int msgLen = dis2.readInt();
                         String msg = utilities.readStringUnicodeBE(dis2, msgLen);
@@ -672,6 +675,7 @@ public class ICQContact extends ContactlistItem {
                         item.confirmed = true;
                         item.message = msg;
                         item.isXtrazMessage = xtraz;
+                        item.encrypted = (flags & HISTORY_FLAG_ENCRYPTED) != 0;
                         item.contact = this;
                         temp.add(item);
                     }
@@ -707,7 +711,7 @@ public class ICQContact extends ContactlistItem {
             try {
                 bos.writeByte((byte) message.direction);
                 bos.writeBoolean(message.isXtrazMessage);
-                bos.writeInt(0);
+                bos.writeInt(message.encrypted ? HISTORY_FLAG_ENCRYPTED : 0);
                 bos.writeLong(message.date);
                 bos.writeInt(message.message.length() * 2);
                 utilities.writeStringUnicodeBE(message.message, bos);

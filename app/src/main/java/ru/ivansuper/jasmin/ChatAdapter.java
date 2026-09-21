@@ -175,7 +175,7 @@ public class ChatAdapter extends BaseAdapter {
                 top_panel.setVisibility(View.VISIBLE);
             }
         }
-        time.setText(hst.formattedDate);
+        time.setText(hst.encrypted ? "\uD83D\uDD12 " + hst.formattedDate : hst.formattedDate);
         nick.setTextSize(PreferenceTable.chatTextSize);
         time.setTextSize(PreferenceTable.chatTimeSize);
         time.setTextColor(ColorScheme.getColor(10));
