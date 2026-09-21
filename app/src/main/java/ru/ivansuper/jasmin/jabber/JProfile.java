@@ -1740,8 +1740,21 @@ public class JProfile extends IMProfile {
             }
             String name = n.getParameterWODecode("name");
             String jid = JProtocol.lowerCaseFullJID(n.getParameterWODecode("jid"));
+            if (jid == null || jid.isEmpty()) {
+                continue;
+            }
+            // Roster JIDs are bare (RFC 6121), but some servers (xabber.org) hand out items with a
+            // resource. JContact uses the JID as a file name, so a '/' in it breaks history
+            // creation and used to throw the whole session away right after login.
+            int slash = jid.indexOf('/');
+            if (slash > 0) {
+                jid = jid.substring(0, slash);
+            }
             Log.e("Roster", jid);
             String subscript = n.getParameterWODecode("subscription");
+            if (subscript == null) {
+                subscript = "none";   // attribute is optional; a missing one crashed parsing here
+            }
             if (name == null) {
                 name = jid;
             }

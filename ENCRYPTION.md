@@ -63,3 +63,27 @@ refused (text stays in the input box) until the derivation finishes.
 | `icq/ICQProfile.java` | Hooks: `sendMessage` encrypts the wire copy; `handleMessage` decrypts before previews, notifications and history see the text. |
 | `chats/ICQChatActivity.java` | Menu entry, passphrase dialog, header badge, send guard, key pre-derivation on chat open. |
 | `HistoryItem.encrypted`, `icq/ICQContact.java` | Flag persisted in the previously reserved int of the UNI16 history record. |
+
+---
+
+# Jabber transport TLS (STARTTLS / port 5223)
+
+The XMPP socket layer used to ship only as compiled classes in `app/libs/Jasmine_BLOB.jar` and
+could not reach servers that require TLS 1.2/1.3: it took the platform's default protocol set
+(TLS 1.0 only before Android 5), sent no usable SNI, never verified the certificate name, and
+its direct-TLS path opened an unconnected SSL socket. `XMLStream` was removed from the jar and
+re-created in source ([jabber/XMLStream.java](app/src/main/java/ru/ivansuper/jasmin/jabber/XMLStream.java),
+same API) with the TLS work in [security/TlsSupport.java](app/src/main/java/ru/ivansuper/jasmin/security/TlsSupport.java):
+
+- every TLS version the device supports is enabled (TLS 1.2 on Android 4.1+, TLS 1.3 on 10+;
+  Android ≤ 4.0 has no TLS 1.2 in the platform at all - that needs a bundled stack such as Conscrypt);
+- SNI carries the XMPP domain; the handshake completes eagerly, so failures are reported at once;
+- the chain is checked against the system store and, failing that, the roots in
+  `assets/tls_roots.pem` (ISRG Root X1/X2 for Let's Encrypt, absent before Android 7.1.1);
+- the certificate name is verified (SAN dNSName, one-label wildcards) against the XMPP domain,
+  or the server host the user typed explicitly. The "check TLS certificate" preference turns
+  both checks off, as before.
+
+Verified from the desktop (same `TlsSupport` code, Android stubs) against jabber.org,
+conversations.im, xmpp.is (TLS 1.3) and jabber.ru (TLS 1.2), STARTTLS and direct 5223, plus a
+name-mismatch rejection.
