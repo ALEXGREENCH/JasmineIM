@@ -11,6 +11,7 @@ import android.os.Message;
 import android.text.ClipboardManager;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,6 +20,7 @@ import android.view.animation.TranslateAnimation;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -46,8 +48,10 @@ import ru.ivansuper.jasmin.icq.FileTransfer.FileTransfer;
 import ru.ivansuper.jasmin.icq.ICQContact;
 import ru.ivansuper.jasmin.icq.ICQProfile;
 import ru.ivansuper.jasmin.resources;
+import ru.ivansuper.jasmin.security.ChatCrypto;
 import ru.ivansuper.jasmin.slide_tools.AnimationCalculator;
 import ru.ivansuper.jasmin.slide_tools.ListViewA;
+import ru.ivansuper.jasmin.ui.MCheckBox;
 import ru.ivansuper.jasmin.utilities;
 
 /**
@@ -198,6 +202,7 @@ public class ICQChatActivity extends Chat {
             }
             adp.put(resources.getString("s_full_history"), 0);
             adp.put(resources.getString("s_encoding"), 7);
+            adp.put(resources.getString(ChatCrypto.isEnabled(conversationId()) ? "s_encryption_on" : "s_encryption_off"), 19);
             if (!multiquoting) {
                 adp.put(resources.getString("s_turn_on_multiquote"), 15);
             }
@@ -218,6 +223,9 @@ public class ICQChatActivity extends Chat {
             adp2.put(resources.getString("s_auto_encoding"), 5);
             ad = DialogBuilder.createWithNoHeader(this.ACTIVITY, adp2, 48, new chatMenuListener(adp2));
         }
+        if (id == 4 && contact != null) {
+            return createEncryptionDialog();
+        }
         if (id == 3) {
             UAdapter adp3 = new UAdapter();
             adp3.setMode(2);
@@ -230,6 +238,118 @@ public class ICQChatActivity extends Chat {
             return DialogBuilder.createWithNoHeader(this.ACTIVITY, adp3, 48, new chatMenuListener(adp3));
         }
         return ad;
+    }
+
+    // -- end-to-end encryption (SimpleOKM / Komet compatible) -----------------
+
+    private String conversationId() {
+        return ChatCrypto.conversationId(contact.profile.ID, contact.ID);
+    }
+
+    /**
+     * Set, change or turn off the shared passphrase for this contact. Both sides must use the
+     * same words; the server only ever sees the Cyrillic-encoded ciphertext.
+     */
+    private Dialog createEncryptionDialog() {
+        final String conversation = conversationId();
+        final boolean on = ChatCrypto.isEnabled(conversation);
+        int pad = (int) (8 * this.ACTIVITY.getResources().getDisplayMetrics().density);
+
+        TextView explain = new TextView(this.ACTIVITY);
+        explain.setTextSize(15.0f);
+        explain.setTextColor(-1);
+        explain.setPadding(pad, pad, pad, pad);
+        explain.setText(resources.getString("s_enc_explain"));
+
+        final EditText input = new EditText(this.ACTIVITY);
+        input.setHint(resources.getString("s_enc_hint"));
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+        input.setSingleLine(true);
+        resources.attachEditText(input);
+
+        MCheckBox show = new MCheckBox(this.ACTIVITY);
+        show.setText(resources.getString("s_enc_show"));
+        show.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                input.setInputType(InputType.TYPE_CLASS_TEXT | (isChecked
+                        ? InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                        : InputType.TYPE_TEXT_VARIATION_PASSWORD));
+                input.setSelection(input.length());
+            }
+        });
+
+        LinearLayout content = new LinearLayout(this.ACTIVITY);
+        content.setOrientation(LinearLayout.VERTICAL);
+        content.setPadding(pad, pad / 2, pad, 0);
+        content.addView(explain);
+        content.addView(input);
+        content.addView(show);
+
+        View.OnClickListener apply = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String pass = input.getText().toString().trim();
+                if (pass.isEmpty()) {
+                    contact.profile.makeShortToast(resources.getString("s_enc_empty"));
+                    return;
+                }
+                ICQChatActivity.this.removeDialog(4);
+                // Save first, so the badge flips to "on" at once even while the slow Argon2id
+                // derivation runs in the background.
+                ChatCrypto.setPassphrase(conversation, pass);
+                ICQChatActivity.this.drawReceiverData();
+                contact.profile.makeShortToast(resources.getString("s_enc_deriving"));
+                unlockAndRefresh(conversation, true);
+            }
+        };
+        View.OnClickListener cancel = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ICQChatActivity.this.removeDialog(4);
+            }
+        };
+        if (!on) {
+            return DialogBuilder.createYesNo(this.ACTIVITY, content, 48, resources.getString("s_encryption_title"),
+                    resources.getString("s_enc_enable"), resources.getString("s_cancel"), apply, cancel);
+        }
+        View.OnClickListener off = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ICQChatActivity.this.removeDialog(4);
+                ChatCrypto.disable(conversation);
+                ICQChatActivity.this.drawReceiverData();
+                contact.profile.makeShortToast(resources.getString("s_enc_off_toast"));
+            }
+        };
+        return DialogBuilder.createYesNoCancel(this.ACTIVITY, content, resources.getString("s_encryption_title"),
+                resources.getString("s_enc_update"), resources.getString("s_enc_turn_off"), resources.getString("s_cancel"),
+                apply, off, cancel);
+    }
+
+    /** Derives the key in the background (if a passphrase is set and it is not cached yet), then repaints the header. */
+    private void unlockAndRefresh(final String conversation, final boolean announce) {
+        if (!ChatCrypto.isEnabled(conversation) || ChatCrypto.isUnlocked(conversation)) {
+            return;
+        }
+        ChatCrypto.unlockAsync(conversation, new Runnable() {
+            @Override
+            public void run() {
+                service.runOnUi(new Runnable() {
+                    @Override
+                    public void run() {
+                        // The chat may have been closed or switched to another contact meanwhile.
+                        if (VISIBLE && contact != null && conversation.equals(conversationId())) {
+                            ICQChatActivity.this.drawReceiverData();
+                        }
+                        if (announce) {
+                            service.showToast(resources.getString(
+                                    ChatCrypto.isUnlocked(conversation) ? "s_enc_on_toast" : "s_enc_derive_failed"), 0);
+                        }
+                    }
+                });
+            }
+        });
     }
 
     private void intentHistoryWindow() {
@@ -314,6 +434,7 @@ public class ICQChatActivity extends Chat {
         service.handleContactlistDatasetChanged();
         contact.hasUnreadedFileRequest = false;
         drawReceiverData();
+        unlockAndRefresh(conversationId(), false);
         contact.loadLastHistory();
         if (this.chatAdp != null && this.chatAdp.isThatHistory(contact.history)) {
             this.chatAdp.refreshList();
@@ -409,7 +530,12 @@ public class ICQChatActivity extends Chat {
         } else {
             xStatus.setVisibility(android.view.View.GONE);
         }
-        nickname.setText(contact.name);
+        if (ChatCrypto.isEnabled(conversationId())) {
+            // padlock while the key is cached, hourglass+padlock while Argon2id is still running
+            nickname.setText((ChatCrypto.isUnlocked(conversationId()) ? "\uD83D\uDD12 " : "\u231B\uD83D\uDD12 ") + contact.name);
+        } else {
+            nickname.setText(contact.name);
+        }
         switch (contact.currentEncoding) {
             case -1:
                 encoding.setText("");
@@ -736,8 +862,20 @@ public class ICQChatActivity extends Chat {
         String message = this.input.getText().toString();
         if (!message.isEmpty()) {
             if (!this.input.getText().toString().trim().isEmpty() && contact.profile.connected) {
+                // With encryption on, never let a message out before the key is cached: keep the
+                // text in the box, kick off the derivation and ask the user to try again.
+                String conversation = conversationId();
+                boolean encrypted = ChatCrypto.isEnabled(conversation);
+                if (encrypted && !ChatCrypto.isUnlocked(conversation)) {
+                    contact.profile.makeShortToast(resources.getString("s_enc_deriving"));
+                    unlockAndRefresh(conversation, false);
+                    return;
+                }
                 ADB.proceedMessage(message);
-                String[] prepared = prepareAndSplit(message);
+                // Ciphertext is ~2x longer than the text (5 bits per letter plus spaces) and
+                // goes out as UCS-2, so encrypted parts are cut shorter to stay within the
+                // server's message size.
+                String[] prepared = prepareAndSplit(message, encrypted ? 256 : 1024);
                 for (String part : prepared) {
                     if (!part.trim().isEmpty()) {
                         HistoryItem hst = new HistoryItem();
@@ -758,16 +896,16 @@ public class ICQChatActivity extends Chat {
         }
     }
 
-    private String[] prepareAndSplit(String source) {
+    private String[] prepareAndSplit(String source, int partSize) {
         int length = source.length();
-        int count = length / 1024;
-        if (count * 1024 < length) {
+        int count = length / partSize;
+        if (count * partSize < length) {
             count++;
         }
         String[] result = new String[count];
         int remain = length;
         for (int i = 0; i < count; i++) {
-            int cut = Math.min(remain, 1024);
+            int cut = Math.min(remain, partSize);
             String part = source.substring(0, cut);
             result[i] = part;
             source = source.substring(cut);
@@ -993,6 +1131,10 @@ public class ICQChatActivity extends Chat {
                     }
                     ICQChatActivity.this.input.setText(item3.message + "\n");
                     ICQChatActivity.this.input.setSelection(item3.message.length());
+                    break;
+                case 19:
+                    ICQChatActivity.this.removeDialog(4);
+                    ICQChatActivity.this.showDialog(4);
                     break;
                 case 18:
                     HistoryItem item4 = ICQChatActivity.this.chatAdp.getItem(ICQChatActivity.this.last_context_message);

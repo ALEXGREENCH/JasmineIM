@@ -12,6 +12,8 @@ import android.view.Gravity;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
+import android.text.InputType;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -25,6 +27,7 @@ import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.icq.ICQProfile;
 import ru.ivansuper.jasmin.jabber.JProfile;
+import ru.ivansuper.jasmin.jabber.XmppSrvResolver;
 import ru.ivansuper.jasmin.jabber.dns.DNS;
 import ru.ivansuper.jasmin.locale.Locale;
 import ru.ivansuper.jasmin.protocols.IMProfile;
@@ -137,6 +140,29 @@ public class ProfilesActivity extends Activity {
     }
 
     @SuppressLint("SetTextI18n")
+
+    /**
+     * Wires the optional "show password" checkbox of a profile dialog to its password field.
+     * Layouts without the checkbox are left alone.
+     */
+    private void attachShowPassword(View lay, final EditText password) {
+        final CheckBox show = lay.findViewById(R.id.profile_show_pass);
+        if (show == null) {
+            return;
+        }
+        show.setText(resources.getString("s_dialog_show_pass"));
+        show.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                int sel = password.getSelectionStart();
+                password.setInputType(InputType.TYPE_CLASS_TEXT | (isChecked
+                        ? InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD
+                        : InputType.TYPE_TEXT_VARIATION_PASSWORD));
+                password.setSelection(Math.max(0, Math.min(sel, password.length())));
+            }
+        });
+    }
+
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -170,6 +196,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(login_edit);
                 final EditText password_edit = lay.findViewById(R.id.icq_profile_add_pass);
                 resources.attachEditText(password_edit);
+                attachShowPassword(lay, password_edit);
                 final CheckBox enabled = lay.findViewById(R.id.icq_profile_add_enabled);
                 enabled.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox autoconnect = lay.findViewById(R.id.icq_profile_add_autoconnect);
@@ -306,6 +333,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(login_edit1);
                 final EditText password_edit1 = lay2.findViewById(R.id.icq_profile_add_pass);
                 resources.attachEditText(password_edit1);
+                attachShowPassword(lay2, password_edit1);
                 final CheckBox enabled1 = lay2.findViewById(R.id.icq_profile_add_enabled);
                 enabled1.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox autoconnect1 = lay2.findViewById(R.id.icq_profile_add_autoconnect);
@@ -413,8 +441,10 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid);
                 final EditText password = lay3.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password);
+                attachShowPassword(lay3, password);
                 final EditText server = lay3.findViewById(R.id.xmpp_profile_add_server);
                 resources.attachEditText(server);
+                server.setHint(resources.getString("s_jabber_server_auto_hint"));
                 final EditText port = lay3.findViewById(R.id.xmpp_profile_add_port);
                 resources.attachEditText(port);
                 final CheckBox enabled2 = lay3.findViewById(R.id.xmpp_profile_add_enabled);
@@ -429,18 +459,23 @@ public class ProfilesActivity extends Activity {
                     @Override
                     public void onClick(View view) {
                         String JID = jid.getText().toString().toLowerCase().trim();
-                        String[] parts = JID.split("@");
+                        final String[] parts = JID.split("@");
                         if (parts.length == 2) {
                             final Dialog progress = DialogBuilder.createProgress(ProfilesActivity.this, Locale.getString("s_please_wait"), true);
                             progress.show();
-                            String str = parts[1];
-                            //noinspection UnnecessaryLocalVariable
                             final EditText editText = server;
-                            DNS.resolve(str, new DNS.DNSListener() {
+                            final EditText portText = port;
+                            XmppSrvResolver.resolveAsync(parts[1], 5222, new XmppSrvResolver.Callback() {
                                 @Override
-                                public void onResult(String server_) {
-                                    editText.setText(server_);
+                                public void onResult(XmppSrvResolver.Target target) {
                                     progress.dismiss();
+                                    if (target.fromSrv) {
+                                        editText.setText(target.host);
+                                        portText.setText(String.valueOf(target.port));
+                                    } else {
+                                        Toast.makeText(ProfilesActivity.this, utilities.match(resources.getString(
+                                            target.lookupFailed ? "s_jabber_srv_lookup_failed" : "s_jabber_srv_not_found"), new String[]{parts[1]}), Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                         }
@@ -471,7 +506,7 @@ public class ProfilesActivity extends Activity {
                                 }
                                 pdata.pass = pass;
                                 String Server = server.getText().toString().trim();
-                                if (Server.length() < 2) {
+                                if (Server.length() == 1) {   // empty = automatic (SRV lookup at connect time)
                                     Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_5"), Toast.LENGTH_SHORT).show();
                                     return;
                                 }
@@ -521,8 +556,10 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid3);
                 final EditText password3 = lay4.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password3);
+                attachShowPassword(lay4, password3);
                 final EditText server3 = lay4.findViewById(R.id.xmpp_profile_add_server);
                 resources.attachEditText(server3);
+                server3.setHint(resources.getString("s_jabber_server_auto_hint"));
                 final EditText port3 = lay4.findViewById(R.id.xmpp_profile_add_port);
                 resources.attachEditText(port3);
                 final CheckBox enabled3 = lay4.findViewById(R.id.xmpp_profile_add_enabled);
@@ -545,18 +582,23 @@ public class ProfilesActivity extends Activity {
                     @Override
                     public void onClick(View view) {
                         String JID = jid3.getText().toString().toLowerCase().trim();
-                        String[] parts = JID.split("@");
+                        final String[] parts = JID.split("@");
                         if (parts.length == 2) {
                             final Dialog progress = DialogBuilder.createProgress(ProfilesActivity.this, Locale.getString("s_please_wait"), true);
                             progress.show();
-                            String str = parts[1];
-                            //noinspection UnnecessaryLocalVariable
                             final EditText editText = server3;
-                            DNS.resolve(str, new DNS.DNSListener() {
+                            final EditText portText = port3;
+                            XmppSrvResolver.resolveAsync(parts[1], 5222, new XmppSrvResolver.Callback() {
                                 @Override
-                                public void onResult(String server_) {
-                                    editText.setText(server_);
+                                public void onResult(XmppSrvResolver.Target target) {
                                     progress.dismiss();
+                                    if (target.fromSrv) {
+                                        editText.setText(target.host);
+                                        portText.setText(String.valueOf(target.port));
+                                    } else {
+                                        Toast.makeText(ProfilesActivity.this, utilities.match(resources.getString(
+                                            target.lookupFailed ? "s_jabber_srv_lookup_failed" : "s_jabber_srv_not_found"), new String[]{parts[1]}), Toast.LENGTH_LONG).show();
+                                    }
                                 }
                             });
                         }
@@ -584,7 +626,7 @@ public class ProfilesActivity extends Activity {
                             }
                             pdata.pass = pass;
                             String Server = server3.getText().toString().trim();
-                            if (Server.length() < 3) {
+                            if (Server.length() > 0 && Server.length() < 3) {   // empty = automatic (SRV lookup at connect time)
                                 Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_5"), Toast.LENGTH_SHORT).show();
                                 return;
                             }
@@ -623,6 +665,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid4);
                 final EditText password4 = lay5.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password4);
+                attachShowPassword(lay5, password4);
                 final CheckBox enabled4 = lay5.findViewById(R.id.xmpp_profile_add_enabled);
                 enabled4.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox autoconnect4 = lay5.findViewById(R.id.xmpp_profile_add_autoconnect);
@@ -680,6 +723,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid5);
                 final EditText password5 = lay6.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password5);
+                attachShowPassword(lay6, password5);
                 final CheckBox enabled5 = lay6.findViewById(R.id.xmpp_profile_add_enabled);
                 enabled5.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox autoconnect5 = lay6.findViewById(R.id.xmpp_profile_add_autoconnect);
@@ -737,6 +781,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid7);
                 final EditText password7 = lay7.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password7);
+                attachShowPassword(lay7, password7);
                 final CheckBox enabled7 = lay7.findViewById(R.id.xmpp_profile_add_enabled);
                 enabled7.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox autoconnect7 = lay7.findViewById(R.id.xmpp_profile_add_autoconnect);
@@ -802,6 +847,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid6);
                 final EditText password6 = lay8.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password6);
+                attachShowPassword(lay8, password6);
                 final CheckBox enabled6 = lay8.findViewById(R.id.xmpp_profile_add_enabled);
                 enabled6.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox autoconnect6 = lay8.findViewById(R.id.xmpp_profile_add_autoconnect);
@@ -975,6 +1021,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid8);
                 final EditText password8 = lay11.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password8);
+                attachShowPassword(lay11, password8);
                 final CheckBox tls8 = lay11.findViewById(R.id.xmpp_profile_add_tls);
                 final CheckBox zlib8 = lay11.findViewById(R.id.xmpp_profile_add_zlib);
                 final CheckBox enabled8 = lay11.findViewById(R.id.xmpp_profile_add_enabled);
@@ -1037,6 +1084,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid9);
                 final EditText password9 = lay12.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password9);
+                attachShowPassword(lay12, password9);
                 final CheckBox enabled9 = lay12.findViewById(R.id.xmpp_profile_add_enabled);
                 enabled9.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox autoconnect9 = lay12.findViewById(R.id.xmpp_profile_add_autoconnect);
@@ -1099,6 +1147,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid10);
                 final EditText password10 = lay13.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password10);
+                attachShowPassword(lay13, password10);
                 final CheckBox tls10 = lay13.findViewById(R.id.xmpp_profile_add_tls);
                 final CheckBox zlib10 = lay13.findViewById(R.id.xmpp_profile_add_zlib);
                 final CheckBox enabled10 = lay13.findViewById(R.id.xmpp_profile_add_enabled);
@@ -1163,6 +1212,7 @@ public class ProfilesActivity extends Activity {
                 resources.attachEditText(jid11);
                 final EditText password11 = lay14.findViewById(R.id.xmpp_profile_add_pass);
                 resources.attachEditText(password11);
+                attachShowPassword(lay14, password11);
                 final CheckBox enabled11 = lay14.findViewById(R.id.xmpp_profile_add_enabled);
                 enabled11.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox autoconnect11 = lay14.findViewById(R.id.xmpp_profile_add_autoconnect);

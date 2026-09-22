@@ -32,8 +32,15 @@ public class Base64Coder {
         return new String(encode(s.getBytes()));
     }
 
+    /**
+     * 76-character lines joined by the system line separator, with NO separator after the last
+     * line. The jar's SCRAM code base64-encodes the client proof through this method and pastes
+     * the result straight into {@code p=...}; a trailing newline there makes every server answer
+     * {@code not-authorized}. The other callers (vCard photos, IBB chunks) don't care either way.
+     */
     public static String encodeLines(byte[] in) {
-        return encodeLines(in, 0, in.length, 76, systemLineSeparator);
+        String s = encodeLines(in, 0, in.length, 76, systemLineSeparator);
+        return s.endsWith(systemLineSeparator) ? s.substring(0, s.length() - systemLineSeparator.length()) : s;
     }
 
     public static String encodeLines(byte[] in, int iOff, int iLen, int lineLen, String lineSeparator) {
@@ -84,8 +91,12 @@ public class Base64Coder {
 
             out[op++] = map1[o0];
             out[op++] = map1[o1];
-            out[op++] = op < oDataLen ? map1[o2] : '=';
-            out[op++] = op < oDataLen ? map1[o3] : '=';
+            // compare BEFORE incrementing: "out[op++] = op < oDataLen ? ..." tested op+1 and
+            // replaced the last data character with '=' whenever iLen % 3 != 1
+            out[op] = op < oDataLen ? map1[o2] : '=';
+            op++;
+            out[op] = op < oDataLen ? map1[o3] : '=';
+            op++;
         }
 
         return out;

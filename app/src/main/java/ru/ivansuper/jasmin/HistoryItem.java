@@ -28,6 +28,8 @@ public class HistoryItem {
     public int conf_warn;
     public boolean confirmed;
     public ICQContact contact;
+    /** ICQ: the text travelled end-to-end encrypted (see ru.ivansuper.jasmin.security.ChatCrypto). */
+    public boolean encrypted;
     public byte[] cookie;
     public long date;
     public int direction;
