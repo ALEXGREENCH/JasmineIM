@@ -238,7 +238,7 @@ public class JConference extends Chat implements Handler.Callback {
                     @Override
                     public void onClick(View view) {
                         String cnt = count.getText().toString();
-                        if (cnt.isEmpty()) {
+                        if (cnt.equals("")) {
                             cnt = String.valueOf(JConference.this.chatAdp.getCount());
                         }
                         try {
@@ -311,7 +311,7 @@ public class JConference extends Chat implements Handler.Callback {
                     @Override
                     public void onClick(View view) {
                         String theme_ = theme.getText().toString();
-                        if (theme_.isEmpty()) {
+                        if (theme_.equals("")) {
                             Toast toast = Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_set_theme_error"), Toast.LENGTH_SHORT);
                             toast.setGravity(48, 0, 0);
                             toast.show();
@@ -335,7 +335,7 @@ public class JConference extends Chat implements Handler.Callback {
                 adp3.put(resources.getString("s_user_nick"), 0);
                 adp3.put(resources.getString("s_start_personal_chat"), 1);
                 adp3.put(resources.getString("s_user_vcard"), 2);
-                if (this.context_user.jid != null && !this.context_user.jid.isEmpty()) {
+                if (this.context_user.jid != null && !this.context_user.jid.equals("")) {
                     adp3.put(resources.getString("s_copy_jid"), 5);
                 }
                 adp3.put(resources.getString("s_commands"), 6);
@@ -606,7 +606,7 @@ public class JConference extends Chat implements Handler.Callback {
                             @Override
                             public void onClick(View v) {
                                 String nick_ = nick.getText().toString().trim();
-                                if (nick_.isEmpty()) {
+                                if (nick_.equals("")) {
                                     Toast toast = Toast.makeText(JConference.this.ACTIVITY, resources.getString("s_change_nick_error"), Toast.LENGTH_SHORT);
                                     toast.setGravity(48, 0, 0);
                                     toast.show();
@@ -830,7 +830,7 @@ public class JConference extends Chat implements Handler.Callback {
         int cursorPosition = input.getSelectionStart();
         input.setText(savedText);
 
-        if (!received_smile_tag.isEmpty()) {
+        if (!received_smile_tag.equals("")) {
             if (cursorPosition < 0) cursorPosition = 0;
             if (cursorPosition > input.length()) cursorPosition = input.length();
             StringBuilder builder = new StringBuilder(input.getText());
@@ -1045,8 +1045,8 @@ public class JConference extends Chat implements Handler.Callback {
 
     public void doSend() {
         String message = this.input.getText().toString();
-        if (!message.isEmpty()) {
-            if (!this.input.getText().toString().trim().isEmpty() && conference.isOnline()) {
+        if (!message.equals("")) {
+            if (!this.input.getText().toString().trim().equals("") && conference.isOnline()) {
                 ADB.proceedMessage(message);
                 HistoryItem hst = new HistoryItem();
                 hst.confirmed = true;

@@ -6,7 +6,6 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
 
 import ru.ivansuper.jasmin.utilities;
 
@@ -512,7 +511,7 @@ public class ByteBuffer {
 
     public final void write1251TLV(int type, String value) {
         writeWordLE(type);
-        if (!value.isEmpty()) {
+        if (!value.equals("")) {
             writeWordLE(value.length() + 3);
             writeWordLE(value.length() + 1);
             writeString1251(value);
@@ -529,12 +528,7 @@ public class ByteBuffer {
             writeWordLE(type);
 
             byte[] raw_value;
-            if (android.os.Build.VERSION.SDK_INT >= 19) {
-                raw_value = value.getBytes(StandardCharsets.UTF_8);
-            } else {
-                //noinspection CharsetObjectCanBeUsed
-                raw_value = value.getBytes("UTF-8");
-            }
+            raw_value = value.getBytes("UTF-8");
 
             writeWordLE(raw_value.length + 3);
             writeWordLE(raw_value.length + 1);

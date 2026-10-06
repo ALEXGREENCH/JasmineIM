@@ -127,7 +127,7 @@ public class BannedListActivity extends Activity {
                     @Override
                     public void onClick(View view) {
                         String raw = input.getText().toString();
-                        if (!raw.trim().isEmpty()) {
+                        if (!raw.trim().equals("")) {
                             String[] items = raw.split("\n");
                             JConference.conference.banUsers(items);
                             d.dismiss();

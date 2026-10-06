@@ -167,7 +167,7 @@ public class UAdapter extends BaseAdapter {
      */
     @Override
     public int getCount() {
-        return this.filter.isEmpty() ? this.labels.size() : this.filtered.size();
+        return this.filter.equals("") ? this.labels.size() : this.filtered.size();
     }
 
     /**
@@ -181,7 +181,7 @@ public class UAdapter extends BaseAdapter {
      * @return The index of the last item, or -1 if the list is empty.
      */
     public int getLastIndex() {
-        return this.filter.isEmpty() ? this.labels.size() - 1 : this.filtered.size() - 1;
+        return this.filter.equals("") ? this.labels.size() - 1 : this.filtered.size() - 1;
     }
 
     /**
@@ -228,7 +228,7 @@ public class UAdapter extends BaseAdapter {
      */
     @Override
     public long getItemId(int arg0) {
-        return this.filter.isEmpty() ? this.ids.get(arg0) : this.filtered.get(arg0).id;
+        return this.filter.equals("") ? this.ids.get(arg0) : this.filtered.get(arg0).id;
     }
 
     /**
@@ -612,7 +612,7 @@ public class UAdapter extends BaseAdapter {
             } else {
                 lay.setBackgroundColor(0);
             }
-            if (this.filter.isEmpty()) {
+            if (this.filter.equals("")) {
                 if (this.gravs.get(position) == null) {
                     lay.setGravity(19);
                 } else {

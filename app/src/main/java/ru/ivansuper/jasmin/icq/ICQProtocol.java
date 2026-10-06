@@ -317,7 +317,7 @@ public class ICQProtocol {
         String away = text.length() > 253 ? text.substring(0, 249) + " ..." : text;
         ByteBuffer data = new ByteBuffer(512);
         ByteBuffer buffer = new ByteBuffer(512);
-        if (!text.isEmpty()) {
+        if (!text.equals("")) {
             buffer.writeWord(2);
             buffer.writeByte((byte) 4);
             byte[] raw = null;
@@ -1167,21 +1167,21 @@ public class ICQProtocol {
         tlv1_subdata.writeWord(criteries.page);
         tlv1_subdata.writeWord(1);
         ByteBuffer criteries_block = new ByteBuffer(512);
-        if (!criteries.nick.isEmpty()) {
+        if (!criteries.nick.equals("")) {
             byte[] raw_nick = utilities.prepareUTF8(criteries.nick);
             criteries_block.writeWord(120);
             //noinspection DataFlowIssue
             criteries_block.writeWord(raw_nick.length);
             criteries_block.write(raw_nick);
         }
-        if (!criteries.name.isEmpty()) {
+        if (!criteries.name.equals("")) {
             byte[] raw_name = utilities.prepareUTF8(criteries.name);
             criteries_block.writeWord(100);
             //noinspection DataFlowIssue
             criteries_block.writeWord(raw_name.length);
             criteries_block.write(raw_name);
         }
-        if (!criteries.lastname.isEmpty()) {
+        if (!criteries.lastname.equals("")) {
             byte[] raw_lastname = utilities.prepareUTF8(criteries.lastname);
             criteries_block.writeWord(110);
             //noinspection DataFlowIssue
@@ -1193,7 +1193,7 @@ public class ICQProtocol {
             criteries_block.writeWord(1);
             criteries_block.writeByte((byte) criteries.gender);
         }
-        if (!criteries.city.isEmpty()) {
+        if (!criteries.city.equals("")) {
             byte[] raw_city = utilities.prepareUTF8(criteries.city);
             criteries_block.writeWord(160);
             //noinspection DataFlowIssue

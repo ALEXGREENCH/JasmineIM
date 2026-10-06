@@ -77,7 +77,7 @@ public class Manager {
             editor.putString("ms_chat_text_size", String.valueOf(chatFontSize));
             editor.putString("ms_chat_time_size", String.valueOf(timeFontSize));
             editor.putString("ms_smileys_scale", String.valueOf(smileScale));
-            editor.apply();
+            ru.ivansuper.jasmin.compat.AndroidCompat.apply(editor);
         }
     }
 

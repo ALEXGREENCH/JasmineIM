@@ -204,7 +204,7 @@ public class ProfilesManager {
                         String item3 = i_profile.nickname;
                         byte[] buf2 = proceedISEM_A(item3);
                         dos.write(buf2.length);
-                        if (!item3.isEmpty()) {
+                        if (!item3.equals("")) {
                             dos.write(buf2);
                         }
                         dos.writeBoolean(i_profile.autoconnect);
@@ -259,7 +259,7 @@ public class ProfilesManager {
                         String item11 = mmp_profile.ID;
                         byte[] buf4 = proceedISEM_A(item11);
                         dos.write(buf4.length);
-                        if (!item11.isEmpty()) {
+                        if (!item11.equals("")) {
                             dos.write(buf4);
                         }
                         dos.writeBoolean(mmp_profile.autoconnect);

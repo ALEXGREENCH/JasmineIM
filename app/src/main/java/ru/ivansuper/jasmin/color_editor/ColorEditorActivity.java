@@ -74,6 +74,15 @@ public class ColorEditorActivity extends Activity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
+        if (android.os.Build.VERSION.SDK_INT < 5 && keyCode == android.view.KeyEvent.KEYCODE_BACK) {
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public void onBackPressed() {
         if (selectorVisible) {
             hideSelector();
