@@ -44,7 +44,7 @@ public class HistoryAdapter extends BaseAdapter {
         if (pattern == null) {
             this.filtered = false;
             notifyDataSetChanged();
-        } else if (pattern.isEmpty()) {
+        } else if (pattern.equals("")) {
             this.filtered = false;
             notifyDataSetChanged();
         } else {

@@ -78,7 +78,7 @@ public final class XmppSrvResolver {
                     }
                 });
                 SrvRecord best = records.get(0);
-                if (!".".equals(best.target) && !best.target.isEmpty()) {
+                if (!".".equals(best.target) && !best.target.equals("")) {
                     Log.i(TAG, domain + " -> " + best.target + ":" + best.port + " (SRV, " + records.size() + " record(s))");
                     return new Target(best.target, best.port, true, false);
                 }
@@ -179,7 +179,7 @@ public final class XmppSrvResolver {
         out.write(0); out.write(0);
         out.write(0); out.write(0);
         for (String label : name.split("\\.")) {
-            if (label.isEmpty()) continue;
+            if (label.equals("")) continue;
             byte[] b = label.getBytes("UTF-8");
             if (b.length > 63) throw new IllegalArgumentException("label too long");
             out.write(b.length);
@@ -262,10 +262,29 @@ public final class XmppSrvResolver {
         List<String> out = new ArrayList<>();
         try {
             if (Build.VERSION.SDK_INT >= 21) {
+                Api21.addResolvers(out);
+            }
+            if (out.isEmpty() && Build.VERSION.SDK_INT < 26) {
+                // old Android: the resolvers are exposed as system properties
+                Class<?> sp = Class.forName("android.os.SystemProperties");
+                java.lang.reflect.Method get = sp.getMethod("get", String.class);
+                for (String key : new String[]{"net.dns1", "net.dns2"}) {
+                    String v = (String) get.invoke(null, key);
+                    if (v != null && !v.equals("") && !out.contains(v)) out.add(v);
+                }
+            }
+        } catch (Exception e) {
+            Log.w(TAG, "cannot read system resolvers: " + e);
+        }
+        return out;
+    }
+    @android.annotation.TargetApi(21)
+    private static class Api21 {
+        static void addResolvers(List<String> out) {
                 ConnectivityManager cm = (ConnectivityManager) resources.ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
                 if (cm != null) {
                     List<Network> networks = new ArrayList<>();
-                    if (Build.VERSION.SDK_INT >= 23 && cm.getActiveNetwork() != null) networks.add(cm.getActiveNetwork());
+                    if (Build.VERSION.SDK_INT >= 23 && Api23.activeNetwork(cm) != null) networks.add(Api23.activeNetwork(cm));
                     Collections.addAll(networks, cm.getAllNetworks());
                     for (Network n : networks) {
                         LinkProperties lp = cm.getLinkProperties(n);
@@ -276,19 +295,11 @@ public final class XmppSrvResolver {
                         }
                     }
                 }
-            }
-            if (out.isEmpty() && Build.VERSION.SDK_INT < 26) {
-                // old Android: the resolvers are exposed as system properties
-                Class<?> sp = Class.forName("android.os.SystemProperties");
-                java.lang.reflect.Method get = sp.getMethod("get", String.class);
-                for (String key : new String[]{"net.dns1", "net.dns2"}) {
-                    String v = (String) get.invoke(null, key);
-                    if (v != null && !v.isEmpty() && !out.contains(v)) out.add(v);
-                }
-            }
-        } catch (Exception e) {
-            Log.w(TAG, "cannot read system resolvers: " + e);
         }
-        return out;
+    }
+
+    @android.annotation.TargetApi(23)
+    private static class Api23 {
+        static Network activeNetwork(ConnectivityManager manager) { return manager.getActiveNetwork(); }
     }
 }

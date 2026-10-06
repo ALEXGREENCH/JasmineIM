@@ -6,7 +6,6 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewConfiguration;
 import android.os.Build;
 import android.content.Context;
 import android.widget.ListAdapter;
@@ -21,8 +20,6 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -234,10 +231,8 @@ public class utilities {
      *
      * <p>This method handles different Android SDK versions for "windows-1251" encoding:
      * <ul>
-     *   <li>For Android API level 19 (KitKat) and above, it uses {@link Charset#forName(String)}.
-     *   <li>For older Android versions, it falls back to {@link String#getBytes(String)},
-     *       catching {@link UnsupportedEncodingException} if the encoding is not supported.
-     *       If the encoding is unsupported, the stack trace is printed, and {@code null} is returned.
+     *   <li>Uses the charset-name overload for Windows-1251 on every Android version.
+     *       If the encoding is unavailable, prints the exception and returns {@code null}.
      * </ul>
      *
      * @param key A byte array representing the key.
@@ -248,17 +243,11 @@ public class utilities {
     public static byte[] getOldHashArray(byte[] key, String password) {
         byte[] passwordRaw;
 
-        if (android.os.Build.VERSION.SDK_INT >= 19) {
-            Charset win1251 = Charset.forName("windows-1251");
-            passwordRaw = password.getBytes(win1251);
-        } else {
-            try {
-                passwordRaw = password.getBytes("windows-1251");
-            } catch (java.io.UnsupportedEncodingException e) {
-                //noinspection CallToPrintStackTrace
-                e.printStackTrace();
-                return null;
-            }
+        try {
+            passwordRaw = password.getBytes("windows-1251");
+        } catch (java.io.UnsupportedEncodingException e) {
+            e.printStackTrace();
+            return null;
         }
 
         byte[] md5buf = new byte[key.length + passwordRaw.length + MD5.AIM_MD5_STRING.length];
@@ -463,7 +452,7 @@ public class utilities {
      * @noinspection unused - This method might be used by parts of the codebase not included in this snippet or intended for future use.
      */
     public static boolean isEmptyForDisplay(String source) {
-        return source == null || source.trim().isEmpty();
+        return source == null || source.trim().equals("");
     }
 
     /**
@@ -588,12 +577,7 @@ public class utilities {
     /**
      * Converts a Java String to a UTF-8 encoded byte array.
      *
-     * <p>This method handles different Android SDK versions for optimal UTF-8 encoding:
-     * <ul>
-     *   <li>For Android API level 19 (KitKat) and above, it uses {@link StandardCharsets#UTF_8}.
-     *   <li>For older Android versions, it falls back to specifying "UTF-8" as a string,
-     *       suppressing the {@code CharsetObjectCanBeUsed} lint warning.
-     * </ul>
+     * <p>Uses the charset-name overload, available since Android 1.6 and earlier.
      * If the input string is {@code null}, this method returns {@code null}.
      *
      * <p>If an {@link UnsupportedEncodingException} occurs (which is highly unlikely for UTF-8
@@ -607,12 +591,7 @@ public class utilities {
     public static byte[] prepareUTF8(String source) {
         if (source == null) return null;
         try {
-            if (android.os.Build.VERSION.SDK_INT >= 19) {
-                return source.getBytes(StandardCharsets.UTF_8);
-            } else {
-                //noinspection CharsetObjectCanBeUsed
-                return source.getBytes("UTF-8");
-            }
+            return source.getBytes("UTF-8");
         } catch (UnsupportedEncodingException e) {
             //noinspection CallToPrintStackTrace
             e.printStackTrace();
@@ -657,7 +636,7 @@ public class utilities {
             return false;
         }
         String[] parts = source.split("@");
-        if (parts.length != 2 || parts[0].isEmpty()) {
+        if (parts.length != 2 || parts[0].equals("")) {
             return false;
         }
         return parts[1].equals("list.ru") || parts[1].equals("mail.ru") || parts[1].equals("bk.ru") || parts[1].equals("inbox.ru");
@@ -1160,11 +1139,7 @@ public class utilities {
      * thread-safe initialization and use of the static {@link MessageDigest} instance
      * for SHA-1.
      *
-     * <p>The input string is converted to bytes using UTF-8 encoding.
-     * <ul>
-     *   <li>On Android API level 19 (KitKat) and above, {@link StandardCharsets#UTF_8} is used.
-     *   <li>On older versions, "UTF-8" is specified directly.
-     * </ul>
+     * <p>The input uses UTF-8 via the charset-name overload for compatibility with Donut.
      *
      * <p>If the "SHA-1" algorithm is not available (which is highly unlikely on standard
      * Android/Java platforms), an error message is printed to {@code System.err}, and
@@ -1192,12 +1167,7 @@ public class utilities {
             }
             try {
                 byte[] utf8Bytes;
-                if (android.os.Build.VERSION.SDK_INT >= 19) {
-                    utf8Bytes = data.getBytes(StandardCharsets.UTF_8);
-                } else {
-                    //noinspection CharsetObjectCanBeUsed
-                    utf8Bytes = data.getBytes("UTF-8");
-                }
+                utf8Bytes = data.getBytes("UTF-8");
                 digest.update(utf8Bytes);
                 convertToHex = convertToHex(digest.digest());
             } catch (UnsupportedEncodingException e) {
@@ -1272,11 +1242,7 @@ public class utilities {
      * For pre-ICS devices we assume menu key is present.
      */
     public static boolean hasHardwareMenuKey(Context context) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
-            ViewConfiguration config = ViewConfiguration.get(context);
-            return config.hasPermanentMenuKey();
-        }
-        return true;
+        return ru.ivansuper.jasmin.compat.AndroidCompat.hasHardwareMenuKey(context);
     }
 
     /**

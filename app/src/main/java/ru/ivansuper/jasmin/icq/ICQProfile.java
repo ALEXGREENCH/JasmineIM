@@ -1125,7 +1125,7 @@ public class ICQProfile extends IMProfile {
                             tlvData4.readPos = backup;
                             away_status = tlvData4.readString1251(len);
                         }
-                        if (!away_status.isEmpty()) {
+                        if (!away_status.equals("")) {
                             contact.away_status = away_status;
                             if (utilities.isEmptyForDisplay(contact.away_status)) {
                                 contact.away_status = null;
@@ -1501,7 +1501,7 @@ public class ICQProfile extends IMProfile {
                         }
                         if (operation.type == 2) {
                             //noinspection ConstantValue
-                            if (nick != null && !nick.trim().isEmpty()) {
+                            if (nick != null && !nick.trim().equals("")) {
                                 this.nickname = nick;
                             }
                             this.info_container.nickname = this.nickname;

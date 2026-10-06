@@ -891,12 +891,12 @@ public class JProfile extends IMProfile {
                     if (subject == null) {
                         subject = "";
                     }
-                    String message = !subject.isEmpty() ? resources.getString("s_jabber_message_theme") + ": " + subject + "\n\n" : "";
+                    String message = !subject.equals("") ? resources.getString("s_jabber_message_theme") + ": " + subject + "\n\n" : "";
                     if (body != null) {
                         message = message + body;
                     }
                     //noinspection ConstantValue
-                    if (!message.isEmpty() || !subject.isEmpty()) {
+                    if (!message.equals("") || !subject.equals("")) {
                         final String subject_ = subject;
                         final String message_ = message;
                         final long timestamp_ = timestamp;
@@ -954,17 +954,17 @@ public class JProfile extends IMProfile {
             if (subject2 == null) {
                 subject2 = "";
             }
-            String message2 = !subject2.isEmpty() ? resources.getString("s_jabber_message_theme") + ": " + subject2 + "\n\n" : "";
+            String message2 = !subject2.equals("") ? resources.getString("s_jabber_message_theme") + ": " + subject2 + "\n\n" : "";
             if (body2 != null) {
                 message2 = message2 + body2;
             }
             if (!type.equals("chat")) {
-                if (!message2.trim().isEmpty()) {
+                if (!message2.trim().equals("")) {
                     this.svc.showMessageInContactList(from, xml_utils.decodeString(message2));
                 }
                 return;
             }
-            if (!message2.isEmpty()) {
+            if (!message2.equals("")) {
                 if (contact == null) {
                     synchronized (ContactsAdapter.locker) {
                         try {
@@ -1076,7 +1076,7 @@ public class JProfile extends IMProfile {
     private void handleStreamPresence(Node data) {
         final String from = JProtocol.lowerCaseFullJID(data.getParameter("from"));
         String type = data.getParameter("type");
-        if (type == null || type.trim().isEmpty()) {
+        if (type == null || type.trim().equals("")) {
             type = "available";
         }
         int priority = 0;
@@ -1298,7 +1298,7 @@ public class JProfile extends IMProfile {
                 if (subscript.equals("remove")) {
                     removeContactByJID(jid);
                 } else {
-                    if (group != null && getGroup(group) == null && !group.isEmpty()) {
+                    if (group != null && getGroup(group) == null && !group.equals("")) {
                         JGroup jgroup = new JGroup(this, group);
                         this.contacts.add(jgroup);
                     }
@@ -1548,12 +1548,12 @@ public class JProfile extends IMProfile {
         priority.setValue(String.valueOf(this.priority));
         presence.putChild(priority);
         String status_ = JProtocol.parseStatus(this.status);
-        if (!status_.isEmpty()) {
+        if (!status_.equals("")) {
             Node show = new Node("show");
             show.setValue(JProtocol.parseStatus(this.status));
             presence.putChild(show);
         }
-        if (!this.status_desc.isEmpty()) {
+        if (!this.status_desc.equals("")) {
             Node status = new Node("status");
             status.setValue(this.status_desc);
             presence.putChild(status);
@@ -1619,8 +1619,8 @@ public class JProfile extends IMProfile {
 
     public final void doAddContact(JContact contact) {
         if (getContactByJID(contact.ID) == null) {
-            String params = !contact.name.isEmpty() ? "name='" + xml_utils.encodeString(contact.name) + "'" : "";
-            String group = !contact.group.isEmpty() ? "<group>" + xml_utils.encodeString(contact.group) + "</group>" : "";
+            String params = !contact.name.equals("") ? "name='" + xml_utils.encodeString(contact.name) + "'" : "";
+            String group = !contact.group.equals("") ? "<group>" + xml_utils.encodeString(contact.group) + "</group>" : "";
             XMLPacket packet = new XMLPacket("<iq type='set' id='roster_add'><query xmlns='jabber:iq:roster'><item jid='" + xml_utils.encodeString(contact.ID) + "' " + params + " subscription='none'>" + group + "</item></query></iq>", null);
             this.stream.write(packet, this);
         }
@@ -1639,8 +1639,8 @@ public class JProfile extends IMProfile {
             if (contact.subscription == 0) {
                 subscription = "none";
             }
-            String params = !contact.name.isEmpty() ? "name='" + xml_utils.encodeString(contact.name) + "'" : "";
-            String group = !contact.group.isEmpty() ? "<group>" + xml_utils.encodeString(contact.group) + "</group>" : "";
+            String params = !contact.name.equals("") ? "name='" + xml_utils.encodeString(contact.name) + "'" : "";
+            String group = !contact.group.equals("") ? "<group>" + xml_utils.encodeString(contact.group) + "</group>" : "";
             XMLPacket packet = new XMLPacket("<iq type='set' id='roster_modify'><query xmlns='jabber:iq:roster'><item jid='" + xml_utils.encodeString(contact.ID) + "' " + params + " subscription='" + subscription + "'>" + group + "</item></query></iq>", null);
             this.stream.write(packet, this);
         }
@@ -1657,15 +1657,15 @@ public class JProfile extends IMProfile {
         if (subscription_ == 0) {
             subscription = "none";
         }
-        String params = !name_.isEmpty() ? "name='" + xml_utils.encodeString(name_) + "'" : "";
-        String group = !group_.isEmpty() ? "<group>" + xml_utils.encodeString(group_) + "</group>" : "";
+        String params = !name_.equals("") ? "name='" + xml_utils.encodeString(name_) + "'" : "";
+        String group = !group_.equals("") ? "<group>" + xml_utils.encodeString(group_) + "</group>" : "";
         XMLPacket packet = new XMLPacket("<iq type='set' id='roster_modify'><query xmlns='jabber:iq:roster'><item jid='" + xml_utils.encodeString(ID_) + "' " + params + " subscription='" + subscription + "'>" + group + "</item></query></iq>", null);
         this.stream.write(packet, this);
     }
 
     public final void doDeleteContact(JContact contact) {
         XMLPacket packet;
-        if (contact.name != null && !contact.name.isEmpty()) {
+        if (contact.name != null && !contact.name.equals("")) {
             packet = new XMLPacket("<iq type='set' id='roster_modify'><query xmlns='jabber:iq:roster'><item jid='" + xml_utils.encodeString(contact.ID) + "' name='" + xml_utils.encodeString(contact.name) + "' subscription='remove'><group>" + contact.group + "</group></item></query></iq>", null);
         } else {
             packet = new XMLPacket("<iq type='set' id='roster_modify'><query xmlns='jabber:iq:roster'><item jid='" + xml_utils.encodeString(contact.ID) + "' subscription='remove'><group>" + xml_utils.encodeString(contact.group) + "</group></item></query></iq>", null);
@@ -1731,7 +1731,7 @@ public class JProfile extends IMProfile {
                 group_ = group.getValue();
                 JGroup jgroup = getGroup(group_);
                 if (jgroup == null) {
-                    if (!group_.isEmpty()) {
+                    if (!group_.equals("")) {
                         JGroup jgroup2 = new JGroup(this, group_);
                         if (!groups.contains(group_)) {
                             groups.add(group_);
@@ -1745,7 +1745,7 @@ public class JProfile extends IMProfile {
             }
             String name = n.getParameterWODecode("name");
             String jid = JProtocol.lowerCaseFullJID(n.getParameterWODecode("jid"));
-            if (jid == null || jid.isEmpty()) {
+            if (jid == null || jid.equals("")) {
                 continue;
             }
             // Roster JIDs are bare (RFC 6121), but some servers (xabber.org) hand out items with a
@@ -2097,7 +2097,7 @@ public class JProfile extends IMProfile {
         if (data.findFirstNodeByName("xml-not-well-formed") != null) {
             description = resources.getString("s_jabber_stream_error_25");
         }
-        if (text != null && !text.getValue().isEmpty()) {
+        if (text != null && !text.getValue().equals("")) {
             description = description + "\n\n" + text.getValue();
         }
         jasminSvc.pla.put(this.nickname, resources.getString("s_jabber_xml_stream_error"), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
@@ -2237,7 +2237,7 @@ public class JProfile extends IMProfile {
 
     /** An empty server field means "find the server from the JID's domain" (SRV record, else the domain itself). */
     public final boolean isServerAutomatic() {
-        return this.server == null || this.server.trim().isEmpty();
+        return this.server == null || this.server.trim().equals("");
     }
 
     public final void connect() {
@@ -2472,7 +2472,7 @@ public class JProfile extends IMProfile {
                         this.contacts.remove(i);
                         i--;
                         list.addElement(contact);
-                    } else if (contact.group.isEmpty() && id == -1) {
+                    } else if (contact.group.equals("") && id == -1) {
                         this.contacts.remove(i);
                         i--;
                         list.addElement(contact);
@@ -2534,7 +2534,7 @@ public class JProfile extends IMProfile {
         Node iq = new Node("iq");
         iq.putParameter("type", "get").putParameter("to", server).putParameter("id", handler.getID()).putParameter("xml:lang", Locale.getCurrentLangCode());
         Node query = new Node("query", "", "http://jabber.org/protocol/disco#" + (info ? "info" : "items"));
-        if (xml_node != null && !xml_node.trim().isEmpty()) {
+        if (xml_node != null && !xml_node.trim().equals("")) {
             query.putParameter("node", xml_node);
         }
         iq.putChild(query);
@@ -2664,7 +2664,7 @@ public class JProfile extends IMProfile {
                     VCardDecoder.decode(vcard, JProfile.this.my_vcard);
                     JProfile.this.my_vcard.avatar = avatar;
                     String nick = JProfile.this.my_vcard.getEntry(ru.ivansuper.jasmin.jabber.vcard.VCard.Entry.Type.NICKNAME);
-                    if (nick != null && !nick.trim().isEmpty()) {
+                    if (nick != null && !nick.trim().equals("")) {
                         JProfile.this.nickname = nick;
                         JProfile.this.svc.profiles.writeProfilesToFile();
                     }
@@ -3142,7 +3142,7 @@ public class JProfile extends IMProfile {
                 if (it != null) {
                     if (it.itemType == ContactlistItem.JABBER_CONTACT) {
                         JContact contact = (JContact) it;
-                        if (contact.group.equals(jgroup.name) || (contact.group.isEmpty() && jgroup.id == -1)) {
+                        if (contact.group.equals(jgroup.name) || (contact.group.equals("") && jgroup.id == -1)) {
                             if (!contact.conf_pm) {
                                 gpi.total++;
                                 if (contact.isOnline()) {

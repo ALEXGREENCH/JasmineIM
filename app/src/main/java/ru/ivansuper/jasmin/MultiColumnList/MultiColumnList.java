@@ -71,6 +71,8 @@ import ru.ivansuper.jasmin.resources;
  */
 @SuppressLint("ViewConstructor")
 public class MultiColumnList extends ViewGroup {
+    private final ru.ivansuper.jasmin.compat.ScrollIndicatorCompat legacyIndicator =
+            android.os.Build.VERSION.SDK_INT < 5 ? new ru.ivansuper.jasmin.compat.ScrollIndicatorCompat() : null;
     /** @noinspection unused*/
     public static final int LONG_CLICK_TIMEOUT = 500;
     private static int OVERSCROLL_EFFECT_AMOUNT = 192;
@@ -185,8 +187,9 @@ public class MultiColumnList extends ViewGroup {
         this.mSelectorRect = new Rect();
         LinearInterpolator i = new LinearInterpolator();
         this.mScroller = new Scroller(getContext(), i);
-        setVerticalScrollBarEnabled(true);
-        setVerticalScrollBarEnabled(true);
+        // Donut's View(Context) does not initialize the scrollbar drawable.
+        // Use our compat indicator there; enabling the native one crashes Donut.
+        setVerticalScrollBarEnabled(android.os.Build.VERSION.SDK_INT >= 5);
         setVerticalFadingEdgeEnabled(true);
         setFadingEdgeLength(48);
     }
@@ -399,6 +402,11 @@ public class MultiColumnList extends ViewGroup {
         if (need_invalidate && !this.freezed) {
             invalidate();
         }
+        if (legacyIndicator != null) {
+            legacyIndicator.draw(canvas, this, computeVerticalScrollExtent(), computeVerticalScrollOffset(),
+                    computeVerticalScrollRange(), getResources().getDisplayMetrics().density,
+                    ColorScheme.getColor(49), this.IS_TOUCHED || !this.mScroller.isFinished());
+        }
     }
 
     private Rect getChildRect(int idx) {
@@ -600,10 +608,10 @@ public class MultiColumnList extends ViewGroup {
             this.mCurrentY = this.mNextY;
             this.mRenderOverscroll = false;
             if (this.keyboard_used) {
-                awakenScrollBars(1500);
+                awakenScrollBarsCompat(1500);
             }
             if (!this.mScroller.isFinished()) {
-                awakenScrollBars();
+                awakenScrollBarsCompat(-1);
                 post(new Runnable() {
                     @Override
                     public void run() {
@@ -1117,7 +1125,7 @@ public class MultiColumnList extends ViewGroup {
             case MotionEvent.ACTION_MOVE:
                 float Y = event.getY();
                 if (mScrolling) {
-                    awakenScrollBars(2000, true);
+                    awakenScrollBarsCompat(2000);
                     mTouchTime = 0L;
                     hideSelector();
                     float diff = mLastMoveY - Y;
@@ -1196,5 +1204,21 @@ public class MultiColumnList extends ViewGroup {
         mAdapter = null;
         mDataObserver = null;
         super.destroyDrawingCache();
+    }
+    private void awakenScrollBarsCompat(int delay) {
+        if (android.os.Build.VERSION.SDK_INT < 5) {
+            legacyIndicator.awaken(this, delay);
+            return;
+        }
+        try {
+            java.lang.reflect.Method method = delay < 0
+                    ? android.view.View.class.getDeclaredMethod("awakenScrollBars")
+                    : android.view.View.class.getDeclaredMethod("awakenScrollBars", int.class);
+            method.setAccessible(true);
+            if (delay < 0) method.invoke(this);
+            else method.invoke(this, delay);
+        } catch (Exception ignored) {
+            invalidate();
+        }
     }
 }

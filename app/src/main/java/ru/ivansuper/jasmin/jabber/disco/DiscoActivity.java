@@ -107,7 +107,7 @@ public class DiscoActivity extends Activity {
             @Override
             public void onClick(View view) {
                 boolean z = false;
-                if (mServer.getText().toString().trim().isEmpty()) {
+                if (mServer.getText().toString().trim().equals("")) {
                     return;
                 }
                 initRoot();

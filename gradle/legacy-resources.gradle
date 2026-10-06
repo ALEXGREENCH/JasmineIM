@@ -1,0 +1,143 @@
+import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.zip.ZipEntry
+import java.util.zip.ZipFile
+import java.util.zip.ZipOutputStream
+import java.util.zip.CRC32
+import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.tasks.*
+
+/** Android 1.6 has no UTF8_FLAG support in ResStringPool. Keep string indices,
+ * resource IDs, styles and XML nodes unchanged; change only pool encoding. */
+abstract class DonutResources extends DefaultTask {
+    @InputDirectory @PathSensitive(PathSensitivity.RELATIVE)
+    abstract DirectoryProperty getInputDirectory()
+    @OutputDirectory abstract DirectoryProperty getOutputDirectory()
+    @Internal Object transformationRequest
+
+    static int u16(byte[] b, int p) { ByteBuffer.wrap(b).order(ByteOrder.LITTLE_ENDIAN).getShort(p) & 0xffff }
+    static int u32(byte[] b, int p) { ByteBuffer.wrap(b).order(ByteOrder.LITTLE_ENDIAN).getInt(p) }
+    static void put32(byte[] b, int p, int v) { ByteBuffer.wrap(b).order(ByteOrder.LITTLE_ENDIAN).putInt(p, v) }
+    static void write16(ByteArrayOutputStream out, int value) { out.write(value & 255); out.write((value >>> 8) & 255) }
+    static void require(boolean condition, String message) { if (!condition) throw new GradleException(message) }
+
+    static byte[] pool(byte[] b) {
+        if ((u32(b, 16) & 0x100) == 0) return b
+        int header = u16(b, 2), count = u32(b, 8), styles = u32(b, 12)
+        int stringsStart = u32(b, 20), stylesStart = u32(b, 24)
+        byte[] prefix = Arrays.copyOf(b, stringsStart)
+        ByteArrayOutputStream strings = new ByteArrayOutputStream()
+        for (int i = 0; i < count; i++) {
+            int p = stringsStart + u32(b, header + i * 4)
+            int chars = b[p++] & 255
+            if ((chars & 128) != 0) chars = ((chars & 127) << 8) | (b[p++] & 255)
+            int bytes = b[p++] & 255
+            if ((bytes & 128) != 0) bytes = ((bytes & 127) << 8) | (b[p++] & 255)
+            require(p + bytes < b.length && b[p + bytes] == 0, 'Malformed UTF-8 resource string')
+            String text = new String(b, p, bytes, 'UTF-8')
+            require(text.length() == chars, 'UTF-8 resource string length mismatch')
+            put32(prefix, header + i * 4, strings.size())
+            if (chars > 0x7fff) write16(strings, (chars >>> 16) | 0x8000)
+            write16(strings, chars & 0xffff)
+            strings.write(text.getBytes('UTF-16LE'))
+            write16(strings, 0)
+        }
+        while ((strings.size() & 3) != 0) strings.write(0)
+        put32(prefix, 16, u32(b, 16) & ~0x100)
+        put32(prefix, 24, stylesStart == 0 ? 0 : stringsStart + strings.size())
+        ByteArrayOutputStream result = new ByteArrayOutputStream()
+        result.write(prefix)
+        result.write(strings.toByteArray())
+        if (stylesStart != 0) result.write(b, stylesStart, b.length - stylesStart)
+        byte[] out = result.toByteArray()
+        put32(out, 4, out.length)
+        return out
+    }
+
+    static byte[] chunk(byte[] b) {
+        int type = u16(b, 0), header = u16(b, 2)
+        require(header >= 8 && header <= b.length && u32(b, 4) == b.length, 'Invalid resource chunk')
+        if (type == 1) return pool(b)
+        if (!(type in [2, 3, 0x200])) return b
+        byte[] prefix = Arrays.copyOf(b, header)
+        ByteArrayOutputStream children = new ByteArrayOutputStream()
+        for (int pos = header; pos < b.length;) {
+            int size = u32(b, pos + 4)
+            require(size >= 8 && pos + size <= b.length, 'Invalid child resource chunk')
+            if (type == 0x200) {
+                // Offsets of the package's type-name and key-name string pools.
+                for (int field : [268, 276]) {
+                    if (u32(b, field) == pos) put32(prefix, field, header + children.size())
+                }
+            }
+            children.write(chunk(Arrays.copyOfRange(b, pos, pos + size)))
+            pos += size
+        }
+        ByteArrayOutputStream result = new ByteArrayOutputStream()
+        result.write(prefix)
+        result.write(children.toByteArray())
+        byte[] out = result.toByteArray()
+        put32(out, 4, out.length)
+        return out
+    }
+
+    @TaskAction
+    void convert() {
+        File source = inputDirectory.get().asFile
+        File destination = outputDirectory.get().asFile
+        destination.mkdirs()
+        transformationRequest.submit(this) { originalArtifact ->
+            File input = new File(originalArtifact.outputFile)
+            File output = new File(destination, input.name)
+            output.parentFile.mkdirs()
+            new ZipFile(input).withCloseable { zip ->
+                new ZipOutputStream(new FileOutputStream(output)).withCloseable { target ->
+                    zip.entries().each { original ->
+                        byte[] data = zip.getInputStream(original).withCloseable { it.bytes }
+                        if (original.name == 'resources.arsc' || original.name.endsWith('.xml')) {
+                            if (data.length >= 8 && u16(data, 0) in [2, 3]) data = chunk(data)
+                        }
+                        ZipEntry entry = new ZipEntry(original.name)
+                        entry.time = 0L
+                        // Preserve AAPT2's storage policy. Android 11+ rejects a
+                        // compressed resource table for target SDK >= 30. AGP
+                        // performs final alignment after this transformation.
+                        entry.method = original.name == 'resources.arsc' ? ZipEntry.STORED : original.method
+                        if (entry.method == ZipEntry.STORED) {
+                            CRC32 crc = new CRC32()
+                            crc.update(data)
+                            entry.size = data.length
+                            entry.compressedSize = data.length
+                            entry.crc = crc.value
+                        }
+                        target.putNextEntry(entry)
+                        target.write(data)
+                        target.closeEntry()
+                    }
+                }
+            }
+            return output
+        }
+    }
+}
+
+// AGP 8.7.3 internal artifact integration: conversion happens before APK packing,
+// alignment and signing. Release resource optimization can emit UTF-8 again, so
+// convert both the linked input and the optimized output. Recheck on AGP upgrades.
+androidComponents.onVariants(androidComponents.selector().all()) { variant ->
+    def artifact = { String name ->
+        project.plugins.getPlugin('com.android.application').class.classLoader
+                .loadClass('com.android.build.gradle.internal.scope.InternalArtifactType$' + name)
+                .getField('INSTANCE').get(null)
+    }
+    def linked = tasks.register("${variant.name}DonutResources", DonutResources)
+    def linkedRequest = variant.artifacts.use(linked).wiredWithDirectories({ it.inputDirectory }, { it.outputDirectory })
+            .toTransformMany(artifact('LINKED_RESOURCES_BINARY_FORMAT'))
+    linked.configure { transformationRequest = linkedRequest }
+    if (variant.buildType == 'release') {
+        def optimized = tasks.register("${variant.name}DonutOptimizedResources", DonutResources)
+        def optimizedRequest = variant.artifacts.use(optimized).wiredWithDirectories({ it.inputDirectory }, { it.outputDirectory })
+                .toTransformMany(artifact('OPTIMIZED_PROCESSED_RES'))
+        optimized.configure { transformationRequest = optimizedRequest }
+    }
+}

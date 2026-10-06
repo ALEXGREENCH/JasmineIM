@@ -98,7 +98,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
         if (pattern == null) {
             this.filtered = false;
             this.svc.handleContactlistNeedRemake();
-        } else if (pattern.isEmpty()) {
+        } else if (pattern.equals("")) {
             this.filtered = false;
             this.svc.handleContactlistNeedRemake();
         } else {
@@ -218,7 +218,7 @@ public class ContactsAdapter extends MultiColumnAdapter {
                             switch (item2.itemType) {
                                 case 4:
                                     JContact jcontact = (JContact) item2;
-                                    if (skip2 && !jcontact.group.equals(current_group) && (!jcontact.group.isEmpty() || current_group_id != -1)) {
+                                    if (skip2 && !jcontact.group.equals(current_group) && (!jcontact.group.equals("") || current_group_id != -1)) {
                                         skip2 = false;
                                     }
                                     if (!current_group.equals(jcontact.group)) {

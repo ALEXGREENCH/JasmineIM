@@ -290,7 +290,7 @@ public class ICQChatActivity extends Chat {
             @Override
             public void onClick(View v) {
                 String pass = input.getText().toString().trim();
-                if (pass.isEmpty()) {
+                if (pass.equals("")) {
                     contact.profile.makeShortToast(resources.getString("s_enc_empty"));
                     return;
                 }
@@ -451,7 +451,7 @@ public class ICQChatActivity extends Chat {
         }
         service.isAnyChatOpened = true;
         nick_.setText(contact.profile.nickname);
-        if (!received_smile_tag.isEmpty()) {
+        if (!received_smile_tag.equals("")) {
             if (cursor_pos2 == -1) {
                 cursor_pos2 = 0;
             }
@@ -860,8 +860,8 @@ public class ICQChatActivity extends Chat {
 
     private void doSend() {
         String message = this.input.getText().toString();
-        if (!message.isEmpty()) {
-            if (!this.input.getText().toString().trim().isEmpty() && contact.profile.connected) {
+        if (!message.equals("")) {
+            if (!this.input.getText().toString().trim().equals("") && contact.profile.connected) {
                 // With encryption on, never let a message out before the key is cached: keep the
                 // text in the box, kick off the derivation and ask the user to try again.
                 String conversation = conversationId();
@@ -877,7 +877,7 @@ public class ICQChatActivity extends Chat {
                 // server's message size.
                 String[] prepared = prepareAndSplit(message, encrypted ? 256 : 1024);
                 for (String part : prepared) {
-                    if (!part.trim().isEmpty()) {
+                    if (!part.trim().equals("")) {
                         HistoryItem hst = new HistoryItem();
                         hst.message = part;
                         hst.contact = contact;

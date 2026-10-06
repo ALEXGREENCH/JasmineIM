@@ -1,6 +1,7 @@
 package ru.ivansuper.jasmin;
 
 import android.Manifest;
+import ru.ivansuper.jasmin.compat.AndroidCompat;
 import android.app.Activity;
 import android.content.ComponentName;
 import android.content.Context;
@@ -94,17 +95,17 @@ public class main extends Activity implements Handler.Callback {
     private void checkPermissionsAndStartService() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             boolean needsForegroundServicePermission = Build.VERSION.SDK_INT >= Build.VERSION_CODES.P &&
-                    checkSelfPermission(Manifest.permission.FOREGROUND_SERVICE) != PackageManager.PERMISSION_GRANTED;
+                    AndroidCompat.checkSelfPermission(this, Manifest.permission.FOREGROUND_SERVICE) != PackageManager.PERMISSION_GRANTED;
 
             boolean needsReadPhoneStatePermission =
-                    checkSelfPermission(Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED;
+                    AndroidCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED;
 
             boolean needsReadStoragePermission =
-                    checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
+                    AndroidCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED;
 
             ////boolean needsPostNotificationsPermission =
             ////        Build.VERSION.SDK_INT >= 33 &&
-            ////                checkSelfPermission(POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED;
+            ////                AndroidCompat.checkSelfPermission(this, POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED;
 
             if (needsForegroundServicePermission || needsReadPhoneStatePermission ||
                     ////needsReadStoragePermission || needsPostNotificationsPermission) {
@@ -127,7 +128,7 @@ public class main extends Activity implements Handler.Callback {
 
                 int requestCode = needsReadStoragePermission ? READ_STORAGE_PERMISSION_REQUEST : READ_PHONE_STATE_PERMISSION_REQUEST;
 
-                requestPermissions(permissions, requestCode);
+                AndroidCompat.requestPermissions(this, permissions, requestCode);
                 return;
             }
         }
@@ -138,11 +139,7 @@ public class main extends Activity implements Handler.Callback {
     private void startJasminService() {
         Intent serviceIntent = new Intent(this, jasminSvc.class);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            startForegroundService(serviceIntent);
-        } else {
-            startService(serviceIntent);
-        }
+        AndroidCompat.startService(this, serviceIntent);
 
         bindService(serviceIntent, serviceConnection, Context.BIND_AUTO_CREATE);
     }
@@ -181,6 +178,15 @@ public class main extends Activity implements Handler.Callback {
         }
 
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
+        if (android.os.Build.VERSION.SDK_INT < 5 && keyCode == android.view.KeyEvent.KEYCODE_BACK) {
+            onBackPressed();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
@@ -227,7 +233,7 @@ public class main extends Activity implements Handler.Callback {
     /** @noinspection NullableProblems*/
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        // Activity's default callback is empty; invoking it would break Donut verification.
         if (requestCode == FOREGROUND_SERVICE_PERMISSION_REQUEST ||
                 requestCode == READ_PHONE_STATE_PERMISSION_REQUEST ||
                 requestCode == READ_STORAGE_PERMISSION_REQUEST) {

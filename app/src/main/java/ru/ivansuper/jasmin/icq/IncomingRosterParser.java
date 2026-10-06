@@ -81,7 +81,7 @@ public class IncomingRosterParser {
                                 //noinspection CallToPrintStackTrace
                                 e.printStackTrace();
                             }
-                            if (!nickname.isEmpty()) {
+                            if (!nickname.equals("")) {
                                 contact.name = nickname;
                             } else {
                                 contact.name = itemName + " [cant read nick]";

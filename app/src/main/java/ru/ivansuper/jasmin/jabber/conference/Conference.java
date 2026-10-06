@@ -203,17 +203,17 @@ public class Conference {
         priority.setValue(String.valueOf(this.profile.priority));
         presence.putChild(priority);
         String status_ = JProtocol.parseStatus(status_param);
-        if (!status_.isEmpty()) {
+        if (!status_.equals("")) {
             Node show = new Node("show");
             show.setValue(JProtocol.parseStatus(status_param));
             presence.putChild(show);
         }
-        if (!this.profile.status_desc.isEmpty()) {
+        if (!this.profile.status_desc.equals("")) {
             Node status = new Node("status");
             status.setValue(this.profile.status_desc);
             presence.putChild(status);
         }
-        if (!this.pass.isEmpty()) {
+        if (!this.pass.equals("")) {
             Node x = new Node("x", "", "http://jabber.org/protocol/muc");
             Node pass = new Node("password");
             pass.setValue(this.pass);
@@ -238,7 +238,7 @@ public class Conference {
         Node query = new Node("query", "", "http://jabber.org/protocol/muc#admin");
         Node item = new Node("item");
         item.putParameter("jid", user).putParameter("affiliation", "outcast");
-        if (reason != null && !reason.trim().isEmpty()) {
+        if (reason != null && !reason.trim().equals("")) {
             Node reason_ = new Node("reason", reason);
             item.putChild(reason_);
         }
@@ -531,7 +531,7 @@ public class Conference {
                 break;
         }
         //noinspection DataFlowIssue
-        if (!reason.isEmpty()) {
+        if (!reason.equals("")) {
             msg = msg + " " + reason;
         }
         hst.message = msg;
@@ -591,19 +591,19 @@ public class Conference {
                 hst.message = hst.message.substring(3).trim();
                 hst.isMe = true;
                 hst.addTwoPoints = false;
-            } else if (hst.conf_nick.isEmpty()) {
+            } else if (hst.conf_nick.equals("")) {
                 hst.isMe = true;
                 hst.addTwoPoints = false;
             } else {
                 hst.addTwoPoints = true;
             }
-            if (!subject.isEmpty()) {
+            if (!subject.equals("")) {
                 hst.isTheme = true;
                 hst.conf_nick = resources.getString("s_conference_theme");
                 if (nick == null) {
                     nick = "";
                 }
-                hst.message = subject + (nick.isEmpty() ? "" : "\n(" + utilities.match(resources.getString("s_who_made_the_theme"), new String[]{nick}) + ")");
+                hst.message = subject + (nick.equals("") ? "" : "\n(" + utilities.match(resources.getString("s_who_made_the_theme"), new String[]{nick}) + ")");
                 this.theme = subject;
                 this.profile.svc.handleChatUpdateInfo();
             }
