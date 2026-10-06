@@ -64,15 +64,7 @@ public class BReceiver extends BroadcastReceiver {
         if (!catched) {
             if (intent.getAction().contains("RINGER_MODE_CHANGED")) {
                 AudioManager am = (AudioManager) this.service.getSystemService(Context.AUDIO_SERVICE);
-                switch (am.getRingerMode()) {
-                    case AudioManager.RINGER_MODE_VIBRATE:
-                        Media.ring_mode = 1;
-                        return;
-                    case AudioManager.RINGER_MODE_NORMAL:
-                        Media.ring_mode = 0;
-                        return;
-                    default:
-                }
+                if (am != null) Media.ring_mode = am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL ? 0 : 1;
             } else if (intent.getAction().contains("SCREEN_OFF")) {
                 this.service.handleScreenTurnedOff();
             } else if (intent.getAction().contains("SCREEN_ON")) {
@@ -80,12 +72,8 @@ public class BReceiver extends BroadcastReceiver {
             } else if (intent.getAction().contains(jasminSvc.ACTION_PING)) {
                 this.service.notifyPingTask(intent.getLongExtra("ID", -1L));
             } else if (intent.getAction().contains("PHONE_STATE")) {
-                TelephonyManager phone = (TelephonyManager) this.service.getSystemService(Context.TELEPHONY_SERVICE);
-                if (phone.getCallState() == TelephonyManager.CALL_STATE_IDLE) {
-                    Media.phone_mode = 0;
-                } else {
-                    Media.phone_mode = 1;
-                }
+                String state = intent.getStringExtra(TelephonyManager.EXTRA_STATE);
+                if (state != null) Media.phone_mode = TelephonyManager.EXTRA_STATE_IDLE.equals(state) ? 0 : 1;
             } else if (intent.getAction().startsWith("ru.ivansuper.jasmin.REQUEST_STATE")) {
                 if (!mWidgetLocked) {
                     if (SystemClock.uptimeMillis() - this.mLastRequestTimestamp < WIDGET_REQUESTS_INTERVAL) {

@@ -9,6 +9,8 @@ import android.os.Build;
 
 /** API 4-safe signatures; the framework Builder is loaded only on API 11+. */
 public final class NotificationBuilder {
+    public static final String MESSAGE_CHANNEL_DEFAULT_ID = "JASMINE_MSG_DEFAULT_V2";
+    public static final String MESSAGE_CHANNEL_HEADSUP_ID = "JASMINE_MSG_HEADSUP_V2";
     private final Object builder;
 
     public NotificationBuilder(Context context) {
@@ -21,6 +23,17 @@ public final class NotificationBuilder {
 
     public static void createChannel(Context context, String id, String name, int importance) {
         if (Build.VERSION.SDK_INT >= 26) Api26.createChannel(context, id, name, importance);
+    }
+
+    /** Sound/vibration are dispatched by the app's event engine, once per event. */
+    public static void createSilentChannel(Context context, String id, String oldId, String name, int importance) {
+        if (Build.VERSION.SDK_INT >= 26) Api26.createSilentChannel(context, id, oldId, name, importance);
+    }
+
+    public static boolean alertsAllowed(Context context, boolean headsUp) {
+        if (Build.VERSION.SDK_INT >= 24 && !Api24.notificationsEnabled(context)) return false;
+        return Build.VERSION.SDK_INT < 26 || Api26.channelEnabled(context,
+                headsUp ? MESSAGE_CHANNEL_HEADSUP_ID : MESSAGE_CHANNEL_DEFAULT_ID);
     }
 
     public NotificationBuilder setSmallIcon(int icon) {
@@ -78,6 +91,14 @@ public final class NotificationBuilder {
         return this;
     }
 
+    public NotificationBuilder setHeadsUpPriority() {
+        setPriority(Notification.PRIORITY_HIGH);
+        // Android 5-7 requires a sound or vibration field for heads-up ranking.
+        // A zero-duration pattern keeps that ranking without a second vibration.
+        if (Build.VERSION.SDK_INT >= 21 && Build.VERSION.SDK_INT < 26) Api21.setSilentHeadsUp(builder);
+        return this;
+    }
+
     public NotificationBuilder setCategory(String category) {
         if (Build.VERSION.SDK_INT >= 21) Api21.setCategory(builder, category);
         return this;
@@ -124,15 +145,41 @@ public final class NotificationBuilder {
 
     @TargetApi(21)
     private static class Api21 {
+        static void setSilentHeadsUp(Object builder) { ((Notification.Builder) builder).setVibrate(new long[] {0}); }
         static void setCategory(Object builder, String category) { ((Notification.Builder) builder).setCategory(category); }
+    }
+
+    @TargetApi(24)
+    private static class Api24 {
+        static boolean notificationsEnabled(Context context) {
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            return manager != null && manager.areNotificationsEnabled();
+        }
     }
 
     @TargetApi(26)
     private static class Api26 {
+        static boolean channelEnabled(Context context, String id) {
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager == null) return false;
+            android.app.NotificationChannel channel = manager.getNotificationChannel(id);
+            return channel == null || channel.getImportance() >= NotificationManager.IMPORTANCE_DEFAULT;
+        }
         static Object create(Context context, String channel) { return new Notification.Builder(context, channel); }
         static void createChannel(Context context, String id, String name, int importance) {
             NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
             if (manager != null) manager.createNotificationChannel(new android.app.NotificationChannel(id, name, importance));
+        }
+        static void createSilentChannel(Context context, String id, String oldId, String name, int importance) {
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            if (manager == null || manager.getNotificationChannel(id) != null) return;
+            android.app.NotificationChannel previous = manager.getNotificationChannel(oldId);
+            android.app.NotificationChannel channel = new android.app.NotificationChannel(id, name,
+                    previous == null ? importance : previous.getImportance());
+            channel.setSound(null, null);
+            channel.enableVibration(false);
+            channel.enableLights(previous == null || previous.shouldShowLights());
+            manager.createNotificationChannel(channel);
         }
         static void setChannelId(Object builder, String channel) { ((Notification.Builder) builder).setChannelId(channel); }
     }

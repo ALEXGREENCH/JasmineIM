@@ -4,4 +4,6 @@
         android:targetPackage="ru.ivansuper.jasmin" android:label="UI compatibility checks" />
     <instrumentation android:name="ru.ivansuper.jasmin.compat.PageAnimationProbe"
         android:targetPackage="ru.ivansuper.jasmin" android:label="Page animation smoke checks" />
+    <instrumentation android:name="ru.ivansuper.jasmin.compat.AlertDeviceProbe"
+        android:targetPackage="ru.ivansuper.jasmin" android:label="Sound and vibration smoke checks" />
 </manifest>

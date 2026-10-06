@@ -190,3 +190,6 @@ certificate verification has not been weakened for this change.
 
 Reference: [AOSP Dalvik verifier notes](https://android.googlesource.com/platform/dalvik/+/refs/heads/main/docs/verifier.html)
 and [Donut resource parser](https://android.googlesource.com/platform/frameworks/base/+/android-1.6_r2/libs/utils/ResourceTypes.cpp).
+
+Sound/vibration fixes, API 4-36 host coverage and the API 4 decoder smoke
+results are documented in [ALERTS.md](ALERTS.md).

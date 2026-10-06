@@ -87,13 +87,11 @@ public final class AndroidCompat {
     }
 
     public static void vibrate(Vibrator vibrator, long duration) {
-        if (Build.VERSION.SDK_INT >= 26) Api26.vibrate(vibrator, duration);
-        else vibrator.vibrate(duration);
+        AlertCompat.vibrate(vibrator, duration);
     }
 
     public static void vibrate(Vibrator vibrator, long[] pattern) {
-        if (Build.VERSION.SDK_INT >= 26) Api26.vibrate(vibrator, pattern);
-        else vibrator.vibrate(pattern, -1);
+        AlertCompat.vibrate(vibrator, pattern);
     }
 
     @TargetApi(5)
@@ -132,11 +130,5 @@ public final class AndroidCompat {
     @TargetApi(26)
     private static class Api26 {
         static void startService(Context context, Intent intent) { context.startForegroundService(intent); }
-        static void vibrate(Vibrator vibrator, long duration) {
-            vibrator.vibrate(android.os.VibrationEffect.createOneShot(duration, android.os.VibrationEffect.DEFAULT_AMPLITUDE));
-        }
-        static void vibrate(Vibrator vibrator, long[] pattern) {
-            vibrator.vibrate(android.os.VibrationEffect.createWaveform(pattern, -1));
-        }
     }
 }

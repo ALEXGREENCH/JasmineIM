@@ -6,6 +6,8 @@ import android.app.AlarmManager;
 import android.app.Notification;
 import ru.ivansuper.jasmin.compat.NotificationBuilder;
 import ru.ivansuper.jasmin.compat.AndroidCompat;
+import ru.ivansuper.jasmin.compat.AlertCompat;
+import ru.ivansuper.jasmin.compat.AlertPolicy;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -93,9 +95,9 @@ import ru.ivansuper.jasmin.utilities;
  */
 public class jasminSvc extends Service implements SharedPreferences.OnSharedPreferenceChangeListener, Handler.Callback {
 
-    private final String CHANNEL_ID = "JASMINE_CHANEL";
-    private static final String MESSAGE_CHANNEL_DEFAULT_ID = "JASMINE_MSG_DEFAULT";
-    private static final String MESSAGE_CHANNEL_HEADSUP_ID = "JASMINE_MSG_HEADSUP";
+    private final String CHANNEL_ID = "JASMINE_STATUS_V2";
+    private static final String MESSAGE_CHANNEL_DEFAULT_ID = NotificationBuilder.MESSAGE_CHANNEL_DEFAULT_ID;
+    private static final String MESSAGE_CHANNEL_HEADSUP_ID = NotificationBuilder.MESSAGE_CHANNEL_HEADSUP_ID;
 
     /** @noinspection unused*/
     public static final int PUT_INTO_LOG = 4;
@@ -341,13 +343,13 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     @SuppressLint("UseRequiresApi")
     @TargetApi(Build.VERSION_CODES.O)
     private void createNotificationChannel() {
-        NotificationBuilder.createChannel(this, CHANNEL_ID, "Jasmine IM Channel", NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationBuilder.createSilentChannel(this, CHANNEL_ID, "JASMINE_CHANEL", "Jasmine IM", NotificationManager.IMPORTANCE_LOW);
     }
 
     @TargetApi(Build.VERSION_CODES.O)
     private void createMessageNotificationChannels() {
-        NotificationBuilder.createChannel(this, MESSAGE_CHANNEL_HEADSUP_ID, "Messages (Heads-up)", NotificationManager.IMPORTANCE_HIGH);
-        NotificationBuilder.createChannel(this, MESSAGE_CHANNEL_DEFAULT_ID, "Messages", NotificationManager.IMPORTANCE_DEFAULT);
+        NotificationBuilder.createSilentChannel(this, MESSAGE_CHANNEL_HEADSUP_ID, "JASMINE_MSG_HEADSUP", "Messages (Heads-up)", NotificationManager.IMPORTANCE_HIGH);
+        NotificationBuilder.createSilentChannel(this, MESSAGE_CHANNEL_DEFAULT_ID, "JASMINE_MSG_DEFAULT", "Messages", NotificationManager.IMPORTANCE_DEFAULT);
     }
 
     @SuppressWarnings("deprecation")
@@ -479,6 +481,9 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     @Override
     public void onDestroy() {
+        if (media != null) media.release();
+        if (vibrator != null) vibrator.cancel();
+        if (sharedPreferences != null) sharedPreferences.unregisterOnSharedPreferenceChangeListener(this);
         if (receiver != null) {
             unregisterReceiver(receiver);
         }
@@ -488,11 +493,14 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
 
     public void performDestroying() {
         ACTIVE = false;
+        if (media != null) media.release();
+        if (vibrator != null) vibrator.cancel();
         Vector<IMProfile> p = this.profiles.getProfiles();
         for (int i = 0; i < p.size(); i++) {
             p.get(i).disconnect();
         }
         unregisterReceiver(this.receiver);
+        this.receiver = null;
         if (this.wifiLock != null && this.wifiLock.isHeld()) {
             this.wifiLock.release();
         }
@@ -590,7 +598,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             } else {
                 builder = new NotificationBuilder(this);
                 if (PreferenceTable.heads_up_notify && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    builder.setPriority(Notification.PRIORITY_HIGH);
+                    builder.setHeadsUpPriority();
                 }
             }
             builder.setSmallIcon(R.drawable.icq_msg_in)
@@ -604,7 +612,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             }
 
             if (PreferenceTable.heads_up_notify) {
-                builder.setDefaults(Notification.DEFAULT_ALL);
+                builder.setDefaults(0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     builder.setCategory(Notification.CATEGORY_MESSAGE);
                 }
@@ -680,7 +688,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             } else {
                 builder = new NotificationBuilder(this);
                 if (PreferenceTable.heads_up_notify && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    builder.setPriority(Notification.PRIORITY_HIGH);
+                    builder.setHeadsUpPriority();
                 }
             }
             builder.setSmallIcon(iconResId)
@@ -694,7 +702,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             }
 
             if (PreferenceTable.heads_up_notify) {
-                builder.setDefaults(Notification.DEFAULT_ALL);
+                builder.setDefaults(0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     builder.setCategory(Notification.CATEGORY_MESSAGE);
                 }
@@ -858,7 +866,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             } else {
                 builder = new NotificationBuilder(this);
                 if (PreferenceTable.heads_up_notify && Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    builder.setPriority(Notification.PRIORITY_HIGH);
+                    builder.setHeadsUpPriority();
                 }
             }
             builder.setSmallIcon(R.drawable.icq_msg_in)
@@ -872,7 +880,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             }
 
             if (PreferenceTable.heads_up_notify) {
-                builder.setDefaults(Notification.DEFAULT_ALL);
+                builder.setDefaults(0);
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                     builder.setCategory(Notification.CATEGORY_MESSAGE);
                 }
@@ -1335,15 +1343,12 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         rebuildChatMarkers();
     }
 
-    public synchronized void playEvent(final int event) {
-        if (PreferenceTable.soundEnabled) {
-            runOnUi(new Runnable() {
-                @Override
-                public void run() {
-                    jasminSvc.this.media.playEvent(event);
-                }
-            }, 50L);
-        }
+    public void playEvent(int event) {
+        if (media != null) media.playEvent(event);
+    }
+
+    public void previewEvent(int event) {
+        if (media != null) media.previewEvent(event);
     }
 
     /** @noinspection unused*/
@@ -1403,13 +1408,15 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
     }
 
     public void doVibrate(long how_long) {
-        if (Media.phone_mode == 0 && this.vibrator != null && PreferenceTable.vibroEnabled) {
+        if (NotificationBuilder.alertsAllowed(this, PreferenceTable.heads_up_notify)
+                && AlertCompat.vibrationAllowed(this, PreferenceTable.vibroEnabled, Media.phone_mode)) {
             AndroidCompat.vibrate(this.vibrator, how_long);
         }
     }
 
     public void doVibrate(long[] how_long) {
-        if (Media.phone_mode == 0 && this.vibrator != null && PreferenceTable.vibroEnabled) {
+        if (NotificationBuilder.alertsAllowed(this, PreferenceTable.heads_up_notify)
+                && AlertCompat.vibrationAllowed(this, PreferenceTable.vibroEnabled, Media.phone_mode)) {
             AndroidCompat.vibrate(this.vibrator, how_long);
         }
     }
@@ -1513,8 +1520,9 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
             PreferenceTable.uiFontScale = 100;
         }
         try {
-            PreferenceTable.vibroLength = Long.parseLong(this.sharedPreferences.getString("ms_vibro_length", "200"));
+            PreferenceTable.vibroLength = AlertPolicy.vibrationDuration(this.sharedPreferences.getString("ms_vibro_length", "200"));
         } catch (Exception e4) {
+            PreferenceTable.vibroLength = 200L;
             this.sharedPreferences.edit().putString("ms_vibro_length", "200").commit();
         }
         try {

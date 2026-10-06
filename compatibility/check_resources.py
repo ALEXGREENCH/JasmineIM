@@ -102,6 +102,10 @@ def check(variant):
     check_packaging(apk)
     count = 0
     with zipfile.ZipFile(candidates[0]) as original, zipfile.ZipFile(apk) as converted:
+        # AAPT2 shortens release resource paths (res/raw/foo.ogg -> res/XX.ogg).
+        sounds = [entry for entry in converted.infolist() if entry.filename.startswith('res/') and entry.filename.endswith('.ogg')]
+        assert len(sounds) == 9, 'Nine built-in event sounds must be packaged'
+        assert all(entry.compress_type == zipfile.ZIP_STORED for entry in sounds), 'Built-in sounds must be uncompressed for openRawResourceFd'
         for name in original.namelist():
             data = original.read(name)
             if name == 'resources.arsc' or name.endswith('.xml'):
@@ -110,7 +114,7 @@ def check(variant):
                     count += 1
                     continue
             assert data == converted.read(name), name
-    print(f'PASS: {variant}: ARSC stored/aligned; {count} binary resources use UTF-16 with identical strings, IDs, XML and styles')
+    print(f'PASS: {variant}: ARSC stored/aligned; 9 sounds uncompressed; {count} binary resources use UTF-16 with identical strings, IDs, XML and styles')
 
 
 if __name__ == '__main__':

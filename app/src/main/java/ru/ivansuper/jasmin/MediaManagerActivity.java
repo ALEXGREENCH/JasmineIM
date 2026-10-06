@@ -41,7 +41,7 @@ public class MediaManagerActivity extends Activity {
         sp = PreferenceManager.getDefaultSharedPreferences(this);
         super.onCreate(savedInstanceState);
         resources.applyFontScale(this);
-        setVolumeControlStream(3);
+        setVolumeControlStream(android.media.AudioManager.STREAM_NOTIFICATION);
         setContentView(R.layout.media_manager);
         SystemBarUtils.setupTransparentBars(this);
         initViews();
@@ -147,7 +147,7 @@ public class MediaManagerActivity extends Activity {
         preview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.playEvent(1);
+                if (service != null) service.previewEvent(1);
             }
         });
         LinearLayout panel = new LinearLayout(this);
@@ -206,7 +206,7 @@ public class MediaManagerActivity extends Activity {
         preview1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.playEvent(2);
+                if (service != null) service.previewEvent(2);
             }
         });
         LinearLayout panel1 = new LinearLayout(this);
@@ -265,7 +265,7 @@ public class MediaManagerActivity extends Activity {
         preview2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.playEvent(3);
+                if (service != null) service.previewEvent(3);
             }
         });
         LinearLayout panel2 = new LinearLayout(this);
@@ -324,7 +324,7 @@ public class MediaManagerActivity extends Activity {
         preview3.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.playEvent(4);
+                if (service != null) service.previewEvent(4);
             }
         });
         LinearLayout panel3 = new LinearLayout(this);
@@ -383,7 +383,7 @@ public class MediaManagerActivity extends Activity {
         preview4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.playEvent(5);
+                if (service != null) service.previewEvent(5);
             }
         });
         LinearLayout panel4 = new LinearLayout(this);
@@ -442,7 +442,7 @@ public class MediaManagerActivity extends Activity {
         preview5.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.playEvent(6);
+                if (service != null) service.previewEvent(6);
             }
         });
         LinearLayout panel5 = new LinearLayout(this);
@@ -501,7 +501,7 @@ public class MediaManagerActivity extends Activity {
         preview6.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.playEvent(0);
+                if (service != null) service.previewEvent(0);
             }
         });
         LinearLayout panel6 = new LinearLayout(this);
@@ -560,7 +560,7 @@ public class MediaManagerActivity extends Activity {
         preview7.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.playEvent(7);
+                if (service != null) service.previewEvent(7);
             }
         });
         LinearLayout panel7 = new LinearLayout(this);
@@ -619,7 +619,7 @@ public class MediaManagerActivity extends Activity {
         preview8.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                service.playEvent(8);
+                if (service != null) service.previewEvent(8);
             }
         });
         LinearLayout panel8 = new LinearLayout(this);

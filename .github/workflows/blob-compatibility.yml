@@ -24,6 +24,7 @@ jobs:
           python-version: '3.12'
       - run: python compatibility/run.py --core-only --self-test
       - run: python compatibility/check_ui.py
+      - run: python compatibility/check_alerts.py
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
