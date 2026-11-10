@@ -34,29 +34,6 @@
             android:summary="Количество колонок при выборе смайлов" />
     </PreferenceScreen>
     <PreferenceScreen android:key="ms_server_settings">
-        <PreferenceCategory
-            android:key="ms_server_settings_icq"
-            android:title="ICQ" />
-        <EditTextPreference
-            android:defaultValue="195.66.114.37"
-            android:key="ms_server"
-            android:negativeButtonText="Отмена"
-            android:positiveButtonText="Применить" />
-        <EditTextPreference
-            android:defaultValue="5190"
-            android:key="ms_port"
-            android:negativeButtonText="Отмена"
-            android:positiveButtonText="Ok" />
-        <EditTextPreference
-            android:defaultValue="http://217.147.15.238"
-            android:key="ms_avatar_base_url"
-            android:negativeButtonText="Отмена"
-            android:positiveButtonText="Ok" />
-        <ListPreference
-            android:defaultValue="1"
-            android:entries="@array/auth_methods"
-            android:entryValues="@array/auth_methods_values"
-            android:key="ms_auth_method" />
         <PreferenceCategory android:key="ms_jabber_category" />
         <CheckBoxPreference
             android:defaultValue="true"

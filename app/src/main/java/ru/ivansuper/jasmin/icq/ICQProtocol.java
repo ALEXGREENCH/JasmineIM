@@ -1211,10 +1211,14 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * Keep-alive probe: a request for our own info (SNAC 01/0E), answered with 01/0F. The old
+     * malformed ICBM (04/06 + 0x09) makes mandarin.im drop the connection and 185.43.7.47 ignores
+     * it; 01/0E is answered by every server (same fix as JasmineKICQ for Symbian).
+     */
     public static ByteBuffer createInvalidPacket(int seq) {
-        ByteBuffer buffer = new ByteBuffer(64);
-        buffer.writeByte((byte) 9);
-        ByteBuffer snc = SNAC.createSnac(4, 6, 0, 15, buffer);
+        ByteBuffer buffer = new ByteBuffer(0);
+        ByteBuffer snc = SNAC.createSnac(1, 14, 0, 14, buffer);
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 

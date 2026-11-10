@@ -17,6 +17,7 @@ import android.text.InputType;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +27,7 @@ import ru.ivansuper.jasmin.MMP.MMPProfile;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.dialogs.DialogBuilder;
 import ru.ivansuper.jasmin.icq.ICQProfile;
+import ru.ivansuper.jasmin.icq.OscarNetwork;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.jabber.XmppSrvResolver;
 import ru.ivansuper.jasmin.jabber.dns.DNS;
@@ -163,6 +165,155 @@ public class ProfilesActivity extends Activity {
         });
     }
 
+    /**
+     * The network part of the ICQ profile dialog. Choosing KICQ or Mandarin fills in that network's
+     * servers, ports and authentication method (OscarNetwork.preset); every value stays editable,
+     * so a profile can follow a network that moves its servers. "Other server" keeps what is typed.
+     */
+    private final class NetworkForm {
+        private final Spinner network;
+        private final Spinner auth;
+        private final EditText server;
+        private final EditText port;
+        private final EditText ftServer;
+        private final EditText ftPort;
+        private final EditText avatar;
+        private int shownNetwork;
+
+        NetworkForm(View lay, OscarNetwork initial) {
+            OscarNetwork n = initial == null ? OscarNetwork.preset(OscarNetwork.KICQ) : initial;
+            ((TextView) lay.findViewById(R.id.icq_profile_network_label)).setText(resources.getString("s_profile_network"));
+            ((TextView) lay.findViewById(R.id.icq_profile_server_label)).setText(resources.getString("s_ms_server"));
+            ((TextView) lay.findViewById(R.id.icq_profile_port_label)).setText(resources.getString("s_ms_port"));
+            ((TextView) lay.findViewById(R.id.icq_profile_ft_server_label)).setText(resources.getString("s_ms_ft_server"));
+            ((TextView) lay.findViewById(R.id.icq_profile_ft_port_label)).setText(resources.getString("s_ms_ft_port"));
+            ((TextView) lay.findViewById(R.id.icq_profile_auth_label)).setText(resources.getString("s_ms_auth_method"));
+            ((TextView) lay.findViewById(R.id.icq_profile_avatar_label)).setText(resources.getString("s_ms_avatar_base_url"));
+            lay.findViewById(R.id.icq_profile_network_summary).setVisibility(View.GONE);
+            network = lay.findViewById(R.id.icq_profile_network);
+            auth = lay.findViewById(R.id.icq_profile_auth);
+            server = lay.findViewById(R.id.icq_profile_server);
+            port = lay.findViewById(R.id.icq_profile_port);
+            ftServer = lay.findViewById(R.id.icq_profile_ft_server);
+            ftPort = lay.findViewById(R.id.icq_profile_ft_port);
+            avatar = lay.findViewById(R.id.icq_profile_avatar);
+            resources.attachEditText(server);
+            resources.attachEditText(port);
+            resources.attachEditText(ftServer);
+            resources.attachEditText(ftPort);
+            resources.attachEditText(avatar);
+
+            UAdapter auths = spinnerAdapter();
+            String[] labels = getResources().getStringArray(R.array.auth_methods);
+            String[] values = getResources().getStringArray(R.array.auth_methods_values);
+            for (int i = 0; i < labels.length && i < values.length; i++) {
+                auths.put(labels[i], OscarNetwork.parseAuth(values[i]));
+            }
+            auth.setAdapter(auths);
+
+            UAdapter nets = spinnerAdapter();
+            nets.put(resources.getString("s_profile_network_kicq"), OscarNetwork.KICQ);
+            nets.put(resources.getString("s_profile_network_mandarin"), OscarNetwork.MANDARIN);
+            nets.put(resources.getString("s_profile_network_custom"), OscarNetwork.CUSTOM);
+            network.setAdapter(nets);
+            shownNetwork = Math.max(0, Math.min(2, n.network));
+            network.setSelection(shownNetwork);
+            fill(n);
+            network.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    int net = selectedNetwork();
+                    if (net == shownNetwork) {
+                        return; // the first call after setSelection, or the same network again
+                    }
+                    shownNetwork = net;
+                    if (net != OscarNetwork.CUSTOM) {
+                        fill(OscarNetwork.preset(net));
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
+                }
+            });
+        }
+
+        private void fill(OscarNetwork n) {
+            server.setText(n.server == null ? "" : n.server);
+            port.setText(String.valueOf(n.getPort()));
+            ftServer.setText(n.getFtServer());
+            ftPort.setText(String.valueOf(n.getFtPort()));
+            avatar.setText(n.avatarUrl == null ? "" : n.avatarUrl);
+            SpinnerAdapterHelper.select(auth, n.authMethod);
+        }
+
+        private UAdapter spinnerAdapter() {
+            UAdapter adp = new UAdapter();
+            adp.setMode(2);
+            adp.setTextSize(18);
+            adp.setTextColor(-7829368);
+            adp.setPadding(15);
+            return adp;
+        }
+
+        private int selectedNetwork() {
+            int pos = network.getSelectedItemPosition();
+            return pos < 0 ? OscarNetwork.KICQ : (int) network.getAdapter().getItemId(pos);
+        }
+
+        /** null (after a toast) when a value is wrong. */
+        OscarNetwork read() {
+            OscarNetwork n = new OscarNetwork();
+            n.network = selectedNetwork();
+            int a = auth.getSelectedItemPosition();
+            n.authMethod = a < 0 ? OscarNetwork.PRESET_AUTH : (int) auth.getAdapter().getItemId(a);
+            n.server = server.getText().toString().trim();
+            n.ftServer = ftServer.getText().toString().trim();
+            n.avatarUrl = avatar.getText().toString().trim();
+            String p = port.getText().toString().trim();
+            n.port = p.length() == 0 ? OscarNetwork.DEFAULT_PORT : OscarNetwork.parsePort(p, -1);
+            String ftp = ftPort.getText().toString().trim();
+            n.ftPort = ftp.length() == 0 ? OscarNetwork.DEFAULT_FT_PORT : OscarNetwork.parsePort(ftp, -1);
+            if (!hostOk(n.server, false) || !hostOk(n.ftServer, true)) {
+                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_server"), Toast.LENGTH_SHORT).show();
+                return null;
+            }
+            if (n.port < 0 || n.ftPort < 0) {
+                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_port"), Toast.LENGTH_SHORT).show();
+                return null;
+            }
+            if (n.avatarUrl.length() > 0 && !n.avatarUrl.startsWith("http://") && !n.avatarUrl.startsWith("https://")) {
+                Toast.makeText(ProfilesActivity.this, resources.getString("s_profile_error_avatar"), Toast.LENGTH_SHORT).show();
+                return null;
+            }
+            if (n.textBytes() > OscarNetwork.MAX_TEXT) {
+                Toast.makeText(ProfilesActivity.this, utilities.match(resources.getString("s_profile_error_too_long"),
+                        new String[]{String.valueOf(OscarNetwork.MAX_TEXT)}), Toast.LENGTH_LONG).show();
+                return null;
+            }
+            return n;
+        }
+
+        private boolean hostOk(String host, boolean mayBeEmpty) {
+            if (host.length() == 0) {
+                return mayBeEmpty;
+            }
+            return host.indexOf(' ') < 0 && host.indexOf(':') < 0 && host.indexOf('/') < 0;
+        }
+    }
+
+    /** Selects the spinner row whose id is the given value. */
+    private static final class SpinnerAdapterHelper {
+        static void select(Spinner spinner, int id) {
+            for (int i = 0; i < spinner.getAdapter().getCount(); i++) {
+                if ((int) spinner.getAdapter().getItemId(i) == id) {
+                    spinner.setSelection(i);
+                    return;
+                }
+            }
+        }
+    }
+
     @Override
     protected Dialog onCreateDialog(int id) {
         switch (id) {
@@ -205,6 +356,7 @@ public class ProfilesActivity extends Activity {
                 password_edit.setText(this.pa.getItem(this.selectedIdx).pass);
                 enabled.setChecked(this.pa.getItem(this.selectedIdx).enabled);
                 autoconnect.setChecked(this.pa.getItem(this.selectedIdx).autoconnect);
+                final NetworkForm netForm = new NetworkForm(lay, ((ICQProfile) service.profiles.getProfiles().get(this.selectedIdx)).network);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad2 = DialogBuilder.createYesNo(this, lay, Gravity.TOP, resources.getString("s_profile_changing"), resources.getString("s_change"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
@@ -216,7 +368,12 @@ public class ProfilesActivity extends Activity {
                         } else if (uin.length() >= 3) {
                             pdata.id = uin;
                             String pass = password_edit.getText().toString();
+                            OscarNetwork net = netForm.read();
+                            if (net == null) {
+                                return;
+                            }
                             if (pass.length() >= 3) {
+                                pdata.oscar = net;
                                 pdata.pass = pass;
                                 pdata.autoconnect = autoconnect.isChecked();
                                 pdata.enabled = enabled.isChecked();
@@ -338,6 +495,7 @@ public class ProfilesActivity extends Activity {
                 enabled1.setText(Locale.getString("s_profile_enabled"));
                 final CheckBox autoconnect1 = lay2.findViewById(R.id.icq_profile_add_autoconnect);
                 autoconnect1.setText(resources.getString("s_dialog_autologin"));
+                final NetworkForm netForm1 = new NetworkForm(lay2, null);
                 //noinspection UnnecessaryLocalVariable
                 Dialog ad4 = DialogBuilder.createYesNo(this, lay2, Gravity.TOP, resources.getString("s_profile_adding"), resources.getString("s_do_add"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
@@ -349,12 +507,18 @@ public class ProfilesActivity extends Activity {
                             if (!service.profiles.isProfileAlreadyExist(uin) && uin.length() >= 3) {
                                 pdata.id = uin;
                                 String pass = password_edit1.getText().toString();
+                                OscarNetwork net = netForm1.read();
+                                if (net == null) {
+                                    return;
+                                }
                                 if (pass.length() >= 3) {
+                                    pdata.oscar = net;
                                     pdata.pass = pass;
                                     pdata.autoconnect = autoconnect1.isChecked();
                                     pdata.enabled = enabled1.isChecked();
                                     pa.add(pdata);
                                     ICQProfile profile = new ICQProfile(pdata.id, pdata.pass, service, pdata.autoconnect, pdata.enabled);
+                                    profile.network = net.copy();
                                     service.profiles.addProfile(profile);
                                     service.profiles.writeProfilesToFile();
                                     service.handleProfileChanged();
@@ -1300,6 +1464,7 @@ public class ProfilesActivity extends Activity {
                     pdata.id = icqprofile.ID;
                     pdata.pass = icqprofile.password;
                     pdata.autoconnect = icqprofile.autoconnect;
+                    pdata.oscar = icqprofile.network.copy();
                     pdatas.add(pdata);
                     break;
                 case 1:

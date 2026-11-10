@@ -99,15 +99,31 @@ public class ICQContact extends ContactlistItem {
         this.itemType = 1;
     }
 
+    /** The avatar server of the ICQ profile with this UIN; empty when there is none. */
+    private static String avatarBaseOf(jasminSvc service, String profileId) {
+        try {
+            for (ru.ivansuper.jasmin.protocols.IMProfile p : service.profiles.getProfiles()) {
+                if (p instanceof ICQProfile && ((ICQProfile) p).ID.equals(profileId)) {
+                    return ((ICQProfile) p).network.getAvatarUrl();
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        return "";
+    }
+
     /** @noinspection unused*/
-    public static void getAvatar(final Callback callback, final String UIN, String PID, final jasminSvc service) {
+    public static void getAvatar(final Callback callback, final String UIN, final String PID, final jasminSvc service) {
         Runnable r = new Runnable() {
             @Override
             public void run() {
                 try {
                     service.showAvatarProgress(Locale.getString("s_loading_avatar"));
-                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
-                    String base = sp.getString("ms_avatar_base_url", "http://217.147.15.238");
+                    String base = avatarBaseOf(service, PID);
+                    if (base.length() == 0) {
+                        service.cancelAvatarProgress();
+                        return;
+                    }
                     URL url = new URL(base + "/avatar/" + UIN + "?hq=1");
                     HttpURLConnection c = (HttpURLConnection) url.openConnection();
                     if (c.getResponseCode() == 200) {
@@ -233,8 +249,11 @@ public class ICQContact extends ContactlistItem {
                 try {
                     service.showAvatarProgress(Locale.getString("s_loading_avatar"));
                     File avatar_file = new File(resources.dataPath + ICQContact.this.profile.ID + "/avatars/" + ICQContact.this.ID);
-                    SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(resources.ctx);
-                    String base = sp.getString("ms_avatar_base_url", "http://217.147.15.238");
+                    String base = ICQContact.this.profile.network.getAvatarUrl();
+                    if (base.length() == 0) {
+                        service.cancelAvatarProgress();
+                        return;
+                    }
                     URL url = new URL(base + "/avatar/" + contact.ID);
                     HttpURLConnection c = (HttpURLConnection) url.openConnection();
 

@@ -1,5 +1,6 @@
 package ru.ivansuper.jasmin;
 
+import android.preference.PreferenceManager;
 import android.util.Log;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -12,6 +13,7 @@ import ru.ivansuper.jasmin.MMP.MMPProfile;
 import ru.ivansuper.jasmin.Service.EventTranslator;
 import ru.ivansuper.jasmin.Service.jasminSvc;
 import ru.ivansuper.jasmin.icq.ICQProfile;
+import ru.ivansuper.jasmin.icq.OscarNetwork;
 import ru.ivansuper.jasmin.jabber.JProfile;
 import ru.ivansuper.jasmin.protocols.IMProfile;
 
@@ -98,9 +100,15 @@ public class ProfilesManager {
                             if (sNICK != null) {
                                 profile.nickname = sNICK;
                             }
+                            byte[] reservedIn = new byte[OscarNetwork.RESERVED_SIZE];
+                            dis.readFully(reservedIn);
+                            OscarNetwork net = OscarNetwork.fromReserved(reservedIn);
+                            if (net == null) {
+                                //noinspection deprecation
+                                net = OscarNetwork.fromLegacyPrefs(PreferenceManager.getDefaultSharedPreferences(this.svc));
+                            }
+                            profile.network = net;
                             this.profiles.add(profile);
-                            //noinspection ResultOfMethodCallIgnored
-                            dis.skip(127L);
                             continue;
                         case IMProfile.JABBER:
                             int idLen = dis.read();
@@ -209,8 +217,7 @@ public class ProfilesManager {
                         }
                         dos.writeBoolean(i_profile.autoconnect);
                         dos.writeBoolean(profile.enabled);
-                        byte[] reserved = new byte[127];
-                        dos.write(reserved);
+                        dos.write(i_profile.network.toReserved());
                         break;
                     case IMProfile.JABBER:
                         dos.write(IMProfile.JABBER);

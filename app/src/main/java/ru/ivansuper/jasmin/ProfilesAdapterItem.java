@@ -18,4 +18,6 @@ public class ProfilesAdapterItem {
     public boolean autoconnect = false;
     public boolean enabled = false;
     public int proto_type = -1;
+    /** ICQ profiles: server, port, authentication and file transfer proxy. */
+    public ru.ivansuper.jasmin.icq.OscarNetwork oscar;
 }

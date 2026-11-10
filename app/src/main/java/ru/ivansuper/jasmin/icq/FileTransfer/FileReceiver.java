@@ -100,7 +100,11 @@ public class FileReceiver extends FileTransfer {
             }
         };
         if (this.use_proxy) {
-            this.socket.connect(this.proxy_ip, 443);
+            // on ARS servers the port of the offer is the proxy's TCP port (5191 on mandarin.im);
+            // the old AOL proxy listened on 443 and used the port as a ticket only
+            int proxyPort = this.port > 0 ? this.port : 443;
+            Log.e("FileReceiver", "Joining sender's proxy " + this.proxy_ip + ":" + proxyPort);
+            this.socket.connect(this.proxy_ip, proxyPort);
         } else {
             this.socket.connect(this.ip, this.port);
         }
@@ -135,10 +139,12 @@ public class FileReceiver extends FileTransfer {
 
     /** @noinspection unused*/
     private void onErrorA(int error) {
-        if (!this.redirected) {
+        String proxy = getFtServer();
+        if (!this.redirected && proxy.length() > 0) {
+            // the sender cannot be reached: invite it over to our own proxy
             this.redirected = true;
             this.socket.mode = 1;
-            this.socket.connect("ars.icq.com", 5190);
+            this.socket.connect(proxy, getFtPort());
             return;
         }
         this.contact.profile.cancelAndRemoveTransfer(this.cookie);
@@ -263,26 +269,8 @@ public class FileReceiver extends FileTransfer {
         this.contact.transfer_cookie = null;
         this.contact.profile.svc.handleChatTransferNeedRebuild();
         HistoryItem hst = new HistoryItem();
-        SpannableStringBuilder ssb = new SpannableStringBuilder();
-        if (this.files_count > 1) {
-            ssb.append(resources.getString("s_files_successful_received")).append(":\n");
-            for (int i = 0; i < this.files_count; i++) {
-                File file = this.received_files.get(i);
-                String name = file.getName();
-                IntentSpan span = new IntentSpan(file.getAbsolutePath());
-                int start = ssb.length();
-                ssb.append(name).append("\n");
-                ssb.setSpan(span, start, name.length() + start, 17);
-            }
-        } else {
-            ssb.append(resources.getString("s_file_successful_received")).append(":\n");
-            File file2 = this.received_files.get(0);
-            String name2 = file2.getName();
-            IntentSpan span2 = new IntentSpan(file2.getAbsolutePath());
-            int start2 = ssb.length();
-            ssb.append(name2);
-            ssb.setSpan(span2, start2, name2.length() + start2, 17);
-        }
+        String title = resources.getString(this.files_count > 1 ? "s_files_successful_received" : "s_file_successful_received");
+        SpannableStringBuilder ssb = FileMessage.build(title, this.received_files, true);
         hst.messageS = ssb;
         hst.message = ssb.toString();
         hst.direction = 1;

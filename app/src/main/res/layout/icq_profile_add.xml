@@ -5,52 +5,175 @@
     android:orientation="vertical"
     android:padding="10sp">
 
-    <TextView
-        android:id="@+id/l1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Введите UIN или E-Mail:"
-        android:textColor="#ffffffff"
-        android:textSize="20sp" />
-
-    <EditText
-        android:id="@+id/icq_profile_add_uin"
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <requestFocus />
-    </EditText>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/l2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Введите пароль:"
-        android:textColor="#ffffffff"
-        android:textSize="20sp" />
+            <TextView
+                android:id="@+id/l1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Введите UIN или E-Mail:"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
 
-    <EditText
-        android:id="@+id/icq_profile_add_pass"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:inputType="textPassword" />
+            <EditText
+                android:id="@+id/icq_profile_add_uin"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    <ru.ivansuper.jasmin.ui.MCheckBox
-        android:id="@+id/profile_show_pass"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Show password" />
+                <requestFocus />
+            </EditText>
 
-    <ru.ivansuper.jasmin.ui.MCheckBox
-        android:id="@+id/icq_profile_add_enabled"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:checked="true"
-        android:text="Enabled" />
+            <TextView
+                android:id="@+id/l2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Введите пароль:"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
 
-    <ru.ivansuper.jasmin.ui.MCheckBox
-        android:id="@+id/icq_profile_add_autoconnect"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Autoconnect" />
+            <EditText
+                android:id="@+id/icq_profile_add_pass"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword" />
+
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/profile_show_pass"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show password" />
+
+            <TextView
+                android:id="@+id/icq_profile_network_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Network:"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+
+            <Spinner
+                android:id="@+id/icq_profile_network"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/icq_profile_network_summary"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffaaaaaa"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:id="@+id/icq_profile_custom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/icq_profile_server_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Server:"
+                    android:textColor="#ffffffff"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/icq_profile_server"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textUri" />
+
+                <TextView
+                    android:id="@+id/icq_profile_port_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Port:"
+                    android:textColor="#ffffffff"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/icq_profile_port"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="5" />
+
+                <TextView
+                    android:id="@+id/icq_profile_ft_server_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="File transfer server:"
+                    android:textColor="#ffffffff"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/icq_profile_ft_server"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textUri" />
+
+                <TextView
+                    android:id="@+id/icq_profile_ft_port_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="File transfer port:"
+                    android:textColor="#ffffffff"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/icq_profile_ft_port"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="number"
+                    android:maxLength="5" />
+
+                <TextView
+                    android:id="@+id/icq_profile_auth_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Authentication method:"
+                    android:textColor="#ffffffff"
+                    android:textSize="20sp" />
+
+                <Spinner
+                    android:id="@+id/icq_profile_auth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/icq_profile_avatar_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Avatar server:"
+                android:textColor="#ffffffff"
+                android:textSize="20sp" />
+
+            <EditText
+                android:id="@+id/icq_profile_avatar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textUri" />
+
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/icq_profile_add_enabled"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="Enabled" />
+
+            <ru.ivansuper.jasmin.ui.MCheckBox
+                android:id="@+id/icq_profile_add_autoconnect"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Autoconnect" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

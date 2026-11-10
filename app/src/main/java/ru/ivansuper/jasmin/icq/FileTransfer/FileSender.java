@@ -111,8 +111,15 @@ public class FileSender extends FileTransfer {
                 }
             }
         };
-        Log.e("FileSender", "Request connecting to proxy");
-        this.socket.connect("ars.icq.com", 5190);
+        String proxy = getFtServer();
+        if (proxy.length() == 0) {
+            // this network has no file transfer proxy: files can be received, not sent
+            Log.e("FileSender", "No file transfer server for this network");
+            onErrorA(-1);
+            return;
+        }
+        Log.e("FileSender", "Request connecting to proxy " + proxy + ":" + getFtPort());
+        this.socket.connect(proxy, getFtPort());
     }
 
     /** @noinspection unused*/
@@ -194,7 +201,10 @@ public class FileSender extends FileTransfer {
         this.contact.transfer_cookie = null;
         this.contact.profile.svc.handleChatTransferNeedRebuild();
         HistoryItem hst = new HistoryItem();
-        hst.message = resources.getString("s_file_sended_successful");
+        java.util.List<File> sent = new java.util.ArrayList<>();
+        sent.add(this.file);
+        hst.messageS = FileMessage.build(resources.getString("s_file_sended_successful"), sent, false);
+        hst.message = hst.messageS.toString();
         hst.direction = 1;
         hst.contact = this.contact;
         hst.isFileMessage = true;

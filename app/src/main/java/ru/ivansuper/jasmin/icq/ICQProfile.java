@@ -84,6 +84,8 @@ public class ICQProfile extends IMProfile {
     private final ICQContact temp_info_container = new ICQContact();
     public byte[] buddy_hash;
     public String password;
+    /** Server, port, authentication method and file transfer proxy of this profile. */
+    public OscarNetwork network = new OscarNetwork();
     public SharedPreferences sp;
     public String xdesc;
     public int xsts;
@@ -2856,60 +2858,41 @@ public class ICQProfile extends IMProfile {
             this.useMD5Login = false;
             this.useMD5NewLogin = false;
             handleProfileStatusChanged();
-            //noinspection deprecation
-            SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(this.svc);
-            //noinspection DataFlowIssue
-            int method = Integer.parseInt(sp.getString("ms_auth_method", "0"));
-            Log.v("ICQProfile", "startConnecting method=" + method);
+            // the profile's own network (server, port, authentication), see OscarNetwork
+            int method = this.network.getAuthMethod();
+            String srv = this.network.getServer();
+            String prt = String.valueOf(this.network.getPort());
+            Log.v("ICQProfile", "startConnecting method=" + method + " server=" + srv + ":" + prt);
             switch (method) {
-                case 0: // XOR authentication
+                case OscarNetwork.AUTH_MD5_OLD:
                     this.http_auth_used = false;
-                    String srv = sp.getString("ms_server", "195.66.114.37");
-                    String prt = sp.getString("ms_port", "5190");
-                    Log.v("ICQProfile", "Connecting via XOR to " + srv + ":" + prt);
+                    this.useMD5Login = true;
                     setConnectionStatus(10);
-                    jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}));
+                    jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv, prt}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv, prt}));
                     this.socket.connect(srv + ":" + prt);
                     break;
-                case 1: // MD5 old authentication
+                case OscarNetwork.AUTH_MD5:
                     this.http_auth_used = false;
-                    String srv2 = sp.getString("ms_server", "195.66.114.37");
-                    String prt2 = sp.getString("ms_port", "5190");
-                    this.useMD5Login = true;
-                    Log.v("ICQProfile", "Connecting via MD5 to " + srv2 + ":" + prt2);
-                    setConnectionStatus(10);
-                    jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5"), new String[]{srv2, prt2}));
-                    this.socket.connect(srv2 + ":" + prt2);
-                    break;
-                case 3: // MD5 authentication
-                    this.http_auth_used = false;
-                    String srvOld = sp.getString("ms_server", "195.66.114.37");
-                    String prtOld = sp.getString("ms_port", "5190");
                     this.useMD5Login = true;
                     this.useMD5NewLogin = true;
-                    Log.v("ICQProfile", "Connecting via MD5 old to " + srvOld + ":" + prtOld);
                     setConnectionStatus(10);
-                    jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_md5_old"), new String[]{srvOld, prtOld}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5_old"), new String[]{srvOld, prtOld}));
-                    this.socket.connect(srvOld + ":" + prtOld);
+                    jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_md5_old"), new String[]{srv, prt}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_md5_old"), new String[]{srv, prt}));
+                    this.socket.connect(srv + ":" + prt);
                     break;
-                case 2: // HTTP authentication
+                case OscarNetwork.AUTH_HTTP:
                     this.http_auth_used = true;
                     HTTPAuthorizer authorizer = new HTTPAuthorizer(this, new http_auth_listener(this, null));
                     Log.v("ICQProfile", "Connecting via HTTP authorizer");
                     authorizer.performAuthorization();
                     break;
-                default:
+                default: // XOR
                     this.http_auth_used = false;
-                    String srvD = sp.getString("ms_server", "195.66.114.37");
-                    String prtD = sp.getString("ms_port", "5190");
-                    Log.v("ICQProfile", "Connecting via default XOR to " + srvD + ":" + prtD);
                     setConnectionStatus(10);
-                    jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srvD, prtD}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
-                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srvD, prtD}));
-                    this.socket.connect(srvD + ":" + prtD);
+                    jasminSvc.pla.put(this.nickname, utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}), null, null, popup_log_adapter.INFO_DISPLAY_TIME, null);
+                    this.svc.put_log(this.nickname + ": " + utilities.match(resources.getString("s_icq_start_connecting_xor"), new String[]{srv, prt}));
+                    this.socket.connect(srv + ":" + prt);
                     break;
             }
 
@@ -2993,6 +2976,9 @@ public class ICQProfile extends IMProfile {
         this.password = pdata.pass;
         this.autoconnect = pdata.autoconnect;
         this.enabled = pdata.enabled;
+        if (pdata.oscar != null) {
+            this.network = pdata.oscar.copy();
+        }
         if (!this.enabled && this.connected) {
             disconnect();
         }
