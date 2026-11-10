@@ -3,12 +3,25 @@ plugins {
 }
 
 android {
+    // Run with -PlegacyApiCheck to gate API compatibility without suppressing
+    // the project's other lint findings in normal lint runs.
+    lint {
+        if (project.hasProperty('legacyApiCheck')) {
+            checkOnly 'NewApi'
+        }
+    }
     //noinspection GradleDependency
     compileSdk 32
 
+    androidResources {
+        // Required for installation on Android 11+ with targetSdk >= 30,
+        // even though minSdk also enables the pre-Android-2.0 resource path.
+        noCompress += ['arsc']
+    }
+
     defaultConfig {
         applicationId "ru.ivansuper.jasmin"
-        minSdk 10
+        minSdk 4
         //noinspection ExpiredTargetSdkVersion
         targetSdk 32
         versionCode 30
@@ -31,6 +44,8 @@ android {
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.aar', '*.jar'], exclude: [])
+    // The former Jasmine_BLOB is now compiled from src/main/java.
 }
+
+apply from: rootProject.file('gradle/legacy-resources.gradle')
 

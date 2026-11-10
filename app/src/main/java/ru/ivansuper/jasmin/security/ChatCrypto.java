@@ -51,7 +51,7 @@ public final class ChatCrypto {
     /** Encryption is switched on for this conversation, whether or not the key is derived yet. */
     public static boolean isEnabled(String conversationId) {
         String p = getPassphrase(conversationId);
-        return p != null && !p.isEmpty();
+        return p != null && !p.equals("");
     }
 
     /** Stores a new passphrase and forgets any cached key. Call {@link #unlockAsync} afterwards. */
@@ -93,7 +93,7 @@ public final class ChatCrypto {
         byte[] cached = getKey(conversationId);
         if (cached != null) return cached;
         String pass = getPassphrase(conversationId);
-        if (pass == null || pass.isEmpty()) return null;
+        if (pass == null || pass.equals("")) return null;
         synchronized (deriveLock) {
             // Someone else may have finished it while we waited for the lock.
             cached = getKey(conversationId);
@@ -155,7 +155,7 @@ public final class ChatCrypto {
      * the send instead of leaking the message in the clear.
      */
     public static String encryptOutgoing(String conversationId, String text) throws Exception {
-        if (text == null || text.isEmpty() || !isEnabled(conversationId)) return text;
+        if (text == null || text.equals("") || !isEnabled(conversationId)) return text;
         byte[] key = getKey(conversationId);
         if (key == null) throw new IllegalStateException("encryption key is not ready");
         return E2ECrypto.encrypt(text, key);
@@ -167,7 +167,7 @@ public final class ChatCrypto {
      * the key first if needed, so call it from the network thread only.
      */
     public static String decryptIncoming(String conversationId, String body) {
-        if (body == null || body.isEmpty() || !isEnabled(conversationId)) return null;
+        if (body == null || body.equals("") || !isEnabled(conversationId)) return null;
         if (!E2ECrypto.looksEncrypted(body)) return null;
         byte[] key = unlock(conversationId);
         if (key == null) return null;

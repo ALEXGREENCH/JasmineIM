@@ -135,12 +135,10 @@ public final class TlsSupport {
     }
 
     private static void setSni(SSLSocket ssl, String host) {
-        if (host == null || host.isEmpty() || isIpAddress(host)) return;
+        if (host == null || host.equals("") || isIpAddress(host)) return;
         if (Build.VERSION.SDK_INT >= 24) {
             try {
-                SSLParameters params = ssl.getSSLParameters();
-                params.setServerNames(Collections.singletonList(new SNIHostName(host)));
-                ssl.setSSLParameters(params);
+                Api24.setSni(ssl, host);
                 return;
             } catch (Exception e) {
                 Log.w(TAG, "SSLParameters SNI failed: " + e);
@@ -172,7 +170,7 @@ public final class TlsSupport {
 
         List<String> certNames = certificateNames(leaf);
         for (String name : acceptedNames) {
-            if (name == null || name.isEmpty()) continue;
+            if (name == null || name.equals("")) continue;
             String wanted = name.toLowerCase(java.util.Locale.US);
             for (String cn : certNames) {
                 if (nameMatches(cn, wanted)) return;
@@ -181,7 +179,7 @@ public final class TlsSupport {
         try {
             HostnameVerifier verifier = HttpsURLConnection.getDefaultHostnameVerifier();
             for (String name : acceptedNames) {
-                if (name != null && !name.isEmpty() && verifier.verify(name, session)) return;
+                if (name != null && !name.equals("") && verifier.verify(name, session)) return;
             }
         } catch (Exception e) {
             Log.w(TAG, "platform verifier failed: " + e);
@@ -219,7 +217,7 @@ public final class TlsSupport {
             String suffix = pattern.substring(1);              // ".example.org"
             if (!host.endsWith(suffix)) return false;
             String label = host.substring(0, host.length() - suffix.length());
-            return !label.isEmpty() && label.indexOf('.') < 0;   // exactly one label, no empty match
+            return !label.equals("") && label.indexOf('.') < 0;   // exactly one label, no empty match
         }
         return pattern.equals(host);
     }
@@ -338,5 +336,13 @@ public final class TlsSupport {
         extraRoots = list.toArray(new X509Certificate[0]);
         Log.i(TAG, extraRoots.length + " bundled root(s) loaded");
         return extraRoots;
+    }
+    @android.annotation.TargetApi(24)
+    private static class Api24 {
+        static void setSni(SSLSocket ssl, String host) {
+                SSLParameters params = ssl.getSSLParameters();
+                params.setServerNames(Collections.singletonList(new SNIHostName(host)));
+                ssl.setSSLParameters(params);
+        }
     }
 }

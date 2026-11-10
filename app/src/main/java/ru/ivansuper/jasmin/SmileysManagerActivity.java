@@ -81,7 +81,7 @@ public class SmileysManagerActivity extends Activity {
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                sp.edit().putString("current_smileys_pack", selectedPack).apply();
+                ru.ivansuper.jasmin.compat.AndroidCompat.apply(sp.edit().putString("current_smileys_pack", selectedPack));
                 SmileysManager.loadPack();
                 Toast.makeText(SmileysManagerActivity.this, resources.getString("s_selection_saved"), Toast.LENGTH_SHORT).show();
             }

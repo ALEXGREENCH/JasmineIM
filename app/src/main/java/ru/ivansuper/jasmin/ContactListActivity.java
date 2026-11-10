@@ -1054,7 +1054,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             @SuppressLint("CutPasteId")
                             EditText name2 = lay.findViewById(R.id.add_contact_name);
                             String sNAME = name2.getText().toString();
-                            if (sNAME.isEmpty()) {
+                            if (sNAME.equals("")) {
                                 sNAME = sUIN;
                             }
                             @SuppressLint("CutPasteId")
@@ -1630,7 +1630,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 ad = DialogBuilder.createYesNo(this, lay_2, 48, resources.getString("s_renaming"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (!edt1.getText().toString().trim().isEmpty()) {
+                        if (!edt1.getText().toString().trim().equals("")) {
                             contextGroup.profile.doRenameGroup(contextGroup, edt1.getText().toString());
                             removeDialog(29);
                         }
@@ -1660,7 +1660,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                 ad = DialogBuilder.createYesNo(this, lay_3, 48, resources.getString("s_add_group"), resources.getString("s_ok"), resources.getString("s_cancel"), new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if (!edt2.getText().toString().trim().isEmpty()) {
+                        if (!edt2.getText().toString().trim().equals("")) {
                             ICQGroup group2 = new ICQGroup();
                             group2.name = edt2.getText().toString().trim();
                             group2.id = utilities.getRandomSSIId();
@@ -1855,13 +1855,13 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                                 EditText ID = layout.findViewById(R.id.add_contact_uin);
                                 String sID = ID.getText().toString().toLowerCase().trim();
                                 String[] parts = sID.split("@");
-                                if (parts.length != 2 || parts[1].isEmpty()) {
+                                if (parts.length != 2 || parts[1].equals("")) {
                                     Toast.makeText(ContactListActivity.this, resources.getString("s_incorrect_jid"), Toast.LENGTH_SHORT).show();
                                     return;
                                 }
                                 EditText name2 = layout.findViewById(R.id.add_contact_name);
                                 String sNAME = name2.getText().toString();
-                                if (sNAME.isEmpty()) {
+                                if (sNAME.equals("")) {
                                     sNAME = sID;
                                 }
                                 Spinner spn3 = layout.findViewById(R.id.add_contact_groups);
@@ -1907,7 +1907,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                if (!edt3.getText().toString().trim().isEmpty()) {
+                                if (!edt3.getText().toString().trim().equals("")) {
                                     String name2 = edt3.getText().toString().trim();
                                     JGroup group3 = new JGroup(contextJProfile, name2);
                                     contextJProfile.doAddGroup(group3);
@@ -1942,7 +1942,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         }
                         @SuppressLint("CutPasteId") EditText message_text2 = sms_layout.findViewById(R.id.send_sms_text);
                         String sTEXT = message_text2.getText().toString();
-                        if (!sTEXT.isEmpty()) {
+                        if (!sTEXT.equals("")) {
                             if (contextMrimProfile != null) {
                                 contextMrimProfile.doSendSMS(sPHONE, sTEXT);
                             }
@@ -2018,7 +2018,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             public void onClick(View view) {
                                 String room_ = room.getText().toString();
                                 String nick = nickname.getText().toString();
-                                if (room_.isEmpty() || nick.isEmpty()) {
+                                if (room_.equals("") || nick.equals("")) {
                                     Toast toast = Toast.makeText(ContactListActivity.this, resources.getString("s_join_parameters_required"), Toast.LENGTH_SHORT);
                                     toast.setGravity(48, 0, 0);
                                     toast.show();
@@ -2193,7 +2193,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                         if (contextJContact != null) {
                             if (contextJContact.group.equals(group3)) {
                                 Toast.makeText(ContactListActivity.this, resources.getString("s_contact_already_in_this_group"), Toast.LENGTH_SHORT).show();
-                            } else if (contextJContact.group.isEmpty() && i == 0) {
+                            } else if (contextJContact.group.equals("") && i == 0) {
                                 Toast.makeText(ContactListActivity.this, resources.getString("s_contact_already_in_this_group"), Toast.LENGTH_SHORT).show();
                             } else {
                                 if (i == 0) {
@@ -2224,7 +2224,7 @@ public class ContactListActivity extends JFragmentActivity implements Handler.Ca
                             @Override
                             public void onClick(View view) {
                                 String prior = priority.getText().toString();
-                                if (!prior.isEmpty()) {
+                                if (!prior.equals("")) {
                                     try {
                                         int priority_ = Integer.parseInt(prior);
                                         contextJProfile.changePriority(priority_);

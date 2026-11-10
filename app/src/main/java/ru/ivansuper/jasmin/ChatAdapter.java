@@ -237,7 +237,7 @@ public class ChatAdapter extends BaseAdapter {
                     resources.attachAuthAskMsg(msg);
                     message.setTextColor(ColorScheme.getColor(8));
                     message.setLinkTextColor(ColorScheme.getColor(8));
-                    if (!hst.message.isEmpty()) {
+                    if (!hst.message.equals("")) {
                         text_for_display = resources.getString("s_icq_authorization_req") + ":\n" + hst.message;
                     } else {
                         text_for_display = resources.getString("s_icq_authorization_req");

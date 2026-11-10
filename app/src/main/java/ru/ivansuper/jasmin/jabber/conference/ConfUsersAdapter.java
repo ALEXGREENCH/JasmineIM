@@ -61,7 +61,7 @@ public class ConfUsersAdapter extends BaseAdapter {
         affiliation.setImageDrawable(null);
         TextView info = lay.findViewById(R.id.user_item_info);
         Conference.User user = getItem(position);
-        if (user.status_text == null || user.status_text.trim().isEmpty()) {
+        if (user.status_text == null || user.status_text.trim().equals("")) {
             status.setVisibility(View.GONE);
         } else {
             status.setText(user.status_text);

@@ -2303,7 +2303,7 @@ public class resources {
         am = ctx.getAssets();
         Locale.prepare();
         OS_VERSION = Integer.parseInt(android.os.Build.VERSION.SDK);
-        File ext = ctx.getExternalFilesDir(null);
+        File ext = ru.ivansuper.jasmin.compat.AndroidCompat.externalFilesDir(ctx);
         if (ext != null) {
             SD_PATH = ext.getAbsolutePath();
         } else {

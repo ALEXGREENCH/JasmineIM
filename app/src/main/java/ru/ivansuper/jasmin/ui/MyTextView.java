@@ -461,7 +461,7 @@ public class MyTextView extends View implements Handler.Callback {
     }
 
     public void selectMatches(String pattern) {
-        if (pattern != null && !pattern.isEmpty()) {
+        if (pattern != null && !pattern.equals("")) {
             int pattern_length = pattern.length();
             String text = this.text.toString();
             SpannableStringBuilder ssb = new SpannableStringBuilder(text);

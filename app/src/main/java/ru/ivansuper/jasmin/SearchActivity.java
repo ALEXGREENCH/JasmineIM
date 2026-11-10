@@ -277,16 +277,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
                             new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                                        android.content.ClipboardManager cb = (android.content.ClipboardManager)
-                                                service.getSystemService(Context.CLIPBOARD_SERVICE);
-                                        android.content.ClipData clip = android.content.ClipData.newPlainText("text", data);
-                                        cb.setPrimaryClip(clip);
-                                    } else {
-                                        android.text.ClipboardManager cb = (android.text.ClipboardManager)
-                                                service.getSystemService(Context.CLIPBOARD_SERVICE);
-                                        cb.setText(data);
-                                    }
+                                    ru.ivansuper.jasmin.compat.AndroidCompat.copyText(service, "text", data);
 
                                     Toast.makeText(service, resources.getString("s_copied"), Toast.LENGTH_SHORT).show();
                                     //noinspection deprecation
@@ -343,7 +334,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
                             EditText name2 = lay1.findViewById(R.id.add_contact_name);
                             resources.attachEditText(name2);
                             String sNAME = name2.getText().toString();
-                            if (sNAME.isEmpty()) {
+                            if (sNAME.equals("")) {
                                 sNAME = sUIN;
                             }
                             @SuppressLint("CutPasteId")
@@ -453,7 +444,7 @@ public class SearchActivity extends Activity implements Handler.Callback {
     }
 
     public boolean isSearchAvailable() {
-        return !criteries.nick.isEmpty() || !criteries.name.isEmpty() || !criteries.lastname.isEmpty() || criteries.gender > 0 || !criteries.city.isEmpty();
+        return !criteries.nick.equals("") || !criteries.name.equals("") || !criteries.lastname.equals("") || criteries.gender > 0 || !criteries.city.equals("");
     }
 
     @Override

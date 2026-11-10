@@ -261,7 +261,7 @@ public class MMPChatActivity extends Chat implements Handler.Callback {
         this.nick_.setText(contact.profile.ID);
         int cursor_pos2 = this.input.getSelectionStart();
         this.input.setText(MessageSaveHelper.getMessage(this.SAVE_HASH));
-        if (!received_smile_tag.isEmpty()) {
+        if (!received_smile_tag.equals("")) {
             if (cursor_pos2 == -1) {
                 cursor_pos2 = 0;
             }
@@ -662,8 +662,8 @@ public class MMPChatActivity extends Chat implements Handler.Callback {
 
     private void doSend() {
         String message = this.input.getText().toString();
-        if (!message.isEmpty()) {
-            if (!this.input.getText().toString().trim().isEmpty() && contact.profile.connected) {
+        if (!message.equals("")) {
+            if (!this.input.getText().toString().trim().equals("") && contact.profile.connected) {
                 ADB.proceedMessage(message);
                 HistoryItem hst = new HistoryItem();
                 hst.confirmed = false;

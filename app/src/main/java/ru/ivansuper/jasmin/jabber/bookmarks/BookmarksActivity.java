@@ -207,7 +207,7 @@ public class BookmarksActivity extends Activity {
                             public void onClick(View view) {
                                 String n = name.getText().toString().trim();
                                 String d = data.getText().toString().trim().toLowerCase();
-                                if (!n.isEmpty() && !d.isEmpty()) {
+                                if (!n.equals("") && !d.equals("")) {
                                     bookmarkItem.NAME = n;
                                     bookmarkItem.JID_OR_URL = d;
                                     bookmarkItem.autojoin = auto.isChecked();
@@ -215,10 +215,10 @@ public class BookmarksActivity extends Activity {
                                     if (mode == 0) {
                                         String nick_ = nick.getText().toString().trim();
                                         String pass_ = pass.getText().toString().trim();
-                                        if (!nick_.isEmpty()) {
+                                        if (!nick_.equals("")) {
                                             bookmarkItem.nick = nick_;
                                         }
-                                        if (!pass_.isEmpty()) {
+                                        if (!pass_.equals("")) {
                                             bookmarkItem.password = pass_;
                                         }
                                     }
@@ -266,12 +266,12 @@ public class BookmarksActivity extends Activity {
                         if (val$item.JID_OR_URL != null) {
                             d = val$item.JID_OR_URL;
                         }
-                        if (n.isEmpty() || d.isEmpty() || d.split("@").length != 2) {
+                        if (n.equals("") || d.equals("") || d.split("@").length != 2) {
                             Toast.makeText(BookmarksActivity.this, Locale.getString("s_conf_join_error"), Toast.LENGTH_SHORT).show();
                             return;
                         }
                         String nick_ = PROFILE.ID;
-                        if (val$item.nick != null && !val$item.nick.isEmpty()) {
+                        if (val$item.nick != null && !val$item.nick.equals("")) {
                             nick_ = val$item.nick;
                         }
                         String pass_ = "";
@@ -291,11 +291,11 @@ public class BookmarksActivity extends Activity {
                             return;
                         }
                         String name_ = JProtocol.getNameFromFullID(jid);
-                        if (val$item.NAME != null && !val$item.NAME.isEmpty()) {
+                        if (val$item.NAME != null && !val$item.NAME.equals("")) {
                             name_ = val$item.NAME;
                         }
                         String nick_2 = PROFILE.ID;
-                        if (val$item.nick != null && !val$item.nick.isEmpty()) {
+                        if (val$item.nick != null && !val$item.nick.equals("")) {
                             nick_2 = val$item.nick;
                         }
                         String pass_2 = "";
@@ -392,7 +392,7 @@ public class BookmarksActivity extends Activity {
                 public void onClick(View view) {
                     String n = name.getText().toString().trim();
                     String d_ = data.getText().toString().trim().toLowerCase();
-                    if (!n.isEmpty() && !d_.isEmpty()) {
+                    if (!n.equals("") && !d_.equals("")) {
                         BookmarkItem item = new BookmarkItem();
                         item.NAME = n;
                         item.JID_OR_URL = d_;
@@ -404,10 +404,10 @@ public class BookmarksActivity extends Activity {
                         if (mode == 0) {
                             String nick_ = nick.getText().toString().trim();
                             String pass_ = pass.getText().toString().trim();
-                            if (!nick_.isEmpty()) {
+                            if (!nick_.equals("")) {
                                 item.nick = nick_;
                             }
-                            if (!pass_.isEmpty()) {
+                            if (!pass_.equals("")) {
                                 item.password = pass_;
                             }
                         }

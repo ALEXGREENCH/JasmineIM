@@ -24,18 +24,7 @@ public class SystemBarUtils {
             if (root == null) return;
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
-                root.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-                    @Override
-                    public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
-                        v.setPadding(
-                                v.getPaddingLeft(),
-                                insets.getSystemWindowInsetTop(),
-                                v.getPaddingRight(),
-                                insets.getSystemWindowInsetBottom());
-                        return insets.consumeSystemWindowInsets();
-                    }
-                });
-                root.requestApplyInsets();
+                Api20.applyInsets(root);
             } else {
                 int top = getInternalDimen(activity, "status_bar_height");
                 int bottom = getInternalDimen(activity, "navigation_bar_height");
@@ -55,6 +44,22 @@ public class SystemBarUtils {
             if (root == null) return;
 
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) {
+                Api20.applyInsets(root);
+            } else {
+                int top = getInternalDimen(dialog.getContext(), "status_bar_height");
+                int bottom = getInternalDimen(dialog.getContext(), "navigation_bar_height");
+                root.setPadding(root.getPaddingLeft(), top, root.getPaddingRight(), bottom);
+            }
+        }
+    }
+
+    private static int getInternalDimen(Context context, String name) {
+        int resId = context.getResources().getIdentifier(name, "dimen", "android");
+        return resId > 0 ? context.getResources().getDimensionPixelSize(resId) : 0;
+    }
+    @android.annotation.TargetApi(20)
+    private static class Api20 {
+        static void applyInsets(View root) {
                 root.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
                     @Override
                     public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
@@ -67,16 +72,6 @@ public class SystemBarUtils {
                     }
                 });
                 root.requestApplyInsets();
-            } else {
-                int top = getInternalDimen(dialog.getContext(), "status_bar_height");
-                int bottom = getInternalDimen(dialog.getContext(), "navigation_bar_height");
-                root.setPadding(root.getPaddingLeft(), top, root.getPaddingRight(), bottom);
-            }
         }
-    }
-
-    private static int getInternalDimen(Context context, String name) {
-        int resId = context.getResources().getIdentifier(name, "dimen", "android");
-        return resId > 0 ? context.getResources().getDimensionPixelSize(resId) : 0;
     }
 }

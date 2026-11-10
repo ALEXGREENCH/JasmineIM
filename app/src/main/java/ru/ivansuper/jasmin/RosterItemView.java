@@ -328,7 +328,7 @@ public class RosterItemView extends View {
             totalFontHeight = var3;
             if (this.status_text != null) {
                 totalFontHeight = var3;
-                if (!this.status_text.isEmpty()) {
+                if (!this.status_text.equals("")) {
                     totalFontHeight = (float)this.measureText(this.status_text, (int)this.status_text_.getTextSize(), (int)((float)this.available_width - this.sts_left));
                 }
             }

@@ -11,7 +11,6 @@ import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.Shader;
 import android.graphics.drawable.Drawable;
-import android.text.TextPaint;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -77,6 +76,7 @@ public class SlideSwitcher extends ViewGroup {
 
     private int animationType      = ANIM_FLIP_SIMPLE;
     private boolean randomizedAnimation = false;
+    private final Random animationRandom = new Random();
 
     private final Vector<String> screenLabels = new Vector<>();
     private final Vector<Object> blinkStates   = new Vector<>();
@@ -100,8 +100,8 @@ public class SlideSwitcher extends ViewGroup {
     private int panelHeight;
     private boolean showPanel = false;
 
-    private TextPaint labelPaint;
-    private Paint effectPaint;
+    private final ru.ivansuper.jasmin.compat.SectionTitleCompat titles =
+            new ru.ivansuper.jasmin.compat.SectionTitleCompat();
     private Paint fadePaint;
     private Shader fadeShader;
     private Matrix fadeMatrix;
@@ -146,18 +146,9 @@ public class SlideSwitcher extends ViewGroup {
         setWillNotDraw(true);
         setDrawingCacheEnabled(false);
         setWillNotCacheDrawing(true);
-        setStaticTransformationsEnabled(true);
-
-        // Label paint
-        labelPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);
-        labelPaint.setColor(ColorScheme.getColor(49));
-        labelPaint.setShadowLayer(1f, 0, 0, 0xFFCCCCCC);
-
-        // Effect outline paint
-        effectPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        effectPaint.setStyle(Paint.Style.STROKE);
-        effectPaint.setStrokeWidth(4f);
-        effectPaint.setAlpha(160);
+        // drawChild applies the transform on both software and hardware Canvas.
+        // Enabling the framework callback too would apply it twice on old Android.
+        setStaticTransformationsEnabled(false);
 
         // Panel drawable
         panelDrawable = getContext().getResources().getDrawable(R.drawable.slide_switcher_panel);
@@ -188,13 +179,16 @@ public class SlideSwitcher extends ViewGroup {
      */
     public void updateConfig() {
         float baseText = PreferenceTable.clTextSize;
-        float scaled = baseText * 1.1f * resources.dm.density;
-        labelPaint.setTextSize(scaled);
-        effectPaint.setTextSize(scaled);
-        effectPaint.setColor(ColorScheme.getColor(49));
-
-        panelHeight = (int)((scaled * 1.7f));
+        android.util.DisplayMetrics metrics = getResources().getDisplayMetrics();
+        float scaled = baseText * 1.1f * metrics.scaledDensity;
+        titles.configure(scaled, metrics.density);
+        textColor = ColorScheme.getColor(49);
+        fadeLength = 16f * metrics.density;
+        fadeShader = new LinearGradient(0, 0, 0, fadeLength, 0xFFFFFFFF, 0x00FFFFFF, Shader.TileMode.CLAMP);
+        fadePaint.setShader(fadeShader);
+        panelHeight = Math.max(Math.round(scaled * 1.7f), (int) Math.ceil(titles.fontHeight() + 8 * metrics.density));
         requestLayout();
+        invalidate();
     }
 
     /**
@@ -288,11 +282,7 @@ public class SlideSwitcher extends ViewGroup {
 
     @SuppressLint("ObsoleteSdkInt")
     private void invalidateOnAnimationCompat() {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN) {
-            postInvalidateOnAnimation();
-        } else {
-            postInvalidate();
-        }
+        ru.ivansuper.jasmin.compat.AndroidCompat.invalidateOnAnimation(this);
     }
 
     @Override
@@ -337,6 +327,7 @@ public class SlideSwitcher extends ViewGroup {
 
     @Override
     public boolean dispatchKeyEvent(KeyEvent event) {
+        if (getChildCount() == 0) return super.dispatchKeyEvent(event);
         View focused = getChildAt(currentScreen);
         if (focused!=null && focused.dispatchKeyEvent(event)) return true;
         if (event.getAction()==KeyEvent.ACTION_DOWN && scroller.isFinished()) {
@@ -350,7 +341,7 @@ public class SlideSwitcher extends ViewGroup {
     }
 
     private void switchToNext() {
-        if (isFullyLocked) return;
+        if (isFullyLocked || getChildCount() < 2) return;
         if (currentScreen==getChildCount()-1) {
             currentScreen=0; wrapToFirst();
         } else {
@@ -363,7 +354,7 @@ public class SlideSwitcher extends ViewGroup {
     }
 
     private void switchToPrevious() {
-        if (isFullyLocked) return;
+        if (isFullyLocked || getChildCount() < 2) return;
         if (currentScreen==0) {
             currentScreen=getChildCount()-1; wrapToLast();
         } else {
@@ -378,6 +369,8 @@ public class SlideSwitcher extends ViewGroup {
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
         if (wrapMode || getChildCount()==0) return false;
+        if (getChildCount()==1) return super.dispatchTouchEvent(ev);
+        boolean wasDragging = isDragging;
         switch(ev.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 isLocked=false;
@@ -401,7 +394,7 @@ public class SlideSwitcher extends ViewGroup {
                     accumulatedScrollX=ev.getX();
                     lastTouchX=accumulatedScrollX;
                     if (randomizedAnimation) {
-                        animationType=new Random().nextInt(8);
+                        animationType=animationRandom.nextInt(ANIM_ICS_2 + 1);
                     }
                     setAnimating(true);
                 } else if (dy>32) {
@@ -413,7 +406,7 @@ public class SlideSwitcher extends ViewGroup {
                 if (isDragging) {
                     isDragging=false;
                     float diff = ev.getX()-accumulatedScrollX;
-                    if (Math.abs(diff)>96 && !isFullyLocked) {
+                    if (ev.getAction()==MotionEvent.ACTION_UP && Math.abs(diff)>96 && !isFullyLocked) {
                         if (diff<0) switchToNext(); else switchToPrevious();
                     } else {
                         scroller.startScroll(getScrollX(),0,0,0,scrollDuration);
@@ -423,9 +416,13 @@ public class SlideSwitcher extends ViewGroup {
                 }
                 break;
         }
-        if (!isDragging) return super.dispatchTouchEvent(ev);
-        super.dispatchTouchEvent(MotionEvent.obtain(ev.getDownTime(),ev.getEventTime(),MotionEvent.ACTION_CANCEL,ev.getX(),ev.getY(),0));
-        return false;
+        if (!isDragging) {
+            boolean handled = super.dispatchTouchEvent(ev);
+            return handled || wasDragging || (!isFullyLocked && ev.getAction()==MotionEvent.ACTION_DOWN);
+        }
+        MotionEvent cancel = MotionEvent.obtain(ev.getDownTime(),ev.getEventTime(),MotionEvent.ACTION_CANCEL,ev.getX(),ev.getY(),0);
+        try { super.dispatchTouchEvent(cancel); } finally { cancel.recycle(); }
+        return true;
     }
 
     @Override
@@ -482,7 +479,7 @@ public class SlideSwitcher extends ViewGroup {
             case ANIM_FADE:
                 t.setTransformationType(Transformation.TYPE_BOTH);
                 float alphaFac=Math.abs(dist/(float)child.getWidth());
-                t.setAlpha(1f-alphaFac);
+                t.setAlpha(Math.max(0f, 1f-alphaFac));
                 if (dist<0) {
                     float factor=alphaFac/7f;
                     m.postScale(1f-factor,1f-factor,child.getWidth()/2f,child.getHeight()/2f);
@@ -495,7 +492,7 @@ public class SlideSwitcher extends ViewGroup {
                 break;
             case ANIM_FADE_ROTATE:
                 t.setTransformationType(Transformation.TYPE_BOTH);
-                t.setAlpha(1f-Math.abs(dist/(float)child.getWidth()));
+                t.setAlpha(Math.max(0f, 1f-Math.abs(dist/(float)child.getWidth())));
                 m.postRotate((dist*90f)/child.getWidth(),0f,0f);
                 m.postTranslate(dist,0f);
                 break;
@@ -522,7 +519,10 @@ public class SlideSwitcher extends ViewGroup {
         drawTransform.clear();
         getChildStaticTransformation(child, drawTransform);
         canvas.save();
+        // Transform is expressed in the child's coordinates, not the pager's.
+        canvas.translate(child.getLeft(), child.getTop());
         canvas.concat(drawTransform.getMatrix());
+        canvas.translate(-child.getLeft(), -child.getTop());
         boolean result;
         if (drawTransform.getAlpha() < 1f) {
             int alphaSave = canvas.saveLayerAlpha(
@@ -554,8 +554,11 @@ public class SlideSwitcher extends ViewGroup {
         panelDrawable.setBounds((int)scrollX,0,(int)(scrollX+width),panelHeight);
         panelDrawable.draw(canvas);
         int save=canvas.saveLayer(scrollX,0,scrollX+width,panelHeight,null,Canvas.ALL_SAVE_FLAG);
-        float textHeight=-labelPaint.getFontMetrics().ascent-labelPaint.getFontMetrics().descent;
         int count=screenLabels.size();
+        float maxTitleWidth = Math.max(0, half - 12 * getResources().getDisplayMetrics().density);
+        // All highlights must be below all labels: a neighbouring tab's wide
+        // highlight used to be painted over text already drawn in this loop.
+        for (int pass = 0; pass < 2 && count > 0; pass++) {
         for(int i=-2;i<count+2;i++){
             String lbl; boolean blink;
             int sx=getScrollX();
@@ -566,26 +569,21 @@ public class SlideSwitcher extends ViewGroup {
             else{ idx=i; }
             lbl=screenLabels.get(idx);
             blink=(blinkStates.get(idx)!=null);
-            float textW=labelPaint.measureText(lbl);
-            float left=(x+half)-(textW/2f);
-            if(left+textW>sx&&left<sx+width){
-                float dist=((sx+half)-(textW/2f))-left;
+            float center = x + half;
+            if(center + half / 2 > sx && center - half / 2 < sx + width){
+                float dist=(sx+half)-center;
                 int alpha=255-(int)(Math.abs(dist)*255/(0.65f*width));
                 alpha=Math.max(0,Math.min(255,alpha));
-                float y=(panelHeight/2f)+(textHeight/2f);
-                if(!blink) canvas.drawText(lbl,left,y,effectPaint);
-                highlightDrawable.setBounds((int)x,0,(int)(x+width),panelHeight);
-                highlightPaint.setAlpha(alpha);
-                highlightDrawable.draw(canvas);
-                labelPaint.setStyle(Paint.Style.STROKE);
-                labelPaint.setColor(0xFF000000);
-                labelPaint.setAlpha(blink?alpha:255);
-                canvas.drawText(lbl,left,y,labelPaint);
-                labelPaint.setStyle(Paint.Style.FILL);
-                labelPaint.setColor(blink?0xFFFFFFFF:textColor);
-                labelPaint.setAlpha(blink?255:alpha);
-                canvas.drawText(lbl,left,y,labelPaint);
+                if (pass == 0) {
+                    highlightDrawable.setBounds((int)x,0,(int)(x+width),panelHeight);
+                    highlightPaint.setAlpha(alpha);
+                    highlightDrawable.draw(canvas);
+                } else {
+                    titles.draw(canvas, lbl, center, panelHeight, maxTitleWidth,
+                            blink ? 0xFFFFFFFF : textColor, alpha);
+                }
             }
+        }
         }
         // draw fade edges
         fadeMatrix.reset(); fadeMatrix.setRotate(-90);
@@ -607,7 +605,7 @@ public class SlideSwitcher extends ViewGroup {
         for(int i=0;i<getChildCount();i++){
             View c=getChildAt(i);
             c.measure(MeasureSpec.makeMeasureSpec(getWidth(),MeasureSpec.EXACTLY),MeasureSpec.makeMeasureSpec(h,MeasureSpec.EXACTLY));
-            c.layout(l+i*w,top,r+i*w,b);
+            c.layout(i*w,top,i*w+getWidth(),getHeight());
         }
     }
 
@@ -624,7 +622,7 @@ public class SlideSwitcher extends ViewGroup {
 
     public void scrollTo(int screen) {
         int child_count = getChildCount();
-        if (child_count > 0 && screen < child_count) {
+        if (child_count > 0 && screen >= 0 && screen < child_count) {
             scrollTo((getWidth() + this.dividerWidth) * screen, 0);
             this.currentScreen = screen;
         }

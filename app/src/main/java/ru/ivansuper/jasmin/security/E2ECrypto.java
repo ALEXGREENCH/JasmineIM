@@ -41,7 +41,7 @@ public final class E2ECrypto {
 
     /** Argon2id key from a chat passphrase. Slow by design (~64 MB, seconds on a phone): derive once per chat and cache. */
     public static byte[] deriveKey(String passphrase) throws Exception {
-        if (passphrase == null || passphrase.isEmpty()) throw new IllegalArgumentException("empty passphrase");
+        if (passphrase == null || passphrase.equals("")) throw new IllegalArgumentException("empty passphrase");
         byte[] pw = passphrase.getBytes("UTF-8");
         MessageDigest sha = MessageDigest.getInstance("SHA-256");
         sha.update(SALT_CONTEXT);
@@ -134,7 +134,7 @@ public final class E2ECrypto {
     }
 
     static byte[] alphabetDecode(String text) {
-        if (text == null || text.isEmpty()) return null;
+        if (text == null || text.equals("")) return null;
         int bits = 0, value = 0, symbols = 0;
         ByteArrayOutputStream out = new ByteArrayOutputStream(text.length());
         for (int i = 0; i < text.length(); i++) {
