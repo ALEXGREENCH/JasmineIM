@@ -1525,7 +1525,7 @@ public class jasminSvc extends Service implements SharedPreferences.OnSharedPref
         PreferenceTable.preloadHistory = this.sharedPreferences.getBoolean("ms_preload_history", true);
         PreferenceTable.writeHistory = this.sharedPreferences.getBoolean("ms_use_history", true);
         PreferenceTable.realtimeHistoryExport = this.sharedPreferences.getBoolean("ms_realtime_history_record", false);
-        PreferenceTable.nickInChat = this.sharedPreferences.getBoolean("ms_nick_in_chat", false);
+        PreferenceTable.nickInChat = this.sharedPreferences.getBoolean("ms_nick_in_chat", true);
         try {
             PreferenceTable.smileysSelectorColumns = Integer.parseInt(this.sharedPreferences.getString("ms_columns", "5"));
         } catch (Exception e6) {

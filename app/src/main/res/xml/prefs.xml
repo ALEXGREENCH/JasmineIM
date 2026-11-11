@@ -182,7 +182,7 @@
             android:defaultValue="14"
             android:key="ms_chat_time_size" />
         <CheckBoxPreference
-            android:defaultValue="false"
+            android:defaultValue="true"
             android:key="ms_nick_in_chat"
             android:title="Отображать никнеймы" />
         <CheckBoxPreference
