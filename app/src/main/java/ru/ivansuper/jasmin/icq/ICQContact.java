@@ -63,6 +63,8 @@ public class ICQContact extends ContactlistItem {
     /** Bit in the (formerly reserved) flags int of a UNI16 history record: the message was end-to-end encrypted. */
     public static final int HISTORY_FLAG_ENCRYPTED = 1;
     public Drawable avatar;
+    /** The BART id of the buddy icon from the last online notice (type word, flags, length, hash); null when none. */
+    public byte[] bart;
     public String away_status;
     public int group;
     public int id;
@@ -243,6 +245,10 @@ public class ICQContact extends ContactlistItem {
     }
 
     public final void getAvatar(final ICQContact contact, final jasminSvc service) {
+        // the avatar service of the OSCAR server, by the BART id the contact announced, comes first
+        if (contact.profile.requestContactAvatar(contact, true)) {
+            return;
+        }
         Runnable r = new Runnable() {
             @Override
             public void run() {

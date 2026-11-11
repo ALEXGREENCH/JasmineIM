@@ -111,6 +111,29 @@ public class ICQProfile extends IMProfile {
     private byte[] cookies;
     private boolean http_auth_used;
     private AvatarProtocol icon_proto;
+    /** The BOS server listed family 0x10 (SSBI, avatars) in 01/03. */
+    private boolean ssbiSupported;
+    /** 01/04 for family 0x10 is out and no 01/05 has come yet. */
+    private boolean ssbiRequested;
+    /** Avatars to fetch over SSBI, by UIN, in order. */
+    private final java.util.LinkedHashMap<String, AvatarRequest> avatarQueue = new java.util.LinkedHashMap<>();
+    /** UINs whose avatar request is out, so the queue does not get them twice. */
+    private final java.util.HashSet<String> avatarInFlight = new java.util.HashSet<>();
+
+    /** One avatar to fetch: the contact and its BART id. */
+    public static final class AvatarRequest {
+        public final String uin;
+        public final int type;
+        public final int flags;
+        public final byte[] hash;
+
+        AvatarRequest(String uin, int type, int flags, byte[] hash) {
+            this.uin = uin;
+            this.type = type;
+            this.flags = flags;
+            this.hash = hash;
+        }
+    }
     private SSIOperation lastAdd;
     private SSIOperation lastDelete;
     private SSIOperation lastRename;
@@ -688,8 +711,15 @@ public class ICQProfile extends IMProfile {
     private void handleServerFamiliesList(ByteBuffer data) {
         // Server has sent the list of supported service families. According to
         // the OSCAR specification we must respond with SNAC(01,17) containing
-        // the versions we support. Just send the request without parsing
-        // the family list, as older code never handled this packet at all.
+        // the versions we support. The list only tells us whether avatars (0x10) can be fetched.
+        boolean ssbi = false;
+        while (data.getBytesCountAvailableToRead() >= 2) {
+            if (data.readWord() == 0x10) {
+                ssbi = true;
+            }
+        }
+        this.ssbiSupported = ssbi;
+        Log.i("SSBI", this.ID + " server " + (ssbi ? "has" : "has no") + " avatar service");
         this.BUFFER = ICQProtocol.createClientFamilies(this.sequence);
         send();
     }
@@ -1006,21 +1036,32 @@ public class ICQProfile extends IMProfile {
             data.skip(len);
         }
         TLVList list = new TLVList(data, data.getBytesCountAvailableToRead(), true);
+        TLV family = list.getTLV(13);
         TLV server = list.getTLV(5);
         TLV cookie = list.getTLV(6);
         Log.v("ICQProfile", "handleServerServiceRedirect: serverTLV=" + (server != null) + ", cookieTLV=" + (cookie != null));
+        if (family != null && family.length >= 2 && family.getData().readWord() != 0x10) {
+            list.recycle();
+            return; // only the avatar service is ever asked for
+        }
+        this.ssbiRequested = false;
         if (server == null || cookie == null) {
+            // the server will not give the avatar service now; that must not end the session
             TLV error = list.getTLV(8);
             int code = error == null ? -1 : error.getData().readWord();
-            Log.e("ICQProfile", "Service redirect error code=" + code);
-            proceedLoginError(code);
+            Log.w("SSBI", this.ID + " no avatar service, code " + code);
+            list.recycle();
+            return;
         }
+        String address = server.getData().readStringAscii(server.length);
+        if (address.indexOf(':') < 0) {
+            address += ":5190"; // a host alone means the BOS port; Mandarin sends host:port
+        }
+        byte[] key = cookie.getData().readBytes(cookie.length);
         if (this.icon_proto == null) {
-            //noinspection DataFlowIssue
-            this.icon_proto = new AvatarProtocol(this, server.getData().readStringAscii(server.length) + ":5190", cookie.getData().readBytes(cookie.length));
+            this.icon_proto = new AvatarProtocol(this, address, key);
         } else {
-            //noinspection DataFlowIssue
-            this.icon_proto.restart(this, server.getData().readStringAscii(server.length) + ":5190", cookie.getData().readBytes(cookie.length));
+            this.icon_proto.restart(this, address, key);
         }
         list.recycle();
     }
@@ -1137,6 +1178,9 @@ public class ICQProfile extends IMProfile {
                     }
                 } catch (Exception ignored) {
                 }
+            }
+            if (tlv6 != null) {
+                checkContactAvatar(contact, tlv6);
             }
             if (contact.presence_initialized && PreferenceTable.log_online && become_online) {
                 jasminSvc.pla.put(utilities.match(resources.getString("s_icq_contact_online"), new String[]{contact.name}), "", resources.getICQStatusIconFull(contact), null, popup_log_adapter.PRESENSE_DISPLAY_TIME, null);
@@ -2202,6 +2246,149 @@ public class ICQProfile extends IMProfile {
         send();
     }
 
+    /** A BART id as the avatars/<uin>.bart file and ICQContact.bart keep it. */
+    public static byte[] bartId(int type, int flags, byte[] hash) {
+        byte[] b = new byte[4 + hash.length];
+        b[0] = (byte) (type >> 8);
+        b[1] = (byte) type;
+        b[2] = (byte) flags;
+        b[3] = (byte) hash.length;
+        System.arraycopy(hash, 0, b, 4, hash.length);
+        return b;
+    }
+
+    /** Reads the buddy icon id from TLV 0x1D of an online notice and fetches the picture when it changed. */
+    private void checkContactAvatar(ICQContact contact, TLV tlv) {
+        try {
+            ByteBuffer d = tlv.getData();
+            int end = tlv.length;
+            int pos = 0;
+            byte[] found = null;
+            int foundType = 0;
+            while (pos + 4 <= end) {
+                int type = d.readWord();
+                int flags = d.readByte() & 0xFF;
+                int len = d.readByte() & 0xFF;
+                pos += 4 + len;
+                if (pos > end) {
+                    break;
+                }
+                byte[] hash = d.readBytes(len);
+                // 02 01 d2 04 72 is the well-known "no icon" id
+                boolean none = len == 5 && hash[0] == 2 && hash[1] == 1 && (hash[2] & 0xFF) == 0xD2 && hash[3] == 4 && hash[4] == 0x72;
+                if ((type == 1 || type == 8) && len > 0 && !none && (found == null || type == 1 && foundType != 1)) {
+                    found = bartId(type, flags, hash);
+                    foundType = type;
+                }
+            }
+            if (found == null) {
+                return;
+            }
+            contact.bart = found;
+            requestContactAvatar(contact, false);
+        } catch (Exception e) {
+            Log.w("SSBI", "bad BART list of " + contact.ID, e);
+        }
+    }
+
+    /**
+     * Queues the contact's avatar for the SSBI connection. Without force it is skipped when the
+     * picture saved for this BART id is there already.
+     *
+     * @return false when it cannot go over SSBI (no BART id, or the server has no avatar service)
+     */
+    public final boolean requestContactAvatar(ICQContact contact, boolean force) {
+        byte[] bart = contact.bart;
+        if (bart == null || bart.length < 5 || !this.ssbiSupported || !this.connected) {
+            return false;
+        }
+        if (!force) {
+            String dir = resources.dataPath + this.ID + "/avatars/";
+            java.io.File pic = new java.io.File(dir + contact.ID);
+            if (pic.length() > 0 && java.util.Arrays.equals(bart, readSmallFile(new java.io.File(dir + contact.ID + ".bart")))) {
+                return true;
+            }
+        }
+        byte[] hash = new byte[bart.length - 4];
+        System.arraycopy(bart, 4, hash, 0, hash.length);
+        AvatarRequest r = new AvatarRequest(contact.ID, ((bart[0] & 0xFF) << 8) | (bart[1] & 0xFF), bart[2] & 0xFF, hash);
+        synchronized (this.avatarQueue) {
+            if (this.avatarInFlight.contains(contact.ID)) {
+                return true;
+            }
+            this.avatarQueue.put(contact.ID, r);
+        }
+        AvatarProtocol p = this.icon_proto;
+        if (p != null && p.isReady()) {
+            p.sendNext();
+        } else if (!this.ssbiRequested && (p == null || !p.connected)) {
+            this.ssbiRequested = true;
+            doRequestAvatarService();
+        }
+        return true;
+    }
+
+    /** The next avatar to ask for, now counted as in flight; null when none is waiting. */
+    final AvatarRequest nextAvatarRequest() {
+        synchronized (this.avatarQueue) {
+            java.util.Iterator<AvatarRequest> it = this.avatarQueue.values().iterator();
+            if (!it.hasNext()) {
+                return null;
+            }
+            AvatarRequest r = it.next();
+            it.remove();
+            this.avatarInFlight.add(r.uin);
+            return r;
+        }
+    }
+
+    final void avatarRequestDone(String uin) {
+        synchronized (this.avatarQueue) {
+            this.avatarInFlight.remove(uin);
+        }
+    }
+
+    /** The SSBI connection ended; ask for a new one while avatars are still waiting. */
+    final void onAvatarServiceClosed(boolean mayRetry) {
+        boolean waiting;
+        synchronized (this.avatarQueue) {
+            this.avatarInFlight.clear();
+            waiting = !this.avatarQueue.isEmpty();
+            if (!mayRetry) {
+                this.avatarQueue.clear();
+            }
+        }
+        if (mayRetry && waiting && this.connected && !this.ssbiRequested) {
+            this.ssbiRequested = true;
+            doRequestAvatarService();
+        }
+    }
+
+    private static byte[] readSmallFile(java.io.File f) {
+        if (!f.isFile() || f.length() > 300) {
+            return null;
+        }
+        try {
+            java.io.FileInputStream in = new java.io.FileInputStream(f);
+            try {
+                byte[] b = new byte[(int) f.length()];
+                int n = 0;
+                while (n < b.length) {
+                    int r = in.read(b, n, b.length - n);
+                    if (r < 0) {
+                        return null;
+                    }
+                    n += r;
+                }
+                return b;
+            } finally {
+                in.close();
+            }
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
     public final void sendAuthorizationReply(String uin, int reply) {
         this.BUFFER = ICQProtocol.createAuthReply(this.sequence, uin, reply);
         userSend();
@@ -2423,7 +2610,12 @@ public class ICQProfile extends IMProfile {
                     for (char c : ICQProfile.this.ID.toCharArray()) {
                         check ^= c;
                     }
-                    URL url = new URL("http://217.147.15.238/upload?uin=" + ICQProfile.this.ID + "&check=" + check);
+                    // the avatar server of this profile; none set = this network has no HTTP avatars
+                    String base = ICQProfile.this.network.getAvatarUrl();
+                    if (base.length() == 0) {
+                        return;
+                    }
+                    URL url = new URL(base + "/upload?uin=" + ICQProfile.this.ID + "&check=" + check);
                     HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setDoOutput(true);
                     conn.setRequestMethod("POST");
@@ -2743,7 +2935,15 @@ public class ICQProfile extends IMProfile {
         this.visible_list.clear();
         this.invisible_list.clear();
         this.ignore_list.clear();
+        if (this.icon_proto != null) {
+            this.icon_proto.close();
+        }
         this.icon_proto = null;
+        this.ssbiRequested = false;
+        synchronized (this.avatarQueue) {
+            this.avatarQueue.clear();
+            this.avatarInFlight.clear();
+        }
         this.offlineMessages.clear();
         this.transfers.clear();
         this.info_requests.clear();

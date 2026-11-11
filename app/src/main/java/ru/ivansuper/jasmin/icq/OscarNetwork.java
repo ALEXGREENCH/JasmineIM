@@ -31,6 +31,8 @@ public final class OscarNetwork {
 
     public static final String KICQ_SERVER = "195.66.114.37";
     public static final String KICQ_AVATAR_URL = "http://217.147.15.238";
+    /** Mandarin has no avatar server of its own; it uses the same HTTP one as KICQ. */
+    public static final String MANDARIN_AVATAR_URL = KICQ_AVATAR_URL;
     public static final String MANDARIN_SERVER = "oscar.mandarin.im";
     public static final String MANDARIN_FT_SERVER = "ars.mandarin.im";
     public static final int DEFAULT_PORT = 5190;
@@ -38,8 +40,9 @@ public final class OscarNetwork {
 
     public static final int RESERVED_SIZE = 127;
     private static final int MARKER = 0x4E; // 'N'
-    /** 1: values of presets not stored; 2: + avatar server; 3: every value stored. */
-    private static final int VERSION = 3;
+    /** 1: values of presets not stored; 2: + avatar server; 3: every value stored;
+     *  4: Mandarin preset got an avatar server. */
+    private static final int VERSION = 4;
     private static final int HEADER = 8;
     /** Room left for the three strings and their length bytes. */
     public static final int MAX_TEXT = RESERVED_SIZE - HEADER - 3;
@@ -83,7 +86,7 @@ public final class OscarNetwork {
             case MANDARIN:
                 n.server = MANDARIN_SERVER;
                 n.ftServer = MANDARIN_FT_SERVER;
-                n.avatarUrl = "";
+                n.avatarUrl = MANDARIN_AVATAR_URL;
                 break;
             default:
                 n.network = CUSTOM;
@@ -253,6 +256,10 @@ public final class OscarNetwork {
         n.ftServer = getString(b, pos);
         // version 1 had no avatar server; it was system-wide then
         n.avatarUrl = version >= 2 ? getString(b, pos) : defaultAvatarUrl(n.network);
+        if (version < 4 && n.network == MANDARIN && n.avatarUrl.trim().length() == 0) {
+            // the Mandarin preset had no avatar server before; an empty one was that default
+            n.avatarUrl = MANDARIN_AVATAR_URL;
+        }
         if (version < 3 && n.network != CUSTOM) {
             // a preset's server, ports, proxy and login were fixed then; take them now
             OscarNetwork p = preset(n.network);
