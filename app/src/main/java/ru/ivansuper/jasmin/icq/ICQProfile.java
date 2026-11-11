@@ -1899,6 +1899,11 @@ public class ICQProfile extends IMProfile {
 
     /** @noinspection unused*/
     private void handleServerMessageReceived(ByteBuffer buffer, int flags, int id) {
+        if ((flags & 0x8000) != 0) {
+            // an optional block of extra data precedes the message when bit 15 of the flags is set
+            int len = buffer.readWord();
+            buffer.skip(len);
+        }
         ICQMessage msg = new ICQMessage(buffer);
         if (msg.is_file) {
             handleIncomingFile(msg);

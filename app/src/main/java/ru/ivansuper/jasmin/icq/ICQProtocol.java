@@ -1084,11 +1084,9 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /** The port with every bit inverted (TLV 0x17); the old byte arithmetic sign-extended to 0xFFxx. */
     private static int getPortCheck(int port) {
-        byte a = (byte) (port >> 8);
-        byte b = (byte) port;
-        byte b2 = (byte) (255 - b);
-        return (((byte) (255 - a)) << 8) | b2;
+        return ~port & 0xFFFF;
     }
 
     public static ByteBuffer createTransferCancel(byte[] cookie, String uin, int seq) {

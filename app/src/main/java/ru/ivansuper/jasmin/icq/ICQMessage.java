@@ -80,21 +80,17 @@ public class ICQMessage {
     private void parseChannel2(ByteBuffer buffer) {
         int len = buffer.readByte();
         this.sender = buffer.readStringAscii(len);
-        buffer.skip(2);
-        int tlvCount = buffer.readWord();
-        buffer.skip(2);
-        int len2 = buffer.readWord();
-        buffer.skip(len2);
-        buffer.skip(2);
-        int len3 = buffer.readWord();
-        buffer.skip(len3);
-        buffer.skip(2);
-        int len4 = buffer.readWord();
-        buffer.skip(len4);
-        TLVList list = new TLVList(buffer, tlvCount + 10);
+        buffer.skip(2); // warning level
+        // The sender's user info: as many TLVs as the server says. It used to skip exactly three,
+        // which loses the rendezvous TLV whenever the sender's session announces a different
+        // number - e.g. one JasmineIM sending a file to another (JasmineKICQ reads the count too).
+        int infoCount = buffer.readWord();
+        TLVList info = new TLVList(buffer, infoCount);
+        info.recycle();
+        TLVList list = new TLVList(buffer, buffer.getBytesCountAvailableToRead(), true);
         int count = list.getTLVCount(5);
         if (count > 0) {
-            TLV tlv = list.getTLV(5, count);
+            TLV tlv = list.getTLV(5);
             if (tlv != null) {
                 ByteBuffer tlvData = tlv.getData();
                 this.msg_type = tlvData.readWord();
@@ -109,8 +105,7 @@ public class ICQMessage {
                             this.use_proxy = true;
                         }
                         TLV t2 = tlv_list.getTLV(10);
-                        //noinspection DataFlowIssue
-                        this.transfer_step = t2.getData().readWord();
+                        this.transfer_step = t2 == null ? 1 : t2.getData().readWord();
                         TLV t3 = tlv_list.getTLV(2);
                         if (t3 != null) {
                             this.proxy_ip = t3.getData().readIPA();
