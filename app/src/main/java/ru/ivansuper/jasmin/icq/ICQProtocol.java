@@ -1084,11 +1084,9 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /** The port with every bit inverted (TLV 0x17); the old byte arithmetic sign-extended to 0xFFxx. */
     private static int getPortCheck(int port) {
-        byte a = (byte) (port >> 8);
-        byte b = (byte) port;
-        byte b2 = (byte) (255 - b);
-        return (((byte) (255 - a)) << 8) | b2;
+        return ~port & 0xFFFF;
     }
 
     public static ByteBuffer createTransferCancel(byte[] cookie, String uin, int seq) {
@@ -1211,10 +1209,14 @@ public class ICQProtocol {
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 
+    /**
+     * Keep-alive probe: a request for our own info (SNAC 01/0E), answered with 01/0F. The old
+     * malformed ICBM (04/06 + 0x09) makes mandarin.im drop the connection and 185.43.7.47 ignores
+     * it; 01/0E is answered by every server (same fix as JasmineKICQ for Symbian).
+     */
     public static ByteBuffer createInvalidPacket(int seq) {
-        ByteBuffer buffer = new ByteBuffer(64);
-        buffer.writeByte((byte) 9);
-        ByteBuffer snc = SNAC.createSnac(4, 6, 0, 15, buffer);
+        ByteBuffer buffer = new ByteBuffer(0);
+        ByteBuffer snc = SNAC.createSnac(1, 14, 0, 14, buffer);
         return FLAP.createFlap((byte) 2, seq, snc);
     }
 

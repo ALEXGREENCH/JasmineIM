@@ -8,6 +8,7 @@ import java.math.RoundingMode;
 import ru.ivansuper.jasmin.ContactListActivity;
 import ru.ivansuper.jasmin.icq.ByteBuffer;
 import ru.ivansuper.jasmin.icq.ICQContact;
+import ru.ivansuper.jasmin.icq.OscarNetwork;
 import ru.ivansuper.jasmin.utilities;
 
 /**
@@ -24,6 +25,23 @@ public abstract class FileTransfer {
     public String file_name;
     public long file_size;
     public int port;
+
+    /** The ARS proxy of the profile's network; empty when the network has none. */
+    public String getFtServer() {
+        try {
+            return this.contact.profile.network.getFtServer();
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    public int getFtPort() {
+        try {
+            return this.contact.profile.network.getFtPort();
+        } catch (Exception e) {
+            return OscarNetwork.DEFAULT_FT_PORT;
+        }
+    }
 
     public static String getSizeLabel(long size) {
         if ((double) size < 1024.0d) {

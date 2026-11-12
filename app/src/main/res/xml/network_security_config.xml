@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">217.147.15.238</domain>
-    </domain-config>
+    <!-- The avatar server is set per profile and may be any host over plain http://,
+         so cleartext HTTP is allowed everywhere, not only for the KICQ default. -->
+    <base-config cleartextTrafficPermitted="true" />
 </network-security-config>

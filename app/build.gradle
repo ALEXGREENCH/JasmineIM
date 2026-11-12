@@ -2,6 +2,16 @@ plugins {
     id 'com.android.application'
 }
 
+// Internal build number for telling builds apart: build-number.txt in the project root,
+// raised by one on every run that assembles, installs or bundles, and put in the APK name,
+// e.g. app-debug-5.5.3-b12.apk. A sync or a clean leaves it alone.
+def buildNumberFile = rootProject.file('build-number.txt')
+def buildNumber = buildNumberFile.exists() ? buildNumberFile.text.trim().toInteger() : 0
+if (gradle.startParameter.taskNames.any { def t = it.toLowerCase(); t.contains('assemble') || t.contains('install') || t.contains('bundle') }) {
+    buildNumber++
+    buildNumberFile.text = buildNumber.toString()
+}
+
 android {
     // Run with -PlegacyApiCheck to gate API compatibility without suppressing
     // the project's other lint findings in normal lint runs.
@@ -41,6 +51,23 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
     namespace 'ru.ivansuper.jasmin'
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            outputFileName = "app-${variant.name}-${variant.versionName}-b${buildNumber}${variant.signingConfig == null ? '-unsigned' : ''}.apk"
+        }
+        // AGP empties outputs/apk/<variant> on every build; every APK is kept in builds/ as well
+        variant.assembleProvider.configure { t ->
+            t.doLast {
+                variant.outputs.each { o ->
+                    project.copy {
+                        from o.outputFile
+                        into rootProject.file('builds')
+                    }
+                }
+            }
+        }
+    }
 }
 
 dependencies {

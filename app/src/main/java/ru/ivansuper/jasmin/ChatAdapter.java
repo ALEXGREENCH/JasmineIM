@@ -244,6 +244,75 @@ public class ChatAdapter extends BaseAdapter {
                     }
                     break;
             }
+        } else if (hst.direction == 1) {
+            // incoming: the contact's name and the incoming colours (lost with the Telegram style removal)
+            if (hst.contact != null) {
+                nick.setText(hst.contact.name);
+            }
+            if (hst.jcontact != null) {
+                nick.setText(hst.jcontact.name);
+            }
+            if (hst.mcontact != null) {
+                nick.setText(hst.mcontact.name);
+            }
+            nick.setTextColor(ColorScheme.getColor(17));
+            if (hst.isXtrazMessage) {
+                nick.setVisibility(View.GONE);
+                sts.setImageDrawable(null);
+                status.setBackgroundColor(0);
+                message.setTextColor(ColorScheme.getColor(26));
+                message.setLinkTextColor(ColorScheme.getColor(26));
+                msg.setBackgroundColor(ColorScheme.getColor(24));
+                resources.attachStatusMsg(msg);
+                time.setPadding(5, 5, 5, 5);
+                time.setCompoundDrawables(hst.xTrazIcon, null, null, null);
+            } else if (hst.isFileMessage) {
+                nick.setText("");
+                status.setBackgroundColor(ColorScheme.getColor(15));
+                message.setTextColor(ColorScheme.getColor(16));
+                message.setLinkTextColor(ColorScheme.getColor(16));
+                msg.setBackgroundColor(ColorScheme.getColor(14));
+                resources.attachTransferMsg(msg);
+                time.setPadding(5, 5, 5, 5);
+                time.setCompoundDrawables(resources.file_for_chat, null, null, null);
+            } else {
+                status.setBackgroundColor(ColorScheme.getColor(15));
+                message.setTextColor(ColorScheme.getColor(16));
+                message.setLinkTextColor(ColorScheme.getColor(16));
+                msg.setBackgroundColor(ColorScheme.getColor(14));
+                resources.attachIngMsg(msg);
+                time.setPadding(0, 0, 0, 0);
+                if (hst.wakeup_alarm) {
+                    time.setCompoundDrawables(resources.mrim_wakeup, null, null, null);
+                } else {
+                    time.setCompoundDrawables(null, null, null, null);
+                }
+            }
+        } else {
+            // outgoing: our own name and the outgoing colours; confirmed and unconfirmed differ
+            if (hst.contact != null) {
+                nick.setText(hst.contact.profile.nickname);
+            }
+            if (hst.jcontact != null) {
+                nick.setText(hst.jcontact.profile.ID);
+            }
+            if (hst.mcontact != null) {
+                nick.setText(hst.mcontact.profile.ID);
+            }
+            nick.setTextColor(ColorScheme.getColor(22));
+            time.setPadding(0, 0, 0, 0);
+            time.setCompoundDrawables(null, null, null, null);
+            if (hst.confirmed) {
+                status.setBackgroundColor(ColorScheme.getColor(19));
+                message.setTextColor(ColorScheme.getColor(21));
+                message.setLinkTextColor(ColorScheme.getColor(21));
+            } else {
+                status.setBackgroundColor(ColorScheme.getColor(20));
+                message.setTextColor(ColorScheme.getColor(23));
+                message.setLinkTextColor(ColorScheme.getColor(23));
+            }
+            msg.setBackgroundColor(ColorScheme.getColor(18));
+            resources.attachOutMsg(msg);
         }
         boolean update_imgs = false;
         if (hst.messageS == null) {
