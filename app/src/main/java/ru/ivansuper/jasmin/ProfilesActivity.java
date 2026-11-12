@@ -214,10 +214,13 @@ public class ProfilesActivity extends Activity {
             UAdapter nets = spinnerAdapter();
             nets.put(resources.getString("s_profile_network_kicq"), OscarNetwork.KICQ);
             nets.put(resources.getString("s_profile_network_mandarin"), OscarNetwork.MANDARIN);
+            nets.put(resources.getString("s_profile_network_logon"), OscarNetwork.LOGON);
+            nets.put(resources.getString("s_profile_network_nina"), OscarNetwork.NINA);
             nets.put(resources.getString("s_profile_network_custom"), OscarNetwork.CUSTOM);
             network.setAdapter(nets);
-            shownNetwork = Math.max(0, Math.min(2, n.network));
-            network.setSelection(shownNetwork);
+            // the list order is not the order of the ids: select by id
+            shownNetwork = n.network;
+            SpinnerAdapterHelper.select(network, shownNetwork);
             fill(n);
             network.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override

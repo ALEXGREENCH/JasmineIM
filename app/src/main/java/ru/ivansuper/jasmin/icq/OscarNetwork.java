@@ -8,7 +8,7 @@ import java.io.UnsupportedEncodingException;
  * Per-profile OSCAR network: which server to log in to, how, which ARS proxy to use for files and
  * where avatars are downloaded from.
  *
- * <p>Two known networks are presets (like the sign-in page of JasmineKICQ for Symbian). A preset
+ * <p>The known networks are presets (like the sign-in page of JasmineKICQ for Symbian). A preset
  * only fills in the values ({@link #preset(int)}); every value stays editable, so a profile keeps
  * working when a network moves its servers.</p>
  *
@@ -20,13 +20,17 @@ public final class OscarNetwork {
     public static final int KICQ = 0;
     public static final int MANDARIN = 1;
     public static final int CUSTOM = 2;
+    // added after CUSTOM, whose value is stored in profiles already
+    public static final int LOGON = 3;
+    public static final int NINA = 4;
+    private static final int LAST_NETWORK = NINA;
 
     /** The values of R.array.auth_methods_values. */
     public static final int AUTH_XOR = 0;
     public static final int AUTH_MD5_OLD = 1;
     public static final int AUTH_HTTP = 2;
     public static final int AUTH_MD5 = 3;
-    /** What the presets log in with. */
+    /** What the KICQ and Mandarin presets log in with; logon.chat and NINA take only XOR (see preset()). */
     public static final int PRESET_AUTH = AUTH_MD5_OLD;
 
     public static final String KICQ_SERVER = "195.66.114.37";
@@ -35,6 +39,10 @@ public final class OscarNetwork {
     public static final String MANDARIN_AVATAR_URL = KICQ_AVATAR_URL;
     public static final String MANDARIN_SERVER = "oscar.mandarin.im";
     public static final String MANDARIN_FT_SERVER = "ars.mandarin.im";
+    /** logon.chat: no file proxy, no HTTP avatars; closes the connection on an MD5 login. */
+    public static final String LOGON_SERVER = "logon.chat";
+    /** NINA (nina.chat): no file proxy, no HTTP avatars; sends 01/15 after 01/03 (see ICQProfile). */
+    public static final String NINA_SERVER = "login.oscar.nina.chat";
     public static final int DEFAULT_PORT = 5190;
     public static final int DEFAULT_FT_PORT = 5191;
 
@@ -87,6 +95,18 @@ public final class OscarNetwork {
                 n.server = MANDARIN_SERVER;
                 n.ftServer = MANDARIN_FT_SERVER;
                 n.avatarUrl = MANDARIN_AVATAR_URL;
+                break;
+            case LOGON:
+                n.server = LOGON_SERVER;
+                n.ftServer = "";
+                n.avatarUrl = "";
+                n.authMethod = AUTH_XOR;
+                break;
+            case NINA:
+                n.server = NINA_SERVER;
+                n.ftServer = "";
+                n.avatarUrl = "";
+                n.authMethod = AUTH_XOR;
                 break;
             default:
                 n.network = CUSTOM;
@@ -149,6 +169,12 @@ public final class OscarNetwork {
         }
         if (s.equals("oscar.mandarin.im") || s.equals("mandarin.im")) {
             return MANDARIN;
+        }
+        if (s.equals(LOGON_SERVER)) {
+            return LOGON;
+        }
+        if (s.equals(NINA_SERVER) || s.equals("oscar.nina.chat") || s.equals("nina.chat")) {
+            return NINA;
         }
         return CUSTOM;
     }
@@ -240,7 +266,7 @@ public final class OscarNetwork {
         OscarNetwork n = new OscarNetwork();
         int i = 2;
         n.network = b[i++] & 0xFF;
-        if (n.network > CUSTOM) {
+        if (n.network > LAST_NETWORK) {
             n.network = CUSTOM;
         }
         n.authMethod = b[i++] & 0xFF;

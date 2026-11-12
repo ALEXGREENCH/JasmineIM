@@ -111,6 +111,8 @@ public class ICQProfile extends IMProfile {
     private byte[] cookies;
     private boolean http_auth_used;
     private AvatarProtocol icon_proto;
+    /** 01/17 went out on this BOS connection; nina.chat drops a client that sends it twice. */
+    private boolean familiesSent;
     /** The BOS server listed family 0x10 (SSBI, avatars) in 01/03. */
     private boolean ssbiSupported;
     /** 01/04 for family 0x10 is out and no 01/05 has come yet. */
@@ -468,7 +470,18 @@ public class ICQProfile extends IMProfile {
         this.svc.put_log(this.nickname + ": " + resources.getString("s_icq_sending_cookies"));
         Log.v("ICQProfile", "handleBOSServerHello: sending cookies length=" + this.cookies.length);
         ByteBuffer buffer = ICQProtocol.createSendCookies(this.cookies, this.ID, this.sequence);
+        this.familiesSent = false;
         send(buffer);
+    }
+
+    /** SNAC 01/17 once per connection: answers both 01/03 and 01/15, whichever comes first. */
+    private void sendClientFamiliesOnce() {
+        if (this.familiesSent) {
+            return;
+        }
+        this.familiesSent = true;
+        this.BUFFER = ICQProtocol.createClientFamilies(this.sequence);
+        send();
     }
 
     private void handleDisconnectFlapData(ByteBuffer data) {
@@ -702,8 +715,8 @@ public class ICQProfile extends IMProfile {
     }
 
     private void handleServerLinks() {
-        this.BUFFER = ICQProtocol.createClientFamilies(this.sequence);
-        send();
+        // nina.chat sends 01/15 (its support links) right after 01/03 and drops a second 01/17
+        sendClientFamiliesOnce();
         setConnectionStatus(60);
     }
 
@@ -720,8 +733,7 @@ public class ICQProfile extends IMProfile {
         }
         this.ssbiSupported = ssbi;
         Log.i("SSBI", this.ID + " server " + (ssbi ? "has" : "has no") + " avatar service");
-        this.BUFFER = ICQProtocol.createClientFamilies(this.sequence);
-        send();
+        sendClientFamiliesOnce();
     }
 
     private void handleServerMOTD() {
